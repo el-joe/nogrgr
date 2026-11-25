@@ -5,8 +5,14 @@ namespace App\Modules\Localization;
 use App\Modules\Localization\Enums\GeocodingProvider;
 use App\Modules\Localization\Repositories\Contracts\CityRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\CountryRepositoryContract;
+use App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract;
+use App\Modules\Localization\Repositories\Contracts\LanguageRepositoryContract;
+use App\Modules\Localization\Repositories\Contracts\TenantLanguageRepositoryContract;
 use App\Modules\Localization\Repositories\Eloquent\CityRepository;
 use App\Modules\Localization\Repositories\Eloquent\CountryRepository;
+use App\Modules\Localization\Repositories\Eloquent\CurrencyRepository;
+use App\Modules\Localization\Repositories\Eloquent\LanguageRepository;
+use App\Modules\Localization\Repositories\Eloquent\TenantLanguageRepository;
 use App\Modules\Localization\Services\Geocoding\IpLocator;
 use App\Modules\Localization\Services\Geocoding\IpWhoIsLocator;
 use App\Modules\Localization\Services\Geocoding\NominatimGeocoder;
@@ -38,6 +44,9 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
     public $bindings = [
         CountryRepositoryContract::class => CountryRepository::class,
         CityRepositoryContract::class => CityRepository::class,
+        LanguageRepositoryContract::class => LanguageRepository::class,
+        CurrencyRepositoryContract::class => CurrencyRepository::class,
+        TenantLanguageRepositoryContract::class => TenantLanguageRepository::class,
     ];
 
     public function register(): void
