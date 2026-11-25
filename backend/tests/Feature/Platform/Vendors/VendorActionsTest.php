@@ -140,7 +140,9 @@ it('impersonates the owner of a provisioned store and audits the reason', functi
         'details' => 'Ticket T-4410: payment option missing.',
     ])->assertOk();
 
-    expect($response->json('redirect'))->toContain('/tenant/'.$tenant->slug);
+    // One-time signed accept link (VEN-005) that opens the store panel.
+    expect($response->json('redirect'))->toContain('/tenant/impersonate/');
+    $this->get($response->json('redirect'))->assertRedirect($this->centralUrl('tenant/'.$tenant->slug.'/dashboard'));
 
     $audit = AuditEvent::query()->where('action', AuditAction::Impersonated->value)->where('subject_id', (string) $tenant->id)->firstOrFail();
     expect(json_encode($audit->getAttributes()))->toContain('support_ticket');

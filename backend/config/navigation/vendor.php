@@ -11,6 +11,7 @@ return [
         'label' => null,
         'items' => [
             ['key' => 'dashboard', 'label' => 'navigation.admin.dashboard', 'icon' => 'dashboard', 'route' => 'vendor.dashboard', 'permission' => 'dashboard.view', 'active' => 'vendor.dashboard'],
+            ['key' => 'onboarding', 'label' => 'navigation.vendor.onboarding', 'icon' => 'check-circle', 'route' => 'vendor.onboarding', 'permission' => 'dashboard.view', 'badge' => 'setup', 'active' => 'vendor.onboarding*'],
         ],
     ],
     [

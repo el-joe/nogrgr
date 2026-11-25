@@ -1,0 +1,355 @@
+/*
+ * Vendor panel shell — Tenant Panel Layout (Figma 12:25829 side menu, Dashboard 12:11267
+ * topbar + hero). Loaded only by resources/css/vendor.css. Width overrides are
+ * unlayered so they beat .ui-sidebar / .ui-shell-main (panels/base.css); collapsed and
+ * drawer modes keep their own (more specific) rules.
+ */
+@media (min-width: 1024px) {
+    .vnd-shell .ui-sidebar {
+        width: 236px;
+        border-inline-end: 0;
+    }
+
+    .vnd-shell .ui-shell-main {
+        margin-inline-start: 236px;
+    }
+}
+
+.vnd-shell .ui-sidebar {
+    border-inline-end-color: transparent;
+}
+
+@layer components {
+    /* Side menu item: 8px start rail + 48px pill (rounded on the inline-end side). */
+    .vnd-nav-link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 48px;
+        overflow: clip;
+        color: var(--color-sidebar-ink);
+        outline: none;
+    }
+
+    .vnd-nav-rail {
+        width: 8px;
+        height: 48px;
+        flex-shrink: 0;
+        border-start-end-radius: 17px;
+        border-end-end-radius: 17px;
+        background-color: var(--color-primary-subtle);
+        transition: background-color 200ms var(--ease-out-soft, ease-out), transform 200ms var(--ease-out-soft, ease-out);
+    }
+
+    .vnd-nav-pill {
+        display: flex;
+        min-width: 0;
+        flex: 1 1 auto;
+        align-items: center;
+        gap: 8px;
+        height: 48px;
+        padding-inline: 16px;
+        margin-inline-end: 28px;
+        border-start-end-radius: 58px;
+        border-end-end-radius: 58px;
+        font-size: 16px;
+        line-height: 1.5;
+        transition: background-color 200ms var(--ease-out-soft, ease-out), color 200ms var(--ease-out-soft, ease-out);
+    }
+
+    .vnd-nav-link:hover .vnd-nav-pill,
+    .vnd-nav-link:focus-visible .vnd-nav-pill {
+        background-color: var(--color-primary-subtle);
+        color: var(--color-ink);
+    }
+
+    .vnd-nav-link:focus-visible .vnd-nav-pill {
+        box-shadow: var(--shadow-focus);
+    }
+
+    .vnd-nav-link:hover .vnd-nav-rail {
+        transform: scaleX(1.25);
+        transform-origin: left;
+    }
+
+    /* Active: orange rail + orange pill running into the inline-end edge. */
+    .vnd-nav-link.is-active {
+        gap: 12px;
+    }
+
+    .vnd-nav-link.is-active .vnd-nav-rail {
+        background-color: var(--color-primary);
+    }
+
+    .vnd-nav-link.is-active .vnd-nav-pill {
+        margin-inline-end: 0;
+        border-radius: 0;
+        border-start-start-radius: 65px;
+        border-end-start-radius: 65px;
+        background-color: var(--color-primary);
+        color: var(--color-on-primary);
+        font-weight: 500;
+    }
+
+    .vnd-nav-count {
+        display: inline-flex;
+        min-width: 20px;
+        height: 20px;
+        align-items: center;
+        justify-content: center;
+        padding-inline: 6px;
+        border-radius: 999px;
+        background-color: var(--color-primary);
+        color: var(--color-on-primary);
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .vnd-nav-link.is-active .vnd-nav-count {
+        background-color: var(--color-surface);
+        color: var(--color-ink-brand);
+    }
+
+    .vnd-nav-children {
+        padding-block: 2px;
+    }
+
+    .vnd-nav-child {
+        display: flex;
+        height: 40px;
+        align-items: center;
+        gap: 12px;
+        margin-inline-end: 28px;
+        padding-inline: 56px 12px;
+        border-start-end-radius: 40px;
+        border-end-end-radius: 40px;
+        font-size: 14px;
+        color: var(--color-sidebar-ink);
+        transition: background-color 180ms ease-out;
+    }
+
+    .vnd-nav-child:hover,
+    .vnd-nav-child.is-active {
+        background-color: var(--color-primary-subtle);
+        color: var(--color-ink-brand);
+    }
+
+    /* Topbar squares (bell / theme / language / store), 40px, 8px radius. */
+    .vnd-square {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        place-items: center;
+        border-radius: 8px;
+        transition: transform 160ms ease-out, background-color 160ms ease-out;
+    }
+
+    .vnd-square:active {
+        transform: scale(0.94);
+    }
+
+    .vnd-bell [data-dropdown-trigger] {
+        border-radius: 8px;
+        background-color: var(--color-primary-subtle);
+        color: var(--color-primary);
+    }
+
+    .vnd-user [data-dropdown-trigger] {
+        border-radius: 8px;
+        background-color: var(--color-subtle);
+        padding: 6px 12px 6px 6px;
+    }
+
+    /* Dashboard CTAs (Figma Component 1 / 2: 16px, 8px radius, 16×24 padding). */
+    .vnd-cta {
+        display: inline-flex;
+        min-height: 56px;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: background-color 180ms ease-out, color 180ms ease-out, transform 180ms ease-out, box-shadow 180ms ease-out;
+    }
+
+    .vnd-cta:active {
+        transform: translateY(1px) scale(0.99);
+    }
+
+    .vnd-cta-primary {
+        background-color: var(--color-primary);
+        color: #f5f5f5;
+    }
+
+    .vnd-cta-primary:hover {
+        background-color: var(--color-primary-hover);
+        box-shadow: 0 8px 24px -10px var(--color-primary);
+    }
+
+    .vnd-cta-outline {
+        border: 1px solid var(--color-primary);
+        color: var(--color-primary);
+    }
+
+    .vnd-cta-outline:hover {
+        background-color: rgb(253 111 4 / 0.08);
+    }
+
+    /* Dashboard hero: generated warehouse photo, darkened toward the text side. */
+    .vnd-hero {
+        background-color: #0b0b0b;
+        background-image:
+            linear-gradient(90deg, rgb(11 11 11 / 0.15) 0%, rgb(11 11 11 / 0.82) 52%, rgb(11 11 11 / 0.92) 100%),
+            image-set(url('../../images/vendor/dashboard-hero.avif') type('image/avif'), url('../../images/vendor/dashboard-hero.webp') type('image/webp'));
+        background-size: cover;
+        background-position: center;
+    }
+
+    [dir='rtl'] .vnd-hero {
+        background-image:
+            linear-gradient(270deg, rgb(11 11 11 / 0.15) 0%, rgb(11 11 11 / 0.82) 52%, rgb(11 11 11 / 0.92) 100%),
+            image-set(url('../../images/vendor/dashboard-hero.avif') type('image/avif'), url('../../images/vendor/dashboard-hero.webp') type('image/webp'));
+    }
+
+    .vnd-power {
+        box-shadow: 0 0 36.6px 0 var(--color-primary);
+        color: var(--color-primary);
+    }
+
+    .vnd-power-arc {
+        transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+    }
+
+    .vnd-hero:not(.is-revealed) .vnd-power-arc {
+        stroke-dashoffset: 390;
+    }
+
+    .vnd-power-dot {
+        position: absolute;
+        width: 13px;
+        height: 13px;
+        border-radius: 999px;
+        background-color: var(--color-primary);
+        box-shadow: 0 0 12px var(--color-primary);
+    }
+
+    .vnd-power-dot-top { top: 36px; left: calc(50% - 6.5px); }
+    .vnd-power-dot-bottom { bottom: 36px; left: calc(50% - 6.5px); }
+    .vnd-power-dot-start { left: 36px; top: calc(50% - 6.5px); }
+    .vnd-power-dot-end { right: 36px; top: calc(50% - 6.5px); }
+
+    .vnd-power-chip {
+        position: absolute;
+        display: grid;
+        gap: 2px;
+        padding: 7px;
+        border-radius: 9.5px;
+        background-color: rgb(255 255 255 / 0.1);
+        backdrop-filter: blur(6px);
+        animation: vnd-float 6s ease-in-out infinite;
+    }
+
+    .vnd-power-chip-top { top: -26px; left: 81px; }
+    .vnd-power-chip-end { top: 92px; left: 200px; animation-delay: -1.5s; }
+    .vnd-power-chip-start { top: 96px; left: -34px; animation-delay: -3s; }
+    .vnd-power-chip-bottom { top: 209px; left: 81px; animation-delay: -4.5s; }
+
+    @keyframes vnd-float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+
+    /* Setup progress bar fill (width from --vnd-progress), grows in on reveal. */
+    .vnd-progress-fill {
+        width: var(--vnd-progress, 0%);
+        transition: width 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+    }
+
+    [data-reveal]:not(.is-revealed) .vnd-progress-fill {
+        width: 0;
+    }
+
+    /* Checklist rows cascade in after their card reveals. */
+    .is-revealed [data-reveal-stagger] > * {
+        animation: vnd-row-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    [data-reveal-stagger] > :nth-child(2) { animation-delay: 60ms; }
+    [data-reveal-stagger] > :nth-child(3) { animation-delay: 120ms; }
+    [data-reveal-stagger] > :nth-child(4) { animation-delay: 180ms; }
+    [data-reveal-stagger] > :nth-child(5) { animation-delay: 240ms; }
+    [data-reveal-stagger] > :nth-child(6) { animation-delay: 300ms; }
+    [data-reveal-stagger] > :nth-child(7) { animation-delay: 360ms; }
+    [data-reveal-stagger] > :nth-child(8) { animation-delay: 420ms; }
+
+    @keyframes vnd-row-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    /* Tour: current stop highlighted, card text slides in. */
+    .vnd-tour-stop {
+        cursor: pointer;
+        transition: border-color 200ms ease-out, background-color 200ms ease-out, box-shadow 200ms ease-out;
+    }
+
+    .vnd-tour-stop[data-current] {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-subtle);
+        box-shadow: 0 6px 20px -12px var(--color-primary);
+    }
+
+    [data-tour-card] {
+        touch-action: pan-y;
+        user-select: none;
+    }
+
+    .vnd-tour-enter {
+        animation: vnd-row-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .vnd-power-arc,
+        .vnd-progress-fill,
+        .vnd-nav-rail,
+        .vnd-cta {
+            transition: none;
+        }
+
+        .vnd-power-chip,
+        .is-revealed [data-reveal-stagger] > *,
+        .vnd-tour-enter {
+            animation: none;
+        }
+
+        [data-reveal]:not(.is-revealed) .vnd-progress-fill {
+            width: var(--vnd-progress, 0%);
+        }
+    }
+}
+
+/* Collapsed (icon-only 76): pill centred, rails and labels hidden. */
+html[data-sidebar-mode='collapsed'] .vnd-sidebar .vnd-nav-rail {
+    display: none;
+}
+
+html[data-sidebar-mode='collapsed'] .vnd-sidebar .vnd-nav-pill {
+    flex: 0 0 48px;
+    justify-content: center;
+    margin-inline: auto;
+    padding-inline: 0;
+    border-radius: 12px;
+}
+
+html[data-sidebar-mode='collapsed'] .vnd-sidebar .vnd-nav-link {
+    justify-content: center;
+}
+
+html[data-sidebar-mode='collapsed'] .vnd-sidebar .ui-sidebar-foot > div {
+    justify-content: center;
+    padding-inline: 0;
+}

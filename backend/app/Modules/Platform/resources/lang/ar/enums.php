@@ -94,4 +94,21 @@ return [
         'suspended' => 'معلّق',
         'not_launched' => 'لم يُطلق بعد',
     ],
+    'setup_step_state' => [
+        'done' => 'تم',
+        'skipped' => 'تم التخطي',
+        'next' => 'التالي',
+        'pending' => 'مطلوب',
+        'optional' => 'اختياري',
+    ],
+    'setup_step' => [
+        'store_details' => 'بيانات المتجر',
+        'countries_languages' => 'الدول واللغات',
+        'theme' => 'القالب',
+        'import_products' => 'استيراد المنتجات',
+        'logo' => 'رفع الشعار',
+        'payment_readiness' => 'جاهزية الدفع',
+        'domain' => 'ربط نطاق',
+        'tour' => 'جولة اللوحة',
+    ],
 ];

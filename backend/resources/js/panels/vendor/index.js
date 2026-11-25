@@ -1,7 +1,18 @@
+import { initNotificationBell } from '../notification-live.js';
+import { initImpersonationBanner } from './impersonation.js';
+
 /**
- * vendor panel page modules. Register page-specific behaviour here
- * (e.g. lazy import per [data-page] attribute).
+ * vendor panel page modules, loaded lazily per [data-page] so each page ships only
+ * what it needs. Shell-wide behaviour (bell, impersonation banner) boots everywhere.
  */
+const pages = {
+    'vendor-onboarding': () => import('./onboarding.js'),
+};
+
 export function initVendor() {
-    // page modules go here
+    initNotificationBell();
+    initImpersonationBanner(document);
+    document.querySelectorAll('[data-page]').forEach((element) => {
+        pages[element.dataset.page]?.().then((module) => module.default?.(element));
+    });
 }

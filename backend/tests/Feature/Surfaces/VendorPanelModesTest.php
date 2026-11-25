@@ -247,9 +247,12 @@ describe('admin impersonation', function (): void {
         $admin = Admin::factory()->create();
         $admin->assignRole('super-admin');
 
-        $this->actingAs($admin, 'admin')
+        $link = $this->actingAs($admin, 'admin')
             ->post($this->centralUrl("admin/tenants/{$tenant->id}/impersonate"))
-            ->assertRedirect($this->centralPanelUrl($tenant, 'dashboard'));
+            ->assertRedirectContains('/tenant/impersonate/')
+            ->headers->get('Location');
+
+        $this->get((string) $link)->assertRedirect($this->centralPanelUrl($tenant, 'dashboard'));
 
         $this->get($this->centralPanelUrl($tenant, 'dashboard'))->assertOk()->assertSee('Acme Store');
 

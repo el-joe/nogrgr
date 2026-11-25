@@ -78,6 +78,8 @@ return [
             'logout' => 'تسجيل خروج',
             'login_failed' => 'محاولة دخول فاشلة',
             'impersonated' => 'بدء الدخول كتاجر',
+            'impersonation_ended' => 'انتهاء الدخول كتاجر',
+            'email_verified' => 'تأكيد البريد الإلكتروني',
             'password_reset_requested' => 'طلب إعادة تعيين كلمة المرور',
             'password_reset' => 'إعادة تعيين كلمة المرور',
             'password_changed' => 'تغيير كلمة المرور',

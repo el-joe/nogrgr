@@ -94,4 +94,21 @@ return [
         'suspended' => 'Suspended',
         'not_launched' => 'Not launched',
     ],
+    'setup_step_state' => [
+        'done' => 'Done',
+        'skipped' => 'Skipped',
+        'next' => 'Next',
+        'pending' => 'To do',
+        'optional' => 'Optional',
+    ],
+    'setup_step' => [
+        'store_details' => 'Store details',
+        'countries_languages' => 'Countries & languages',
+        'theme' => 'Theme',
+        'import_products' => 'Import products',
+        'logo' => 'Upload your logo',
+        'payment_readiness' => 'Payment readiness',
+        'domain' => 'Connect a domain',
+        'tour' => 'Panel tour',
+    ],
 ];

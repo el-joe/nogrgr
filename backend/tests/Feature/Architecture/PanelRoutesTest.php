@@ -32,7 +32,10 @@ const PANEL_GUEST_ROUTE_SUFFIXES = [
     'register.store',
 ];
 
-const PANEL_AUTH_ONLY_ROUTE_SUFFIXES = ['logout'];
+const PANEL_AUTH_ONLY_ROUTE_SUFFIXES = ['logout', 'impersonation.leave'];
+
+/* Signed result pages that work signed in or not; the controller validates the signature. */
+const PANEL_SIGNED_PUBLIC_ROUTE_SUFFIXES = ['verification.verify'];
 
 it('protects every panel route with auth and a permission', function (): void {
     $violations = [];
@@ -50,6 +53,10 @@ it('protects every panel route with auth and a permission', function (): void {
             $checked++;
             $suffix = Str::after($name, $prefix);
             $middleware = $route->gatherMiddleware();
+
+            if (in_array($suffix, PANEL_SIGNED_PUBLIC_ROUTE_SUFFIXES, true)) {
+                continue;
+            }
 
             if (in_array($suffix, PANEL_GUEST_ROUTE_SUFFIXES, true)) {
                 if (! in_array('guest:'.$guard, $middleware, true)) {
@@ -86,7 +93,7 @@ it('mounts every vendor panel route in both host modes', function (): void {
 
     $tenantHost = $names->filter(fn (string $name) => Str::startsWith($name, VendorPanel::TENANT_NAME_PREFIX))
         ->map(fn (string $name) => Str::after($name, VendorPanel::TENANT_NAME_PREFIX))
-        ->reject(fn (string $suffix) => array_key_exists($suffix, VendorPanel::CENTRAL_AUTH_ROUTES))
+        ->reject(fn (string $suffix) => array_key_exists($suffix, VendorPanel::CENTRAL_AUTH_ROUTES) || in_array($suffix, VendorPanel::STORE_HOST_ONLY_ROUTES, true))
         ->sort()->values()->all();
 
     $centralHost = $names->filter(fn (string $name) => Str::startsWith($name, VendorPanel::CENTRAL_NAME_PREFIX))

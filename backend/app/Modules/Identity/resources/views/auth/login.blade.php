@@ -8,7 +8,8 @@
 
 @php
     $shell = app(\App\Shared\Navigation\PanelShell::class);
-    $forgotUrl = $shell->url($surface, 'password.request');
+    /* Vendor reset lives on the store host (identity::vendor.*); the central-host vendor login has no store to reset in. */
+    $forgotUrl = $surface === 'vendor' ? null : $shell->url($surface, 'password.request');
     $googleUrl = $shell->url($surface, 'auth.google');
 @endphp
 

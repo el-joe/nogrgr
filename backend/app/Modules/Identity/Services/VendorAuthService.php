@@ -219,7 +219,7 @@ class VendorAuthService extends BaseService
                 $guard->logout();
             }
 
-            $request->session()->forget([VendorPanel::SESSION_TENANT, VendorPanel::SESSION_IMPERSONATOR, self::PENDING_SESSION_KEY]);
+            $request->session()->forget([VendorPanel::SESSION_TENANT, VendorPanel::SESSION_IMPERSONATOR, VendorImpersonationService::SESSION_EXPIRES, self::PENDING_SESSION_KEY]);
         };
 
         if ($tenant instanceof Tenant && ! tenancy()->initialized) {
@@ -307,7 +307,7 @@ class VendorAuthService extends BaseService
             $request->session()->put(VendorPanel::SESSION_IMPERSONATOR, $impersonatorId);
             $this->auditor->record(AuditAction::Impersonated, $staff, ['impersonator_admin_id' => $impersonatorId]);
         } else {
-            $request->session()->forget(VendorPanel::SESSION_IMPERSONATOR);
+            $request->session()->forget([VendorPanel::SESSION_IMPERSONATOR, VendorImpersonationService::SESSION_EXPIRES]);
             $staff->forceFill(['last_login_at' => now()])->saveQuietly();
             $this->auditor->record(AuditAction::Login, $staff);
         }

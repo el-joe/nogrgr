@@ -19,20 +19,25 @@ use App\Modules\Platform\Repositories\Contracts\AuditEventRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\ComplianceProfileRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\DnsRecordTemplateRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\DomainRequestRepositoryContract;
+use App\Modules\Platform\Repositories\Contracts\StoreSettingRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\TenantRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\VendorRegistrationRepositoryContract;
 use App\Modules\Platform\Repositories\Eloquent\AuditEventRepository;
 use App\Modules\Platform\Repositories\Eloquent\ComplianceProfileRepository;
 use App\Modules\Platform\Repositories\Eloquent\DnsRecordTemplateRepository;
 use App\Modules\Platform\Repositories\Eloquent\DomainRequestRepository;
+use App\Modules\Platform\Repositories\Eloquent\StoreSettingRepository;
 use App\Modules\Platform\Repositories\Eloquent\TenantRepository;
 use App\Modules\Platform\Repositories\Eloquent\VendorRegistrationRepository;
 use App\Modules\Platform\Support\PartialMigrationCleaner;
+use App\Modules\Platform\Support\SetupBadgeCounter;
 use App\Modules\Platform\Support\StreamCertificateInspector;
 use App\Modules\Platform\Support\SystemDnsResolver;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
+use App\Shared\Navigation\Contracts\PanelBadgeCounter;
 use Illuminate\Database\Events\MigrationFailed;
 use Illuminate\Database\Events\MigrationStarted;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 
@@ -49,6 +54,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         VendorRegistrationRepositoryContract::class => VendorRegistrationRepository::class,
         ComplianceProfileRepositoryContract::class => ComplianceProfileRepository::class,
         DomainRequestRepositoryContract::class => DomainRequestRepository::class,
+        StoreSettingRepositoryContract::class => StoreSettingRepository::class,
         DnsRecordTemplateRepositoryContract::class => DnsRecordTemplateRepository::class,
         DnsResolver::class => SystemDnsResolver::class,
         CertificateInspector::class => StreamCertificateInspector::class,
@@ -64,6 +70,9 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
     public function boot(): void
     {
         parent::boot();
+
+        $this->app->tag([SetupBadgeCounter::class], PanelBadgeCounter::TAG);
+        Blade::anonymousComponentPath(__DIR__.'/resources/views/components/vendor', 'vendor');
 
         Event::listen(MigrationStarted::class, [PartialMigrationCleaner::class, 'started']);
         Event::listen(MigrationFailed::class, [PartialMigrationCleaner::class, 'failed']);

@@ -20,6 +20,8 @@ enum AuditAction: string
     case Logout = 'auth.logout';
     case LoginFailed = 'auth.login_failed';
     case Impersonated = 'auth.impersonated';
+    case ImpersonationEnded = 'auth.impersonation_ended';
+    case EmailVerified = 'auth.email_verified';
     case PasswordResetRequested = 'auth.password_reset_requested';
     case PasswordReset = 'auth.password_reset';
     case PasswordChanged = 'auth.password_changed';

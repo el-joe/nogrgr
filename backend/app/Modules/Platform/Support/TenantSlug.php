@@ -19,7 +19,7 @@ final class TenantSlug
      *
      * @var list<string>
      */
-    public const ROUTE_RESERVED = ['login', 'logout', 'stores', 'select', 'register', 'password', 'up', 'health'];
+    public const ROUTE_RESERVED = ['login', 'logout', 'stores', 'select', 'impersonate', 'register', 'password', 'up', 'health'];
 
     /**
      * @return list<string>

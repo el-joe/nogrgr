@@ -78,6 +78,8 @@ return [
             'logout' => 'Signed out',
             'login_failed' => 'Failed sign-in',
             'impersonated' => 'Impersonation started',
+            'impersonation_ended' => 'Impersonation ended',
+            'email_verified' => 'E-mail verified',
             'password_reset_requested' => 'Password reset requested',
             'password_reset' => 'Password reset',
             'password_changed' => 'Password changed',

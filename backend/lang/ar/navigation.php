@@ -103,6 +103,7 @@ return [
         'ui_kit' => 'مكتبة المكونات',
     ],
     'vendor' => [
+        'onboarding' => 'إعداد المتجر',
         'change_requests' => 'طلبات التغيير',
         'subscription' => 'الاشتراك',
         'selling_countries' => 'دول البيع',

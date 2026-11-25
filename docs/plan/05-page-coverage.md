@@ -208,17 +208,17 @@
 
 | ID | Page / screen | Route (new, proposed name) | Key actions & states | Old source | Figma node | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| VEN-001 | Login | `vendor.auth.login` | Std; validate, remember, throttle | tenant.login | designed: Vendor Panel (new screens) 82:99816 | P2 | todo |
-| VEN-002 | Forgot password | `vendor.auth.password.request` | sent state | tenant.password.request | designed: Vendor Panel (new screens) 82:99866 | P2 | todo |
-| VEN-003 | Reset password | `vendor.auth.password.reset` | invalid token | tenant.password.reset | designed: Vendor Panel (new screens) 82:99866 | P2 | todo |
-| VEN-004 | Verify email (result) | `vendor.auth.verify` | verified / expired | tenant.verification.verify | designed: Vendor Panel (new screens) 82:99909 | P2 | todo |
-| VEN-005 | Impersonation accept (+ "impersonating" banner) | `vendor.auth.impersonate` | expired token error, leave | tenant.impersonate.accept | designed: Vendor Panel (new screens) 82:101033 | P2 | todo |
-| VEN-006 | Panel shell (side menu, top bar, bell, store link, dark/light) | layout `x-vendor::layout` | permission nav, setup badge | TenantNavigation | 12:25829 (side menu), 12:40706 (KPI card), 12:40666, 12:40689, 12:40753 (type scale), 12:18944, 12:18951, 12:25854, 12:25858, 12:40266, 12:40743, 12:40745, 12:40748, 12:40749 | P2 | todo |
-| VEN-007 | Onboarding (tour / setup) | `vendor.onboarding` | dismiss, complete tour | tenant.onboarding | designed: Vendor Panel (new screens) 82:100227 · wizard 82:99932 | P2 | todo |
-| VEN-007a | ↳ Tab: Tour | tab | complete | tenant.onboarding.tour.complete | designed: Vendor Panel (new screens) 82:100227 | P2 | todo |
-| VEN-007b | ↳ Tab: Setup checklist (logo upload, payment readiness skip) | tab | 8 steps, progress | tenant.onboarding.logo, .payment-readiness.skip | designed: Vendor Panel (new screens) 82:100227 | P2 | todo |
-| VEN-008 | Setup progress widget | `vendor.widgets.setup-progress` | % done, links | tenant.widgets.setup-progress | designed: Vendor Panel (new screens) 82:100227 | P2 | todo |
-| VEN-009 | Dashboard | `vendor.dashboard` | Std; period selector, KPIs, latest orders, top customers/products | tenant.dashboard | 12:11267, m 12:18171 | P8 | todo |
+| VEN-001 | Login | `vendor.auth.login` | Std; validate, remember, throttle | tenant.login | designed: Vendor Panel (new screens) 82:99816 | P2 | done |
+| VEN-002 | Forgot password | `vendor.auth.password.request` | sent state | tenant.password.request | designed: Vendor Panel (new screens) 82:99866 | P2 | done |
+| VEN-003 | Reset password | `vendor.auth.password.reset` | invalid token | tenant.password.reset | designed: Vendor Panel (new screens) 82:99866 | P2 | done |
+| VEN-004 | Verify email (result) | `vendor.auth.verify` | verified / expired | tenant.verification.verify | designed: Vendor Panel (new screens) 82:99909 | P2 | done |
+| VEN-005 | Impersonation accept (+ "impersonating" banner) | `vendor.auth.impersonate` | expired token error, leave | tenant.impersonate.accept | designed: Vendor Panel (new screens) 82:101033 | P2 | done |
+| VEN-006 | Panel shell (side menu, top bar, bell, store link, dark/light) | layout `x-vendor::layout` | permission nav, setup badge | TenantNavigation | 12:25829 (side menu), 12:40706 (KPI card), 12:40666, 12:40689, 12:40753 (type scale), 12:18944, 12:18951, 12:25854, 12:25858, 12:40266, 12:40743, 12:40745, 12:40748, 12:40749 | P2 | done |
+| VEN-007 | Onboarding (tour / setup) | `vendor.onboarding` | dismiss, complete tour | tenant.onboarding | designed: Vendor Panel (new screens) 82:100227 · wizard 82:99932 | P2 | partial — Tour + Setup checklist tabs done (VEN-007a/b); the 4-step setup wizard (82:99932: countries → languages → theme → launch) is pending until the selling-countries and themes pages exist |
+| VEN-007a | ↳ Tab: Tour | tab | complete | tenant.onboarding.tour.complete | designed: Vendor Panel (new screens) 82:100227 | P2 | done |
+| VEN-007b | ↳ Tab: Setup checklist (logo upload, payment readiness skip) | tab | 8 steps, progress | tenant.onboarding.logo, .payment-readiness.skip | designed: Vendor Panel (new screens) 82:100227 | P2 | done |
+| VEN-008 | Setup progress widget | `vendor.widgets.setup-progress` | % done, links | tenant.widgets.setup-progress | designed: Vendor Panel (new screens) 82:100227 | P2 | done |
+| VEN-009 | Dashboard | `vendor.dashboard` | Std; period selector, KPIs, latest orders, top customers/products | tenant.dashboard | 12:11267, m 12:18171 | P8 | partial — P2 foundation at the panel home: welcome header (View store), store hero with "Store power" = setup progress and readiness chips, setup widget (VEN-008), store status card. KPI cards, period selector, latest orders / top customers wait for their P5 / P8 data (no sample numbers) |
 | VEN-009a | ↳ Owed-to-platform alert → settle | widget | pay link | dashboard `_hero`, `_pay-alert` | 12:11267 | P8 | todo |
 | VEN-009b | ↳ Partner program banner | widget | copy link | dashboard `_partner` | 12:11267 | P9 | todo |
 | VEN-009c | ↳ Opportunities + flash-sale suggestion modal | widget + modal | create flash sale | dashboard `_opportunities`, `_opp-flash-sale-modal` | 12:11267 | P8 | todo |

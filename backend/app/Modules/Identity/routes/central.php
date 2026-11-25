@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Identity\Http\Controllers\Central\ImpersonationAcceptController;
 use App\Modules\Identity\Http\Controllers\Central\SocialAuthController;
 use App\Modules\Identity\Http\Controllers\Central\StorePickerController;
 use App\Modules\Identity\Http\Controllers\Central\TenantLoginController;
@@ -17,6 +18,7 @@ Route::prefix('tenant')->name('tenant.')->group(function (): void {
     Route::get('stores', [StorePickerController::class, 'index'])->name('stores');
     Route::post('stores', [StorePickerController::class, 'store'])->name('stores.select');
     Route::post('logout', [TenantLoginController::class, 'destroy'])->name('logout');
+    Route::get('impersonate/{token}', ImpersonationAcceptController::class)->where('token', '[A-Za-z0-9]{64}')->middleware('throttle:20,1')->name('impersonate');
 });
 
 /*

@@ -50,6 +50,17 @@ final class VendorPanel
         'logout' => 'central.tenant.logout',
     ];
 
+    /**
+     * Vendor auth routes served on the store host only (no central-host twin): password
+     * reset and e-mail verification act on one store's staff table.
+     *
+     * @var list<string>
+     */
+    public const STORE_HOST_ONLY_ROUTES = [
+        'password.request', 'password.email', 'password.reset', 'password.store',
+        'verification.verify', 'verification.send',
+    ];
+
     public static function mode(?Request $request = null): VendorPanelMode
     {
         $request ??= request();

@@ -8,6 +8,7 @@ use App\Modules\Platform\Enums\AuditAction;
 use App\Modules\Platform\Services\Auditor;
 use App\Shared\Services\BaseService;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,27 @@ class PasswordResetService extends BaseService
         if ($status === Password::RESET_LINK_SENT) {
             $this->auditor->record(AuditAction::PasswordResetRequested, null, ['guard' => $guard->value, 'email' => $email]);
         }
+    }
+
+    /**
+     * Whether a reset link (token + e-mail) is still usable, so the form can show the
+     * "link expired" state up front instead of after the user typed a new password.
+     */
+    public function tokenIsValid(Guard $guard, ?string $email, string $token): bool
+    {
+        if ($email === null || $email === '') {
+            return false;
+        }
+
+        $broker = Password::broker($guard->passwordBroker());
+
+        if (! $broker instanceof PasswordBroker) {
+            return false;
+        }
+
+        $user = $broker->getUser(['email' => mb_strtolower(trim($email))]);
+
+        return $user !== null && $broker->tokenExists($user, $token);
     }
 
     /**

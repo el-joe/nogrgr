@@ -103,6 +103,7 @@ return [
         'ui_kit' => 'Component library',
     ],
     'vendor' => [
+        'onboarding' => 'Store setup',
         'change_requests' => 'Change requests',
         'subscription' => 'Subscription',
         'selling_countries' => 'Selling countries',
