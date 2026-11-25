@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Modules\Notifications\Models;
+
+use App\Modules\Notifications\Enums\NotificationCategory;
+use Illuminate\Notifications\DatabaseNotification;
+use Stancl\Tenancy\Database\Concerns\CentralConnection;
+
+/**
+ * A central user's inbox row (Laravel `notifications` table on the central DB).
+ * `data` = PanelNotification::toArray(): category, icon, title/body translation keys
+ * + params, url.
+ */
+class PanelNotificationRecord extends DatabaseNotification
+{
+    use CentralConnection;
+
+    public function category(): NotificationCategory
+    {
+        return NotificationCategory::fromType($this->type) ?? NotificationCategory::System;
+    }
+
+    public function title(): string
+    {
+        return $this->translated('title');
+    }
+
+    public function body(): string
+    {
+        return $this->translated('body');
+    }
+
+    public function targetUrl(): ?string
+    {
+        $url = $this->data['url'] ?? null;
+
+        return is_string($url) && $url !== '' ? $url : null;
+    }
+
+    private function translated(string $field): string
+    {
+        $key = $this->data[$field.'_key'] ?? null;
+        $params = $this->data[$field.'_params'] ?? [];
+
+        if (! is_string($key) || $key === '') {
+            return (string) ($this->data[$field] ?? '');
+        }
+
+        $text = __($key, is_array($params) ? $params : []);
+
+        return is_string($text) ? $text : $key;
+    }
+}

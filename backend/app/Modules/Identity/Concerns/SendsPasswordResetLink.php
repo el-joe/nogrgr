@@ -35,7 +35,7 @@ trait SendsPasswordResetLink
 
     public function preferredLocale(): ?string
     {
-        $locale = $this->getAttribute('locale');
+        $locale = $this->getAttributes()['locale'] ?? null;
 
         return is_string($locale) && $locale !== '' ? $locale : null;
     }

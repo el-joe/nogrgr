@@ -126,7 +126,7 @@ final class NavigationBuilder
         $route = isset($item['route']) ? (string) $item['route'] : null;
         $active = $hasChildren
             ? in_array(true, array_column($children, 'active'), true)
-            : $this->isActive($route, isset($item['active']) ? (string) $item['active'] : null);
+            : $this->isActive($route, isset($item['active']) ? (is_array($item['active']) ? array_map('strval', $item['active']) : (string) $item['active']) : null);
 
         return [
             'key' => (string) ($item['key'] ?? $route ?? Str::random(6)),
@@ -166,7 +166,10 @@ final class NavigationBuilder
         return $this->urlResolver !== null ? ($this->urlResolver)($route) : route($route);
     }
 
-    private function isActive(?string $route, ?string $pattern): bool
+    /**
+     * @param  string|list<string>|null  $pattern  one route pattern or several (any matches)
+     */
+    private function isActive(?string $route, string|array|null $pattern): bool
     {
         if ($route === null) {
             return false;
@@ -174,6 +177,6 @@ final class NavigationBuilder
 
         $pattern ??= Str::endsWith($route, '.index') ? Str::beforeLast($route, '.index').'.*' : $route;
 
-        return $this->request->routeIs($pattern);
+        return $this->request->routeIs(...(array) $pattern);
     }
 }

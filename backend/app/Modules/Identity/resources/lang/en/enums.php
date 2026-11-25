@@ -18,4 +18,7 @@ return [
         'email' => 'Email',
         'push' => 'Push',
     ],
+    'system_role' => [
+        'super-admin' => 'Super admin',
+    ],
 ];

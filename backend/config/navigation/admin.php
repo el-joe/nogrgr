@@ -11,7 +11,7 @@
 | lacks, then drops empty groups and sections. Nothing renders as a dead link.
 |
 | item keys: key, label (translation key), icon (resources/svg/icons), route,
-|            permission, active (route pattern, default "<route without .index>*"),
+|            permission, active (route pattern or list of patterns, default "<route without .index>*"),
 |            badge (key into the live counts array), children (same shape).
 */
 
@@ -89,10 +89,10 @@ return [
         'label' => 'navigation.sections.vendors',
         'items' => [
             ['key' => 'vendors', 'label' => 'navigation.admin.vendors', 'icon' => 'store', 'badge' => 'vendors', 'children' => [
-                ['key' => 'vendors.index', 'label' => 'navigation.admin.all_vendors', 'route' => 'admin.vendors.index', 'permission' => 'vendors.view'],
-                ['key' => 'vendors.pending', 'label' => 'navigation.admin.pending_registrations', 'route' => 'admin.vendors.pending', 'permission' => 'vendors.view', 'active' => 'admin.vendors.pending'],
-                ['key' => 'vendors.kyc', 'label' => 'navigation.admin.compliance_kyc', 'route' => 'admin.vendors.kyc.index', 'permission' => 'vendors.kyc.view'],
-                ['key' => 'vendors.domains', 'label' => 'navigation.admin.domains_dns', 'route' => 'admin.vendors.domains.index', 'permission' => 'vendors.domains.view'],
+                ['key' => 'vendors.index', 'label' => 'navigation.admin.all_vendors', 'route' => 'admin.vendors.index', 'permission' => 'vendors.view', 'active' => ['admin.vendors.index', 'admin.vendors.create', 'admin.vendors.show']],
+                ['key' => 'vendors.pending', 'label' => 'navigation.admin.pending_registrations', 'route' => 'admin.vendors.pending', 'permission' => 'vendors.view', 'active' => 'admin.vendors.pending*'],
+                ['key' => 'vendors.compliance', 'label' => 'navigation.admin.compliance_kyc', 'route' => 'admin.vendors.compliance.index', 'permission' => 'vendors.kyc.view', 'active' => 'admin.vendors.compliance.*'],
+                ['key' => 'vendors.domains', 'label' => 'navigation.admin.domains_dns', 'route' => 'admin.vendors.domains.index', 'permission' => 'vendors.domains.view', 'active' => 'admin.vendors.domains.*'],
                 ['key' => 'vendors.shoppers', 'label' => 'navigation.admin.shoppers', 'route' => 'admin.vendors.shoppers.index', 'permission' => 'vendors.shoppers.view'],
             ]],
             ['key' => 'plans', 'label' => 'navigation.admin.plans', 'icon' => 'star', 'route' => 'admin.plans.index', 'permission' => 'plans.view'],
@@ -159,10 +159,10 @@ return [
             ['key' => 'tickets', 'label' => 'navigation.admin.support_tickets', 'icon' => 'lifebuoy', 'route' => 'admin.tickets.index', 'permission' => 'tickets.view', 'badge' => 'tickets'],
             ['key' => 'notifications', 'label' => 'navigation.admin.notifications', 'icon' => 'bell', 'route' => 'admin.notifications.index', 'permission' => 'notifications.view'],
             ['key' => 'admins', 'label' => 'navigation.admin.admins_roles', 'icon' => 'shield', 'children' => [
-                ['key' => 'admins.index', 'label' => 'navigation.admin.admins_list', 'route' => 'admin.admins.index', 'permission' => 'admins.view'],
-                ['key' => 'roles.index', 'label' => 'navigation.vendor.roles', 'route' => 'admin.roles.index', 'permission' => 'roles.view'],
+                ['key' => 'admins.index', 'label' => 'navigation.admin.admins_list', 'route' => 'admin.system.admins.index', 'permission' => 'admins.view'],
+                ['key' => 'roles.index', 'label' => 'navigation.vendor.roles', 'route' => 'admin.system.roles.index', 'permission' => 'roles.view'],
             ]],
-            ['key' => 'audit', 'label' => 'navigation.admin.audit_log', 'icon' => 'file', 'route' => 'admin.audit.index', 'permission' => 'audit.view'],
+            ['key' => 'audit', 'label' => 'navigation.admin.audit_log', 'icon' => 'file', 'route' => 'admin.system.audit.index', 'permission' => 'audit.view'],
             ['key' => 'system-tools', 'label' => 'navigation.admin.system_tools', 'icon' => 'server', 'children' => [
                 ['key' => 'system.maintenance', 'label' => 'navigation.admin.maintenance_windows', 'route' => 'admin.system.maintenance.index', 'permission' => 'system.maintenance.view'],
                 ['key' => 'system.cache', 'label' => 'navigation.admin.cache_tools', 'route' => 'admin.system.cache.index', 'permission' => 'system.cache.manage'],

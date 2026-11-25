@@ -2,23 +2,32 @@
 
 namespace App\Modules\Identity;
 
+use App\Modules\Identity\Events\AdminAccountCreated;
+use App\Modules\Identity\Events\AdminPasswordChanged;
+use App\Modules\Identity\Events\AdminRoleChanged;
 use App\Modules\Identity\Events\CustomerRegistered;
 use App\Modules\Identity\Listeners\NotifyStoreOwnersOfNewCustomer;
+use App\Modules\Identity\Listeners\SendAdminAccountNotifications;
+use App\Modules\Identity\Models\Admin;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Identity\Observers\VendorStaffDirectoryObserver;
+use App\Modules\Identity\Policies\AdminPolicy;
+use App\Modules\Identity\Repositories\Contracts\AdminRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\CustomerAddressRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\CustomerRepositoryContract;
+use App\Modules\Identity\Repositories\Contracts\RoleRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffDirectoryRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffRepositoryContract;
+use App\Modules\Identity\Repositories\Eloquent\AdminRepository;
 use App\Modules\Identity\Repositories\Eloquent\CustomerAddressRepository;
 use App\Modules\Identity\Repositories\Eloquent\CustomerRepository;
+use App\Modules\Identity\Repositories\Eloquent\RoleRepository;
 use App\Modules\Identity\Repositories\Eloquent\VendorStaffDirectoryRepository;
 use App\Modules\Identity\Repositories\Eloquent\VendorStaffRepository;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
-use App\Modules\Identity\Models\Admin;
 
 class ModuleServiceProvider extends BaseModuleServiceProvider
 {
@@ -28,6 +37,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
      * @var array<class-string, class-string>
      */
     public $bindings = [
+        AdminRepositoryContract::class => AdminRepository::class,
+        RoleRepositoryContract::class => RoleRepository::class,
         CustomerAddressRepositoryContract::class => CustomerAddressRepository::class,
         CustomerRepositoryContract::class => CustomerRepository::class,
         VendorStaffDirectoryRepositoryContract::class => VendorStaffDirectoryRepository::class,
@@ -41,6 +52,12 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         VendorStaff::observe(VendorStaffDirectoryObserver::class);
 
         Event::listen(CustomerRegistered::class, NotifyStoreOwnersOfNewCustomer::class);
+        Event::listen(AdminAccountCreated::class, [SendAdminAccountNotifications::class, 'created']);
+        Event::listen(AdminPasswordChanged::class, [SendAdminAccountNotifications::class, 'passwordChanged']);
+        Event::listen(AdminRoleChanged::class, [SendAdminAccountNotifications::class, 'roleChanged']);
+
+        Gate::policy(Admin::class, AdminPolicy::class);
+        Gate::define('manage-own-account', static fn (mixed $user): bool => $user instanceof Admin);
 
         $this->bootPermissionRules();
     }

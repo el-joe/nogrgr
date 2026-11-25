@@ -31,6 +31,12 @@
             :role="$shell['role']"
             :commands="$shell['commands']"
             :tag="$shell['tag']"
+            :notifications="$shell['notifications']['items']"
+            :unread="$shell['notifications']['unread']"
+            :mark-all-url="$shell['notifications']['markAllUrl']"
+            :view-all-url="$shell['notifications']['viewAllUrl']"
+            :latest-url="$shell['notifications']['latestUrl']"
+            :realtime="$shell['notifications']['realtime']"
         />
         <main id="main" tabindex="-1" class="flex-1 px-4 py-6 outline-none sm:px-6 xl:px-8 xl:py-8">
             <div {{ $attributes->class(['mx-auto grid w-full max-w-[1600px] gap-6 *:min-w-0']) }}>

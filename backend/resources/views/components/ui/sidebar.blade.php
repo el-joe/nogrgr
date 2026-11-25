@@ -86,7 +86,7 @@
     </nav>
 
     <div class="ui-sidebar-foot flex h-[72px] shrink-0 items-center gap-3 border-t border-sidebar-line px-4">
-        <x-ui::avatar :name="$user?->name" tone="brand" :size="36" />
+        <x-ui::avatar :name="$user?->name" :src="isset($user->avatar_url) && is_string($user->avatar_url) ? $user->avatar_url : null" tone="brand" :size="36" data-user-avatar />
         <div class="ui-sidebar-user-text min-w-0 flex-1">
             <p class="truncate text-[13px] font-medium leading-[18px] text-sidebar-ink-active">{{ $user?->name }}</p>
             @if ($role)

@@ -27,6 +27,7 @@ final class PermissionCatalog
                 // Identity
                 'admins.view', 'admins.manage',
                 'roles.view', 'roles.manage',
+                'audit.view', 'audit.export',
                 // Localization
                 'localization.languages.view', 'localization.languages.manage',
                 'localization.currencies.view', 'localization.currencies.manage',

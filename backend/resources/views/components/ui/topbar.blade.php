@@ -4,7 +4,7 @@
     light/dark toggle, notifications bell, avatar → user menu. Mobile 56: menu, logo,
     search, bell, avatar.
 --}}
-@props(['user' => null, 'surface' => 'admin', 'role' => null, 'commands' => [], 'notifications' => [], 'unread' => null, 'tag' => null])
+@props(['user' => null, 'surface' => 'admin', 'role' => null, 'commands' => [], 'notifications' => [], 'unread' => null, 'tag' => null, 'markAllUrl' => null, 'viewAllUrl' => null, 'latestUrl' => null, 'realtime' => null])
 @php
     $locales = \App\Shared\Support\Locale::enabled();
     $current = app()->getLocale();
@@ -57,7 +57,7 @@
                 </button>
             </div>
 
-            <x-ui::notification-dropdown :items="$notifications" :unread="$unread" />
+            <x-ui::notification-dropdown :items="$notifications" :unread="$unread" :mark-all-url="$markAllUrl" :view-all-url="$viewAllUrl" :latest-url="$latestUrl" :realtime="$realtime" />
 
             <x-ui::user-menu :user="$user" :surface="$surface" :role="$role" />
         </div>

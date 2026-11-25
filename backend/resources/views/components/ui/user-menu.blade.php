@@ -8,7 +8,8 @@
     $name = $user?->name ?? __('ui.user.guest');
     $role ??= $user !== null && method_exists($user, 'getRoleNames') ? \App\Shared\Support\Ui::roleLabel((string) $user->getRoleNames()->first()) : null;
     $route = fn (string $name) => app(\App\Shared\Navigation\PanelShell::class)->url($surface, $name);
-    $profileUrl = $route('profile.edit');
+    $profileUrl = $route('account.edit') ?? $route('profile.edit');
+    $avatar = $user !== null && isset($user->avatar_url) && is_string($user->avatar_url) ? $user->avatar_url : null;
     $securityUrl = $route('security.edit');
     $logoutUrl = $route('logout');
     $locales = \App\Shared\Support\Locale::enabled();
@@ -17,7 +18,7 @@
 <x-ui::dropdown align="end" :width="260" :label="__('ui.user.menu')" {{ $attributes }}>
     <x-slot:trigger>
         <button type="button" data-dropdown-trigger aria-haspopup="menu" aria-expanded="false" class="flex items-center gap-2.5 rounded-control p-1 pe-2 text-start hover:bg-subtle">
-            <x-ui::avatar :name="$name" :size="36" />
+            <x-ui::avatar :name="$name" :src="$avatar" :size="36" data-user-avatar />
             @unless ($compact)
                 <span class="hidden min-w-0 lg:grid">
                     <span class="truncate text-[13px] font-medium leading-[18px] text-ink">{{ $name }}</span>
@@ -31,7 +32,7 @@
     </x-slot:trigger>
 
     <div class="mb-2 flex items-center gap-3 border-b border-line px-2 pb-3 pt-1">
-        <x-ui::avatar :name="$name" :size="36" />
+        <x-ui::avatar :name="$name" :src="$avatar" :size="36" data-user-avatar />
         <div class="min-w-0">
             <p class="truncate text-sm font-medium text-ink">{{ $name }}</p>
             @if ($role)

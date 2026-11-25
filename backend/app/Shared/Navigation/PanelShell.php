@@ -2,6 +2,7 @@
 
 namespace App\Shared\Navigation;
 
+use App\Shared\Navigation\Contracts\PanelNotificationFeed;
 use App\Shared\Support\Ui;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -12,8 +13,8 @@ use Illuminate\Support\Str;
 /**
  * Everything the panel layout (<x-layouts.panel>) needs for its shell: the signed-in
  * user of the surface's guard, the filtered sidebar sections, the command-palette
- * entries, live counts and the surface tag. Counts and notifications are empty until
- * the modules that own them register providers.
+ * entries, live counts, the surface tag and the notification bell (PanelNotificationFeed,
+ * bound by the Notifications module; empty when no module binds it).
  *
  * @phpstan-import-type NavSection from NavigationBuilder
  */
@@ -27,7 +28,7 @@ final class PanelShell
     public function __construct(private readonly NavigationBuilder $builder) {}
 
     /**
-     * @return array{user: ?Authenticatable, role: ?string, sections: list<NavSection>, commands: list<array{label: string, group: ?string, url: string}>, counts: array<string, int>, tag: string, homeUrl: ?string}
+     * @return array{user: ?Authenticatable, role: ?string, sections: list<NavSection>, commands: list<array{label: string, group: ?string, url: string}>, counts: array<string, int>, tag: string, homeUrl: ?string, notifications: array<string, mixed>}
      */
     public function for(string $surface): array
     {
@@ -56,7 +57,15 @@ final class PanelShell
             'counts' => [],
             'tag' => (string) __('ui.tags.'.$surface),
             'homeUrl' => $this->url($surface, 'dashboard'),
+            'notifications' => $this->feed()->for($surface, $user),
         ];
+    }
+
+    private function feed(): PanelNotificationFeed
+    {
+        return app()->bound(PanelNotificationFeed::class)
+            ? app(PanelNotificationFeed::class)
+            : new NullPanelNotificationFeed;
     }
 
     /**
