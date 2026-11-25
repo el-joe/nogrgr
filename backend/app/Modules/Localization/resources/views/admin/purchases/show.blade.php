@@ -56,7 +56,7 @@
             @if ($logs->isEmpty())
                 <x-ui::empty-state compact icon="file" :title="__('localization::purchases.no_payments')" :description="__('localization::purchases.no_payments_description')" />
             @else
-                <div class="overflow-x-auto">
+                <div class="relative overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b border-line text-start text-xs text-ink-secondary">

@@ -34,7 +34,7 @@
         >
             <x-slot:filters>
                 <x-ui::filters-bar target="notifications" :search="false">
-                    <input type="hidden" name="category" value="" data-filter :data-filter-label="__('notifications::panel.inbox.filter_label')" data-notification-category>
+                    <input type="hidden" name="category" value="" data-filter data-filter-label="{{ __('notifications::panel.inbox.filter_label') }}" data-notification-category>
                     <div class="flex flex-wrap gap-2" role="group" aria-label="{{ __('notifications::panel.inbox.filter_label') }}">
                         <button type="button" data-category-chip="" aria-pressed="true" class="inline-flex h-8 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-[13px] font-medium text-ink transition-colors hover:bg-subtle aria-pressed:border-transparent aria-pressed:bg-inverse aria-pressed:text-on-inverse">{{ __('notifications::panel.inbox.all') }}</button>
                         @foreach ($categories as $category)

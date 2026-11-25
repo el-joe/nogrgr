@@ -13,53 +13,59 @@
     .vnd-card-grid.ui-datatable > div:first-of-type {
         overflow: visible;
     }
+}
 
-    :root .vnd-card-grid table.dataTable thead {
-        display: none;
-    }
+/*
+ * Card-grid overrides of the shared DataTable cell rules (panels/base.css, unlayered):
+ * kept outside @layer so they win over the 56px row height and cell borders.
+ */
+:root .vnd-card-grid table.dataTable thead {
+    display: none;
+}
 
-    :root .vnd-card-grid table.dataTable tbody {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-        gap: 24px;
-    }
+:root .vnd-card-grid table.dataTable tbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 24px;
+}
 
-    :root .vnd-card-grid[data-state='loading'] table.dataTable tbody {
-        display: none;
-    }
+:root .vnd-card-grid[data-state='loading'] table.dataTable tbody {
+    display: none;
+}
 
-    :root .vnd-card-grid table.dataTable tbody tr {
-        position: relative;
-        display: block;
-    }
+:root .vnd-card-grid table.dataTable tbody tr {
+    position: relative;
+    display: block;
+}
 
-    :root .vnd-card-grid table.dataTable tbody tr:hover > * {
-        background-color: transparent;
-    }
+:root .vnd-card-grid table.dataTable tbody tr:hover > * {
+    background-color: transparent;
+}
 
-    :root .vnd-card-grid table.dataTable tbody tr:has(td.dt-empty) {
-        grid-column: 1 / -1;
-    }
+:root .vnd-card-grid table.dataTable tbody tr:has(td.dt-empty) {
+    grid-column: 1 / -1;
+}
 
-    :root .vnd-card-grid table.dataTable tbody td {
-        display: block;
-        height: auto;
-        padding: 0 !important;
-        border: 0;
-    }
+:root .vnd-card-grid table.dataTable tbody td {
+    display: block;
+    height: auto;
+    padding: 0 !important;
+    border: 0;
+}
 
-    :root .vnd-card-grid table.dataTable tbody td.w-12 {
-        position: absolute;
-        top: 12px;
-        inset-inline-start: 12px;
-        z-index: 2;
-        width: auto;
-        border-radius: 8px;
-        background-color: var(--color-surface);
-        padding: 6px !important;
-        box-shadow: var(--shadow-card);
-    }
+:root .vnd-card-grid table.dataTable tbody td.w-12 {
+    position: absolute;
+    top: 12px;
+    inset-inline-start: 12px;
+    z-index: 2;
+    width: auto;
+    border-radius: 8px;
+    background-color: var(--color-surface);
+    padding: 6px !important;
+    box-shadow: var(--shadow-card);
+}
 
+@layer components {
     .vnd-card-grid [data-dt-skeleton] {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));

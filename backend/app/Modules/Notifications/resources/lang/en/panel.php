@@ -16,9 +16,9 @@ return [
         'columns' => [
             'notification' => 'Notification',
             'received' => 'Received',
-            'mark_all_vendor' => 'Mark all as read',
-            'vendor_empty_description' => 'Replies to your requests, order updates and product assignments will show up here.',
         ],
+        'mark_all_vendor' => 'Mark all as read',
+        'vendor_empty_description' => 'Replies to your requests, order updates and product assignments will show up here.',
         'new' => 'New',
         'open' => 'Open',
         'mark_read' => 'Mark as read',

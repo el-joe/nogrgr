@@ -54,7 +54,7 @@
                         <x-ui::empty-state compact icon="truck" :title="__('shipping::settings.defaults.empty_title')" :description="__('shipping::settings.defaults.empty_description')" />
                     </div>
                 @else
-                    <div class="overflow-x-auto">
+                    <div class="relative overflow-x-auto">
                         <table class="w-full min-w-[420px] text-sm">
                             <thead class="bg-subtle text-xs text-ink-secondary">
                                 <tr>

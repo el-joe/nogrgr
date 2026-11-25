@@ -81,7 +81,7 @@
                                     <x-ui::empty-state compact icon="calendar" :title="__('shipping::companies.day_rules.empty_title')" :description="__('shipping::companies.day_rules.empty_description')" />
                                 </div>
                             @else
-                                <div class="overflow-x-auto">
+                                <div class="relative overflow-x-auto">
                                     <table class="w-full min-w-[520px] text-sm">
                                         <thead class="bg-subtle text-xs text-ink-secondary">
                                             <tr>

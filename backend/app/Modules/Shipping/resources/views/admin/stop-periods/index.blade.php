@@ -35,7 +35,7 @@
                         <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-warning"></span>{{ __('shipping::stop_periods.all_companies') }}</span>
                     </div>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="relative overflow-x-auto">
                     <table class="w-full min-w-[640px] table-fixed border-separate border-spacing-1 text-sm" aria-label="{{ $month->locale(app()->getLocale())->isoFormat('MMMM YYYY') }}">
                         <thead>
                             <tr>

@@ -11,7 +11,7 @@
     $countryIds = $isNew ? [] : $rule->countries->pluck('id')->all();
 @endphp
 <x-layouts.panel surface="admin" :title="$title" data-page="admin-shipping">
-    <form id="rule-form" method="POST" action="{{ $isNew ? route('admin.shipping.rules.store') : route('admin.shipping.rules.update', $rule) }}" data-ajax data-unsaved-form data-rule-form data-cities-url="{{ $citiesUrl }}" novalidate class="grid gap-6">
+    <form id="rule-form" method="POST" action="{{ $isNew ? route('admin.shipping.rules.store') : route('admin.shipping.rules.update', $rule) }}" data-ajax data-unsaved-form data-rule-form data-cities-url="{{ $citiesUrl }}" novalidate class="grid gap-6 *:min-w-0">
         @csrf
         @unless ($isNew)
             @method('PUT')
@@ -34,7 +34,7 @@
             </div>
         </x-ui::card>
 
-        <div class="grid items-start gap-6 lg:grid-cols-2" data-zones>
+        <div class="grid items-start gap-6 lg:grid-cols-2 *:min-w-0" data-zones>
             @foreach ($zones as $z => $zone)
                 @include('shipping::admin.rules._zone', ['z' => $z, 'zone' => $zone])
             @endforeach

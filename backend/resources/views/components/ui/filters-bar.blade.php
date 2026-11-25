@@ -17,7 +17,7 @@
             <div class="ui-control min-h-10 w-full sm:w-[280px]">
                 <x-ui::icon name="search" :size="18" class="text-ink-muted" />
                 <label for="{{ $drawerId }}-search" class="sr-only">{{ __('ui.filters.search') }}</label>
-                <input id="{{ $drawerId }}-search" type="search" name="search" data-filter data-filter-debounce placeholder="{{ $searchPlaceholder ?? __('ui.filters.search') }}" class="h-9" autocomplete="off">
+                <input id="{{ $drawerId }}-search" type="search" name="search" data-filter data-filter-debounce placeholder="{{ $searchPlaceholder ?? __('ui.filters.search') }}" class="h-9 w-full min-w-0" autocomplete="off">
             </div>
         @endif
         {{ $slot }}

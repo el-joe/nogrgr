@@ -230,3 +230,101 @@ Setup: dedicated DB `nogrgr_qa` (+ tenant DB suffix `_qa`), `php artisan serve -
 - QA-P2-008: remote-modal URLs opened directly (labels, admins, audit event, product prices, owner domain edit) render the full panel page (`RendersRemoteModals`) and return to the list after a save. On verify and complete, the sign-up stepper marks plan and payment as done. The owner "Add domain" modal falls back to `tenancy.custom_domain_records` when no DNS templates exist, or shows an empty-state line.
 - QA-P2-005: the WEB-018a store step has a "Store categories" Select2 multi-select with search: active top-level categories, ar/en, required while any exist. The choice is stored on `vendor_registrations.selling_category_ids` and then `tenants.selling_category_ids`.
 - QA-P2-007: gateway tiles use brand-colour tokens (`--gateway-<code>`). The owner tag reads "Owner"/"المالك" on one line (`whitespace-nowrap`). The owner sidebar gets "Help & support", which links to the new `owner.support` page (OWN-009): channels come from General settings, with an empty state when none are set. The Select2 chevron replaces the triangle globally: the skin moved to `shared/select2.css` and the vendor `<b>` is hidden. The products list gets a bulk-select column with activate, deactivate and delete via `ProductService::bulk`, and delete asks for confirmation. Vendor Overview KPIs are left for P9.
+
+---
+
+## P3 / P4 / P5 (batches 1–3) / P6 + vendor panel gate (teammate "qa2") — 2026-11-25
+
+**Setup.** QA DB `nogrgr_qa`, rebuilt with `migrate:fresh --seed`; tenant DBs use the `_qa` suffix. Cache is `file` (own prefix), queue is `sync`, mail is `log`. Server: `php artisan serve --port=8099 --no-reload`. Without `--no-reload`, `serve` drops the shell env and silently uses the dev `.env`.
+
+Data was built through the UI:
+- Admin catalog: categories (including the tree drag), an attribute, a product with 2 variants, branch stock.
+- Branch, fixed costs SA/EG, a shipping company, a KSA rule.
+- Stripe sandbox config with placeholder test keys, coupon QA10, central flash sale.
+
+Stores:
+- QA store 1: real sign-up, trial path, then the 4-step setup wizard.
+- QA store 2: `TenantProvisioningService`.
+
+Both stores imported all central products. Owner role re-synced on both stores (`TenantPermissionSeeder`): 44/44 vendor permissions.
+
+**Results**
+- Tests: the first run had 1824/1841, and all 17 failures came from finance's half-written `GatewayRefundUpdates` binding (QA-P5-008). The final run, with this gate's new tests, is **1861/1861 passed** (`--parallel --processes=12`).
+- `npm run build`: passes. `pint --test`: passes. PHPStan: **0 errors**.
+- Browser (Playwright):
+  - 127 admin, 29 vendor and 26 central URLs, each in en/light/1440 and ar/dark/375. Detail pages were included.
+  - No 500s, no JS errors, no raw keys and no horizontal/RTL overflow after the fixes below.
+  - Only 404s: `/pages/about` (system page served at `/about`) and the intended 404 page.
+- Flows exercised end to end:
+  - Sign-up → plan (trial) → verify mail → account → store (categories picker) → provisioning.
+  - Owner portal and the central login that lands in the vendor panel.
+  - Impersonation: one-time link; re-use gives **410**; banner; End session returns to the admin vendor page.
+  - Vendor login, reset mail and onboarding wizard.
+  - Import all; card grid; product edit; price-list markup run (queued, 100 %); shipping details; edit request ER-1.
+  - Admin approve.
+  - Product request PR-0001 with chat in both directions.
+  - Store API: cart → coupon → checkout options → place (Stripe, idempotency key) → order list.
+  - Payment simulated with `markGroupPaid` (no real gateway).
+  - Shipping queue packed → in transit (company, tracking) → delivered.
+  - Admin create return → approve → received → inspect + restock → refund. Refund list: reject, complete.
+  - Vendor 2-step cancel; admin coupon and flash sale with product picker; contact form; newsletter.
+- **Decision #65 verified.**
+  - Store 1's approved edit request shows "QA Phone X — Store One Edition" on store 1 only.
+  - Store 2 and the central product still read "QA Phone X".
+- **Money (ORDER_FORMULAS §1–3), checked by hand on stored orders:**
+  - ORD-10001 (2 lines, 1.3 kg, no promos): items 300.37, shipping 7.50, total 307.87. Platform 258.64 + vendor 49.23.
+  - ORD-10003 (central 10 % flash + central 10 % coupon):
+    - price 286.61, fixed shipping 5.00, discount 29.16, line total 262.45, coupon 26.25, total 243.70.
+    - Platform 195.93 = cost 238.84 + fixed 5 − flash 29.16 + shipping 7.50 − coupon 26.25. Vendor 47.77 = profit.
+  - Return value of 1 of 2 units = 134.50. Vendor card and price-list prices match cost × markup + per-country fixed shipping.
+- Figma (read-only):
+  - Vendor products grid 12:12968: matches after the fix.
+  - Vendor orders 12:15191: matches; KPI icons are line icons instead of illustrations.
+  - Admin order detail 49:17280: matches.
+
+**Fixed in this gate**
+- QA-P5-001 (High): the vendor products card grid (VEN-010/011/016) collapsed every card to 56 px, so titles were cut and images and prices hidden.
+  - Cause: the card-grid overrides sat in `@layer components` and lost to the unlayered `.ui-datatable … td { height: 56px }` in `panels/base.css`.
+  - Fix: the overrides moved out of the layer in `resources/css/panels/vendor-catalog.css`.
+- QA-P5-002 (Medium): raw keys `notifications::panel.inbox.vendor_empty_description` and `mark_all_vendor` on the vendor inbox. They were nested under `inbox.columns` in en/ar `panel.php`.
+  - Fixed. New guard: `tests/Feature/Architecture/TranslationKeysExistTest.php` checks that every literal `module::key` used in code exists in en and ar.
+  - Regression test in `VendorNotificationsTest`.
+- QA-P5-003 (Low): admin and vendor notification inboxes printed `:data-filter-label="__('…')"` literally, because Blade binding was used on a plain `<input>`. Fixed in `Notifications/resources/views/{admin,vendor}/index.blade.php`.
+- QA-P5-004 (High): refund Retry / Mark completed / Reject (admin ADM-024, vendor VEN-023) posted to `/admin/[object HTMLInputElement]` and got a 404.
+  - Cause: the hidden `name="action"` field shadows `form.action` in the shared `core/ajax-forms.js`. The handler now uses `getAttribute('action')`.
+  - This also fixes finance's payout and ledger forms. Test: `tests/Unit/Architecture/AjaxFormsActionTest.php`.
+- QA-P5-005 (Medium): at 375 px the shipping rule form scrolled sideways by 183 px.
+  - Cause: grid items without `min-w-0`, and `overflow-x-auto` wrappers without `relative` (the `sr-only` escape, same as QA-P2-001).
+  - Fixed in the rule form and zone partial. `relative` added to the 7 remaining wrappers: vendor product edit, import preview and categories, language purchase, stop periods, company day rules, shipping settings.
+- QA-P5-006 (Medium): the filters-bar search input kept its intrinsic width. At 375 px it ran off-screen, on the left in RTL, on card-grid lists. Fixed with `w-full min-w-0` in `components/ui/filters-bar.blade.php`.
+- Regression: `ProvisioningTest` now asserts that a new store's owner holds every `PermissionCatalog::tenant()['vendor']` permission.
+
+**Found and fixed by the owning teammate (finance)**
+- QA-P5-007 (High, money): one return could be refunded twice.
+  - Cause: `ReturnRequestService::maxRefund()` did not subtract the return's own pending, failed or completed refunds. RMA-1001 got 2 × $134.50.
+  - Fix: `RefundService::maxForReturn()`. Test: "never refunds one return twice".
+- QA-P5-008: 17 suite failures (`BindingResolutionException` for `GatewayRefundUpdates`) caused by batch 4 work in progress. Now bound in the AfterSales provider.
+
+**Open**
+- Medium: QA-P5-009, P3 vendor pages not built.
+  - VEN-017 (vendor categories, inner page, create, sort) and VEN-018 (badges, products, sort): no routes exist.
+  - Not verified for lack of data: VEN-011a, VEN-015a/b, VEN-016a, VEN-050f/i, ADM-033d.
+  - Left `todo` in coverage.
+- Low: QA-P5-010, vendor orders list "Your share" shows the stored `vendor_profit` for cancelled orders (ORD-10002 shows $68.90), while the detail shows $0.00 (§3: cancelled = 0). "Collected" ignores refunds.
+- Low: QA-P5-011, after a seller-fault return refund on a platform-collected order, the store share goes negative (−$85.27, §3 "partial refund reduces the vendor's share only"), but "Owed to platform" shows $0.00. The debt is not surfaced. For finance (ledger).
+- Low: QA-P5-012, setup-wizard "Default country" offers all 249 countries instead of the countries just picked.
+- Low: QA-P5-013, the city seeder has no cities for the UAE (and other countries), so a UAE branch can't be created (city is required).
+- Low: QA-P5-014, on a gateway edit, enabling a config and toggling "Active" before saving gives "Enable vendor payments … before activating it" (422). Save first; consider disabling the toggle while the form is dirty.
+- Low: QA-P5-015, the admin product form tab strip overflows at 1440 px with a scrollbar ("Stock" cut off).
+- Low: QA-P5-016, the provisioning page's "Contact support" falls back to `no-reply@<host>` when no support e-mail is set.
+- VEN-007 stays partial: the wizard's Theme step waits for the themes page (P7).
+
+**Coverage:** 97 rows set to `done`:
+- All 38 `done (unverified in browser)` rows.
+- ADM-031…035 except 033d; ADM-080…084.
+- VEN-010/010a/010e, 011, 012/a/c/d/e, 013/a, 014, 015, 016/b/c, 050/a/b/c/d/e/g/h.
+- WEB-001/002/005–011/013–015/018a/025–027.
+
+`partial`: VEN-007 (reason updated), VEN-009 (unchanged).
+
+**Verdict: PASS.** No Critical or High issue is open; both Highs found were fixed and have regression tests. The full suite, build, Pint and PHPStan are green. Open: QA-P5-009 (Medium, vendor categories and badges VEN-017/018 not built, plus a few unexercised modals) and the Lows above.

@@ -11,7 +11,7 @@
     @if ($preview['items'] === [])
         <x-ui::empty-state compact :title="__('catalog::imports.modal.preview_empty')" description="" />
     @else
-        <div class="overflow-x-auto rounded-control border border-line">
+        <div class="relative overflow-x-auto rounded-control border border-line">
             <table class="ui-table w-full text-[13px]">
                 <thead>
                     <tr class="border-b border-line bg-subtle text-xs font-medium text-ink-secondary">

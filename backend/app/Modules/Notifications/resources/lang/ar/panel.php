@@ -16,9 +16,9 @@ return [
         'columns' => [
             'notification' => 'الإشعار',
             'received' => 'وقت الاستلام',
-            'mark_all_vendor' => 'تعليم الكل كمقروء',
-            'vendor_empty_description' => 'ستظهر هنا الردود على طلباتك وتحديثات الطلبات وتعيين المنتجات.',
         ],
+        'mark_all_vendor' => 'تعليم الكل كمقروء',
+        'vendor_empty_description' => 'ستظهر هنا الردود على طلباتك وتحديثات الطلبات وتعيين المنتجات.',
         'new' => 'جديد',
         'open' => 'فتح',
         'mark_read' => 'تحديد كمقروء',

@@ -19,7 +19,7 @@
         <x-ui::icon-button icon="trash" size="sm" :label="__('shipping::rules.remove_zone')" data-zone-remove />
     </div>
 
-    <div class="overflow-x-auto rounded-control border border-line">
+    <div class="relative overflow-x-auto rounded-control border border-line">
         <table class="w-full min-w-[520px] text-sm">
             <thead class="bg-subtle text-xs text-ink-secondary">
                 <tr>

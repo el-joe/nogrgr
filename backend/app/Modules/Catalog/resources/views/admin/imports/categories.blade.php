@@ -47,7 +47,7 @@
                     <div class="flex items-center justify-between gap-3 border-b border-line px-5 py-3 text-[13px] text-ink-secondary">
                         <span>{{ __('catalog::imports.mapping.count', ['mapped' => number_format($overview['mapped']), 'total' => number_format($overview['mappings'])]) }}</span>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="relative overflow-x-auto">
                         <table class="ui-table w-full text-sm">
                             <thead>
                                 <tr class="border-b border-line bg-subtle text-xs font-medium text-ink-secondary">

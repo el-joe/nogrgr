@@ -70,7 +70,7 @@
                                 <x-ui::empty-state compact icon="globe" :description="__('catalog::vendor.products.no_countries')" />
                             </div>
                         @else
-                            <div class="overflow-x-auto">
+                            <div class="relative overflow-x-auto">
                                 <table class="w-full min-w-[720px] text-sm">
                                     <thead class="bg-subtle text-[13px] text-ink-secondary">
                                         <tr>
@@ -134,7 +134,7 @@
                             <x-ui::button size="sm" variant="secondary" icon="message" data-remote-modal="edit-request-modal" :data-url="vendor_route('catalog.edit-requests.form', ['product' => $product->id, 'field' => 'weight_grams'])">{{ __('catalog::vendor.edit.request_weight') }}</x-ui::button>
                         @endif
                     </header>
-                    <div class="overflow-x-auto rounded-card border border-line">
+                    <div class="relative overflow-x-auto rounded-card border border-line">
                         <table class="w-full text-sm">
                             <thead class="bg-subtle text-[13px] text-ink-secondary">
                                 <tr>

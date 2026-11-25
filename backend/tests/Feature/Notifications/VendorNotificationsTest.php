@@ -56,6 +56,18 @@ it('renders the inbox and links "View all" from the bell', function (): void {
         ->assertSee(($this->url)(''), false);
 });
 
+it('renders the vendor inbox strings as translations, not raw keys (QA-P5-002)', function (): void {
+    expect(__('notifications::panel.inbox.mark_all_vendor'))->toBe('Mark all as read')
+        ->and(__('notifications::panel.inbox.vendor_empty_description'))->not->toStartWith('notifications::')
+        ->and(trans('notifications::panel.inbox.vendor_empty_description', [], 'ar'))->not->toStartWith('notifications::');
+
+    vendorInboxRow($this->tenant, $this->owner);
+
+    $this->actingAsVendor($this->owner, $this->tenant)->get(($this->url)(''))
+        ->assertOk()
+        ->assertDontSee('notifications::panel', false);
+});
+
 it('lists only the member\'s own rows with category and state filters', function (): void {
     vendorInboxRow($this->tenant, $this->owner, ['title' => 'Mine unread']);
     vendorInboxRow($this->tenant, $this->owner, ['title' => 'Mine read'], now()->toDateTimeString());
