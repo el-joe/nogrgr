@@ -6,9 +6,12 @@ use App\Modules\Integrations\Contracts\PaymentGatewayDriver;
 use App\Modules\Integrations\DTOs\CheckoutRequestData;
 use App\Modules\Integrations\DTOs\HostedCheckout;
 use App\Modules\Integrations\DTOs\PaymentResult;
+use App\Modules\Integrations\DTOs\RefundRequestData;
+use App\Modules\Integrations\DTOs\RefundResult;
 use App\Modules\Integrations\DTOs\WebhookNotification;
 use App\Modules\Integrations\Enums\GatewayMode;
 use App\Modules\Integrations\Enums\PaymentOutcome;
+use App\Modules\Integrations\Enums\RefundOutcome;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
 use App\Modules\Integrations\Models\PaymentGatewayConfig;
 use Illuminate\Http\Client\ConnectionException;
@@ -90,6 +93,34 @@ class PaypalCheckoutDriver implements PaymentGatewayDriver
         }
 
         return $this->resultFromOrder((array) $response->json(), $checkoutId);
+    }
+
+    /**
+     * POST /v2/payments/captures/{capture id}/refund (PayPal-Request-Id = our reference).
+     * COMPLETED → completed, PENDING → pending, anything else → failed.
+     */
+    public function refund(PaymentGatewayConfig $config, RefundRequestData $data): RefundResult
+    {
+        $response = $this->send($config, fn (PendingRequest $http): Response => $http
+            ->withHeaders(['PayPal-Request-Id' => 'refund-'.$data->reference])
+            ->post('/v2/payments/captures/'.rawurlencode($data->transactionId).'/refund', array_filter([
+                'amount' => ['value' => $data->amount->toDecimal(), 'currency_code' => $data->amount->currency],
+                'invoice_id' => $data->reference,
+                'note_to_payer' => $data->reason !== null ? mb_substr($data->reason, 0, 255) : null,
+            ])));
+
+        $status = $response->json('status');
+
+        return new RefundResult(
+            outcome: match ($status) {
+                'COMPLETED' => RefundOutcome::Completed,
+                'PENDING' => RefundOutcome::Pending,
+                default => RefundOutcome::Failed,
+            },
+            refundId: is_string($response->json('id')) ? $response->json('id') : null,
+            reason: is_string($response->json('status_details.reason')) ? $response->json('status_details.reason') : null,
+            details: array_filter(['status' => $status], static fn (mixed $value): bool => $value !== null),
+        );
     }
 
     public function parseWebhook(PaymentGatewayConfig $config, Request $request): WebhookNotification

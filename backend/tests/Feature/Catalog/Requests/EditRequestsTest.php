@@ -21,6 +21,7 @@ require_once __DIR__.'/RequestHelpers.php';
 
 beforeEach(function (): void {
     Storage::fake('local');
+    Storage::fake('central');
     Storage::fake('public');
     [$this->tenant, $this->owner] = requestsStore();
     $this->product = Product::factory()->create(['name' => ['en' => 'Wireless Earbuds Pro', 'ar' => 'سماعات لاسلكية برو']]);
@@ -50,7 +51,8 @@ it('builds the field diff on submit and keeps only real changes', function (): v
         ->and(collect($request->changes)->map(fn (array $change): string => $change['field'].':'.$change['locale'])->all())->toBe(['name:ar', 'summary:en', 'images:'])
         ->and($request->changes[0]['current'])->toBe('سماعات لاسلكية برو')
         ->and($request->files)->toHaveCount(1);
-    Storage::disk('local')->assertExists($request->files[0]['path']);
+    Storage::disk('central')->assertExists($request->files[0]['path']);
+    Storage::disk('local')->assertMissing($request->files[0]['path']);
 
     expect(fn () => submitEditRequest($this, ['summary' => ['en' => 'Another']]))->toThrow(RequestRuleException::class);
 });
@@ -124,4 +126,31 @@ it('guards the review actions by permission', function (): void {
     $this->postJson($this->centralUrl("/admin/requests/edits/{$request->id}/reject"), ['reason' => 'No'])->assertForbidden();
     $this->get($this->centralUrl("/admin/requests/edits/{$request->id}/files/0"))->assertOk();
     $this->get($this->centralUrl("/admin/requests/edits/{$request->id}/files/5"))->assertNotFound();
+});
+
+it('stores vendor images on the central disk and still reads legacy rows from the local disk', function (): void {
+    Notification::fake();
+    $this->tenant = $this->createTenant('legacy', ['owner_id' => $this->owner->id, 'owner_name' => $this->owner->name, 'owner_email' => $this->owner->email]);
+    $request = $this->tenant->run(fn (): EditRequest => app(EditRequestService::class)->submit(new EditRequestSubmissionData(
+        tenantId: $this->tenant->id,
+        productId: $this->product->id,
+        variantId: null,
+        values: ['name' => ['ar' => 'سماعات ميغز']],
+        images: [UploadedFile::fake()->image('vendor.jpg')],
+        vendorNote: 'Vendor photo',
+    )));
+
+    expect($request->files[0]['disk'])->toBe('central');
+    Storage::disk('central')->assertExists($request->files[0]['path']);
+
+    Storage::disk('local')->put('edit-requests/legacy/old.jpg', 'old-bytes');
+    $request->forceFill(['files' => [['path' => 'edit-requests/legacy/old.jpg', 'name' => 'old.jpg', 'size' => 9, 'mime_type' => 'image/jpeg'], ...$request->files]])->save();
+
+    $this->actingAs(catalogAdmin(['requests.edits.view', 'requests.edits.manage']), 'admin');
+    $this->get($this->centralUrl("/admin/requests/edits/{$request->id}/files/0"))->assertOk();
+    $this->get($this->centralUrl("/admin/requests/edits/{$request->id}/files/1"))->assertOk();
+
+    expect(EditRequestService::diskOf('edit-requests/legacy/old.jpg'))->toBe('local')
+        ->and(EditRequestService::diskOf($request->files[1]['path'], 'central'))->toBe('central')
+        ->and(EditRequestService::diskOf('edit-requests/missing.jpg'))->toBeNull();
 });

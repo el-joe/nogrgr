@@ -48,4 +48,22 @@ interface BranchStockRepositoryContract extends RepositoryContract
      * @return Builder<BranchStock>
      */
     public function forBranch(int $branchId): Builder;
+
+    /**
+     * Adds $delta units (may be negative) to one cell; on_hand never drops below 0. A
+     * missing cell is created for a positive delta.
+     */
+    public function adjust(int $branchId, int $productId, int $variantKey, int $delta): void;
+
+    /**
+     * Active branches holding the cell, the most stocked first: branch_id => on_hand.
+     *
+     * @return array<int, int>
+     */
+    public function branchesHolding(int $productId, int $variantKey): array;
+
+    /**
+     * Whether any branch tracks stock of the product.
+     */
+    public function tracksProduct(int $productId): bool;
 }

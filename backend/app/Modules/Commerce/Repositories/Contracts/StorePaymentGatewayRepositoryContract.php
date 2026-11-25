@@ -20,4 +20,16 @@ interface StorePaymentGatewayRepositoryContract extends RepositoryContract
     public function offered(): Collection;
 
     public function findByCode(PaymentGatewayCode $code): ?StorePaymentGateway;
+
+    /**
+     * @return Collection<int, StorePaymentGateway>
+     */
+    public function allRows(): Collection;
+
+    public function firstOrNewByCode(PaymentGatewayCode $code): StorePaymentGateway;
+
+    /**
+     * Makes one row the primary gateway (and no other).
+     */
+    public function markPrimary(StorePaymentGateway $row): void;
 }

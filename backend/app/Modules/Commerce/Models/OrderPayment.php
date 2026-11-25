@@ -35,6 +35,12 @@ use Illuminate\Support\Carbon;
 class OrderPayment extends Model
 {
     /**
+     * Explicit storage format: admin pages read store orders after leaving the store's
+     * tenant context, where the "tenant" connection (default date format) is gone.
+     */
+    protected $dateFormat = 'Y-m-d H:i:s';
+
+    /**
      * @var list<string>
      */
     protected $fillable = [

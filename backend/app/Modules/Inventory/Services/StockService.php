@@ -99,6 +99,73 @@ class StockService extends BaseService
     }
 
     /**
+     * Branch that ships $quantity units of a cell: the preferred branch when it is active
+     * and holds the cell, else the most stocked active branch (null = no branch tracks it).
+     */
+    public function pickBranch(int $productId, int $variantKey, int $quantity, ?int $preferredBranchId = null): ?int
+    {
+        $holding = $this->stock->branchesHolding($productId, $variantKey);
+
+        if ($preferredBranchId !== null && array_key_exists($preferredBranchId, $holding)) {
+            return $preferredBranchId;
+        }
+
+        foreach ($holding as $branchId => $onHand) {
+            if ($onHand >= $quantity) {
+                return $branchId;
+            }
+        }
+
+        return array_key_first($holding);
+    }
+
+    /**
+     * Fulfilment: $quantity units leave a branch (paid central order line shipped). Products
+     * whose stock no branch tracks are decremented on the product / variant itself.
+     */
+    public function deduct(?int $branchId, int $productId, int $variantKey, int $quantity): void
+    {
+        $this->move($branchId, $productId, $variantKey, -max(0, $quantity));
+    }
+
+    /**
+     * A returned unit goes back on the shelf of a branch (inspection + restock).
+     */
+    public function restock(?int $branchId, int $productId, int $variantKey, int $quantity): void
+    {
+        $this->move($branchId, $productId, $variantKey, max(0, $quantity));
+    }
+
+    private function move(?int $branchId, int $productId, int $variantKey, int $delta): void
+    {
+        /** @var Product|null $product */
+        $product = $this->products->find($productId);
+
+        if ($product === null || $delta === 0) {
+            return;
+        }
+
+        if ($branchId !== null && $this->stock->tracksProduct($productId)) {
+            $this->transaction(fn () => $this->stock->adjust($branchId, $productId, $variantKey, $delta), $this->connection());
+            $this->recompute($product, null, $branchId);
+
+            return;
+        }
+
+        $variantTotals = [];
+
+        foreach ($product->variants()->get(['id', 'stock']) as $variant) {
+            $variantTotals[(int) $variant->id] = (int) $variant->getAttribute('stock') + ((int) $variant->id === $variantKey ? $delta : 0);
+            $variantTotals[(int) $variant->id] = max(0, $variantTotals[(int) $variant->id]);
+        }
+
+        $total = $variantTotals === [] ? max(0, (int) $product->stock + $delta) : array_sum($variantTotals);
+        $this->products->saveStockTotals($product, $total, $variantTotals);
+
+        StockChanged::dispatch($product->id, $total, null);
+    }
+
+    /**
      * @param  list<int>|null  $keys
      */
     private function recompute(Product $product, ?array $keys = null, ?int $branchId = null): void

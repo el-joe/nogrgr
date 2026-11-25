@@ -2,8 +2,10 @@
 
 namespace App\Modules\Commerce\Listeners;
 
+use App\Modules\Commerce\Enums\FulfilmentStatus;
 use App\Modules\Commerce\Events\OrderCancelled;
 use App\Modules\Commerce\Events\OrderDelivered;
+use App\Modules\Commerce\Events\OrderFulfilmentUpdated;
 use App\Modules\Commerce\Events\OrderPaid;
 use App\Modules\Commerce\Events\OrderShipped;
 use App\Modules\Commerce\Models\Order;
@@ -25,7 +27,10 @@ use Illuminate\Support\Facades\Notification;
  *               "new order", admins with orders.view "order paid";
  *   shipped   → customer (order.shipped, tracking number);
  *   delivered → customer (order.delivered);
- *   cancelled → customer (order.cancelled), store owners, admins.
+ *   cancelled → customer (order.cancelled), store owners, admins;
+ *   out for delivery / delayed → customer (shipping updates preference).
+ * The public notify* helpers are reused by AfterSales (returns, refunds) in the store's
+ * tenant context.
  */
 class SendOrderNotifications
 {
@@ -42,18 +47,29 @@ class SendOrderNotifications
         $events->listen(OrderShipped::class, [self::class, 'shipped']);
         $events->listen(OrderDelivered::class, [self::class, 'delivered']);
         $events->listen(OrderCancelled::class, [self::class, 'cancelled']);
+        $events->listen(OrderFulfilmentUpdated::class, [self::class, 'fulfilment']);
+    }
+
+    public function fulfilment(OrderFulfilmentUpdated $event): void
+    {
+        if ($event->notifyCustomer && in_array($event->status, [FulfilmentStatus::OutForDelivery, FulfilmentStatus::Delayed], true)) {
+            $this->notifyCustomer($event->order, null, 'shipping_'.$event->status->value, [
+                'shipment.company' => (string) $event->order->shipping_company_name,
+                'shipment.tracking_no' => (string) $event->order->tracking_number,
+            ]);
+        }
     }
 
     public function paid(OrderPaid $event): void
     {
-        $this->customer($event->order, EmailTemplateEvent::OrderConfirmation, 'confirmation');
-        $this->store($event->order, 'store_new_order');
-        $this->admins($event->order, 'admin_order_paid');
+        $this->notifyCustomer($event->order, EmailTemplateEvent::OrderConfirmation, 'confirmation');
+        $this->notifyStore($event->order, 'store_new_order');
+        $this->notifyAdmins($event->order, 'admin_order_paid');
     }
 
     public function shipped(OrderShipped $event): void
     {
-        $this->customer($event->order, EmailTemplateEvent::OrderShipped, 'shipped', [
+        $this->notifyCustomer($event->order, EmailTemplateEvent::OrderShipped, 'shipped', [
             'shipment.company' => (string) $event->order->shipping_company_name,
             'shipment.tracking_no' => (string) $event->order->tracking_number,
             'shipment.tracking_url' => '',
@@ -62,20 +78,20 @@ class SendOrderNotifications
 
     public function delivered(OrderDelivered $event): void
     {
-        $this->customer($event->order, EmailTemplateEvent::OrderDelivered, 'delivered');
+        $this->notifyCustomer($event->order, EmailTemplateEvent::OrderDelivered, 'delivered');
     }
 
     public function cancelled(OrderCancelled $event): void
     {
-        $this->customer($event->order, EmailTemplateEvent::OrderCancelled, 'cancelled');
-        $this->store($event->order, 'store_order_cancelled');
-        $this->admins($event->order, 'admin_order_cancelled');
+        $this->notifyCustomer($event->order, EmailTemplateEvent::OrderCancelled, 'cancelled');
+        $this->notifyStore($event->order, 'store_order_cancelled');
+        $this->notifyAdmins($event->order, 'admin_order_cancelled');
     }
 
     /**
      * @param  array<string, string>  $extra
      */
-    private function customer(Order $order, EmailTemplateEvent $template, string $name, array $extra = []): void
+    public function notifyCustomer(Order $order, ?EmailTemplateEvent $template, string $name, array $extra = []): void
     {
         $customer = $order->customer_id !== null ? $this->customers->find($order->customer_id) : null;
 
@@ -97,12 +113,15 @@ class SendOrderNotifications
         ] + $extra, $order->uuid));
     }
 
-    private function store(Order $order, string $name): void
+    /**
+     * @param  array<string, string|int>  $extra
+     */
+    public function notifyStore(Order $order, string $name, array $extra = []): void
     {
         $owners = $this->staff->activeOwners();
 
         if ($owners->isNotEmpty()) {
-            Notification::send($owners, new OrderAlertNotification($name, $this->params($order), forStore: true));
+            Notification::send($owners, new OrderAlertNotification($name, $this->params($order) + $extra, forStore: true));
         }
     }
 
@@ -110,11 +129,14 @@ class SendOrderNotifications
      * Admins and their permissions live in the central DB: resolved and notified in the
      * central context.
      */
-    private function admins(Order $order, string $name): void
+    /**
+     * @param  array<string, string|int>  $extra
+     */
+    public function notifyAdmins(Order $order, string $name, string $permission = 'orders.view', array $extra = []): void
     {
-        $notification = new OrderAlertNotification($name, $this->params($order));
-        $send = function () use ($notification): void {
-            $admins = $this->admins->activeWithPermission('orders.view');
+        $notification = new OrderAlertNotification($name, $this->params($order) + $extra);
+        $send = function () use ($notification, $permission): void {
+            $admins = $this->admins->activeWithPermission($permission);
 
             if ($admins->isNotEmpty()) {
                 $this->dispatcher->send($admins, $notification);

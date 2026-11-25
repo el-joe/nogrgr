@@ -2,6 +2,7 @@
 
 namespace App\Modules\Reporting;
 
+use App\Modules\Commerce\Events\OrderFulfilmentUpdated;
 use App\Modules\Commerce\Events\OrderStatusChanged;
 use App\Modules\Reporting\Listeners\RecordOrderFacts;
 use App\Modules\Reporting\Repositories\Contracts\OrderFactRepositoryContract;
@@ -25,5 +26,6 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         parent::boot();
 
         Event::listen(OrderStatusChanged::class, RecordOrderFacts::class);
+        Event::listen(OrderFulfilmentUpdated::class, RecordOrderFacts::class);
     }
 }

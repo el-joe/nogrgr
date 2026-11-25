@@ -39,7 +39,16 @@ use Throwable;
  */
 class EditRequestService extends BaseService
 {
-    public const PRIVATE_DISK = 'local';
+    /**
+     * Private, not re-rooted by tenancy (decision #67): vendor uploads made in tenant
+     * context and the admin review read the same place.
+     */
+    public const PRIVATE_DISK = 'central';
+
+    /**
+     * Rows stored before the move to the central disk name no disk and live on `local`.
+     */
+    public const LEGACY_DISK = 'local';
 
     public const PUBLIC_DISK = 'public';
 
@@ -113,11 +122,10 @@ class EditRequestService extends BaseService
         if ($data->images !== []) {
             foreach ($data->images as $image) {
                 // Always the central private disk (the vendor submits from tenant context, the admin reviews centrally).
-                $store = static fn (): string|false => $image->storeAs('edit-requests/'.$data->tenantId, Str::uuid()->toString().'.'.($image->guessExtension() ?: 'jpg'), self::PRIVATE_DISK);
-                $path = tenancy()->initialized ? tenancy()->central($store) : $store();
+                $path = $image->storeAs('edit-requests/'.$data->tenantId, Str::uuid()->toString().'.'.($image->guessExtension() ?: 'jpg'), self::PRIVATE_DISK);
 
                 if ($path !== false) {
-                    $files[] = ['path' => $path, 'name' => Str::limit($image->getClientOriginalName(), 180, ''), 'size' => (int) $image->getSize(), 'mime_type' => $image->getMimeType()];
+                    $files[] = ['path' => $path, 'disk' => self::PRIVATE_DISK, 'name' => Str::limit($image->getClientOriginalName(), 180, ''), 'size' => (int) $image->getSize(), 'mime_type' => $image->getMimeType()];
                 }
             }
 
@@ -251,11 +259,13 @@ class EditRequestService extends BaseService
     {
         $file = $editRequest->files[$index] ?? null;
 
-        if ($file === null || ! Storage::disk(self::PRIVATE_DISK)->exists($file['path'])) {
+        $disk = $file !== null ? self::diskOf($file['path'], $file['disk'] ?? null) : null;
+
+        if ($file === null || $disk === null) {
             throw new NotFoundHttpException((string) __('catalog::requests.errors.attachment_missing'));
         }
 
-        return Storage::disk(self::PRIVATE_DISK)->response($file['path'], $file['name'], [
+        return Storage::disk($disk)->response($file['path'], $file['name'], [
             'Content-Type' => $file['mime_type'] ?? 'application/octet-stream',
             'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, no-store',
@@ -341,12 +351,14 @@ class EditRequestService extends BaseService
         $published = [];
 
         foreach ($paths as $path) {
-            if (! is_string($path) || ! Storage::disk(self::PRIVATE_DISK)->exists($path)) {
+            $disk = is_string($path) ? self::diskOf($path) : null;
+
+            if ($disk === null) {
                 continue;
             }
 
-            $target = 'catalog/overrides/'.$editRequest->tenant_id.'/'.$editRequest->product_id.'/'.basename($path);
-            Storage::disk(self::PUBLIC_DISK)->put($target, (string) Storage::disk(self::PRIVATE_DISK)->get($path));
+            $target = 'catalog/overrides/'.$editRequest->tenant_id.'/'.$editRequest->product_id.'/'.basename((string) $path);
+            Storage::disk(self::PUBLIC_DISK)->put($target, (string) Storage::disk($disk)->get((string) $path));
             $published[] = $target;
         }
 
@@ -380,5 +392,20 @@ class EditRequestService extends BaseService
         if (! $editRequest->isPending()) {
             throw RequestRuleException::alreadyReviewed();
         }
+    }
+
+    /**
+     * Disk holding a request file: the one recorded on the row, else the central disk,
+     * else the legacy `local` disk (rows from before the move); null when missing.
+     */
+    public static function diskOf(string $path, ?string $recorded = null): ?string
+    {
+        foreach (array_unique(array_filter([$recorded, self::PRIVATE_DISK, self::LEGACY_DISK])) as $disk) {
+            if (Storage::disk($disk)->exists($path)) {
+                return $disk;
+            }
+        }
+
+        return null;
     }
 }

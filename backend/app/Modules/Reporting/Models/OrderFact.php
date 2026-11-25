@@ -35,6 +35,20 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property Carbon|null $shipped_at
  * @property Carbon|null $delivered_at
  * @property Carbon|null $cancelled_at
+ * @property int|null $order_id
+ * @property string|null $customer_name
+ * @property string|null $customer_city
+ * @property string|null $payment_source
+ * @property string $fulfilment_status
+ * @property int|null $shipping_company_id
+ * @property string|null $shipping_company_name
+ * @property string|null $tracking_number
+ * @property int $weight_grams
+ * @property int|null $fulfilment_branch_id
+ * @property Carbon|null $delivery_min_date
+ * @property Carbon|null $delivery_max_date
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class OrderFact extends Model
 {
@@ -48,6 +62,8 @@ class OrderFact extends Model
         'tenant_id', 'order_uuid', 'order_number', 'kind', 'status', 'payment_status', 'customer_id', 'country_id', 'currency',
         'items_count', 'items_grand_total', 'flash_discount', 'shipping_charge', 'coupon_discount', 'coupon_source', 'grand_total',
         'platform_profit', 'vendor_profit', 'payment_gateway', 'placed_at', 'paid_at', 'shipped_at', 'delivered_at', 'cancelled_at',
+        'order_id', 'customer_name', 'customer_city', 'payment_source', 'fulfilment_status', 'shipping_company_id', 'shipping_company_name',
+        'tracking_number', 'weight_grams', 'fulfilment_branch_id', 'delivery_min_date', 'delivery_max_date',
     ];
 
     /**
@@ -72,6 +88,20 @@ class OrderFact extends Model
             'shipped_at' => 'datetime',
             'delivered_at' => 'datetime',
             'cancelled_at' => 'datetime',
+            'order_id' => 'integer',
+            'shipping_company_id' => 'integer',
+            'weight_grams' => 'integer',
+            'fulfilment_branch_id' => 'integer',
+            'delivery_min_date' => 'date',
+            'delivery_max_date' => 'date',
         ];
+    }
+
+    /**
+     * Own-products orders are merchant-fulfilled: the platform only reads them.
+     */
+    public function isOwnProducts(): bool
+    {
+        return $this->kind === 'own';
     }
 }

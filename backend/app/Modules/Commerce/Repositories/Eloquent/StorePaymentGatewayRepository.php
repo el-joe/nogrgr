@@ -27,4 +27,20 @@ class StorePaymentGatewayRepository extends BaseRepository implements StorePayme
     {
         return $this->query()->where('code', $code->value)->first();
     }
+
+    public function allRows(): Collection
+    {
+        return $this->query()->orderBy('code')->get();
+    }
+
+    public function firstOrNewByCode(PaymentGatewayCode $code): StorePaymentGateway
+    {
+        return $this->query()->firstOrNew(['code' => $code->value], ['is_active' => false, 'is_hidden' => false, 'use_own' => false, 'mode' => 'test', 'connection_status' => 'not_connected']);
+    }
+
+    public function markPrimary(StorePaymentGateway $row): void
+    {
+        $this->query()->whereKeyNot($row->id)->update(['is_primary' => false]);
+        $row->forceFill(['is_primary' => true])->save();
+    }
 }

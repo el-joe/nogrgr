@@ -25,4 +25,13 @@ return [
     'checkout_attempt_status' => ['processing' => 'Processing', 'completed' => 'Completed', 'failed' => 'Failed'],
     'checkout_block' => ['empty_cart' => 'Empty cart', 'sign_in_required' => 'Sign-in required', 'no_address' => 'No address', 'unavailable_items' => 'Unavailable items', 'shipping_unavailable' => 'Shipping unavailable', 'no_gateway' => 'No payment method', 'gateway_unavailable' => 'Payment method unavailable', 'coupon_invalid' => 'Coupon invalid', 'stock_changed' => 'Stock changed'],
     'actor_type' => ['customer' => 'Customer', 'vendor' => 'Store', 'admin' => 'Admin', 'system' => 'System', 'gateway' => 'Payment gateway'],
+    'fulfilment_status' => ['pending' => 'To ship', 'packed' => 'Packed', 'in_transit' => 'In transit', 'out_for_delivery' => 'Out for delivery', 'delayed' => 'Delayed', 'delivered' => 'Delivered'],
+    'cancellation_reason' => [
+        'changed_mind' => 'Changed my mind', 'ordered_by_mistake' => 'Ordered by mistake', 'found_better_price' => 'Found a better price', 'delivery_too_long' => 'Delivery takes too long',
+        'wrong_address_or_details' => 'Wrong address or details', 'payment_issue' => 'Payment issue', 'duplicate_order' => 'Duplicate order', 'out_of_stock' => 'Out of stock',
+        'unable_to_fulfil' => 'Unable to fulfil', 'suspected_fraud' => 'Suspected fraud', 'customer_request' => 'Customer request', 'pricing_error' => 'Pricing error', 'other' => 'Other',
+    ],
+    'settlement_status' => ['pending' => 'Pending', 'paid' => 'Paid', 'failed' => 'Failed'],
+    'attachment_kind' => ['shipping_label' => 'Shipping label', 'packing_proof' => 'Packing proof', 'customs' => 'Customs', 'other' => 'Other'],
+    'collected_by' => ['vendor' => 'Store', 'platform' => 'Platform'],
 ];

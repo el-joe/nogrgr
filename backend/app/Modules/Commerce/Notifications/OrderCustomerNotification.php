@@ -16,8 +16,8 @@ use Illuminate\Notifications\Notification;
 
 /**
  * Order e-mail + account notification for the customer (order confirmation, shipped,
- * delivered, cancelled). The mail uses the admin's active template of the event
- * (EmailTemplateEvent, Admin › Email templates) and falls back to the built-in
+ * delivered, cancelled, shipping steps, refunds, returns). The mail uses the admin's active template of the event
+ * (EmailTemplateEvent, Admin › Email templates; none for shipping steps and returns) and falls back to the built-in
  * commerce::notifications.customer.<event> texts. E-mail follows the customer's
  * "order updates" / "shipping updates" e-mail preference; the account inbox always gets it.
  */
@@ -29,7 +29,7 @@ class OrderCustomerNotification extends Notification implements ShouldQueue
      * @param  array<string, string>  $variables  template variables (EmailTemplateEvent::variables())
      */
     public function __construct(
-        public readonly EmailTemplateEvent $template,
+        public readonly ?EmailTemplateEvent $template,
         public readonly string $eventName,
         public readonly array $variables,
         public readonly string $orderUuid,
@@ -43,7 +43,7 @@ class OrderCustomerNotification extends Notification implements ShouldQueue
     public function via(object $notifiable): array
     {
         $channels = ['database'];
-        $type = in_array($this->template, [EmailTemplateEvent::OrderShipped, EmailTemplateEvent::OrderDelivered], true)
+        $type = in_array($this->template, [EmailTemplateEvent::OrderShipped, EmailTemplateEvent::OrderDelivered], true) || str_starts_with($this->eventName, 'shipping_')
             ? CustomerNotificationType::ShippingUpdates
             : CustomerNotificationType::OrderUpdates;
 
@@ -58,7 +58,7 @@ class OrderCustomerNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage|TemplatedMail
     {
         $locale = $notifiable instanceof Customer && $notifiable->locale !== null ? $notifiable->locale : app()->getLocale();
-        $rendered = app(EmailTemplateRenderer::class)->renderEvent($this->template, $locale, $this->variables);
+        $rendered = $this->template !== null ? app(EmailTemplateRenderer::class)->renderEvent($this->template, $locale, $this->variables) : null;
 
         if ($rendered !== null) {
             return (new TemplatedMail($rendered))->to((string) $notifiable->routeNotificationFor('mail', $this));

@@ -6,8 +6,11 @@ use App\Modules\Integrations\Contracts\PaymentGatewayDriver;
 use App\Modules\Integrations\DTOs\CheckoutRequestData;
 use App\Modules\Integrations\DTOs\HostedCheckout;
 use App\Modules\Integrations\DTOs\PaymentResult;
+use App\Modules\Integrations\DTOs\RefundRequestData;
+use App\Modules\Integrations\DTOs\RefundResult;
 use App\Modules\Integrations\DTOs\WebhookNotification;
 use App\Modules\Integrations\Enums\PaymentOutcome;
+use App\Modules\Integrations\Enums\RefundOutcome;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
 use App\Modules\Integrations\Models\PaymentGatewayConfig;
 use Illuminate\Http\Client\ConnectionException;
@@ -111,6 +114,39 @@ class StripeCheckoutDriver implements PaymentGatewayDriver
             type: $type,
             checkoutId: $checkoutId,
             outcome: $outcome ?? PaymentOutcome::Pending,
+        );
+    }
+
+    /**
+     * POST /v1/refunds with the payment intent (pi_…) or charge (ch_…) and the amount;
+     * the refund reference is the idempotency key. succeeded → completed, pending /
+     * requires_action → pending, failed / canceled → failed.
+     */
+    public function refund(PaymentGatewayConfig $config, RefundRequestData $data): RefundResult
+    {
+        $target = str_starts_with($data->transactionId, 'ch_') ? 'charge' : 'payment_intent';
+
+        $response = $this->send(fn (PendingRequest $http): Response => $http
+            ->asForm()
+            ->withHeaders(['Idempotency-Key' => 'refund-'.$data->reference])
+            ->post('/v1/refunds', [
+                $target => $data->transactionId,
+                'amount' => $data->amount->minor,
+                'metadata[reference]' => $data->reference,
+            ]), $config);
+
+        $status = $response->json('status');
+        $reason = $response->json('failure_reason');
+
+        return new RefundResult(
+            outcome: match ($status) {
+                'succeeded' => RefundOutcome::Completed,
+                'failed', 'canceled' => RefundOutcome::Failed,
+                default => RefundOutcome::Pending,
+            },
+            refundId: is_string($response->json('id')) ? $response->json('id') : null,
+            reason: is_string($reason) ? $reason : null,
+            details: array_filter(['status' => $status, 'amount' => $response->json('amount'), 'currency' => $response->json('currency')], static fn (mixed $value): bool => $value !== null),
         );
     }
 

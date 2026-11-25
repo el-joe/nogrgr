@@ -77,6 +77,27 @@ class StockReservationRepository extends BaseRepository implements StockReservat
             ->get();
     }
 
+    public function forOrder(string $orderUuid, ?StockReservationStatus $status = null): Collection
+    {
+        return $this->query()
+            ->withoutGlobalScope(CurrentTenantScope::class)
+            ->where('order_uuid', $orderUuid)
+            ->when($status !== null, static fn (Builder $query) => $query->where('status', $status?->value))
+            ->orderBy('id')
+            ->get();
+    }
+
+    public function incrementOwnStock(int $storeProductId, int $variantKey, int $quantity): void
+    {
+        $quantity = max(0, $quantity);
+
+        if ($variantKey > 0) {
+            StoreProductVariant::query()->whereKey($variantKey)->whereNotNull('stock')->increment('stock', $quantity);
+        }
+
+        StoreProduct::query()->whereKey($storeProductId)->where('manage_stock', true)->increment('stock', $quantity);
+    }
+
     public function setStatus(StockReservation $reservation, StockReservationStatus $status): void
     {
         $reservation->forceFill(['status' => $status])->save();

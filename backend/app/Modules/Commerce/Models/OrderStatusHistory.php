@@ -21,6 +21,12 @@ use Illuminate\Support\Carbon;
  */
 class OrderStatusHistory extends Model
 {
+    /**
+     * Explicit storage format: admin pages read store orders after leaving the store's
+     * tenant context, where the "tenant" connection (default date format) is gone.
+     */
+    protected $dateFormat = 'Y-m-d H:i:s';
+
     public const UPDATED_AT = null;
 
     protected $table = 'order_status_history';

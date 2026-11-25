@@ -29,4 +29,9 @@ interface OrderPaymentRepositoryContract extends RepositoryContract
      * Stores a webhook event id; false when it was already processed (replay).
      */
     public function rememberWebhook(string $gateway, string $eventId, string $type, ?string $checkoutId): bool;
+
+    /**
+     * The captured payment of a checkout group (refunds go back to it).
+     */
+    public function paidForGroup(string $checkoutGroup): ?OrderPayment;
 }

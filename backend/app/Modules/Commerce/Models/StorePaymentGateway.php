@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property bool $is_active
  * @property bool $is_hidden
  * @property bool $use_own
+ * @property bool $is_primary
  * @property GatewayMode $mode
  * @property array<string, string>|null $credentials
  * @property GatewayConnection $connection_status
@@ -31,7 +32,7 @@ class StorePaymentGateway extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['code', 'is_active', 'is_hidden', 'use_own', 'mode', 'credentials', 'connection_status', 'last_tested_at', 'last_error'];
+    protected $fillable = ['code', 'is_active', 'is_hidden', 'use_own', 'mode', 'credentials', 'connection_status', 'last_tested_at', 'last_error', 'is_primary'];
 
     /**
      * @var list<string>
@@ -48,6 +49,7 @@ class StorePaymentGateway extends Model
             'is_active' => 'boolean',
             'is_hidden' => 'boolean',
             'use_own' => 'boolean',
+            'is_primary' => 'boolean',
             'mode' => GatewayMode::class,
             'credentials' => 'encrypted:array',
             'connection_status' => GatewayConnection::class,

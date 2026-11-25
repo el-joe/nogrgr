@@ -73,4 +73,41 @@ class BranchStockRepository extends BaseRepository implements BranchStockReposit
             ->whereHas('product')
             ->with(['product', 'variant.options']);
     }
+
+    public function adjust(int $branchId, int $productId, int $variantKey, int $delta): void
+    {
+        /** @var BranchStock|null $cell */
+        $cell = $this->query()->where(['branch_id' => $branchId, 'product_id' => $productId, 'variant_key' => $variantKey])->lockForUpdate()->first();
+
+        if ($cell === null) {
+            if ($delta > 0) {
+                $this->put($branchId, $productId, $variantKey === 0 ? null : $variantKey, $delta);
+            }
+
+            return;
+        }
+
+        $cell->forceFill(['on_hand' => max(0, $cell->on_hand + $delta)])->save();
+    }
+
+    public function branchesHolding(int $productId, int $variantKey): array
+    {
+        /** @var array<int, int> $rows */
+        $rows = $this->query()
+            ->where('product_id', $productId)
+            ->where('variant_key', $variantKey)
+            ->whereHas('branch', static fn (Builder $query) => $query->where('is_active', true))
+            ->orderByDesc('on_hand')
+            ->orderBy('branch_id')
+            ->pluck('on_hand', 'branch_id')
+            ->map(static fn (mixed $units): int => (int) $units)
+            ->all();
+
+        return $rows;
+    }
+
+    public function tracksProduct(int $productId): bool
+    {
+        return $this->query()->where('product_id', $productId)->exists();
+    }
 }

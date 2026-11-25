@@ -2,18 +2,19 @@
 
 namespace App\Modules\Reporting\Listeners;
 
+use App\Modules\Commerce\Events\OrderFulfilmentUpdated;
 use App\Modules\Commerce\Events\OrderStatusChanged;
 use App\Modules\Reporting\Repositories\Contracts\OrderFactRepositoryContract;
 
 /**
  * Keeps the central order_facts row of a store order in sync (architecture: central
- * reporting facts fed by events): written on placement and on every status change.
+ * reporting facts fed by events): written on placement, every status change and every shipping step.
  */
 class RecordOrderFacts
 {
     public function __construct(private readonly OrderFactRepositoryContract $facts) {}
 
-    public function handle(OrderStatusChanged $event): void
+    public function handle(OrderStatusChanged|OrderFulfilmentUpdated $event): void
     {
         $order = $event->order;
 
@@ -40,6 +41,28 @@ class RecordOrderFacts
             'shipped_at' => $order->shipped_at,
             'delivered_at' => $order->delivered_at,
             'cancelled_at' => $order->cancelled_at,
+            'order_id' => $order->id,
+            'customer_name' => $order->customer_name,
+            'customer_city' => self::city($order->shipping_address),
+            'payment_source' => $order->payment_source?->value,
+            'fulfilment_status' => $order->fulfilment_status->value,
+            'shipping_company_id' => $order->shipping_company_id,
+            'shipping_company_name' => $order->shipping_company_name,
+            'tracking_number' => $order->tracking_number,
+            'weight_grams' => (int) $order->items()->sum('weight_grams'),
+            'fulfilment_branch_id' => $order->fulfilment_branch_id,
+            'delivery_min_date' => $order->delivery_min_date,
+            'delivery_max_date' => $order->delivery_max_date,
         ]);
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $address
+     */
+    private static function city(?array $address): ?string
+    {
+        $city = $address['city_name'] ?? $address['city'] ?? null;
+
+        return is_string($city) && $city !== '' ? mb_substr($city, 0, 120) : null;
     }
 }

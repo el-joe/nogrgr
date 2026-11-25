@@ -11,6 +11,7 @@ const pages = {
     'vendor-requests': () => import('./requests.js'),
     'vendor-notifications': () => import('./notifications.js'),
     'vendor-setup-wizard': () => import('./setup-wizard.js'),
+    'vendor-orders': () => import('./orders.js'),
 };
 
 export function initVendor() {

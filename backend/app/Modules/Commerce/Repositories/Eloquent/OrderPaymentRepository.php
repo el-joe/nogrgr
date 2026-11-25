@@ -2,6 +2,7 @@
 
 namespace App\Modules\Commerce\Repositories\Eloquent;
 
+use App\Modules\Commerce\Enums\PaymentAttemptStatus;
 use App\Modules\Commerce\Models\OrderPayment;
 use App\Modules\Commerce\Models\PaymentWebhookEvent;
 use App\Modules\Commerce\Repositories\Contracts\OrderPaymentRepositoryContract;
@@ -57,5 +58,10 @@ class OrderPaymentRepository extends BaseRepository implements OrderPaymentRepos
         }
 
         return true;
+    }
+
+    public function paidForGroup(string $checkoutGroup): ?OrderPayment
+    {
+        return $this->query()->where('checkout_group', $checkoutGroup)->where('status', PaymentAttemptStatus::Paid->value)->orderByDesc('id')->first();
     }
 }

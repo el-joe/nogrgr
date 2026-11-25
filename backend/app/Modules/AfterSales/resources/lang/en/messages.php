@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'errors' => [
+        'order_not_found' => 'Order not found.',
+        'order_read_only' => 'Store-products orders are managed by the store; the platform can only view them.',
+        'platform_collected' => 'The platform collected this order\'s payment, so refunds are handled by the platform.',
+        'nothing_refundable' => 'Nothing is left to refund on this order.',
+        'amount_exceeds' => 'The amount must be between 0.01 and :max.',
+        'gateway_unsupported' => 'This payment gateway cannot refund automatically; mark the refund completed once you paid it back.',
+        'no_transaction' => 'The original payment could not be found at the gateway.',
+        'refund_not_retryable' => 'Only pending or failed gateway refunds can be retried.',
+        'refund_closed' => 'This refund is already closed.',
+        'refund_not_found' => 'Refund not found.',
+        'refund_action_not_allowed' => 'This action is not available for this refund.',
+        'return_not_found' => 'Return not found.',
+        'order_not_returnable' => 'Returns can be opened once the order has shipped.',
+        'line_not_returnable' => 'Every unit of this item is already being returned.',
+        'quantity_exceeds' => 'You can return up to :max unit(s) of this item.',
+        'reason_invalid' => 'Choose an active return reason.',
+        'reason_not_found' => 'Reason not found.',
+        'reason_in_use' => 'This reason is used by returns; switch it off instead.',
+        'exchanges_disabled' => 'Exchanges are switched off in the return policy.',
+        'transition_not_allowed' => '":action" is not possible while the return is ":status".',
+        'note_required' => 'Add a note for this step.',
+        'inspection_result_required' => 'Choose the inspection result.',
+        'upload_failed' => 'The file could not be stored. Please try again.',
+        'file_not_found' => 'File not found.',
+    ],
+];

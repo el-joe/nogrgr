@@ -21,6 +21,7 @@ require_once __DIR__.'/VendorCatalogHelpers.php';
 
 beforeEach(function (): void {
     Storage::fake('local');
+    Storage::fake('central');
     Storage::fake('public');
     Notification::fake();
     [$this->tenant, $this->owner, $this->sa, $this->ae] = catalogStore();

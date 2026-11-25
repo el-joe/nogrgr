@@ -2,7 +2,10 @@
 
 namespace App\Modules\Commerce\Models;
 
+use App\Modules\Commerce\Enums\CancellationReason;
+use App\Modules\Commerce\Enums\CollectedBy;
 use App\Modules\Commerce\Enums\DiscountSource;
+use App\Modules\Commerce\Enums\FulfilmentStatus;
 use App\Modules\Commerce\Enums\OrderKind;
 use App\Modules\Commerce\Enums\OrderStatus;
 use App\Modules\Commerce\Enums\PaymentSource;
@@ -71,11 +74,21 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $returned_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property FulfilmentStatus $fulfilment_status
+ * @property int|null $fulfilment_branch_id
+ * @property CancellationReason|null $cancel_reason_code
  * @property-read Collection<int, OrderItem> $items
+ * @property-read Collection<int, OrderTrackingEvent> $trackingEvents
  * @property-read Collection<int, OrderStatusHistory> $history
  */
 class Order extends Model
 {
+    /**
+     * Explicit storage format: admin pages read store orders after leaving the store's
+     * tenant context, where the "tenant" connection (default date format) is gone.
+     */
+    protected $dateFormat = 'Y-m-d H:i:s';
+
     /**
      * @var list<string>
      */
@@ -87,8 +100,14 @@ class Order extends Model
         'shipping_quote', 'shipping_company_id', 'shipping_company_name', 'delivery_min_date', 'delivery_max_date',
         'delivery_estimate', 'payment_gateway', 'payment_source', 'display_currency', 'display_rate', 'locale',
         'tracking_number', 'cancel_reason', 'reservation_expires_at', 'placed_at', 'paid_at', 'shipped_at',
-        'delivered_at', 'completed_at', 'cancelled_at', 'refunded_at', 'returned_at',
+        'delivered_at', 'completed_at', 'cancelled_at', 'refunded_at', 'returned_at', 'fulfilment_status',
+        'fulfilment_branch_id', 'cancel_reason_code',
     ];
+
+    /**
+     * @var array<string, mixed>
+     */
+    protected $attributes = ['fulfilment_status' => 'pending'];
 
     /**
      * @return array<string, string>
@@ -101,6 +120,9 @@ class Order extends Model
             'payment_status' => PaymentStatus::class,
             'coupon_source' => DiscountSource::class,
             'payment_source' => PaymentSource::class,
+            'fulfilment_status' => FulfilmentStatus::class,
+            'cancel_reason_code' => CancellationReason::class,
+            'fulfilment_branch_id' => 'integer',
             'customer_id' => 'integer',
             'country_id' => 'integer',
             'coupon_id' => 'integer',
@@ -160,5 +182,34 @@ class Order extends Model
     public function history(): HasMany
     {
         return $this->hasMany(OrderStatusHistory::class)->orderBy('id');
+    }
+
+    /**
+     * @return HasMany<OrderTrackingEvent, $this>
+     */
+    public function trackingEvents(): HasMany
+    {
+        return $this->hasMany(OrderTrackingEvent::class)->orderByDesc('id');
+    }
+
+    /**
+     * Own-products orders are merchant-fulfilled: the platform never ships or changes them.
+     */
+    public function isOwnProducts(): bool
+    {
+        return $this->kind === OrderKind::Own;
+    }
+
+    public function collectedBy(): CollectedBy
+    {
+        return CollectedBy::forOrder($this->payment_source, $this->payment_status);
+    }
+
+    /**
+     * Money was taken for the order (gateway capture; COD is collected on delivery).
+     */
+    public function isPaidOnline(): bool
+    {
+        return $this->paid_at !== null && in_array($this->payment_status, [PaymentStatus::Paid, PaymentStatus::Refunded], true);
     }
 }

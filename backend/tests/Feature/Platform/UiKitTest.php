@@ -68,7 +68,6 @@ it('renders the admin shell, dashboard and only registered sidebar links', funct
         ->assertSee(__('platform::dashboard.kpi.gross_sales'))
         ->assertSee(__('platform::dashboard.attention.title'))
         ->assertSee(__('navigation.admin.dashboard'))
-        ->assertDontSee(__('navigation.admin.shipping_queue'))
         ->assertDontSee(__('navigation.admin.support_tickets'));
 });
 

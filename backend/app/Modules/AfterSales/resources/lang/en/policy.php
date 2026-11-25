@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'title' => 'Return policy',
+    'subtitle' => 'Platform default; stores may tighten it but not loosen it.',
+    'rules' => 'Rules',
+    'saved' => 'Return policy saved.',
+    'fields' => [
+        'window' => 'Return window (days)',
+        'fee' => 'Restocking fee (%)',
+        'fee_help' => 'Taken from the refund unless the reason is the seller\'s fault.',
+        'payer' => 'Who pays return shipping',
+        'categories' => 'Non-returnable categories',
+        'categories_placeholder' => 'Choose categories',
+        'video' => 'Require video for reasons that need it',
+        'exchanges' => 'Allow exchanges',
+    ],
+    'reasons' => [
+        'title' => 'Reasons',
+        'add' => 'Add reason',
+        'add_short' => 'Add',
+        'edit' => 'Edit reason',
+        'delete' => 'Delete',
+        'delete_title' => 'Delete ":name"?',
+        'delete_confirm' => 'The reason is removed from the list. Reasons used by returns cannot be deleted.',
+        'deleted' => 'Reason deleted.',
+        'saved' => 'Reason saved.',
+        'empty' => 'No reasons yet.',
+        'name_en' => 'Name (English)',
+        'name_ar' => 'Name (Arabic)',
+        'sort' => 'Order',
+        'active' => 'Active',
+        'video_required' => 'Video required',
+        'seller_fault' => 'Seller fault',
+        'seller_fault_help' => 'No restocking fee; shipping is refunded when the whole order comes back.',
+        'fee_applies' => 'Fee applies',
+    ],
+];

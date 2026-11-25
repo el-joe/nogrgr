@@ -21,6 +21,11 @@ return [
                 ['key' => 'catalog.edit-requests', 'label' => 'navigation.vendor.edit_requests', 'route' => 'vendor.catalog.edit-requests.index', 'permission' => 'catalog.products.view'],
                 ['key' => 'catalog.sort', 'label' => 'navigation.vendor.product_sort', 'route' => 'vendor.catalog.products.sort', 'permission' => 'catalog.products.view'],
             ]],
+            ['key' => 'sales', 'label' => 'navigation.vendor.orders', 'icon' => 'cart', 'children' => [
+                ['key' => 'sales.orders', 'label' => 'navigation.vendor.all_orders', 'route' => 'vendor.sales.orders.index', 'permission' => 'orders.view', 'active' => ['vendor.sales.orders.*', 'vendor.finance.settle.*']],
+                ['key' => 'sales.returns', 'label' => 'navigation.vendor.returns', 'route' => 'vendor.sales.returns.index', 'permission' => 'returns.view'],
+                ['key' => 'sales.refunds', 'label' => 'navigation.vendor.refunds', 'route' => 'vendor.sales.refunds.index', 'permission' => 'refunds.view'],
+            ]],
         ],
     ],
     [

@@ -3,9 +3,12 @@
 namespace App\Modules\Commerce\Repositories\Eloquent;
 
 use App\Modules\Commerce\Enums\ActorType;
+use App\Modules\Commerce\Enums\FulfilmentStatus;
 use App\Modules\Commerce\Enums\OrderStatus;
+use App\Modules\Commerce\Enums\PaymentStatus;
 use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Models\OrderStatusHistory;
+use App\Modules\Commerce\Models\OrderTrackingEvent;
 use App\Modules\Commerce\Repositories\Contracts\OrderRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -92,5 +95,70 @@ class OrderRepository extends BaseRepository implements OrderRepositoryContract
             'actor_id' => $actorId,
             'note' => $note,
         ]);
+    }
+
+    public function recordTrackingEvent(Order $order, FulfilmentStatus $status, ActorType $actor, ?int $actorId, ?string $location, ?string $note): void
+    {
+        OrderTrackingEvent::query()->create([
+            'order_id' => $order->id,
+            'status' => $status,
+            'location' => $location,
+            'note' => $note,
+            'actor_type' => $actor,
+            'actor_id' => $actorId,
+        ]);
+    }
+
+    public function listing(array $filters): Builder
+    {
+        $search = is_string($filters['search'] ?? null) ? trim($filters['search']) : '';
+        $status = OrderStatus::tryFrom((string) ($filters['status'] ?? ''));
+        $payment = PaymentStatus::tryFrom((string) ($filters['payment'] ?? ''));
+        $gateway = is_string($filters['gateway'] ?? null) && $filters['gateway'] !== '' ? $filters['gateway'] : null;
+        $kind = is_string($filters['kind'] ?? null) && $filters['kind'] !== '' ? $filters['kind'] : null;
+        $from = is_string($filters['from'] ?? null) && strtotime($filters['from']) !== false ? $filters['from'] : null;
+        $to = is_string($filters['to'] ?? null) && strtotime($filters['to']) !== false ? $filters['to'] : null;
+
+        return $this->query()
+            ->withSum('items as items_quantity', 'quantity')
+            ->with(['items' => static fn ($items) => $items->select(['id', 'order_id', 'name', 'image_url'])])
+            ->when($status !== null, static fn (Builder $query) => $query->where('status', $status?->value))
+            ->when($payment !== null, static fn (Builder $query) => $query->where('payment_status', $payment?->value))
+            ->when($gateway !== null, static fn (Builder $query) => $query->where('payment_gateway', $gateway))
+            ->when($kind !== null, static fn (Builder $query) => $query->where('kind', $kind))
+            ->when($from !== null, static fn (Builder $query) => $query->whereDate('placed_at', '>=', (string) $from))
+            ->when($to !== null, static fn (Builder $query) => $query->whereDate('placed_at', '<=', (string) $to))
+            ->when($search !== '', static function (Builder $query) use ($search): void {
+                $term = '%'.addcslashes($search, '%_\\').'%';
+                $query->where(static fn (Builder $inner) => $inner
+                    ->where('number', 'like', $term)
+                    ->orWhere('customer_name', 'like', $term)
+                    ->orWhere('customer_email', 'like', $term)
+                    ->orWhere('customer_phone', 'like', $term)
+                    ->orWhere('tracking_number', 'like', $term)
+                    ->orWhereHas('items', static fn (Builder $items) => $items->where('name', 'like', $term)));
+            });
+    }
+
+    public function stats(): array
+    {
+        $paid = [OrderStatus::Paid->value, OrderStatus::Processing->value, OrderStatus::Shipped->value, OrderStatus::Delivered->value, OrderStatus::Completed->value];
+
+        return [
+            'orders' => $this->query()->where('status', '!=', OrderStatus::PendingPayment->value)->count(),
+            'paid' => $this->query()->where('payment_status', PaymentStatus::Paid->value)->count(),
+            'processing' => $this->query()->whereIn('status', [OrderStatus::Paid->value, OrderStatus::Processing->value])->count(),
+            'collected' => (int) $this->query()->whereIn('status', $paid)->where('payment_status', PaymentStatus::Paid->value)->sum('grand_total'),
+        ];
+    }
+
+    public function findDetailed(string $uuid): ?Order
+    {
+        return $this->query()->where('uuid', $uuid)->with(['items', 'history', 'trackingEvents'])->first();
+    }
+
+    public function placedCountForCustomer(int $customerId): int
+    {
+        return $this->query()->where('customer_id', $customerId)->where('status', '!=', OrderStatus::PendingPayment->value)->count();
     }
 }

@@ -57,17 +57,17 @@
 | ADM-018g | ↳ Brand requests list | `admin.requests.brands.index` | Std; filter, status modal | admin.brand-requests.index | designed: Admin Panel 68:33923 | P3 | done (unverified in browser) |
 | ADM-018h | ↳ Brand request detail (chat, payment requests) | `admin.requests.brands.show` | reply, status, payment request | admin.brand-requests.show | designed: Admin Panel 68:33923 | P3 | done (unverified in browser) |
 | ADM-018i | ↳ Tenant change requests (countries / categories) | `admin.requests.tenant-changes.index` | approve, reject (note) | admin.plans.tenant-change-requests | designed: Admin Panel 68:34678 | P3 | done (unverified in browser) |
-| ADM-020 | Orders list (all tenants, from facts) | `admin.sales.orders.index` | Std; filter status/payment/gateway/tenant, export | admin.orders.index | designed: Admin Panel 48:16236 | P5 | todo |
-| ADM-021 | Order detail | `admin.sales.orders.show` | Std; timeline, tracking no., own-product orders read-only | admin.orders.show | designed: Admin Panel 49:17280 | P5 | todo |
-| ADM-021a | ↳ Cancel order modal (2-step, reason codes) | modal | reason, note if "other" | OrderDetailPage cancel | designed: Admin Panel 70:41386 | P5 | todo |
-| ADM-021b | ↳ Refund modal (≤ refundable) | modal | amount, reason | OrderDetailPage refund | designed: Admin Panel 70:41386 | P5 | todo |
-| ADM-021c | ↳ Create return modal | modal | reason ≥ 10 chars | OrderDetailPage return | designed: Admin Panel 70:41386 | P5 | todo |
-| ADM-021d | ↳ Reassign shipping company modal | modal | company picker, new estimate | — (new, §D resolved) | designed: Admin Panel 70:41386 | P5 | todo |
-| ADM-022 | Shipping list (fulfilment queue) | `admin.sales.shipping.index` | Std; filter shipping status | admin.shipping.in-delivery | designed: Admin Panel 70:34839 | P5 | todo |
-| ADM-022a | ↳ Shipping order detail (status modal, tracking, attachments, create return) | `admin.sales.shipping.show` | upload/delete attachment | admin.shipping.in-delivery.show | designed: Admin Panel 70:35864 | P5 | todo |
-| ADM-023 | Return requests list | `admin.sales.returns.index` | Std; filter status/tenant | admin.orders.returns.index | designed: Admin Panel 70:36668 | P5 | todo |
-| ADM-023a | ↳ Return detail (approve, reject, more info, inspect + restock, refund, ship exchange, notes) | `admin.sales.returns.show` | one modal per transition | admin.orders.returns.show | designed: Admin Panel 70:37613 · 70:41386 | P5 | todo |
-| ADM-024 | Refunds list | `admin.sales.refunds.index` | Std; filter tenant/status/source/date; retry, complete, reject modals | admin.orders.refunds.index | designed: Admin Panel 70:38484 · 70:41386 | P5 | todo |
+| ADM-020 | Orders list (all tenants, from facts) | `admin.orders.index` | Std; filter status/payment/gateway/tenant, export | admin.orders.index | designed: Admin Panel 48:16236 | P5 | done (unverified in browser) |
+| ADM-021 | Order detail | `admin.orders.show` | Std; timeline, tracking no., own-product orders read-only | admin.orders.show | designed: Admin Panel 49:17280 | P5 | done (unverified in browser) |
+| ADM-021a | ↳ Cancel order modal (2-step, reason codes) | modal | reason, note if "other" | OrderDetailPage cancel | designed: Admin Panel 70:41386 | P5 | done (unverified in browser) |
+| ADM-021b | ↳ Refund modal (≤ refundable) | modal | amount, reason | OrderDetailPage refund | designed: Admin Panel 70:41386 | P5 | done (unverified in browser) |
+| ADM-021c | ↳ Create return modal | modal | reason ≥ 10 chars | OrderDetailPage return | designed: Admin Panel 70:41386 | P5 | done (unverified in browser) |
+| ADM-021d | ↳ Reassign shipping company modal | modal | company picker, new estimate | — (new, §D resolved) | designed: Admin Panel 70:41386 | P5 | done (unverified in browser) |
+| ADM-022 | Shipping list (fulfilment queue) | `admin.shipping-queue.index` | Std; filter shipping status | admin.shipping.in-delivery | designed: Admin Panel 70:34839 | P5 | done (unverified in browser) |
+| ADM-022a | ↳ Shipping order detail (status modal, tracking, attachments, create return) | `admin.shipping-queue.show` | upload/delete attachment | admin.shipping.in-delivery.show | designed: Admin Panel 70:35864 | P5 | done (unverified in browser) |
+| ADM-023 | Return requests list | `admin.returns.index` | Std; filter status/tenant | admin.orders.returns.index | designed: Admin Panel 70:36668 | P5 | done (unverified in browser) |
+| ADM-023a | ↳ Return detail (approve, reject, more info, inspect + restock, refund, ship exchange, notes) | `admin.returns.show` | one modal per transition | admin.orders.returns.show | designed: Admin Panel 70:37613 · 70:41386 | P5 | done (unverified in browser) |
+| ADM-024 | Refunds list | `admin.refunds.index` | Std; filter tenant/status/source/date; retry, complete, reject modals | admin.orders.refunds.index | designed: Admin Panel 70:38484 · 70:41386 | P5 | done (unverified in browser) |
 | ADM-025 | Coupons (central) | `admin.promotions.coupons.index` | Std; list per country, delete | admin.store.coupons.index, admin.store.coupons.list | designed: Admin Panel 70:39532 | P5 | done (unverified in browser) |
 | ADM-025a | ↳ Coupon create / edit modal | `admin.promotions.coupons.create / .edit` | type, value, min spend, dates, countries | CouponsPage | designed: Admin Panel 70:41386 | P5 | done (unverified in browser) |
 | ADM-026 | Flash sales (central) | `admin.promotions.flash-sales.index` | Std; list per country, delete | admin.store.flash-sales.index, admin.store.flash-sales.list | designed: Admin Panel 70:40462 | P5 | done (unverified in browser) |
@@ -158,7 +158,7 @@
 | ADM-088a | ↳ Template part create / edit | `admin.storefront.template-parts.create` / `.edit` | | admin.settings.template-parts.create, admin.settings.template-parts.edit | designed: Admin Panel 78:79365 | P7 | todo |
 | ADM-089 | Custom theme review queue (Twig) | `admin.storefront.theme-reviews.index` | Std; filter status | admin.settings.blade-themes | designed: Admin Panel 78:80277 | P7 | todo |
 | ADM-089a | ↳ Review detail (validation report, versions, preview, approve / reject reason) | `admin.storefront.theme-reviews.show` | approve, reject | BladeThemeQueuePage | designed: Admin Panel 78:81175 | P7 | todo |
-| ADM-090 | Return policy (platform default) | `admin.storefront.return-policy` | window, fee, categories, video reasons | admin.settings.return-policy | designed: Admin Panel 78:81991 | P5 | todo |
+| ADM-090 | Return policy (platform default) | `admin.storefront.return-policy.edit` | window, fee, categories, video reasons | admin.settings.return-policy | designed: Admin Panel 78:81991 | P5 | done (unverified in browser) |
 | ADM-091 | Languages (ISO seed) | `admin.localization.languages.index` | Std; activate, free/price, AI price, countries, sort | admin.settings.languages | designed: Admin Panel 79:81928 | P2 | done |
 | ADM-091a | ↳ Language create / edit | `admin.localization.languages.create` / `.edit` | flag, direction | admin.settings.languages.create, admin.settings.languages.edit | designed: Admin Panel 79:90884 | P2 | done |
 | ADM-091b | ↳ AI catalog translation progress modal (retry) | modal | progress 0–100 %, failed state | LanguagesPage retry | designed: Admin Panel 79:90884 | P10 | todo |
@@ -256,15 +256,15 @@
 | VEN-018 | Badges | `vendor.catalog.badges.index` | Std | tenant.badges.index | designed: Vendor Panel (new screens) 83:103600 | P3 | todo |
 | VEN-018a | ↳ Badge products (search, assign category) | `vendor.catalog.badges.show` | assign, remove | tenant.badges.show, tenant.badges.search | designed: Vendor Panel (new screens) 83:103600 | P3 | todo |
 | VEN-018b | ↳ Badge sort | `vendor.catalog.badges.sort` | drag & drop | tenant.badges.sort | designed: Vendor Panel (new screens) 83:103600 | P3 | todo |
-| VEN-020 | Orders | `vendor.sales.orders.index` | Std; filter, export | tenant.orders.index, tenant.orders.export | 12:15191, m 12:23476 | P5 | todo |
-| VEN-021 | Order detail (totals, settlement figures, print) | `vendor.sales.orders.show` | Std | tenant.orders.show | designed: Vendor Panel (new screens) 84:102416 | P5 | todo |
-| VEN-021a | ↳ Cancel modal (reason codes) | modal | | OrdersController@cancel | designed: Vendor Panel (new screens) 84:107236 | P5 | todo |
-| VEN-021b | ↳ Manual refund modal | modal | | OrdersController@storeRefund | designed: Vendor Panel (new screens) 84:107236 | P5 | todo |
-| VEN-021c | ↳ Update shipping status (own-product orders only) | modal | 403 otherwise | OrdersController@updateShippingStatus | designed: Vendor Panel (new screens) 84:107236 | P5 | todo |
-| VEN-021d | ↳ Pay platform: settlement breakdown → gateway → result | `vendor.finance.settle.show` | success / cancel states | tenant.finance.vendor-purchase-settle, tenant.finance.vendor-purchase-settle.breakdown, tenant.vendor-settlement.charge, tenant.vendor-settlement.cancel, tenant.vendor-settlement.success | designed: Vendor Panel (new screens) 84:103244 | P5 | todo |
-| VEN-022 | Returns | `vendor.sales.returns.index` | Std; filter | tenant.returns.index | designed: Vendor Panel (new screens) 84:103852 | P5 | todo |
-| VEN-022a | ↳ Return detail (all transitions: approve, reject, info, received, inspect, refund, exchange, close, note) | `vendor.sales.returns.show` | one modal per action | tenant.returns.show | designed: Vendor Panel (new screens) 84:104582 | P5 | todo |
-| VEN-023 | Refunds (retry, complete, reject) | `vendor.sales.refunds.index` | Std | tenant.refunds.index | designed: Vendor Panel (new screens) 84:105181 | P5 | todo |
+| VEN-020 | Orders | `vendor.sales.orders.index` | Std; filter, export | tenant.orders.index, tenant.orders.export | 12:15191, m 12:23476 | P5 | done (unverified in browser) |
+| VEN-021 | Order detail (totals, settlement figures, print) | `vendor.sales.orders.show` | Std | tenant.orders.show | designed: Vendor Panel (new screens) 84:102416 | P5 | done (unverified in browser) |
+| VEN-021a | ↳ Cancel modal (reason codes) | modal | | OrdersController@cancel | designed: Vendor Panel (new screens) 84:107236 | P5 | done (unverified in browser) |
+| VEN-021b | ↳ Manual refund modal | modal | | OrdersController@storeRefund | designed: Vendor Panel (new screens) 84:107236 | P5 | done (unverified in browser) |
+| VEN-021c | ↳ Update shipping status (own-product orders only) | modal | 403 otherwise | OrdersController@updateShippingStatus | designed: Vendor Panel (new screens) 84:107236 | P5 | done (unverified in browser) |
+| VEN-021d | ↳ Pay platform: settlement breakdown → gateway → result | `vendor.finance.settle.*` | success / cancel states | tenant.finance.vendor-purchase-settle, tenant.finance.vendor-purchase-settle.breakdown, tenant.vendor-settlement.charge, tenant.vendor-settlement.cancel, tenant.vendor-settlement.success | designed: Vendor Panel (new screens) 84:103244 | P5 | done (unverified in browser) |
+| VEN-022 | Returns | `vendor.sales.returns.index` | Std; filter | tenant.returns.index | designed: Vendor Panel (new screens) 84:103852 | P5 | done (unverified in browser) |
+| VEN-022a | ↳ Return detail (all transitions: approve, reject, info, received, inspect, refund, exchange, close, note) | `vendor.sales.returns.show` | one modal per action | tenant.returns.show | designed: Vendor Panel (new screens) 84:104582 | P5 | done (unverified in browser) |
+| VEN-023 | Refunds (retry, complete, reject) | `vendor.sales.refunds.index` | Std | tenant.refunds.index | designed: Vendor Panel (new screens) 84:105181 | P5 | done (unverified in browser) |
 | VEN-024 | Return analytics | `vendor.sales.returns.analytics` | charts, export | tenant.returns.analytics | designed: Vendor Panel (new screens) 84:105181 | P8 | todo |
 | VEN-025 | Customers | `vendor.sales.customers.index` | Std; export, delete | tenant.customers.index, tenant.customers.export | 12:15544, m 12:23838 | P8 | todo |
 | VEN-025a | ↳ Customer create | `vendor.sales.customers.create` | intl-tel-input | tenant.customers.create | designed: Vendor Panel (new screens) 84:107236 | P8 | todo |
@@ -340,8 +340,8 @@
 | VEN-076a | ↳ Staff create / edit | modal | | tenant.settings.admins.show | designed: Vendor Panel (new screens) 90:115176 | P8 | todo |
 | VEN-077 | Settings: Roles & permissions | `vendor.settings.roles.index` | Std | tenant.settings.roles-permissions | designed: Vendor Panel (new screens) 90:115822 | P8 | todo |
 | VEN-077a | ↳ Role create / edit | modal | | tenant.settings.roles-permissions.show | designed: Vendor Panel (new screens) 90:115822 | P8 | todo |
-| VEN-078 | Settings: Payment gateways | `vendor.settings.gateways.index` | Std; set primary | tenant.settings.payment-gateways | designed: Vendor Panel (new screens) 90:116465 | P5 | todo |
-| VEN-078a | ↳ Gateway credentials (own creds, sandbox, check connection) | `vendor.settings.gateways.show` | test result | tenant.settings.payment-gateways.show | designed: Vendor Panel (new screens) 90:116465 | P5 | todo |
+| VEN-078 | Settings: Payment gateways | `vendor.settings.payment-gateways.index` | Std; set primary | tenant.settings.payment-gateways | designed: Vendor Panel (new screens) 90:116465 | P5 | done (unverified in browser) |
+| VEN-078a | ↳ Gateway credentials (own creds, sandbox, check connection) | `vendor.settings.payment-gateways.show` | test result | tenant.settings.payment-gateways.show | designed: Vendor Panel (new screens) 90:116465 | P5 | done (unverified in browser) |
 | VEN-078b | ↳ Payment readiness checklist | `vendor.settings.payment-readiness` | | tenant.settings.payment-readiness | designed: Vendor Panel (new screens) 90:116465 | P5 | todo |
 | VEN-079 | Settings: Return policy | `vendor.settings.return-policy` | override platform default | tenant.settings.return-policy | designed: Vendor Panel (new screens) 90:117144 | P5 | todo |
 | VEN-080 | Settings: Email templates | `vendor.settings.email-templates.index` | resync from central | tenant.settings.email-templates | designed: Vendor Panel (new screens) 91:114835 | P8 | todo |

@@ -60,4 +60,16 @@ interface StockReservationRepositoryContract extends RepositoryContract
      * @return array<int, list<string>>
      */
     public function expiredGroupsByTenant(int $limit = 500): array;
+
+    /**
+     * Holds of one order (any tenant: callers pass the order's own uuid).
+     *
+     * @return Collection<int, StockReservation>
+     */
+    public function forOrder(string $orderUuid, ?StockReservationStatus $status = null): Collection;
+
+    /**
+     * Returned own-product units go back into the store's stock.
+     */
+    public function incrementOwnStock(int $storeProductId, int $variantKey, int $quantity): void;
 }
