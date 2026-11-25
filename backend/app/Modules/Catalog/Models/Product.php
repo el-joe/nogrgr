@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\ProductFactory;
 use App\Modules\Catalog\Enums\AssignmentScope;
 use App\Modules\Catalog\Enums\DeliveryScope;
@@ -59,7 +60,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  */
-class Product extends Model
+class Product extends Model implements AiTranslatable
 {
     use CentralConnection;
 
@@ -73,6 +74,11 @@ class Product extends Model
      * @var list<string>
      */
     public array $translatable = ['name', 'label', 'summary', 'description', 'meta_title', 'meta_keywords', 'meta_description'];
+
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>
@@ -220,5 +226,27 @@ class Product extends Model
     public function primaryImageUrl(): ?string
     {
         return $this->media->first()?->url();
+    }
+
+    /**
+     * Regular price shown struck through when the product is on sale (null otherwise).
+     */
+    public function compareAtPrice(): ?Money
+    {
+        return $this->sale_price !== null && $this->sale_price->isPositive() ? $this->base_price : null;
+    }
+
+    /**
+     * Gross margin of the cost basis over the platform cost, in percent (null without a cost).
+     */
+    public function marginPercentage(): ?float
+    {
+        $price = $this->costBasis();
+
+        if ($this->cost_price === null || ! $price->isPositive()) {
+            return null;
+        }
+
+        return round(($price->minor - $this->cost_price->minor) / $price->minor * 100, 1);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\AttributeFactory;
 use App\Modules\Catalog\Enums\AttributeDisplayType;
 use App\Modules\Catalog\Enums\RecordStatus;
@@ -27,7 +28,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-class Attribute extends Model
+class Attribute extends Model implements AiTranslatable
 {
     use CentralConnection;
 
@@ -41,6 +42,11 @@ class Attribute extends Model
      * @var list<string>
      */
     public array $translatable = ['name'];
+
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

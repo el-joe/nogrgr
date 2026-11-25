@@ -5,7 +5,9 @@ use App\Modules\Catalog\Http\Controllers\Admin\AttributeController;
 use App\Modules\Catalog\Http\Controllers\Admin\BadgeController;
 use App\Modules\Catalog\Http\Controllers\Admin\CategoryController;
 use App\Modules\Catalog\Http\Controllers\Admin\CategorySortController;
+use App\Modules\Catalog\Http\Controllers\Admin\ProductController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductLabelController;
+use App\Modules\Catalog\Http\Controllers\Admin\ProductSortController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,37 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:admin')->prefix('catalog')->name('catalog.')->group(function (): void {
+    Route::prefix('products')->name('products.')->group(function (): void {
+        Route::controller(ProductController::class)->group(function (): void {
+            Route::middleware('permission:catalog.products.view,admin')->group(function (): void {
+                Route::get('/', 'index')->name('index');
+                Route::get('data', 'data')->name('data');
+                Route::get('{product}/prices', 'prices')->whereNumber('product')->name('prices');
+                Route::get('{product}/prices/export', 'pricesExport')->whereNumber('product')->middleware('permission:catalog.products.export,admin')->name('prices.export');
+            });
+
+            Route::get('export', 'export')->middleware('permission:catalog.products.export,admin')->name('export');
+
+            Route::middleware('permission:catalog.products.manage,admin')->group(function (): void {
+                Route::get('create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::post('validate/{product?}', 'validateField')->whereNumber('product')->name('validate');
+                Route::get('tenants', 'tenants')->name('tenants');
+                Route::get('{product}/edit', 'edit')->whereNumber('product')->name('edit');
+                Route::put('{product}', 'update')->whereNumber('product')->name('update');
+                Route::delete('{product}', 'destroy')->whereNumber('product')->name('destroy');
+                Route::patch('{product}/restore', 'restore')->whereNumber('product')->name('restore');
+            });
+        });
+
+        Route::controller(ProductSortController::class)->prefix('sort')->middleware('permission:catalog.products.manage,admin')->group(function (): void {
+            Route::get('/', 'index')->name('sort');
+            Route::get('data', 'data')->name('sort.data');
+            Route::put('/', 'save')->name('sort.save');
+            Route::post('reset', 'reset')->name('sort.reset');
+        });
+    });
+
     Route::prefix('categories')->name('categories.')->group(function (): void {
         Route::get('/', [CategoryController::class, 'index'])->middleware('permission:catalog.categories.view,admin')->name('index');
 

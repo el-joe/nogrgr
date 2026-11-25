@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\CategoryFactory;
 use App\Modules\Catalog\Enums\RecordStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,7 +39,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  */
-class Category extends Model
+class Category extends Model implements AiTranslatable
 {
     use CentralConnection;
 
@@ -56,6 +57,11 @@ class Category extends Model
      * @var list<string>
      */
     public array $translatable = ['name', 'description', 'meta_title', 'meta_description'];
+
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
  * @property int $mediable_id
  * @property string $disk
  * @property string $path
+ * @property string|null $webp_path
  * @property string|null $avif_path
  * @property string|null $mime_type
  * @property int $size
@@ -33,7 +34,7 @@ class CatalogMedia extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['disk', 'path', 'avif_path', 'mime_type', 'size', 'width', 'height', 'conversion_status', 'is_primary', 'sort_order'];
+    protected $fillable = ['disk', 'path', 'webp_path', 'avif_path', 'mime_type', 'size', 'width', 'height', 'conversion_status', 'is_primary', 'sort_order'];
 
     /**
      * @return array<string, string>
@@ -66,5 +67,10 @@ class CatalogMedia extends Model
     public function avifUrl(): ?string
     {
         return $this->avif_path !== null ? Storage::disk($this->disk)->url($this->avif_path) : null;
+    }
+
+    public function webpUrl(): ?string
+    {
+        return $this->webp_path !== null ? Storage::disk($this->disk)->url($this->webp_path) : null;
     }
 }

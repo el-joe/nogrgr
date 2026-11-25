@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\ProductBadgeFactory;
 use App\Modules\Catalog\Enums\BadgeAutoFill;
 use App\Modules\Catalog\Enums\BadgeType;
@@ -22,7 +23,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int $auto_fill_limit
  * @property int $sort_order
  */
-class ProductBadge extends Model
+class ProductBadge extends Model implements AiTranslatable
 {
     use CentralConnection;
 
@@ -35,6 +36,11 @@ class ProductBadge extends Model
      * @var list<string>
      */
     public array $translatable = ['name'];
+
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

@@ -18,6 +18,8 @@ const pages = {
     'admin-general-settings': () => import('./general-settings.js'),
     'admin-email-templates': () => import('./email-templates.js'),
     'admin-catalog': () => import('./catalog.js'),
+    'admin-products': () => import('./products.js'),
+    'admin-branches': () => import('./branches.js'),
 };
 
 export function initAdmin() {

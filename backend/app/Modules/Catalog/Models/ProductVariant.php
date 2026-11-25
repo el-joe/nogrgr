@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\ProductVariantFactory;
 use App\Modules\Catalog\Enums\RecordStatus;
 use App\Shared\Money\Money;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Translatable\HasTranslations;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
@@ -34,7 +36,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property Carbon|null $deleted_at
  * @property-read Product $product
  */
-class ProductVariant extends Model
+class ProductVariant extends Model implements AiTranslatable
 {
     use CentralConnection;
 
@@ -48,6 +50,11 @@ class ProductVariant extends Model
      * @var list<string>
      */
     public array $translatable = ['title'];
+
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>
@@ -113,5 +120,20 @@ class ProductVariant extends Model
     public function options(): BelongsToMany
     {
         return $this->belongsToMany(AttributeOption::class, 'product_variant_option');
+    }
+
+    /**
+     * Display label: the title, else the option names ("Black / M").
+     */
+    public function label(): string
+    {
+        $title = (string) $this->title;
+
+        return $title !== '' ? $title : $this->options->sortBy('attribute_id')->pluck('name')->implode(' / ');
+    }
+
+    public function imageUrl(): ?string
+    {
+        return $this->image_path !== null ? Storage::disk('public')->url($this->image_path) : null;
     }
 }

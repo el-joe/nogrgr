@@ -99,5 +99,7 @@ return [
         'catalog.attributes' => 'السمات',
         'catalog.labels' => 'ملصقات المنتجات',
         'catalog.badges' => 'شارات المنتجات',
+        'catalog.products' => 'المنتجات',
+        'shipping.branches' => 'الفروع',
     ],
 ];

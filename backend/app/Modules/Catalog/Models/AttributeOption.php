@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\AttributeOptionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +23,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int|null $external_id
  * @property-read Attribute $attribute
  */
-class AttributeOption extends Model
+class AttributeOption extends Model implements AiTranslatable
 {
     use CentralConnection;
 
@@ -36,6 +37,11 @@ class AttributeOption extends Model
      * @var list<string>
      */
     public array $translatable = ['name'];
+
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

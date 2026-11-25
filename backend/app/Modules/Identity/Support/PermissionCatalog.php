@@ -53,6 +53,9 @@ final class PermissionCatalog
                 'catalog.attributes.view', 'catalog.attributes.manage',
                 'catalog.labels.view', 'catalog.labels.manage',
                 'catalog.badges.view', 'catalog.badges.manage',
+                'catalog.products.view', 'catalog.products.manage', 'catalog.products.export',
+                // Inventory: branches
+                'shipping.branches.view', 'shipping.branches.manage',
             ],
             Guard::Affiliate->value => ['dashboard.view', 'notifications.view'],
         ];

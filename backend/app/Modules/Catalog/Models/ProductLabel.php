@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\ProductLabelFactory;
 use App\Modules\Catalog\Enums\LabelPlaceholder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property bool $is_active
  * @property int $sort_order
  */
-class ProductLabel extends Model
+class ProductLabel extends Model implements AiTranslatable
 {
     use CentralConnection;
 
@@ -36,6 +37,11 @@ class ProductLabel extends Model
      * @var list<string>
      */
     public array $translatable = ['text'];
+
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

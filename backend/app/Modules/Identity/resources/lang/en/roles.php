@@ -99,5 +99,7 @@ return [
         'catalog.attributes' => 'Attributes',
         'catalog.labels' => 'Product labels',
         'catalog.badges' => 'Product badges',
+        'catalog.products' => 'Products',
+        'shipping.branches' => 'Branches',
     ],
 ];

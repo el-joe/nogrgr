@@ -81,7 +81,7 @@ return [
                 ['key' => 'shipping.stops', 'label' => 'navigation.admin.stop_periods', 'route' => 'admin.shipping.stop-periods.index', 'permission' => 'shipping.stop-periods.view'],
                 ['key' => 'shipping.popup', 'label' => 'navigation.admin.delivery_popup_days', 'route' => 'admin.shipping.delivery-days.index', 'permission' => 'shipping.delivery-days.view'],
             ]],
-            ['key' => 'branches', 'label' => 'navigation.admin.branches', 'icon' => 'building', 'route' => 'admin.branches.index', 'permission' => 'branches.view'],
+            ['key' => 'branches', 'label' => 'navigation.admin.branches', 'icon' => 'building', 'route' => 'admin.shipping.branches.index', 'permission' => 'shipping.branches.view'],
         ],
     ],
     [

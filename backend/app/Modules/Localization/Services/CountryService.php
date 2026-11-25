@@ -5,6 +5,7 @@ namespace App\Modules\Localization\Services;
 use App\Modules\Localization\DTOs\CountryData;
 use App\Modules\Localization\Models\Country;
 use App\Modules\Localization\Repositories\Contracts\CountryRepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Central ISO countries: the admin edits names, phone code, default currency and region,
@@ -33,6 +34,17 @@ class CountryService
     public function options(): array
     {
         return $this->countries->options();
+    }
+
+    /**
+     * Active countries (optionally only the given ids), by ISO code.
+     *
+     * @param  list<int>|null  $ids
+     * @return Collection<int, Country>
+     */
+    public function active(?array $ids = null): Collection
+    {
+        return $this->countries->active($ids);
     }
 
     public function update(Country $country, CountryData $data): Country
