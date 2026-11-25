@@ -26,5 +26,16 @@ return [
         'inspection_result_required' => 'اختر نتيجة الفحص.',
         'upload_failed' => 'تعذّر حفظ الملف. حاول مرة أخرى.',
         'file_not_found' => 'الملف غير موجود.',
+        'return_window_expired' => 'انتهت مدة الإرجاع لهذا الطلب.',
+        'nothing_returnable' => 'لا يوجد منتج قابل للإرجاع في هذا الطلب.',
+        'category_not_returnable' => 'هذا المنتج ضمن فئة غير قابلة للإرجاع.',
+        'video_required' => 'يرجى إرفاق فيديو للمنتج لهذا الإرجاع.',
+        'withdraw_not_allowed' => 'يمكن سحب طلب الإرجاع فقط أثناء المراجعة (الحالة الآن ":status").',
+        'reply_not_allowed' => 'حالة هذا المرتجع ":status"؛ لم يعد الرد متاحًا.',
+    ],
+    'store_api' => [
+        'created' => 'تم إرسال طلب الإرجاع.',
+        'replied' => 'تم إرسال ردك.',
+        'withdrawn' => 'تم سحب طلب الإرجاع.',
     ],
 ];

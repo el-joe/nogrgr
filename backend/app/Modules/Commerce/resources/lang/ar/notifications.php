@@ -9,6 +9,8 @@ return [
     'store_return_updated' => ['title' => 'المرتجع :reference: :status', 'body' => 'حالة المرتجع :reference للطلب :number الآن :status.'],
     'admin_return_opened' => ['title' => 'المرتجع :reference في :store', 'body' => 'تم فتح مرتجع للمنتج :product في الطلب :number.'],
     'admin_return_updated' => ['title' => 'المرتجع :reference: :status', 'body' => 'حالة المرتجع :reference للطلب :number في :store الآن :status.'],
+    'store_return_message' => ['title' => 'رسالة جديدة على المرتجع :reference', 'body' => 'كتب :customer عن :product (الطلب :number): :message'],
+    'admin_return_message' => ['title' => 'رسالة جديدة على المرتجع :reference', 'body' => 'كتب :customer عن :product (الطلب :number في :store): :message'],
     'store_refund_completed' => ['title' => 'اكتمل الاسترداد :reference', 'body' => 'تم استرداد :amount للطلب :number.'],
     'admin_refund_completed' => ['title' => 'اكتمل الاسترداد :reference', 'body' => 'تم استرداد :amount للطلب :number في :store.'],
     'store_refund_failed' => ['title' => 'فشل الاسترداد :reference', 'body' => 'فشل استرداد :amount للطلب :number: :error'],

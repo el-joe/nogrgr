@@ -6,6 +6,7 @@ use App\Modules\Integrations\Contracts\PaymentGatewayDriver;
 use App\Modules\Integrations\DTOs\CheckoutRequestData;
 use App\Modules\Integrations\DTOs\HostedCheckout;
 use App\Modules\Integrations\DTOs\PaymentResult;
+use App\Modules\Integrations\DTOs\RefundNotification;
 use App\Modules\Integrations\DTOs\RefundRequestData;
 use App\Modules\Integrations\DTOs\RefundResult;
 use App\Modules\Integrations\DTOs\WebhookNotification;
@@ -114,7 +115,48 @@ class StripeCheckoutDriver implements PaymentGatewayDriver
             type: $type,
             checkoutId: $checkoutId,
             outcome: $outcome ?? PaymentOutcome::Pending,
+            refunds: $this->refundsFromEvent($type, $session),
         );
+    }
+
+    /**
+     * Refund events: `charge.refunded` (object = charge, its refunds list) and
+     * `refund.created` / `refund.updated` / `refund.failed` (object = refund). Status
+     * succeeded → completed, failed / canceled → failed, anything else → pending.
+     *
+     * @param  array<string, mixed>  $object
+     * @return list<RefundNotification>
+     */
+    protected function refundsFromEvent(string $type, array $object): array
+    {
+        $refunds = match ($type) {
+            'charge.refunded' => is_array($object['refunds']['data'] ?? null) ? $object['refunds']['data'] : [],
+            'refund.created', 'refund.updated', 'refund.failed', 'charge.refund.updated' => [$object],
+            default => [],
+        };
+        $notifications = [];
+
+        foreach ($refunds as $refund) {
+            if (! is_array($refund) || ! is_string($refund['id'] ?? null)) {
+                continue;
+            }
+
+            $reference = $refund['metadata']['reference'] ?? null;
+            $reason = $refund['failure_reason'] ?? null;
+
+            $notifications[] = new RefundNotification(
+                refundId: $refund['id'],
+                reference: is_string($reference) ? $reference : null,
+                outcome: match ($refund['status'] ?? null) {
+                    'succeeded' => RefundOutcome::Completed,
+                    'failed', 'canceled' => RefundOutcome::Failed,
+                    default => RefundOutcome::Pending,
+                },
+                reason: is_string($reason) ? $reason : null,
+            );
+        }
+
+        return $notifications;
     }
 
     /**

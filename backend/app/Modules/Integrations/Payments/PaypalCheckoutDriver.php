@@ -6,6 +6,7 @@ use App\Modules\Integrations\Contracts\PaymentGatewayDriver;
 use App\Modules\Integrations\DTOs\CheckoutRequestData;
 use App\Modules\Integrations\DTOs\HostedCheckout;
 use App\Modules\Integrations\DTOs\PaymentResult;
+use App\Modules\Integrations\DTOs\RefundNotification;
 use App\Modules\Integrations\DTOs\RefundRequestData;
 use App\Modules\Integrations\DTOs\RefundResult;
 use App\Modules\Integrations\DTOs\WebhookNotification;
@@ -172,7 +173,36 @@ class PaypalCheckoutDriver implements PaymentGatewayDriver
             outcome: $outcome,
             needsConfirmation: $needsConfirmation,
             reason: is_string($resource['status_details']['reason'] ?? null) ? $resource['status_details']['reason'] : null,
+            refunds: $this->refundsFromEvent($type, $resource),
         );
+    }
+
+    /**
+     * Refund events (resource = the refund): PAYMENT.CAPTURE.REFUNDED and the refund
+     * status events. COMPLETED → completed, FAILED / CANCELLED → failed, else pending;
+     * `invoice_id` is our refund reference (sent by refund()).
+     *
+     * @param  array<string, mixed>  $resource
+     * @return list<RefundNotification>
+     */
+    private function refundsFromEvent(string $type, array $resource): array
+    {
+        if (! in_array($type, ['PAYMENT.CAPTURE.REFUNDED', 'PAYMENT.REFUND.COMPLETED', 'PAYMENT.REFUND.FAILED', 'PAYMENT.REFUND.CANCELLED', 'PAYMENT.REFUND.PENDING'], true) || ! is_string($resource['id'] ?? null)) {
+            return [];
+        }
+
+        $reason = $resource['status_details']['reason'] ?? null;
+
+        return [new RefundNotification(
+            refundId: $resource['id'],
+            reference: is_string($resource['invoice_id'] ?? null) ? $resource['invoice_id'] : null,
+            outcome: match ($resource['status'] ?? null) {
+                'COMPLETED' => RefundOutcome::Completed,
+                'FAILED', 'CANCELLED' => RefundOutcome::Failed,
+                default => RefundOutcome::Pending,
+            },
+            reason: is_string($reason) ? $reason : null,
+        )];
     }
 
     /**

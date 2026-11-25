@@ -2,6 +2,7 @@
 
 namespace App\Modules\Commerce\Services\Payments;
 
+use App\Modules\Commerce\Contracts\GatewayRefundUpdates;
 use App\Modules\Commerce\DTOs\Payments\StartedPayment;
 use App\Modules\Commerce\Enums\CheckoutBlock;
 use App\Modules\Commerce\Enums\OrderStatus;
@@ -49,6 +50,7 @@ class PaymentService extends BaseService
         private readonly OrderPaymentRepositoryContract $payments,
         private readonly OrderLifecycleService $lifecycle,
         private readonly GatewayCheckoutRouteRepositoryContract $routes,
+        private readonly GatewayRefundUpdates $refundUpdates,
     ) {}
 
     public function start(Order $order, PaymentGatewayCode $code, string $baseUrl): StartedPayment
@@ -165,6 +167,10 @@ class PaymentService extends BaseService
      */
     public function handleNotification(PaymentGatewayCode $code, WebhookNotification $notification, PaymentGatewayConfig $config, bool $centralOnly = false): string
     {
+        if ($notification->isRefundEvent()) {
+            return $this->handleRefundNotification($code, $notification, $centralOnly);
+        }
+
         if (! $notification->isRelevant()) {
             return 'ignored';
         }
@@ -186,6 +192,34 @@ class PaymentService extends BaseService
         $this->settle($payment, $result);
 
         return 'processed';
+    }
+
+    /**
+     * Refund events (Stripe charge.refunded / refund.*, PayPal capture refunded) complete
+     * or fail the store's pending gateway refunds (AfterSales, decision #72). Replay-safe
+     * per gateway event id (`payment_webhook_events`); unknown refunds are ignored.
+     *
+     * @return string processed | duplicate | ignored
+     */
+    private function handleRefundNotification(PaymentGatewayCode $code, WebhookNotification $notification, bool $centralOnly): string
+    {
+        $tenantId = tenancy()->initialized ? (int) tenant()?->getTenantKey() : null;
+
+        if ($tenantId === null) {
+            return 'ignored';
+        }
+
+        if (! $this->payments->rememberWebhook($code->value, $notification->eventId, $notification->type, null)) {
+            return 'duplicate';
+        }
+
+        $applied = false;
+
+        foreach ($notification->refunds as $update) {
+            $applied = $this->refundUpdates->apply($tenantId, $code, $update, $centralOnly) || $applied;
+        }
+
+        return $applied ? 'processed' : 'ignored';
     }
 
     /**

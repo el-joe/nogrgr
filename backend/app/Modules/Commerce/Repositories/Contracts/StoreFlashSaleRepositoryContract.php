@@ -28,4 +28,16 @@ interface StoreFlashSaleRepositoryContract extends RepositoryContract
      * @param  list<int>  $countryIds
      */
     public function syncTargets(StoreFlashSale $sale, array $products, array $countryIds): void;
+
+    /**
+     * Sales that have not ended yet (the attach-from-product modal, VEN-041b).
+     *
+     * @return Collection<int, StoreFlashSale>
+     */
+    public function openSales(): Collection;
+
+    /**
+     * Adds one product to a sale; false when it is already there.
+     */
+    public function attachProduct(StoreFlashSale $sale, ProductRef $product): bool;
 }

@@ -73,6 +73,16 @@ class RefundRepository extends BaseRepository implements RefundRepositoryContrac
         return (int) Refund::withoutTenantScope()->where('tenant_id', $tenantId)->where('order_uuid', $orderUuid)->whereIn('status', $statuses)->sum('amount');
     }
 
+    public function sumForOrders(int $tenantId, array $orderUuids, array $statuses): int
+    {
+        return (int) Refund::withoutTenantScope()->where('tenant_id', $tenantId)->whereIn('order_uuid', $orderUuids)->whereIn('status', $statuses)->sum('amount');
+    }
+
+    public function sumForReturn(int $returnId, array $statuses): int
+    {
+        return (int) Refund::withoutTenantScope()->where('return_request_id', $returnId)->whereIn('status', $statuses)->sum('amount');
+    }
+
     public function nextReference(): string
     {
         $last = (int) Refund::withoutTenantScope()->max('id');
@@ -86,6 +96,34 @@ class RefundRepository extends BaseRepository implements RefundRepositoryContrac
         $locked = Refund::withoutTenantScope()->whereKey($refund->id)->lockForUpdate()->firstOrFail();
 
         return $locked;
+    }
+
+    public function findByGatewayRefund(string $gateway, ?string $gatewayRefundId, ?string $reference): ?Refund
+    {
+        $query = Refund::withoutTenantScope()->where('gateway', $gateway);
+
+        if ($gatewayRefundId !== null && $gatewayRefundId !== '') {
+            /** @var Refund|null $refund */
+            $refund = (clone $query)->where(static fn (Builder $inner) => $inner
+                ->where('gateway_refund_id', $gatewayRefundId)
+                ->orWhereHas('attemptLog', static fn (Builder $attempts) => $attempts->where('gateway_refund_id', $gatewayRefundId)))
+                ->first();
+
+            if ($refund !== null) {
+                return $refund;
+            }
+        }
+
+        if ($reference === null || $reference === '') {
+            return null;
+        }
+
+        $candidates = array_values(array_unique([$reference, (string) preg_replace('/-\d+$/', '', $reference)]));
+
+        /** @var Refund|null $refund */
+        $refund = $query->whereIn('reference', $candidates)->first();
+
+        return $refund;
     }
 
     public function logAttempt(Refund $refund, array $attributes): RefundAttempt

@@ -50,7 +50,7 @@ return [
         'item' => 'المنتج', 'quantity' => 'الكمية', 'reason' => 'السبب', 'description' => 'الوصف', 'description_min' => 'السبب (10 أحرف على الأقل)',
         'type' => 'النوع', 'note' => 'ملاحظة', 'message' => 'رسالة للعميل', 'result' => 'النتيجة', 'condition' => 'الحالة',
         'branch' => 'الإعادة إلى', 'restock' => 'إعادة للمخزون', 'refund_now' => 'استرداد الآن', 'tracking' => 'رقم التتبع', 'photos' => 'الصور',
-        'inspector_notes' => 'ملاحظات الفاحص',
+        'inspector_notes' => 'ملاحظات الفاحص', 'video' => 'الفيديو', 'reply' => 'الرد',
     ],
     'actions_help' => [
         'approve' => 'يُطلب من العميل إعادة المنتج.',

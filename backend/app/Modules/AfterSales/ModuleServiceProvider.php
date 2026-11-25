@@ -12,8 +12,10 @@ use App\Modules\AfterSales\Repositories\Contracts\ReturnRequestRepositoryContrac
 use App\Modules\AfterSales\Repositories\Eloquent\RefundRepository;
 use App\Modules\AfterSales\Repositories\Eloquent\ReturnPolicyRepository;
 use App\Modules\AfterSales\Repositories\Eloquent\ReturnRequestRepository;
+use App\Modules\AfterSales\Support\GatewayRefundWebhooks;
 use App\Modules\AfterSales\Support\RefundLedger;
 use App\Modules\AfterSales\Support\ReturnsBadgeCounter;
+use App\Modules\Commerce\Contracts\GatewayRefundUpdates;
 use App\Modules\Commerce\Contracts\OrderRefundLedger;
 use App\Modules\Commerce\Events\OrderCancelled;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
@@ -32,6 +34,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         ReturnRequestRepositoryContract::class => ReturnRequestRepository::class,
         RefundRepositoryContract::class => RefundRepository::class,
         OrderRefundLedger::class => RefundLedger::class,
+        GatewayRefundUpdates::class => GatewayRefundWebhooks::class,
     ];
 
     public function register(): void

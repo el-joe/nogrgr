@@ -35,6 +35,15 @@ it('owes the store its share on platform-collected orders', function (): void {
         ->and($figures->owedToPlatform->minor)->toBe(0);
 });
 
+it('makes the store owe the shortfall when refunds exceed its share on a platform-collected order (QA-P5-011)', function (): void {
+    $figures = settlement(refunded: 3000, by: CollectedBy::Platform);
+
+    expect($figures->vendorShare->minor)->toBe(-2040)
+        ->and($figures->owedToVendor->minor)->toBe(0)
+        ->and($figures->owedToPlatform->minor)->toBe(2040)
+        ->and(settlement(refunded: 3000, paid: 1000, by: CollectedBy::Platform)->owedToPlatform->minor)->toBe(1040);
+});
+
 it('lets a partial refund lower only the store share and voids a full refund', function (): void {
     expect(settlement(refunded: 500)->vendorShare->minor)->toBe(460)
         ->and(settlement(refunded: 500)->platformShare->minor)->toBe(5420)

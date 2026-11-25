@@ -9,6 +9,8 @@ return [
     'store_return_updated' => ['title' => 'Return :reference: :status', 'body' => 'Return :reference on order :number is now :status.'],
     'admin_return_opened' => ['title' => 'Return :reference at :store', 'body' => 'A return was opened for :product on order :number.'],
     'admin_return_updated' => ['title' => 'Return :reference: :status', 'body' => 'Return :reference on order :number at :store is now :status.'],
+    'store_return_message' => ['title' => 'New message on return :reference', 'body' => ':customer wrote about :product (order :number): :message'],
+    'admin_return_message' => ['title' => 'New message on return :reference', 'body' => ':customer wrote about :product (order :number at :store): :message'],
     'store_refund_completed' => ['title' => 'Refund :reference completed', 'body' => ':amount was refunded on order :number.'],
     'admin_refund_completed' => ['title' => 'Refund :reference completed', 'body' => ':amount was refunded on order :number at :store.'],
     'store_refund_failed' => ['title' => 'Refund :reference failed', 'body' => 'Refund of :amount on order :number failed: :error'],

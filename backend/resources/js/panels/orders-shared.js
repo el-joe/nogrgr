@@ -3,6 +3,7 @@
  * document so it also works inside remote-modal fragments loaded later.
  */
 import { http } from '../core/http';
+import { bindRemoteModals } from './remote-modal.js';
 
 function bindPrint(root) {
     root.addEventListener('click', (event) => {
@@ -100,8 +101,17 @@ function applyWidths(root) {
     });
 }
 
+let remoteModalsBound = false;
+
 export function initOrderPage(root) {
     applyWidths(root);
+
+    // Detail / action modals of the order, return, refund and finance lists.
+    if (!remoteModalsBound && document.querySelector('[data-remote-body]')) {
+        remoteModalsBound = true;
+        bindRemoteModals(root);
+    }
+
     bindPrint(root);
     bindBulk(root);
 

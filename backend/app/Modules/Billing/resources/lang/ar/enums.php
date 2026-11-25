@@ -42,4 +42,10 @@ return [
     'payment_purpose' => ['registration' => 'تسجيل', 'renewal' => 'تجديد', 'addon' => 'إضافة', 'settlement' => 'تسوية', 'invoice' => 'سداد فاتورة'],
     'addon_purchase_status' => ['pending_payment' => 'بانتظار الدفع', 'paid' => 'مدفوعة', 'failed' => 'فاشلة', 'cancelled' => 'ملغاة'],
     'addon_type' => ['language' => 'لغة', 'ai_translation' => 'ترجمة بالذكاء الاصطناعي'],
+    'ledger_account' => ['vendor_payable' => 'مستحق للتاجر', 'vendor_receivable' => 'مستحق على التاجر', 'platform_cash' => 'نقدية المنصة', 'platform_revenue' => 'إيرادات المنصة'],
+    'ledger_direction' => ['credit' => 'دائن', 'debit' => 'مدين', 'reversal' => 'عكس'],
+    'ledger_source' => ['order' => 'حصة طلب', 'refund' => 'استرداد', 'settlement' => 'تسوية', 'payout' => 'دفعة', 'subscription' => 'اشتراك', 'addon' => 'إضافة'],
+    'payout_status' => ['scheduled' => 'مجدولة', 'processing' => 'قيد المعالجة', 'paid' => 'مدفوعة', 'cancelled' => 'ملغاة'],
+    'payout_method' => ['bank_transfer' => 'تحويل بنكي', 'paypal' => 'PayPal', 'wise' => 'Wise', 'cash' => 'نقدًا', 'cheque' => 'شيك', 'other' => 'أخرى'],
+    'settlement_method' => ['bank_transfer' => 'تحويل بنكي', 'cash' => 'نقدًا', 'cheque' => 'شيك', 'payout_offset' => 'مقاصة من المدفوعات', 'other' => 'أخرى'],
 ];

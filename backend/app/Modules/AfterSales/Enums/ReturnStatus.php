@@ -56,6 +56,14 @@ enum ReturnStatus: string
     }
 
     /**
+     * The customer may still withdraw the request (under review).
+     */
+    public function isWithdrawable(): bool
+    {
+        return in_array($this, [self::Pending, self::AwaitingInfo], true);
+    }
+
+    /**
      * The quantity of the order line is held by this return (not rejected / cancelled).
      */
     public function holdsQuantity(): bool

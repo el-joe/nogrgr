@@ -8,6 +8,7 @@ use App\Modules\AfterSales\Models\ReturnRequestEvent;
 use App\Modules\AfterSales\Models\ReturnRequestMedia;
 use App\Modules\AfterSales\Repositories\Contracts\ReturnRequestRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -56,6 +57,27 @@ class ReturnRequestRepository extends BaseRepository implements ReturnRequestRep
     public function findForTenant(int $id, ?int $tenantId = null): ?ReturnRequest
     {
         return $this->query()->whereKey($id)->when($tenantId !== null, static fn (Builder $query) => $query->where('tenant_id', $tenantId))->first();
+    }
+
+    public function forCustomer(int $tenantId, int $customerId, ?string $orderUuid, int $perPage): LengthAwarePaginator
+    {
+        return ReturnRequest::withoutTenantScope()
+            ->where('tenant_id', $tenantId)
+            ->where('customer_id', $customerId)
+            ->when($orderUuid !== null, static fn (Builder $query) => $query->where('order_uuid', $orderUuid))
+            ->with(['events' => static fn ($query) => $query->where('customer_visible', true)])
+            ->orderByDesc('id')
+            ->paginate($perPage);
+    }
+
+    public function findForCustomer(int $tenantId, int $customerId, int $id): ?ReturnRequest
+    {
+        return ReturnRequest::withoutTenantScope()
+            ->whereKey($id)
+            ->where('tenant_id', $tenantId)
+            ->where('customer_id', $customerId)
+            ->with(['events', 'media', 'refunds'])
+            ->first();
     }
 
     public function forOrder(int $tenantId, string $orderUuid): Collection

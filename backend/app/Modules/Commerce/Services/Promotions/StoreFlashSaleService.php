@@ -3,6 +3,7 @@
 namespace App\Modules\Commerce\Services\Promotions;
 
 use App\Modules\Commerce\DTOs\FlashSaleData;
+use App\Modules\Commerce\DTOs\Promotions\ProductRef;
 use App\Modules\Commerce\Enums\DiscountSource;
 use App\Modules\Commerce\Enums\PromotionKind;
 use App\Modules\Commerce\Events\PromotionsChanged;
@@ -58,6 +59,21 @@ class StoreFlashSaleService
         $this->sales->delete($sale);
 
         PromotionsChanged::dispatch(PromotionKind::FlashSale, DiscountSource::Vendor, $sale->id, $tenantId);
+    }
+
+    /**
+     * VEN-041b: adds a product to one of the store's sales; false when already there.
+     */
+    public function attachProduct(StoreFlashSale $sale, ProductRef $product): bool
+    {
+        $tenantId = (int) StoreContext::tenant()->getTenantKey();
+        $attached = $this->sales->attachProduct($sale, $product);
+
+        if ($attached) {
+            PromotionsChanged::dispatch(PromotionKind::FlashSale, DiscountSource::Vendor, $sale->id, $tenantId);
+        }
+
+        return $attached;
     }
 
     private function storeBanner(StoreFlashSale $sale, FlashSaleData $data): void

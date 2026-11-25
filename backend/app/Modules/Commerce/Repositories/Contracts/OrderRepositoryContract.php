@@ -71,6 +71,13 @@ interface OrderRepositoryContract extends RepositoryContract
     public function findDetailed(string $uuid): ?Order;
 
     /**
+     * Uuids of the paid, not void orders counted as "collected" (vendor KPI).
+     *
+     * @return list<string>
+     */
+    public function collectedUuids(): array;
+
+    /**
      * Orders of the store placed by a customer (for "nth order" hints).
      */
     public function placedCountForCustomer(int $customerId): int;

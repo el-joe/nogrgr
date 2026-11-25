@@ -96,6 +96,10 @@ it('cancels with a reason code and refunds the store-collected payment', functio
         ->and(Refund::withoutTenantScope()->sole()->amount)->toBe(6380)
         ->and(OrderFact::withoutTenantScope()->where('order_uuid', $this->order->uuid)->value('status'))->toBe('refunded');
     Http::assertSent(fn (HttpRequest $request): bool => $request->url() === 'https://api.stripe.com/v1/refunds');
+
+    // QA-P5-010: the list shows the same (void) store share as the detail page.
+    $row = $this->getJson(($this->url)('/orders/data?draw=1&start=0&length=10&status=refunded'))->assertOk()->json('data.0');
+    expect($row['commission'])->toContain('$0.00');
 });
 
 it('refunds manually only money the store collected', function (): void {
@@ -107,6 +111,10 @@ it('refunds manually only money the store collected', function (): void {
     $this->postJson(($this->url)("/orders/{$this->order->uuid}/refund"), ['amount' => '19.00', 'reason' => 'Missing item'])->assertCreated();
 
     expect(Refund::withoutTenantScope()->sole()->status)->toBe(RefundStatus::Completed);
+
+    // QA-P5-010: "Collected" and the list share account for the refund (63.80 − 19.00; 9.60 − 19.00).
+    $this->get(($this->url)('/orders'))->assertOk()->assertSee('$44.80');
+    expect($this->getJson(($this->url)('/orders/data?draw=1&start=0&length=10'))->json('data.0.commission'))->toContain('-$9.40');
 
     $platform = paidShopOrder($this->shop, shopCustomer($this->shop), [$this->shop->catalog->id => 1], 'order-key-v2', 'central');
     ($this->as)();

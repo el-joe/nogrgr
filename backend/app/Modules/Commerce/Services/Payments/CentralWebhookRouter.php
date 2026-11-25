@@ -2,6 +2,7 @@
 
 namespace App\Modules\Commerce\Services\Payments;
 
+use App\Modules\Commerce\Contracts\GatewayRefundUpdates;
 use App\Modules\Commerce\Support\TenantRunner;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
@@ -17,7 +18,8 @@ use Illuminate\Http\Request;
  * config (the storefront driver, central webhook secret), finds the store through
  * `gateway_checkout_routes` and settles the attempt in the store's database through
  * PaymentService::handleNotification() (replay-safe per gateway event id; only attempts
- * paid with the central keys).
+ * paid with the central keys). Refund events of central-key payments are routed to the
+ * refund's store the same way (decision #72).
  */
 class CentralWebhookRouter
 {
@@ -26,6 +28,7 @@ class CentralWebhookRouter
         private readonly PaymentGatewayRepositoryContract $centralGateways,
         private readonly GatewayCheckoutRouteRepositoryContract $routes,
         private readonly TenantRunner $tenants,
+        private readonly GatewayRefundUpdates $refundUpdates,
     ) {}
 
     /**
@@ -48,18 +51,21 @@ class CentralWebhookRouter
             return null;
         }
 
-        if (! $notification->isRelevant()) {
+        if ($notification->isRefundEvent()) {
+            // Refunds of central-key payments (decision #72): the refund row names the store.
+            $tenantId = $this->refundUpdates->tenantOf($code, $notification->refunds[0], centralOnly: true);
+        } elseif ($notification->isRelevant()) {
+            $tenantId = $this->routes->findRoute($code->value, (string) $notification->checkoutId)?->tenant_id;
+        } else {
             return null;
         }
 
-        $route = $this->routes->findRoute($code->value, (string) $notification->checkoutId);
-
-        if ($route === null) {
+        if ($tenantId === null) {
             return null;
         }
 
         try {
-            return $this->tenants->run($route->tenant_id, static fn (): string => app(PaymentService::class)->handleNotification($code, $notification, $config, centralOnly: true));
+            return $this->tenants->run($tenantId, static fn (): string => app(PaymentService::class)->handleNotification($code, $notification, $config, centralOnly: true));
         } catch (ModelNotFoundException) {
             return 'ignored'; // the store was deleted
         }

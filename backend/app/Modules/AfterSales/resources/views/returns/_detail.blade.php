@@ -6,6 +6,8 @@
 --}}
 @php
     $vendor = $surface === 'vendor';
+    // A refund already raised for the return (pending / retryable / done) uses up its value: no second Refund.
+    $actions = array_values(array_filter($actions, fn ($a) => $a !== \App\Modules\AfterSales\Enums\ReturnAction::Refund || $maxRefund->isPositive()));
     $user = $vendor ? auth('vendor')->user() : auth('admin')->user();
     $canManage = (bool) $user?->can('returns.manage');
     $formUrl = fn ($action) => $vendor ? vendor_route('sales.returns.actions.form', ['return' => $return->id, 'action' => $action->value]) : route('admin.returns.actions.form', [$return->id, $action->value]);

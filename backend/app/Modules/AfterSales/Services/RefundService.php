@@ -30,6 +30,7 @@ use App\Modules\Commerce\Services\Orders\OrderLifecycleService;
 use App\Modules\Commerce\Services\Payments\StorefrontGatewayService;
 use App\Modules\Commerce\Services\Stock\FulfilmentStockService;
 use App\Modules\Commerce\Support\TenantRunner;
+use App\Modules\Integrations\DTOs\RefundNotification;
 use App\Modules\Integrations\DTOs\RefundRequestData;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
 use App\Modules\Integrations\Enums\RefundOutcome;
@@ -112,9 +113,21 @@ class RefundService extends BaseService
         return $this->create($tenantId, $order, RefundSource::Cancellation, $breakdown, (string) ($order->cancel_reason ?: __('after-sales::refunds.reasons.cancellation')), $actor);
     }
 
+    /**
+     * Largest refund a return still allows: its fixed value less every refund already
+     * raised for it that holds money (pending, processing, failed-retryable, completed),
+     * capped by the order's refundable remainder. Never negative.
+     */
+    public function maxForReturn(ReturnRequest $return, Order $order): Money
+    {
+        $raised = Money::ofMinor($this->refunds->sumForReturn($return->id, RefundStatus::reservingValues()));
+
+        return $return->money('refund_amount')->subtract($raised)->min($this->remaining($return->tenant_id, $order))->max(Money::zero());
+    }
+
     public function createForReturn(ReturnRequest $return, Order $order, Money $amount, Actor $actor): Refund
     {
-        $max = $return->money('refund_amount')->min($this->remaining($return->tenant_id, $order));
+        $max = $this->maxForReturn($return, $order);
 
         if (! $amount->isPositive() || $amount->greaterThan($max)) {
             throw AfterSalesException::rule('amount_exceeds', 422, ['max' => $max->format()]);
@@ -188,6 +201,49 @@ class RefundService extends BaseService
             RefundOutcome::Pending => $this->refunds->update($refund, ['gateway_refund_id' => $result->refundId]),
             RefundOutcome::Failed => $this->fail($refund, $result->reason ?? (string) __('after-sales::refunds.declined'), $actor, false),
         };
+    }
+
+    /**
+     * A gateway webhook reports the outcome of a refund that was sent to it (decision
+     * #72): completed → finish (return refunded, order status, RefundCompleted); failed →
+     * failed (staff may retry). Only refunds still pending / processing move; a replay or
+     * an update of a final refund changes nothing.
+     */
+    public function applyGatewayUpdate(Refund $refund, RefundNotification $update): Refund
+    {
+        $actor = Actor::system();
+
+        /** @var array{0: Refund, 1: bool} $locked */
+        $locked = $this->transaction(function () use ($refund, $update, $actor): array {
+            $refund = $this->refunds->lock($refund);
+
+            if (! in_array($refund->status, [RefundStatus::Pending, RefundStatus::Processing], true) || $update->outcome === RefundOutcome::Pending) {
+                return [$refund, false];
+            }
+
+            $this->refunds->logAttempt($refund, [
+                'gateway' => $refund->gateway,
+                'status' => $update->outcome === RefundOutcome::Completed ? RefundStatus::Completed : RefundStatus::Failed,
+                'amount' => $refund->amount,
+                'gateway_refund_id' => $update->refundId,
+                'error' => $update->reason,
+                'details' => ['source' => 'webhook'],
+                'actor_type' => $actor->type,
+                'actor_id' => null,
+            ]);
+
+            return [$refund, true];
+        }, $refund->getConnectionName());
+
+        [$refund, $changed] = $locked;
+
+        if (! $changed) {
+            return $refund;
+        }
+
+        return $update->outcome === RefundOutcome::Completed
+            ? $this->finish($refund, $actor, $update->refundId)
+            : $this->fail($refund, $update->reason ?? (string) __('after-sales::refunds.declined'), $actor, false);
     }
 
     public function retry(Refund $refund, ?string $note, Actor $actor): Refund

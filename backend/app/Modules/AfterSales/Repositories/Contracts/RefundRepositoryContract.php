@@ -38,9 +38,30 @@ interface RefundRepositoryContract extends RepositoryContract
      */
     public function sumForOrder(int $tenantId, string $orderUuid, array $statuses): int;
 
+    /**
+     * Σ refunds of several orders of a store in the given statuses (USD minor).
+     *
+     * @param  list<string>  $orderUuids
+     * @param  list<string>  $statuses
+     */
+    public function sumForOrders(int $tenantId, array $orderUuids, array $statuses): int;
+
+    /**
+     * Σ refunds raised for one return in the given statuses (USD minor).
+     *
+     * @param  list<string>  $statuses
+     */
+    public function sumForReturn(int $returnId, array $statuses): int;
+
     public function nextReference(): string;
 
     public function lock(Refund $refund): Refund;
+
+    /**
+     * The refund a gateway reports, by its gateway refund id (refund or attempt log) or
+     * our reference sent with the refund call (`<reference>-<attempt>`), all stores.
+     */
+    public function findByGatewayRefund(string $gateway, ?string $gatewayRefundId, ?string $reference): ?Refund;
 
     /**
      * @param  array<string, mixed>  $attributes

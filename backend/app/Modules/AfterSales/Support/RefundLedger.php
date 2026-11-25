@@ -23,4 +23,9 @@ class RefundLedger implements OrderRefundLedger
     {
         return Money::ofMinor($this->refunds->sumForOrder($tenantId, $orderUuid, RefundStatus::reservingValues()));
     }
+
+    public function refundedForOrders(int $tenantId, array $orderUuids): Money
+    {
+        return Money::ofMinor($orderUuids === [] ? 0 : $this->refunds->sumForOrders($tenantId, $orderUuids, [RefundStatus::Completed->value]));
+    }
 }

@@ -89,6 +89,7 @@ class StripePaymentIntentDriver extends StripeCheckoutDriver
             checkoutId: $outcome !== null && is_string($intent['id'] ?? null) ? $intent['id'] : null,
             outcome: $outcome ?? PaymentOutcome::Pending,
             reason: is_string($error) ? $error : null,
+            refunds: $this->refundsFromEvent($event['type'], $intent),
         );
     }
 

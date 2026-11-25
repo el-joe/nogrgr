@@ -2,6 +2,7 @@
 
 namespace App\Modules\Commerce\Repositories\Eloquent;
 
+use App\Modules\Commerce\DTOs\Promotions\ProductRef;
 use App\Modules\Commerce\Models\StoreFlashSale;
 use App\Modules\Commerce\Models\StoreFlashSaleCountry;
 use App\Modules\Commerce\Models\StoreFlashSaleProduct;
@@ -62,5 +63,28 @@ class StoreFlashSaleRepository extends BaseRepository implements StoreFlashSaleR
         }
 
         $sale->unsetRelation('productRows')->unsetRelation('countryRows');
+    }
+
+    public function openSales(): Collection
+    {
+        return $this->query()
+            ->with('productRows')
+            ->where('ends_at', '>=', now())
+            ->orderBy('starts_at')
+            ->orderBy('id')
+            ->get();
+    }
+
+    public function attachProduct(StoreFlashSale $sale, ProductRef $product): bool
+    {
+        $attached = StoreFlashSaleProduct::query()->insertOrIgnore([
+            'store_flash_sale_id' => $sale->id,
+            'product_source' => $product->source->value,
+            'product_id' => $product->id,
+        ]) > 0;
+
+        $sale->unsetRelation('productRows');
+
+        return $attached;
     }
 }

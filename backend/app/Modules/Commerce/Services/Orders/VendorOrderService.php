@@ -2,6 +2,7 @@
 
 namespace App\Modules\Commerce\Services\Orders;
 
+use App\Modules\Commerce\Contracts\OrderRefundLedger;
 use App\Modules\Commerce\DTOs\Orders\CancelOrderData;
 use App\Modules\Commerce\DTOs\Orders\FulfilmentUpdateData;
 use App\Modules\Commerce\Exceptions\CommerceException;
@@ -29,6 +30,7 @@ class VendorOrderService extends BaseService
         private readonly OrderCancellationService $cancellation,
         private readonly OrderFulfilmentService $fulfilment,
         private readonly TenantRunner $tenants,
+        private readonly OrderRefundLedger $refundLedger,
     ) {}
 
     public function tenantId(): int
@@ -48,7 +50,10 @@ class VendorOrderService extends BaseService
     {
         $stats = $this->orders->stats();
 
-        return ['orders' => $stats['orders'], 'paid' => $stats['paid'], 'processing' => $stats['processing'], 'collected' => Money::ofMinor($stats['collected'])];
+        // Collected = paid, not void orders less what was refunded on them (QA-P5-010).
+        $refunded = $this->refundLedger->refundedForOrders($this->tenantId(), $this->orders->collectedUuids());
+
+        return ['orders' => $stats['orders'], 'paid' => $stats['paid'], 'processing' => $stats['processing'], 'collected' => Money::ofMinor($stats['collected'])->subtract($refunded)->max(Money::zero())];
     }
 
     /**

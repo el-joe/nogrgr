@@ -7,6 +7,7 @@ use App\Modules\AfterSales\Models\ReturnRequest;
 use App\Modules\AfterSales\Models\ReturnRequestEvent;
 use App\Modules\AfterSales\Models\ReturnRequestMedia;
 use App\Shared\Repositories\Contracts\RepositoryContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -29,6 +30,18 @@ interface ReturnRequestRepositoryContract extends RepositoryContract
     public function statusCounts(): array;
 
     public function findForTenant(int $id, ?int $tenantId = null): ?ReturnRequest;
+
+    /**
+     * A customer's own returns of one store (optionally of one order), newest first.
+     *
+     * @return LengthAwarePaginator<int, ReturnRequest>
+     */
+    public function forCustomer(int $tenantId, int $customerId, ?string $orderUuid, int $perPage): LengthAwarePaginator;
+
+    /**
+     * A customer's own return of one store (with its timeline, media and refunds).
+     */
+    public function findForCustomer(int $tenantId, int $customerId, int $id): ?ReturnRequest;
 
     /**
      * @return Collection<int, ReturnRequest>

@@ -50,7 +50,7 @@ return [
         'item' => 'Item', 'quantity' => 'Quantity', 'reason' => 'Reason', 'description' => 'Description', 'description_min' => 'Reason (min 10 characters)',
         'type' => 'Type', 'note' => 'Note', 'message' => 'Message to the customer', 'result' => 'Result', 'condition' => 'Condition',
         'branch' => 'Restock to', 'restock' => 'Restock', 'refund_now' => 'Refund now', 'tracking' => 'Tracking no.', 'photos' => 'Photos',
-        'inspector_notes' => 'Inspector notes',
+        'inspector_notes' => 'Inspector notes', 'video' => 'Video', 'reply' => 'Reply',
     ],
     'actions_help' => [
         'approve' => 'The customer is told to send the item back.',

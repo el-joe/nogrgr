@@ -81,6 +81,13 @@ final class PermissionCatalog
                 'returns.view', 'returns.manage',
                 'refunds.view', 'refunds.manage',
                 'storefront.return-policy.view', 'storefront.return-policy.manage',
+                // Storefront: default banners (P7, ADM-085)
+                'storefront.banners.view', 'storefront.banners.manage',
+                // Billing: ledger, settlements, payouts, transactions (P5 batch 4)
+                'finance.ledger.view', 'finance.ledger.manage',
+                'finance.settlements.view',
+                'finance.payouts.view', 'finance.payouts.manage',
+                'finance.transactions.view',
                 // Content: central website (P6)
                 'content.posts.view', 'content.posts.manage',
                 'content.post-categories.view', 'content.post-categories.manage',
@@ -119,6 +126,12 @@ final class PermissionCatalog
                 'orders.view', 'orders.manage', 'orders.export',
                 'returns.view', 'returns.manage',
                 'refunds.view', 'refunds.manage',
+                // P5 batch 4: promotions, money flow
+                'coupons.view', 'coupons.manage',
+                'flash-sales.view', 'flash-sales.manage',
+                'finance.purchases.view',
+                'finance.settlements.view',
+                'finance.payouts.view',
             ],
         ];
     }

@@ -247,3 +247,32 @@ it('edits the platform return policy and its reasons', function (): void {
     $this->deleteJson($this->centralUrl("/admin/storefront/return-policy/reasons/{$reason->id}"))->assertOk();
     expect(ReturnReason::query()->whereKey($reason->id)->exists())->toBeFalse();
 });
+
+it('never refunds one return twice: a failed or pending refund uses up the return value', function (): void {
+    ($this->deliver)();
+    fakeStripeRefund('failed');
+    $item = orderIn($this->shop, $this->order)->items->first();
+    $this->postJson($this->centralUrl("/admin/orders/{$this->fact}/return"), ['order_item_id' => $item->id, 'quantity' => 1, 'reason_code' => 'changed_mind', 'description' => 'Ordered the wrong colour.'])->assertCreated();
+    $return = ReturnRequest::withoutTenantScope()->sole();
+    $act = fn (string $action, array $data = []) => $this->postJson($this->centralUrl("/admin/returns/{$return->id}/actions/{$action}"), $data);
+
+    $act('approve')->assertOk();
+    $act('mark_received')->assertOk();
+    $act('inspect', ['result' => 'accepted', 'then_refund' => 1, 'amount' => '29.40'])->assertOk();
+
+    $first = Refund::withoutTenantScope()->sole();
+    expect($first->status)->toBe(RefundStatus::Failed)
+        ->and($return->refresh()->status)->toBe(ReturnStatus::Inspected);
+
+    // The failed refund is retryable: the return has nothing left to refund.
+    $this->get($this->centralUrl("/admin/returns/{$return->id}"))->assertOk()->assertSee('$0.00');
+    $act('refund', ['amount' => '29.40'])->assertUnprocessable()->assertJsonPath('data.reason', 'amount_exceeds');
+    $act('refund', ['amount' => '0.01'])->assertUnprocessable();
+
+    // Once the first refund is rejected, its value is free again.
+    $this->postJson($this->centralUrl("/admin/refunds/{$first->id}/action"), ['action' => 'reject', 'note' => 'Card closed'])->assertOk();
+    $act('refund', ['amount' => '29.40'])->assertOk();
+
+    expect(Refund::withoutTenantScope()->where('return_request_id', $return->id)->count())->toBe(2)
+        ->and(Refund::withoutTenantScope()->where('return_request_id', $return->id)->where('status', '!=', RefundStatus::Rejected->value)->sum('amount'))->toEqual(2940);
+});

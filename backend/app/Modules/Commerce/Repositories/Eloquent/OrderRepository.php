@@ -20,6 +20,9 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class OrderRepository extends BaseRepository implements OrderRepositoryContract
 {
+    /** Paid, not void orders (vendor "Collected" KPI). */
+    private const COLLECTED_STATUSES = [OrderStatus::Paid->value, OrderStatus::Processing->value, OrderStatus::Shipped->value, OrderStatus::Delivered->value, OrderStatus::Completed->value];
+
     protected function model(): string
     {
         return Order::class;
@@ -140,9 +143,14 @@ class OrderRepository extends BaseRepository implements OrderRepositoryContract
             });
     }
 
+    public function collectedUuids(): array
+    {
+        return array_values(array_map('strval', $this->query()->whereIn('status', self::COLLECTED_STATUSES)->where('payment_status', PaymentStatus::Paid->value)->pluck('uuid')->all()));
+    }
+
     public function stats(): array
     {
-        $paid = [OrderStatus::Paid->value, OrderStatus::Processing->value, OrderStatus::Shipped->value, OrderStatus::Delivered->value, OrderStatus::Completed->value];
+        $paid = self::COLLECTED_STATUSES;
 
         return [
             'orders' => $this->query()->where('status', '!=', OrderStatus::PendingPayment->value)->count(),

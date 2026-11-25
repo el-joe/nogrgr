@@ -42,4 +42,10 @@ return [
     'payment_purpose' => ['registration' => 'Registration', 'renewal' => 'Renewal', 'addon' => 'Add-on', 'settlement' => 'Settlement', 'invoice' => 'Invoice payment'],
     'addon_purchase_status' => ['pending_payment' => 'Pending payment', 'paid' => 'Paid', 'failed' => 'Failed', 'cancelled' => 'Cancelled'],
     'addon_type' => ['language' => 'Language', 'ai_translation' => 'AI translation'],
+    'ledger_account' => ['vendor_payable' => 'Owed to the vendor', 'vendor_receivable' => 'Owed by the vendor', 'platform_cash' => 'Platform cash', 'platform_revenue' => 'Platform revenue'],
+    'ledger_direction' => ['credit' => 'Credit', 'debit' => 'Debit', 'reversal' => 'Reversal'],
+    'ledger_source' => ['order' => 'Order share', 'refund' => 'Refund', 'settlement' => 'Settlement', 'payout' => 'Payout', 'subscription' => 'Subscription', 'addon' => 'Add-on'],
+    'payout_status' => ['scheduled' => 'Scheduled', 'processing' => 'Processing', 'paid' => 'Paid', 'cancelled' => 'Cancelled'],
+    'payout_method' => ['bank_transfer' => 'Bank transfer', 'paypal' => 'PayPal', 'wise' => 'Wise', 'cash' => 'Cash', 'cheque' => 'Cheque', 'other' => 'Other'],
+    'settlement_method' => ['bank_transfer' => 'Bank transfer', 'cash' => 'Cash', 'cheque' => 'Cheque', 'payout_offset' => 'Payout offset', 'other' => 'Other'],
 ];

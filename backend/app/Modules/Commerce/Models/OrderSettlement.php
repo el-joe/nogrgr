@@ -14,6 +14,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * Payments). Central; paid by the vendor through the vendor-payments gateway.
  *
  * @property int $id
+ * @property string|null $reference
  * @property int $tenant_id
  * @property string $order_uuid
  * @property string $order_number
@@ -22,9 +23,15 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int $product_cost
  * @property string $currency
  * @property string $gateway
+ * @property string|null $method
+ * @property string|null $transaction_reference
+ * @property string|null $note
+ * @property string|null $attachment_path
+ * @property string|null $attachment_name
  * @property int|null $payment_log_id
  * @property SettlementStatus $status
  * @property int|null $paid_by_id
+ * @property string|null $recorded_by_name
  * @property Carbon|null $paid_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -37,7 +44,7 @@ class OrderSettlement extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['tenant_id', 'order_uuid', 'order_number', 'amount', 'shipping_cost', 'product_cost', 'currency', 'gateway', 'payment_log_id', 'status', 'paid_by_id', 'paid_at'];
+    protected $fillable = ['reference', 'method', 'transaction_reference', 'note', 'attachment_path', 'attachment_name', 'recorded_by_name', 'tenant_id', 'order_uuid', 'order_number', 'amount', 'shipping_cost', 'product_cost', 'currency', 'gateway', 'payment_log_id', 'status', 'paid_by_id', 'paid_at'];
 
     /**
      * @return array<string, string>

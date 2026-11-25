@@ -1,5 +1,9 @@
 <?php
 
+use App\Modules\Billing\Http\Controllers\Admin\Finance\LedgerController;
+use App\Modules\Billing\Http\Controllers\Admin\Finance\PayoutController;
+use App\Modules\Billing\Http\Controllers\Admin\Finance\SettlementController;
+use App\Modules\Billing\Http\Controllers\Admin\Finance\TransactionController;
 use App\Modules\Billing\Http\Controllers\Admin\InvoiceController;
 use App\Modules\Billing\Http\Controllers\Admin\PaymentLogController;
 use App\Modules\Billing\Http\Controllers\Admin\PlanController;
@@ -7,7 +11,8 @@ use App\Modules\Billing\Http\Controllers\Admin\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 /*
-| Surface: admin — Billing (plans, subscriptions, invoices, payment logs).
+| Surface: admin — Billing (plans, subscriptions, invoices, payment logs; finance ledger,
+| settlements, payouts, transactions — decision #72).
 | Every route: auth:admin + permission (tests/Feature/Architecture/PanelRoutesTest.php).
 */
 
@@ -66,4 +71,60 @@ Route::middleware('auth:admin')->group(function (): void {
             ->middleware('permission:finance.payment-logs.manage,admin')
             ->name('status');
     });
+
+    // Ledger (ADM-050 / 050a)
+    Route::prefix('finance/ledger')->name('finance.ledger.')->controller(LedgerController::class)->group(function (): void {
+        Route::middleware('permission:finance.ledger.view,admin')->group(function (): void {
+            Route::get('/', 'index')->name('index');
+            Route::get('data', 'data')->name('data');
+            Route::get('stores', 'stores')->name('stores');
+            Route::get('export', 'export')->name('export');
+            Route::get('{tenant}', 'show')->whereNumber('tenant')->name('show');
+            Route::get('{tenant}/entries', 'entries')->whereNumber('tenant')->name('entries');
+            Route::get('{tenant}/statement', 'statement')->whereNumber('tenant')->name('statement');
+        });
+        Route::middleware('permission:finance.ledger.manage,admin')->group(function (): void {
+            Route::get('{tenant}/settle', 'settleForm')->whereNumber('tenant')->name('settle.form');
+            Route::post('{tenant}/settle', 'settle')->whereNumber('tenant')->name('settle');
+        });
+    });
+
+    // Settlements vendor → platform (ADM-051)
+    Route::prefix('finance/settlements')->name('finance.settlements.')->controller(SettlementController::class)
+        ->middleware('permission:finance.settlements.view,admin')
+        ->group(function (): void {
+            Route::get('/', 'index')->name('index');
+            Route::get('data', 'data')->name('data');
+            Route::get('stores', 'stores')->name('stores');
+            Route::get('{reference}', 'show')->where('reference', 'ST-[A-Za-z0-9-]+')->name('show');
+            Route::get('{reference}/attachment', 'attachment')->where('reference', 'ST-[A-Za-z0-9-]+')->name('attachment');
+        });
+
+    // Payouts platform → store (ADM-052 / 052a / 052b)
+    Route::prefix('finance/payouts')->name('finance.payouts.')->controller(PayoutController::class)->group(function (): void {
+        Route::middleware('permission:finance.payouts.view,admin')->group(function (): void {
+            Route::get('/', 'index')->name('index');
+            Route::get('data', 'data')->name('data');
+            Route::get('stores', 'stores')->name('stores');
+            Route::get('{payout}', 'show')->whereNumber('payout')->name('show');
+        });
+        Route::middleware('permission:finance.payouts.manage,admin')->group(function (): void {
+            Route::get('create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('{payout}/edit', 'edit')->whereNumber('payout')->name('edit');
+            Route::put('{payout}', 'update')->whereNumber('payout')->name('update');
+            Route::post('{payout}/cancel', 'cancel')->whereNumber('payout')->name('cancel');
+        });
+    });
+
+    // Transactions (ADM-053)
+    Route::prefix('finance/transactions')->name('finance.transactions.')->controller(TransactionController::class)
+        ->middleware('permission:finance.transactions.view,admin')
+        ->group(function (): void {
+            Route::get('/', 'index')->name('index');
+            Route::get('data', 'data')->name('data');
+            Route::get('stores', 'stores')->name('stores');
+            Route::get('export', 'export')->name('export');
+            Route::get('{transaction}', 'show')->whereNumber('transaction')->name('show');
+        });
 });

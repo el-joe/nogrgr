@@ -199,6 +199,18 @@ class ReturnRequestService extends BaseService
     }
 
     /**
+     * The customer withdraws a request still under review (pending / awaiting info).
+     */
+    public function withdraw(ReturnRequest $return, Actor $actor, ?string $note = null): ReturnRequest
+    {
+        if (! $return->status->isWithdrawable()) {
+            throw AfterSalesException::rule('withdraw_not_allowed', 422, ['status' => $return->status->label()]);
+        }
+
+        return $this->move($return, ReturnStatus::Cancelled, $actor, $note, true, ['cancelled_at' => now()]);
+    }
+
+    /**
      * @param  list<UploadedFile>  $files
      */
     public function addPhotos(ReturnRequest $return, array $files, ReturnMediaKind $kind, Actor $actor): void
@@ -235,14 +247,14 @@ class ReturnRequestService extends BaseService
     }
 
     /**
-     * Largest refund the return still allows (its fixed value, capped by the order's
-     * refundable remainder).
+     * Largest refund the return still allows (its fixed value less the refunds already
+     * raised for it, capped by the order's refundable remainder; RefundService::maxForReturn).
      */
     public function maxRefund(ReturnRequest $return, ?Order $order = null): Money
     {
         $order ??= $this->order($return);
 
-        return $return->money('refund_amount')->min($this->refunds->remaining($return->tenant_id, $order));
+        return $this->refunds->maxForReturn($return, $order);
     }
 
     private function inspect(ReturnRequest $return, ReturnActionData $data, Actor $actor): ReturnRequest

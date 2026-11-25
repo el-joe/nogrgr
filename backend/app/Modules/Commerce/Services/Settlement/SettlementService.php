@@ -8,6 +8,7 @@ use App\Modules\Billing\Models\PaymentLog;
 use App\Modules\Billing\Repositories\Contracts\PaymentLogRepositoryContract;
 use App\Modules\Billing\Services\GatewayPaymentService;
 use App\Modules\Commerce\Enums\SettlementStatus;
+use App\Modules\Commerce\Events\SettlementPaid;
 use App\Modules\Commerce\Exceptions\CommerceException;
 use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Models\OrderSettlement as SettlementRow;
@@ -78,6 +79,7 @@ class SettlementService extends BaseService
 
         /** @var SettlementRow $settlement */
         $settlement = $this->settlements->create([
+            'reference' => $this->settlements->nextReference(),
             'tenant_id' => $tenantId,
             'order_uuid' => $order->uuid,
             'order_number' => $order->number,
@@ -156,5 +158,9 @@ class SettlementService extends BaseService
         $this->settlements->update($settlement, $outcome === PaymentOutcome::Paid
             ? ['status' => SettlementStatus::Paid, 'paid_at' => now()]
             : ['status' => SettlementStatus::Failed]);
+
+        if ($outcome === PaymentOutcome::Paid) {
+            SettlementPaid::dispatch($settlement);
+        }
     }
 }

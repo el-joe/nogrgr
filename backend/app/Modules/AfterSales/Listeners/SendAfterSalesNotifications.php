@@ -5,6 +5,7 @@ namespace App\Modules\AfterSales\Listeners;
 use App\Modules\AfterSales\Enums\ReturnStatus;
 use App\Modules\AfterSales\Events\RefundCompleted;
 use App\Modules\AfterSales\Events\RefundFailed;
+use App\Modules\AfterSales\Events\ReturnCustomerMessaged;
 use App\Modules\AfterSales\Events\ReturnStatusChanged;
 use App\Modules\Commerce\Listeners\SendOrderNotifications;
 use App\Modules\Commerce\Models\Order;
@@ -17,7 +18,8 @@ use Illuminate\Events\Dispatcher;
 /**
  * After-sales events → the shared order notifications (customer e-mail + account inbox,
  * store owners' inbox / push / mail, admins with returns.view / refunds.view):
- *   return opened / every status change / message to the customer;
+ *   return opened / every status change / message to the customer (cancelled = the
+ *   customer withdrew: staff too); customer replies → store owners and admins;
  *   refund completed (customer: order.refund_processed template) and refund failed
  *   (staff only).
  * Customers and store staff live in the store database: sent in its tenant context.
@@ -33,6 +35,7 @@ class SendAfterSalesNotifications
     public function subscribe(Dispatcher $events): void
     {
         $events->listen(ReturnStatusChanged::class, [self::class, 'returnChanged']);
+        $events->listen(ReturnCustomerMessaged::class, [self::class, 'customerMessaged']);
         $events->listen(RefundCompleted::class, [self::class, 'refundCompleted']);
         $events->listen(RefundFailed::class, [self::class, 'refundFailed']);
     }
@@ -55,10 +58,24 @@ class SendAfterSalesNotifications
                 $name = $event->from === null ? 'return_opened' : 'return_updated';
                 $this->notify->notifyStore($order, 'store_'.$name, $params);
 
-                if ($event->from === null || in_array($status, [ReturnStatus::Approved, ReturnStatus::Rejected, ReturnStatus::Refunded, ReturnStatus::Closed], true)) {
+                if ($event->from === null || in_array($status, [ReturnStatus::Approved, ReturnStatus::Rejected, ReturnStatus::Refunded, ReturnStatus::Cancelled, ReturnStatus::Closed], true)) {
                     $this->notify->notifyAdmins($order, 'admin_'.$name, 'returns.view', $params);
                 }
             }
+        });
+    }
+
+    /**
+     * The customer replied on the thread → store owners and admins with returns.view.
+     */
+    public function customerMessaged(ReturnCustomerMessaged $event): void
+    {
+        $return = $event->return;
+        $params = ['reference' => $return->reference, 'product' => $return->product_name, 'message' => mb_strimwidth($event->message, 0, 200, '…')];
+
+        $this->inStore($return->tenant_id, $return->order_uuid, function (Order $order) use ($params): void {
+            $this->notify->notifyStore($order, 'store_return_message', $params);
+            $this->notify->notifyAdmins($order, 'admin_return_message', 'returns.view', $params);
         });
     }
 

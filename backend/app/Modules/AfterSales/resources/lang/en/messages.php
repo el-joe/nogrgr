@@ -26,5 +26,16 @@ return [
         'inspection_result_required' => 'Choose the inspection result.',
         'upload_failed' => 'The file could not be stored. Please try again.',
         'file_not_found' => 'File not found.',
+        'return_window_expired' => 'The return window for this order has ended.',
+        'nothing_returnable' => 'No item of this order can be returned.',
+        'category_not_returnable' => 'This item belongs to a category that cannot be returned.',
+        'video_required' => 'Please attach a video of the item for this return.',
+        'withdraw_not_allowed' => 'A return can only be withdrawn while it is under review (now ":status").',
+        'reply_not_allowed' => 'This return is ":status"; replies are closed.',
+    ],
+    'store_api' => [
+        'created' => 'Your return request was sent.',
+        'replied' => 'Your reply was sent.',
+        'withdrawn' => 'Your return request was withdrawn.',
     ],
 ];

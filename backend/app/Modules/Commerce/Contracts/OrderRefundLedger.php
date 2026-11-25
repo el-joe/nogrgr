@@ -20,4 +20,11 @@ interface OrderRefundLedger
      * Completed + open (pending / processing / failed) refunds: what the cap must keep free.
      */
     public function reserved(int $tenantId, string $orderUuid): Money;
+
+    /**
+     * Completed refunds of several orders of a store (list KPIs).
+     *
+     * @param  list<string>  $orderUuids
+     */
+    public function refundedForOrders(int $tenantId, array $orderUuids): Money;
 }

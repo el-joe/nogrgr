@@ -4,9 +4,10 @@ namespace App\Modules\Commerce\DataTables;
 
 use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Repositories\Contracts\OrderRepositoryContract;
+use App\Modules\Commerce\Services\Orders\OrderFinanceService;
+use App\Modules\Commerce\Support\TenantRunner;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
 use App\Shared\DataTables\BaseDataTable;
-use App\Shared\Money\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Yajra\DataTables\EloquentDataTable;
@@ -23,7 +24,11 @@ final class VendorOrdersDataTable extends BaseDataTable
 {
     public const FILTERS = ['search', 'status', 'payment', 'gateway', 'kind', 'from', 'to'];
 
-    public function __construct(private readonly OrderRepositoryContract $orders) {}
+    public function __construct(
+        private readonly OrderRepositoryContract $orders,
+        private readonly OrderFinanceService $finance,
+        private readonly TenantRunner $tenants,
+    ) {}
 
     protected function query(): Builder
     {
@@ -52,7 +57,8 @@ final class VendorOrdersDataTable extends BaseDataTable
             ->addColumn('order', fn (Order $order): string => view('commerce::vendor.orders._order-cell', ['order' => $order])->render())
             ->addColumn('customer', fn (Order $order): string => e((string) $order->customer_name))
             ->addColumn('value', fn (Order $order): string => '<span dir="ltr">'.e($order->money('grand_total')->format()).'</span>')
-            ->addColumn('commission', fn (Order $order): string => '<span dir="ltr">'.e(Money::ofMinor($order->vendor_profit, $order->currency)->format()).'</span>')
+            // Same figures as the order detail (OrderSettlement): void → 0, refunds lower it (QA-P5-010).
+            ->addColumn('commission', fn (Order $order): string => '<span dir="ltr">'.e($this->finance->figures($order, (int) $this->tenants->currentTenantId())->vendorShare->format()).'</span>')
             ->addColumn('status', fn (Order $order): string => view('commerce::partials.status-badge', ['value' => $order->status])->render())
             ->addColumn('gateway', fn (Order $order): string => e(self::gatewayLabel($order->payment_gateway)))
             ->addColumn('placed', fn (Order $order): string => e((string) $order->placed_at?->translatedFormat('D, d M Y')))
