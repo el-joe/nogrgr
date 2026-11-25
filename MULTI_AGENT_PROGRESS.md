@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| P2 Localization | Languages (184 ISO, one price/lang #45), Currencies (+ daily rate sync), Countries admin; tenant language services; 88 tests | `d27aab1` |
 | Verify | Recovered WIP verified: migrate:fresh clean, suite **660/660**; repository bindings added; QA-P0-016 and CustomerAuthTest confirmed OK | `e794206` |
 
 ## Pending (by phase)
@@ -35,7 +36,7 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 
 ## In progress (batch P2-1, started 2026-11-25, agent team of 2)
 
-- **localization**: Languages (ISO seeder, CRUD, ar/en locked), Currencies (CRUD, `SyncExchangeRates` job + Sync now), Countries (seed, CRUD), tenant ar/en auto-enable method.
+- **identity** (started after localization finished): admin profile, notifications inbox + preferences, admins, roles/permission matrix, audit log (ADM-005, 007/007a, 110/110a, 111/111a, 112/112a).
 - **billing**: Plans CRUD, Subscriptions (state machine, expiry job, assign plan), Invoices (list/detail/print), Payment logs (list/detail/refund event), add-on purchase service.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
-- Next batches: P2-2 Vendors/provisioning/domains/compliance · P2-3 Admins/roles, profile, notifications, integrations · P2 QA gate.
+- Next: Vendors/provisioning/domains/compliance (after billing) · Integrations (AI translation provider switch #43) · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
