@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| P5 batch 2 + vendor requests | Cart/checkout/orders/payments + /store-api/v1 (decision #68); vendor requests hub, inbox, setup wizard (#67); suite 1674 green | `d7d9f18` |
 | P5 batch 1 | OrderPricing/OrderComposer (golden + 700-cart invariant), central+store coupons & flash sales merged by source, admin ADM-025/026; decision #66 | `44996c1` |
 | P3 Vendor catalog | VEN-010…016: store products from central + per-field tenant overrides via approved requests (#65), markup price list, import new, edit requests, sort, opportunities, own products; suite 1606 green | `03e6361` |
 | **P4 Shipping** | Fixed costs/gram, rules/zones/bands, companies + day rules + stop periods, estimator, settings, popup days; pure quote/estimator with golden tests; branches on real zones (ADM-031…035) | `4dd7689` |
@@ -39,7 +40,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 
 - **P2 Platform & Identity (rest):** services, controllers, FormRequests, DTOs, panel UI + DataTables for admins/roles, languages, countries, currencies, plans, tenant provisioning, subscriptions, integrations, notifications settings; tests.
 - **P3 Catalog & Inventory (rest):** repositories, services, controllers, panel UI, imports, media conversions, inventory; tests.
-- **P4 Shipping · P5 rest: admin orders/shipping/returns/refunds ADM-020…024, vendor orders, ledger/settlements/payouts ADM-050…053, vendor coupons/flash VEN-040/041 · P6 Central website · P7 Themes · P8 Vendor panel · P9 Affiliates/Support/Content/Reports · P10 AI · P11 Mobile · P12 Migration & launch:** not started.
+- **P4 Shipping · P5 rest: ledger/settlements/payouts ADM-050…053, vendor coupons/flash VEN-040/041 · P5 QA gate · P6 Central website · P7 Themes · P8 Vendor panel · P9 Affiliates/Support/Content/Reports · P10 AI · P11 Mobile · P12 Migration & launch:** not started.
 - **P1 Design:** Figma additions as needed per module (never edit existing client frames).
 
 ## Dependencies
@@ -55,7 +56,6 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
 - **vendorrequests**: vendor requests hub VEN-050…050j (+ vendor channel auth, pay requests), notifications inbox VEN-090, setup wizard VEN-007, real ImportProducts step.
 - **central** (P6): central website WEB-001…030 + Content admin (blog, FAQs, pages, newsletter), SEO, ComfyUI imagery.
-- Uncommitted, finished: vendorrequests (VEN-050…050j, VEN-090, VEN-007 wizard; suite 1674 green) — interleaved with orders' Billing/Integrations edits, commit together when orders reports.
-- **orders** (P5 batch 2): cart (tenant DB), checkout, orders state machine + order_facts, tenant gateway payments (spec 08), JSON store-api v1.
+- **fulfilment** (P5 batch 3): admin orders/shipping queue/returns/refunds ADM-020…024 + ADM-090, vendor orders/returns/refunds VEN-020…023, vendor gateways VEN-078 (fixes dead nav link), branch stock decrement, EditRequest disk fix.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
 - Next: Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
