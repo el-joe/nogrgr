@@ -102,4 +102,14 @@ class PlatformRuleException extends DomainException
     {
         return new self(__('platform::signup.errors.payment_unavailable'));
     }
+
+    public static function languageNotPurchasable(): self
+    {
+        return new self(__('platform::setup.errors.language_not_purchasable'));
+    }
+
+    public static function launchNeedsCountries(): self
+    {
+        return new self(__('platform::setup.errors.launch_needs_countries'));
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Platform\Services;
 
+use App\Modules\Catalog\Repositories\Contracts\StoreProductRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\TenantLanguageRepositoryContract;
 use App\Modules\Platform\DTOs\SetupProgressData;
 use App\Modules\Platform\DTOs\SetupStepData;
@@ -39,6 +40,7 @@ class OnboardingService extends BaseService
     public function __construct(
         private readonly StoreSettingsService $settings,
         private readonly TenantLanguageRepositoryContract $languages,
+        private readonly StoreProductRepositoryContract $storeProducts,
     ) {}
 
     public function progress(Tenant $tenant): SetupProgressData
@@ -89,7 +91,7 @@ class OnboardingService extends BaseService
             SetupStep::StoreDetails->value => filled($tenant->name) && filled($tenant->owner_email) && filled($tenant->owner_phone),
             SetupStep::CountriesLanguages->value => ($tenant->selling_country_ids ?? []) !== [],
             SetupStep::Theme->value => is_string($tenant->getAttribute('theme_family')) && $tenant->getAttribute('theme_family') !== '',
-            SetupStep::ImportProducts->value => false,
+            SetupStep::ImportProducts->value => $this->storeProducts->hasAny(),
             SetupStep::Logo->value => $this->settings->logoPath() !== null,
             SetupStep::PaymentReadiness->value => false,
             SetupStep::Domain->value => $tenant->domains()->where('type', DomainType::Custom->value)->exists(),

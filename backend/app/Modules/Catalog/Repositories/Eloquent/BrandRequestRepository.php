@@ -30,4 +30,9 @@ final class BrandRequestRepository extends ThreadedRequestRepository implements 
     {
         return BrandRequestStatus::openValues();
     }
+
+    protected function completedStatusValues(): array
+    {
+        return [BrandRequestStatus::Completed->value];
+    }
 }

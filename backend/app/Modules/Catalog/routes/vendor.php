@@ -1,11 +1,15 @@
 <?php
 
+use App\Modules\Catalog\Enums\RequestKind;
 use App\Modules\Catalog\Http\Controllers\Vendor\EditRequestController;
 use App\Modules\Catalog\Http\Controllers\Vendor\NewProductController;
 use App\Modules\Catalog\Http\Controllers\Vendor\OpportunityController;
 use App\Modules\Catalog\Http\Controllers\Vendor\OwnProductController;
 use App\Modules\Catalog\Http\Controllers\Vendor\PriceListController;
 use App\Modules\Catalog\Http\Controllers\Vendor\ProductSortController;
+use App\Modules\Catalog\Http\Controllers\Vendor\Requests\RequestAttachmentController;
+use App\Modules\Catalog\Http\Controllers\Vendor\Requests\RequestPaymentController;
+use App\Modules\Catalog\Http\Controllers\Vendor\Requests\VendorRequestController;
 use App\Modules\Catalog\Http\Controllers\Vendor\StoreProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -100,4 +104,62 @@ Route::middleware('auth:vendor')->prefix('catalog')->name('catalog.')->group(fun
             Route::delete('{product}', 'destroy')->whereNumber('product')->name('destroy');
         });
     });
+});
+
+/*
+| Surface: vendor panel — Requests (VEN-050 … 050j), names "vendor.requests.*": the store's
+| own product / manufacturing / brand requests ("requests.<kind>.*", the kind is read from
+| the route name by RequestKind::fromVendorRouteName(); ids are
+| central request ids limited to the current store). Permissions per kind on the vendor
+| guard: requests.products|manufacturing|brands.view / .manage.
+*/
+
+Route::middleware('auth:vendor')->prefix('requests')->name('requests.')->group(function (): void {
+    // Any request view permission; the kind-specific check happens in the policy / controller.
+    Route::middleware('permission:'.implode('|', array_map(static fn (RequestKind $kind): string => $kind->permission('view'), RequestKind::cases())).',vendor')->group(function (): void {
+        Route::get('/', [VendorRequestController::class, 'hub'])->name('index');
+        Route::get('attachments/{attachment}', RequestAttachmentController::class)->whereNumber('attachment')->name('attachments.show');
+        Route::post('broadcasting/auth', [VendorRequestController::class, 'broadcastAuth'])->middleware('throttle:60,1')->withoutMiddleware('audit.requests')->name('broadcast-auth');
+
+        Route::controller(RequestPaymentController::class)->prefix('payments/{payment}')->name('payment.')->whereNumber('payment')->group(function (): void {
+            Route::get('result', 'result')->name('result');
+            Route::get('cancel', 'cancel')->name('cancel');
+        });
+    });
+
+    foreach (RequestKind::cases() as $kind) {
+        Route::prefix($kind->value)->name($kind->value.'.')->group(function () use ($kind): void {
+            Route::middleware('permission:'.$kind->permission('view').',vendor')->controller(VendorRequestController::class)->group(function () use ($kind): void {
+                Route::get('/', 'index')->name('index');
+                Route::get('data', 'data')->name('data');
+                Route::get('{id}', 'show')->whereNumber('id')->name('show');
+                Route::get('{id}/messages', 'messages')->whereNumber('id')->name('messages');
+
+                if ($kind === RequestKind::Manufacturing) {
+                    Route::get('export', 'export')->name('export');
+                }
+            });
+
+            Route::middleware('permission:'.$kind->permission('manage').',vendor')->group(function () use ($kind): void {
+                Route::controller(VendorRequestController::class)->group(function () use ($kind): void {
+                    Route::get('create', 'create')->name('create');
+                    Route::post('/', 'store')->middleware('throttle:20,1')->name('store');
+                    Route::post('{id}/reply', 'reply')->whereNumber('id')->middleware('throttle:60,1')->name('reply');
+
+                    if ($kind === RequestKind::Manufacturing) {
+                        Route::get('products', 'products')->name('products');
+                        Route::post('{id}/cancel', 'cancel')->whereNumber('id')->name('cancel');
+                    }
+
+                    if ($kind === RequestKind::Brand) {
+                        Route::delete('{id}', 'destroy')->whereNumber('id')->name('destroy');
+                    }
+                });
+
+                if ($kind->hasPayments()) {
+                    Route::post('{id}/payments/{payment}/pay', [RequestPaymentController::class, 'pay'])->whereNumber(['id', 'payment'])->middleware('throttle:20,1')->name('payments.pay');
+                }
+            });
+        });
+    }
 });

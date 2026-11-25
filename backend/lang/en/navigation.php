@@ -121,6 +121,11 @@ return [
         'compliance' => 'Compliance center',
         'language_purchases' => 'Language purchases',
         'roles' => 'Roles & permissions',
+        'requests' => 'Requests',
+        'product_requests' => 'Product requests',
+        'manufacturing' => 'Manufacturing',
+        'brand_requests' => 'Brand requests',
+        'notifications' => 'Notifications',
     ],
     'owner' => [
         'dashboard' => 'My stores',

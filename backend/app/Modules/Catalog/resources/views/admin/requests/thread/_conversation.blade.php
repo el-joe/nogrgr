@@ -1,21 +1,25 @@
 {{--
     Shared request conversation (ADM-018d / 018f / 018h, Figma 68:31430): messages, "Live"
     indicator (Reverb push, polling fallback every 15 s), composer with Enter-to-send and
-    up to 5 attachments. One component for every threaded request type (resources/js/panels/
-    admin/requests.js, [data-thread]).
-    $request (ThreadedRequest), $messages, $canManage, $realtime (array|null).
+    up to 5 attachments. One component for every threaded request type and both panels
+    (resources/js/panels/request-thread.js, [data-thread]).
+    $request (ThreadedRequest), $messages, $canManage, $realtime (array|null),
+    optional $viewer ('admin' default | 'vendor' with $messagesUrl, $replyUrl, $threadTitle).
 --}}
 @php
+    $viewer ??= 'admin';
     $prefix = $request->kind()->routePrefix();
+    $messagesUrl ??= route($prefix.'.messages', $request->id);
+    $replyUrl ??= $viewer === 'admin' ? route($prefix.'.reply', $request->id) : null;
     $lastId = (int) ($messages->last()?->id ?? 0);
 @endphp
 <x-ui::card id="conversation" :padding="false" class="flex min-h-[420px] flex-col"
     data-thread
-    :data-messages-url="route($prefix.'.messages', $request->id)"
+    :data-messages-url="$messagesUrl"
     :data-last-id="$lastId"
 >
     <header class="flex items-center justify-between gap-3 px-5 pt-5">
-        <h2 class="text-base font-semibold text-ink">{{ __('catalog::requests.thread.title') }}</h2>
+        <h2 class="text-base font-semibold text-ink">{{ $threadTitle ?? __('catalog::requests.thread.title') }}</h2>
         <span class="inline-flex items-center gap-1.5 text-xs font-medium text-ink-secondary" data-live-state>
             <span class="size-2 rounded-full bg-line-strong" data-live-dot aria-hidden="true"></span>
             <span data-live-label data-live-text="{{ __('catalog::requests.thread.live') }}" data-offline-text="{{ __('catalog::requests.thread.offline') }}">{{ __('catalog::requests.thread.offline') }}</span>
@@ -28,14 +32,14 @@
         </div>
         <ol class="grid gap-4" role="list" data-thread-list>
             @foreach ($messages as $message)
-                @include('catalog::admin.requests.thread._message', ['message' => $message, 'request' => $request])
+                @include('catalog::admin.requests.thread._message', ['message' => $message, 'request' => $request, 'viewer' => $viewer])
             @endforeach
         </ol>
         <p class="mt-3 hidden text-xs text-danger" role="status" data-thread-error>{{ __('catalog::requests.thread.load_error') }}</p>
     </div>
 
-    @if ($canManage)
-        <form method="POST" action="{{ route($prefix.'.reply', $request->id) }}" enctype="multipart/form-data" class="grid gap-2 border-t border-line p-4" data-thread-form novalidate>
+    @if ($canManage && $replyUrl)
+        <form method="POST" action="{{ $replyUrl }}" enctype="multipart/form-data" class="grid gap-2 border-t border-line p-4" data-thread-form novalidate>
             @csrf
             <ul class="flex flex-wrap gap-2 empty:hidden" role="list" data-thread-files data-remove-label="{{ __('catalog::requests.thread.remove_file', ['name' => ':name']) }}"></ul>
             <div class="ui-control min-h-12 items-end gap-2 py-1.5">

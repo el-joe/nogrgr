@@ -39,7 +39,7 @@ return [
     ],
     'payment_log_status' => ['pending' => 'قيد الانتظار', 'captured' => 'محصّلة', 'failed' => 'فاشلة', 'refunded' => 'مستردة'],
     'payment_gateway' => ['stripe' => 'Stripe', 'moyasar' => 'ميسّر', 'paymob' => 'Paymob', 'tap' => 'Tap', 'paypal' => 'PayPal', 'manual' => 'يدوي'],
-    'payment_purpose' => ['registration' => 'تسجيل', 'renewal' => 'تجديد', 'addon' => 'إضافة', 'settlement' => 'تسوية'],
+    'payment_purpose' => ['registration' => 'تسجيل', 'renewal' => 'تجديد', 'addon' => 'إضافة', 'settlement' => 'تسوية', 'invoice' => 'سداد فاتورة'],
     'addon_purchase_status' => ['pending_payment' => 'بانتظار الدفع', 'paid' => 'مدفوعة', 'failed' => 'فاشلة', 'cancelled' => 'ملغاة'],
     'addon_type' => ['language' => 'لغة', 'ai_translation' => 'ترجمة بالذكاء الاصطناعي'],
 ];

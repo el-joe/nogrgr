@@ -8,6 +8,9 @@ import { initImpersonationBanner } from './impersonation.js';
 const pages = {
     'vendor-onboarding': () => import('./onboarding.js'),
     'vendor-catalog': () => import('./catalog.js'),
+    'vendor-requests': () => import('./requests.js'),
+    'vendor-notifications': () => import('./notifications.js'),
+    'vendor-setup-wizard': () => import('./setup-wizard.js'),
 };
 
 export function initVendor() {

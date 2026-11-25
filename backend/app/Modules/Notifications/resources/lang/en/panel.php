@@ -7,6 +7,8 @@ return [
         'inbox' => 'Inbox',
         'preferences' => 'Preferences',
     ],
+    'vendor_subtitle' => 'View all notifications from the admin team including order updates and product assignments.',
+    'unread_count' => '{0} All read|{1} 1 unread|[2,*] :count unread',
     'inbox' => [
         'all' => 'All',
         'filter_label' => 'Filter notifications by type',
@@ -14,6 +16,8 @@ return [
         'columns' => [
             'notification' => 'Notification',
             'received' => 'Received',
+            'mark_all_vendor' => 'Mark all as read',
+            'vendor_empty_description' => 'Replies to your requests, order updates and product assignments will show up here.',
         ],
         'new' => 'New',
         'open' => 'Open',

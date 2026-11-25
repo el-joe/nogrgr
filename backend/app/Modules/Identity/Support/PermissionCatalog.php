@@ -73,6 +73,8 @@ final class PermissionCatalog
                 // Commerce: promotions (P5)
                 'coupons.view', 'coupons.manage',
                 'flash-sales.view', 'flash-sales.manage',
+                // Commerce: orders (P5)
+                'orders.view', 'orders.manage',
             ],
             Guard::Affiliate->value => ['dashboard.view', 'notifications.view'],
         ];
@@ -95,9 +97,13 @@ final class PermissionCatalog
                 'settings.payment-gateways.view', 'settings.payment-gateways.manage',
                 'settings.email-templates.view', 'settings.email-templates.manage',
                 'requests.tenant-changes.view', 'requests.tenant-changes.manage',
+                'requests.products.view', 'requests.products.manage',
+                'requests.manufacturing.view', 'requests.manufacturing.manage',
+                'requests.brands.view', 'requests.brands.manage',
                 'finance.subscription.view',
                 'catalog.products.view', 'catalog.products.manage', 'catalog.products.export',
                 'catalog.own-products.view', 'catalog.own-products.manage',
+                'orders.view', 'orders.manage',
             ],
         ];
     }

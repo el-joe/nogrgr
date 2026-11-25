@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Blade;
 
 /**
  * Vendor panel bell: latest rows of the store's `notifications` table, unread count,
- * "Mark all read" and the per-tenant private channel `tenant.{tenant}.vendor.{id}`
+ * "Mark all read", "View all" (VEN-090 inbox) and the per-tenant private channel `tenant.{tenant}.vendor.{id}`
  * when broadcasting runs on Reverb.
  */
 final class VendorPanelNotificationFeed implements PanelNotificationFeed
 {
+    public const ID_PLACEHOLDER = '00000000-0000-0000-0000-000000000000';
+
     public function __construct(private readonly VendorNotificationInboxService $inbox) {}
 
     public function for(string $surface, ?Authenticatable $user): array
@@ -30,7 +32,7 @@ final class VendorPanelNotificationFeed implements PanelNotificationFeed
             'items' => $this->inbox->bellItems($user),
             'unread' => $this->inbox->unreadCount($user),
             'markAllUrl' => vendor_route('notifications.read-all'),
-            'viewAllUrl' => null,
+            'viewAllUrl' => vendor_route('notifications.index'),
             'latestUrl' => vendor_route('notifications.latest'),
             'realtime' => $this->realtime($user),
         ];
@@ -62,6 +64,8 @@ final class VendorPanelNotificationFeed implements PanelNotificationFeed
             'channel' => 'private-'.$user->receivesBroadcastNotificationsOn(),
             'authUrl' => vendor_route('notifications.broadcast-auth'),
             'event' => 'panel.notification',
+            // Live rows carry no URL (queued without a host): the bell builds it from this.
+            'openUrl' => vendor_route('notifications.open', ['notification' => self::ID_PLACEHOLDER]),
             'icons' => $icons,
         ];
     }

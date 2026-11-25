@@ -30,4 +30,28 @@ interface ThreadedRequestRepositoryContract extends RepositoryContract
      * Requests the admin has not opened or that carry unread vendor messages.
      */
     public function adminUnreadCount(): int;
+
+    /**
+     * Vendor list of one store: filters status ("open" = every open status) and search
+     * (subject, request number). Adds vendor_unread_count (unread platform messages).
+     *
+     * @param  array<string, mixed>  $filters
+     * @return Builder<TModel>
+     */
+    public function vendorListing(int $tenantId, array $filters = []): Builder;
+
+    /**
+     * @return TModel|null
+     */
+    public function findForTenant(int $tenantId, int $id): ?Model;
+
+    /**
+     * Requests of the store with unread platform messages.
+     */
+    public function vendorUnreadCount(int $tenantId): int;
+
+    /**
+     * @return array{total: int, open: int, completed: int}
+     */
+    public function vendorStats(int $tenantId): array;
 }

@@ -29,6 +29,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property string|null $product_url
  * @property int|null $category_id
  * @property Money|null $target_price
+ * @property list<int>|null $target_country_ids
  * @property RequestPriority $priority
  * @property Carbon|null $archived_at
  * @property-read Category|null $category
@@ -91,6 +92,7 @@ class ProductRequest extends Model implements ThreadedRequest
             'status' => ProductRequestStatus::class,
             'priority' => RequestPriority::class,
             'target_price' => MoneyCast::class.':USD',
+            'target_country_ids' => 'array',
             'admin_seen_at' => 'datetime',
             'last_message_at' => 'datetime',
             'archived_at' => 'datetime',

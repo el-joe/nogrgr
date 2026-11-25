@@ -39,7 +39,7 @@ return [
     ],
     'payment_log_status' => ['pending' => 'Pending', 'captured' => 'Captured', 'failed' => 'Failed', 'refunded' => 'Refunded'],
     'payment_gateway' => ['stripe' => 'Stripe', 'moyasar' => 'Moyasar', 'paymob' => 'Paymob', 'tap' => 'Tap', 'paypal' => 'PayPal', 'manual' => 'Manual'],
-    'payment_purpose' => ['registration' => 'Registration', 'renewal' => 'Renewal', 'addon' => 'Add-on', 'settlement' => 'Settlement'],
+    'payment_purpose' => ['registration' => 'Registration', 'renewal' => 'Renewal', 'addon' => 'Add-on', 'settlement' => 'Settlement', 'invoice' => 'Invoice payment'],
     'addon_purchase_status' => ['pending_payment' => 'Pending payment', 'paid' => 'Paid', 'failed' => 'Failed', 'cancelled' => 'Cancelled'],
     'addon_type' => ['language' => 'Language', 'ai_translation' => 'AI translation'],
 ];

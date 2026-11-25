@@ -7,6 +7,7 @@ use App\Modules\Shipping\DTOs\ShippingQuote;
 use App\Modules\Shipping\DTOs\ShippingQuoteRequest;
 use App\Modules\Shipping\Enums\ShippingUnavailableReason;
 use App\Modules\Shipping\Repositories\Contracts\ShippingRuleRepositoryContract;
+use App\Modules\Shipping\Support\BandDefinition;
 use App\Modules\Shipping\Support\RuleDefinition;
 use App\Shared\Money\Money;
 
@@ -37,6 +38,19 @@ class ShippingQuoteService
             : null;
 
         return self::calculate($rule, $request);
+    }
+
+    /**
+     * Free-shipping threshold of a destination in grams (cart progress bar, old
+     * CalculatesFreeShipping): the lowest min weight of a band priced 0 in the resolved
+     * zone. Null = the destination has no free band.
+     */
+    public function freeShippingThreshold(?int $countryId, ?int $cityId = null): ?int
+    {
+        $zone = $countryId !== null ? $this->rules->definitionForCountry($countryId)?->zoneFor($cityId) : null;
+        $free = array_filter($zone->bands ?? [], static fn (BandDefinition $band): bool => $band->price->isZero());
+
+        return $free === [] ? null : min(array_map(static fn (BandDefinition $band): int => $band->minGrams, $free));
     }
 
     public static function calculate(?RuleDefinition $rule, ShippingQuoteRequest $request): ShippingQuote

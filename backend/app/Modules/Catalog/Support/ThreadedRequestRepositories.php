@@ -67,4 +67,20 @@ final class ThreadedRequestRepositories
             RequestKind::Brand => $this->brands->adminUnreadCount(),
         };
     }
+
+    public function for(RequestKind $kind): ProductRequestRepositoryContract|ManufacturingRequestRepositoryContract|BrandRequestRepositoryContract
+    {
+        return match ($kind) {
+            RequestKind::Product => $this->products,
+            RequestKind::Manufacturing => $this->manufacturing,
+            RequestKind::Brand => $this->brands,
+        };
+    }
+
+    public function findForTenant(RequestKind $kind, int $tenantId, int $id): (Model&ThreadedRequest)|null
+    {
+        $request = $this->for($kind)->findForTenant($tenantId, $id);
+
+        return $request instanceof ThreadedRequest ? $request : null;
+    }
 }

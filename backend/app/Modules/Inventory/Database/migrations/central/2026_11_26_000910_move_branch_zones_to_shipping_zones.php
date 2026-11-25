@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Branch "serves zones" moves from cities (decision #53, interim) to real shipping zones
- * (decision #63). Each old city link is mapped onto the shipping zones that list that
+ * (decision #65). Each old city link is mapped onto the shipping zones that list that
  * city, then the city table is dropped.
  */
 return new class extends Migration

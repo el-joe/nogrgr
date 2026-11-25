@@ -27,6 +27,11 @@ return [
         'key' => 'requests',
         'label' => 'navigation.sections.requests',
         'items' => [
+            ['key' => 'requests', 'label' => 'navigation.vendor.requests', 'icon' => 'message', 'badge' => 'vendor-requests', 'children' => [
+                ['key' => 'requests.product', 'label' => 'navigation.vendor.product_requests', 'route' => 'vendor.requests.product.index', 'permission' => 'requests.products.view', 'badge' => 'vendor-requests.product', 'active' => 'vendor.requests.product.*'],
+                ['key' => 'requests.manufacturing', 'label' => 'navigation.vendor.manufacturing', 'route' => 'vendor.requests.manufacturing.index', 'permission' => 'requests.manufacturing.view', 'badge' => 'vendor-requests.manufacturing', 'active' => 'vendor.requests.manufacturing.*'],
+                ['key' => 'requests.brand', 'label' => 'navigation.vendor.brand_requests', 'route' => 'vendor.requests.brand.index', 'permission' => 'requests.brands.view', 'badge' => 'vendor-requests.brand', 'active' => 'vendor.requests.brand.*'],
+            ]],
             ['key' => 'requests.tenant-changes', 'label' => 'navigation.vendor.change_requests', 'icon' => 'message', 'route' => 'vendor.requests.tenant-changes.index', 'permission' => 'requests.tenant-changes.view'],
         ],
     ],

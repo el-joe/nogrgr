@@ -15,6 +15,7 @@ use App\Modules\Catalog\Support\ThreadedRequestRepositories;
 use App\Shared\Services\BaseService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -29,7 +30,11 @@ use Throwable;
  */
 class RequestThreadService extends BaseService
 {
-    public const DISK = 'local';
+    /**
+     * Central private disk (not re-rooted by tenancy): vendor uploads from the store panel
+     * and admin uploads land in the same place. Older rows say "local" (same root).
+     */
+    public const DISK = 'central';
 
     public function __construct(
         private readonly RequestMessageRepositoryContract $messages,
@@ -97,13 +102,16 @@ class RequestThreadService extends BaseService
                 }
 
                 $this->requests->update($request, $attributes);
-                $this->dispatchAfterCommit(new RequestMessagePosted($request, $message));
+
+                if (! $reply->silent) {
+                    $this->dispatchAfterCommit(new RequestMessagePosted($request, $message));
+                }
 
                 return $message;
             }, $request->getConnectionName());
         } catch (Throwable $exception) {
             foreach ($stored as $path) {
-                Storage::disk(self::DISK)->delete($path);
+                self::disk(self::DISK)->delete($path);
             }
 
             throw $exception;
@@ -127,6 +135,29 @@ class RequestThreadService extends BaseService
         }
     }
 
+    /**
+     * A store member opened the request: platform messages become read for the store.
+     */
+    public function openByVendor(Model&ThreadedRequest $request): void
+    {
+        if ($this->messages->markRead($request, MessageSender::Vendor) > 0) {
+            $this->pushUpdate($request, 'read');
+        }
+    }
+
+    /**
+     * Deletes the conversation of a request with its files (request deleted by the store).
+     */
+    public function purge(Model&ThreadedRequest $request): void
+    {
+        $paths = $this->messages->attachments($request)->map(static fn (RequestAttachment $attachment): array => [$attachment->disk, $attachment->path])->all();
+        $this->messages->deleteThread($request);
+
+        foreach ($paths as [$disk, $path]) {
+            self::disk($disk)->delete($path);
+        }
+    }
+
     public function unreadFor(Model&ThreadedRequest $request, MessageSender $reader): int
     {
         return $this->messages->unreadFor($request, $reader);
@@ -142,7 +173,9 @@ class RequestThreadService extends BaseService
      */
     public function stream(RequestAttachment $attachment, bool $download = false): StreamedResponse
     {
-        if (! Storage::disk($attachment->disk)->exists($attachment->path)) {
+        $disk = self::disk($attachment->disk);
+
+        if (! $disk->exists($attachment->path)) {
             throw new NotFoundHttpException((string) __('catalog::requests.errors.attachment_missing'));
         }
 
@@ -154,21 +187,22 @@ class RequestThreadService extends BaseService
         $inline = ! $download && ($attachment->isImage() || $attachment->mime_type === 'application/pdf');
 
         return $inline
-            ? Storage::disk($attachment->disk)->response($attachment->path, $attachment->original_name, $headers, 'inline')
-            : Storage::disk($attachment->disk)->download($attachment->path, $attachment->original_name, $headers);
+            ? $disk->response($attachment->path, $attachment->original_name, $headers, 'inline')
+            : $disk->download($attachment->path, $attachment->original_name, $headers);
     }
 
     /**
-     * Reverb (Pusher protocol) settings for the live thread of an admin page, or null when
-     * broadcasting is not Reverb — the page then polls.
+     * Reverb (Pusher protocol) settings for the live thread of an admin or vendor page, or
+     * null when broadcasting is not Reverb — the page then polls.
      *
      * @return array{key: string, host: string, port: int, tls: bool, channel: string, authUrl: string, event: string}|null
      */
-    public function realtimeConfig(Model&ThreadedRequest $request): ?array
+    public function realtimeConfig(Model&ThreadedRequest $request, string $surface = 'admin'): ?array
     {
         $key = config('broadcasting.connections.reverb.key');
+        $authRoute = $surface === 'vendor' ? 'vendor.requests.broadcast-auth' : 'admin.notifications.broadcast-auth';
 
-        if (config('broadcasting.default') !== 'reverb' || ! is_string($key) || $key === '' || ! Route::has('admin.notifications.broadcast-auth')) {
+        if (config('broadcasting.default') !== 'reverb' || ! is_string($key) || $key === '' || ! Route::has($authRoute)) {
             return null;
         }
 
@@ -180,16 +214,27 @@ class RequestThreadService extends BaseService
             'port' => (int) config('broadcasting.connections.reverb.options.port', $scheme === 'https' ? 443 : 80),
             'tls' => $scheme === 'https',
             'channel' => 'private-requests.'.$request->kind()->value.'.'.$request->getKey(),
-            'authUrl' => route('admin.notifications.broadcast-auth'),
+            'authUrl' => $surface === 'vendor' ? vendor_route('requests.broadcast-auth') : route($authRoute),
             'event' => 'request.updated',
         ];
     }
 
     /**
-     * Tells open request pages (admin now, vendor later) to refresh.
+     * Tells open request pages (admin and vendor) to refresh.
      */
     public function pushUpdate(Model&ThreadedRequest $request, string $reason, int $lastMessageId = 0): void
     {
         event(new RequestThreadUpdated($request->kind()->value, (int) $request->getKey(), $lastMessageId, $reason));
+    }
+
+    /**
+     * The disk of a stored attachment; legacy "local" rows live on the same central root.
+     */
+    private static function disk(string $name): FilesystemAdapter
+    {
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk($name === 'local' ? self::DISK : $name);
+
+        return $disk;
     }
 }

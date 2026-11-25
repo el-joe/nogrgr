@@ -26,6 +26,11 @@
         :breadcrumbs="[__('platform::panel.dashboard') => vendor_route('dashboard'), __('platform::onboarding.title') => null]"
         data-reveal="fade-up"
     >
+        @if ($canManage)
+            <x-slot:actions>
+                <x-ui::button icon="sparkles" :href="vendor_route('onboarding.setup')">{{ __('platform::setup.open') }}</x-ui::button>
+            </x-slot:actions>
+        @endif
         <x-slot:tabs>
             <x-ui::tabs id="onboarding-tabs" :items="$tabs" :active="$tab" :label="__('platform::onboarding.title')" />
         </x-slot:tabs>

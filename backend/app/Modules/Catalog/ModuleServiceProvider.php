@@ -50,7 +50,9 @@ use App\Modules\Catalog\Repositories\Eloquent\StorePriceListRunRepository;
 use App\Modules\Catalog\Repositories\Eloquent\StoreProductRepository;
 use App\Modules\Catalog\Repositories\Eloquent\TenantChangeRequestRepository;
 use App\Modules\Catalog\Support\RequestsBadgeCounter;
+use App\Modules\Catalog\Support\VendorRequestsBadgeCounter;
 use App\Modules\Identity\Models\Admin;
+use App\Modules\Identity\Models\VendorStaff;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 use App\Shared\Navigation\Contracts\PanelBadgeCounter;
 use Illuminate\Console\Scheduling\Schedule;
@@ -94,7 +96,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
     {
         parent::register();
 
-        $this->app->tag([RequestsBadgeCounter::class], PanelBadgeCounter::TAG);
+        $this->app->tag([RequestsBadgeCounter::class, VendorRequestsBadgeCounter::class], PanelBadgeCounter::TAG);
     }
 
     public function boot(): void
@@ -115,7 +117,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
     /**
      * Requests center: stable morph aliases (never class names in the DB), notifications,
      * invoice settlement, attachment policy and the live thread channel
-     * "requests.<kind>.<id>" (admins allowed to view that request type).
+     * "requests.<kind>.<id>" (admins allowed to view that request type, and the store's own
+     * staff with that view permission).
      */
     private function bootRequests(): void
     {
@@ -134,7 +137,19 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Broadcast::channel('requests.{kind}.{id}', static function (mixed $user, string $kind, string $id): bool {
             $requestKind = RequestKind::tryFrom($kind);
 
-            return $user instanceof Admin && $requestKind !== null && ctype_digit($id) && $user->can($requestKind->permission('view'));
-        }, ['guards' => ['admin']]);
+            if ($requestKind === null || ! ctype_digit($id)) {
+                return false;
+            }
+
+            if ($user instanceof Admin) {
+                return $user->can($requestKind->permission('view'));
+            }
+
+            // Store staff: only their own store's request (the tenant scope applies).
+            return $user instanceof VendorStaff
+                && tenancy()->initialized
+                && $user->can($requestKind->permission('view'))
+                && $requestKind->modelClass()::query()->whereKey((int) $id)->exists();
+        }, ['guards' => ['admin', 'vendor']]);
     }
 }

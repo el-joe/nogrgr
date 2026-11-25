@@ -46,7 +46,7 @@ function rowFor(item) {
     const tone = row.querySelector('[data-tone]');
 
     row.dataset.notificationId = item.id;
-    link.href = item.url || '#';
+    link.href = item.url || (config?.openUrl ? config.openUrl.replace('00000000-0000-0000-0000-000000000000', encodeURIComponent(item.id)) : '#');
     link.classList.toggle('bg-primary-subtle/60', Boolean(item.unread));
     row.querySelector('[data-title]').textContent = item.title;
     row.querySelector('[data-meta]').textContent = item.meta || '';

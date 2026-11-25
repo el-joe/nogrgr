@@ -117,5 +117,6 @@ return [
         'shipping.settings' => 'إعدادات الشحن',
         'coupons' => 'القسائم',
         'flash-sales' => 'التخفيضات السريعة',
+        'orders' => 'الطلبات',
     ],
 ];

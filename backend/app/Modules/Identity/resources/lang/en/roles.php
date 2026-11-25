@@ -117,5 +117,6 @@ return [
         'shipping.settings' => 'Shipping settings',
         'coupons' => 'Coupons',
         'flash-sales' => 'Flash sales',
+        'orders' => 'Orders',
     ],
 ];

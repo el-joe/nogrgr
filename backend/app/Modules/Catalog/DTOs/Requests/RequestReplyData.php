@@ -7,7 +7,9 @@ use App\Shared\DTOs\BaseDTO;
 use Illuminate\Http\UploadedFile;
 
 /**
- * One message posted to a request conversation (admin reply now, vendor reply in VEN-0xx).
+ * One message posted to a request conversation (admin or vendor reply). `silent` skips the
+ * RequestMessagePosted notification (the opening message of a new request, which has
+ * its own RequestSubmitted notification).
  */
 final class RequestReplyData extends BaseDTO
 {
@@ -20,5 +22,6 @@ final class RequestReplyData extends BaseDTO
         public readonly ?string $body,
         public readonly array $files = [],
         public readonly ?int $adminId = null,
+        public readonly bool $silent = false,
     ) {}
 }

@@ -49,4 +49,9 @@ interface RequestMessageRepositoryContract extends RepositoryContract
      * @return Collection<int, RequestAttachment>
      */
     public function attachments(Model&ThreadedRequest $request): Collection;
+
+    /**
+     * Removes every message and attachment row of a request (files are deleted by the caller).
+     */
+    public function deleteThread(Model&ThreadedRequest $request): void;
 }

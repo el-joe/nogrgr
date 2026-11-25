@@ -30,4 +30,9 @@ final class ManufacturingRequestRepository extends ThreadedRequestRepository imp
     {
         return ManufacturingRequestStatus::openValues();
     }
+
+    protected function completedStatusValues(): array
+    {
+        return [ManufacturingRequestStatus::Delivered->value];
+    }
 }

@@ -97,6 +97,14 @@ class AddonPurchaseService extends BaseService
         return $purchase;
     }
 
+    /**
+     * The store's unpaid purchase of a language, if any.
+     */
+    public function openLanguagePurchase(int $tenantId, string $languageCode): ?AddonPurchase
+    {
+        return $this->purchases->openFor($tenantId, AddonType::Language, strtolower($languageCode));
+    }
+
     public function invoiceFor(AddonPurchase $purchase): ?Invoice
     {
         /** @var Invoice|null $invoice */

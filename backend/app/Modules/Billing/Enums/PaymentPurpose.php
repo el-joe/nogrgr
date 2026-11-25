@@ -12,4 +12,5 @@ enum PaymentPurpose: string
     case Renewal = 'renewal';
     case Addon = 'addon';
     case Settlement = 'settlement';
+    case Invoice = 'invoice';
 }

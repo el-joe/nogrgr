@@ -35,4 +35,9 @@ final class ProductRequestRepository extends ThreadedRequestRepository implement
     {
         return true;
     }
+
+    protected function completedStatusValues(): array
+    {
+        return [ProductRequestStatus::AddedToCatalog->value];
+    }
 }

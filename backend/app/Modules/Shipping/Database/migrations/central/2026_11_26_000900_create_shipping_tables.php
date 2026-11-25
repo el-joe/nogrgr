@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Central shipping configuration (P4, decision #63):
+ * Central shipping configuration (P4, decision #65):
  *  - shipping_fixed_costs: one price_per_gram (USD) per country → products' fixed_shipping_costs map;
  *  - shipping_rules → countries → zones (cities) → weight bands {min g, max g, price minor};
  *  - shipping_companies + day rules per country {min, max days} + default company per country;

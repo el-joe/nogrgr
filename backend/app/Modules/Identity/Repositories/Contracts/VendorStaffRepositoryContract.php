@@ -19,4 +19,11 @@ interface VendorStaffRepositoryContract extends RepositoryContract
      * @return Collection<int, VendorStaff>
      */
     public function activeOwners(): Collection;
+
+    /**
+     * Active staff members holding a permission (vendor guard).
+     *
+     * @return Collection<int, VendorStaff>
+     */
+    public function activeWithPermission(string $permission): Collection;
 }

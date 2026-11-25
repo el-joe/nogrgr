@@ -22,7 +22,7 @@ require_once __DIR__.'/RequestHelpers.php';
 */
 
 beforeEach(function (): void {
-    Storage::fake('local');
+    Storage::fake('central');
     [$this->tenant, $this->owner] = requestsStore();
     $this->request = ProductRequest::factory()->create(['tenant_id' => $this->tenant->id, 'title' => 'Bamboo cutting board set']);
 });
@@ -72,8 +72,8 @@ it('posts a reply with attachments, pushes a live update and notifies the store 
 
     expect($message->sender)->toBe(MessageSender::Admin)
         ->and($attachment->original_name)->toBe('quote.pdf')
-        ->and($attachment->disk)->toBe('local');
-    Storage::disk('local')->assertExists($attachment->path);
+        ->and($attachment->disk)->toBe('central');
+    Storage::disk('central')->assertExists($attachment->path);
     Event::assertDispatched(RequestThreadUpdated::class, fn (RequestThreadUpdated $event): bool => $event->broadcastOn()->name === 'private-requests.product.'.$this->request->id);
     Notification::assertSentTo($this->owner, RequestUpdateNotification::class, fn (RequestUpdateNotification $notification): bool => $notification->eventName === 'admin_replied');
 });
@@ -102,7 +102,7 @@ it('returns only new messages to the polling endpoint', function (): void {
 
 it('streams attachments only to admins allowed to see the request type', function (): void {
     $message = $this->request->messages()->create(['tenant_id' => $this->tenant->id, 'sender' => MessageSender::Vendor, 'sender_name' => 'Megz', 'body' => null]);
-    Storage::disk('local')->put('requests/product/1/photo.jpg', 'image-bytes');
+    Storage::disk('central')->put('requests/product/1/photo.jpg', 'image-bytes');
     $attachment = RequestAttachment::query()->create(['message_id' => $message->id, 'disk' => 'local', 'path' => 'requests/product/1/photo.jpg', 'original_name' => 'board.jpg', 'mime_type' => 'image/jpeg', 'size' => 11]);
     $url = $this->centralUrl("/admin/requests/attachments/{$attachment->id}");
 

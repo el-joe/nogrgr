@@ -127,6 +127,40 @@ class StoreProductPricingService
     }
 
     /**
+     * Unit split of one imported product (or one of its central variants) for one
+     * destination country (cart / checkout lines, P5): cost basis, profit_amount by the
+     * markup precedence and the country's fixed shipping. Null when the store does not
+     * sell the product in that country.
+     */
+    public function unitFor(StoreProduct $product, ?int $variantId, int $countryId): ?UnitPrice
+    {
+        $view = $this->reader->view($product);
+        $central = $view->central;
+
+        if ($central === null || $view->isOwn()) {
+            return null;
+        }
+
+        $countries = $this->countriesFor($central)->filter(static fn (Country $country): bool => $country->id === $countryId)->values();
+
+        if ($countries->isEmpty()) {
+            return null;
+        }
+
+        $variant = $variantId !== null ? $view->variant($variantId) : null;
+
+        if ($variantId !== null && $variant === null) {
+            return null;
+        }
+
+        $key = (string) $countryId;
+        $rule = $this->profitMap($product, $variant?->id(), $countries, null)[$key] ?? ProfitRule::percentage($this->defaultPercentage());
+        $shipping = $this->shippingMap($view, $variant, $countries)[$key];
+
+        return UnitPricing::unitPrice($variant?->costBasis() ?? $central->costBasis(), $rule, $shipping);
+    }
+
+    /**
      * Unit price of a not-yet-added central product with the store's default markup
      * (new product preview; fixed shipping depends on the destination and is not included).
      */

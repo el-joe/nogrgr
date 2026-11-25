@@ -188,4 +188,9 @@ class StoreProductRepository extends BaseRepository implements StoreProductRepos
             OwnProductSection::BestSellers => $query->where('sold_count', '>', 0)->orderByDesc('sold_count')->orderByDesc('id'),
         };
     }
+
+    public function hasAny(): bool
+    {
+        return $this->query()->exists();
+    }
 }

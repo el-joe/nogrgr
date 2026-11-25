@@ -215,6 +215,9 @@ return [
         'payments_not_supported' => 'هذا النوع من الطلبات لا يدعم طلبات الدفع.',
         'empty_message' => 'اكتب رسالة أو أرفق ملفًا.',
         'attachment_missing' => 'الملف لم يعد متاحًا.',
+        'not_cancellable' => 'لم يعد بالإمكان إلغاء هذا الطلب.',
+        'not_deletable' => 'يمكن حذف الطلبات المعلّقة التي لا تتضمن طلبات دفع فقط.',
+        'payment_not_payable' => 'طلب الدفع هذا غير متاح للدفع.',
     ],
     'notifications' => [
         'admin_replied' => ['title' => 'رد جديد على :reference', 'body' => 'ردّت المنصة على "‎:subject": :excerpt'],
@@ -226,5 +229,7 @@ return [
         'edit_rejected' => ['title' => 'تم رفض طلب التعديل :reference', 'body' => 'تم رفض تغييراتك على :product: :reason'],
         'tenant_change_approved' => ['title' => 'تم اعتماد تعديل :type', 'body' => 'تم تطبيق تعديل :type على :store. :note'],
         'tenant_change_rejected' => ['title' => 'تم رفض تعديل :type', 'body' => 'تم رفض تعديل :type لمتجر :store: :note'],
+        'vendor_submitted' => ['title' => 'أرسل :store الطلب :reference', 'body' => ':kind جديد: ":subject".'],
+        'vendor_cancelled' => ['title' => 'ألغى :store الطلب :reference', 'body' => 'ألغى المتجر ":subject".'],
     ],
 ];

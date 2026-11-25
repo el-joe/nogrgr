@@ -97,4 +97,9 @@ interface StoreProductRepositoryContract extends RepositoryContract
      * @return list<int>
      */
     public function centralIdsMatching(string $term): array;
+
+    /**
+     * Whether the store sells at least one product (imported central or own).
+     */
+    public function hasAny(): bool;
 }

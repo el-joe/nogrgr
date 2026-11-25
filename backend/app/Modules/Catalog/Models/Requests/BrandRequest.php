@@ -6,10 +6,12 @@ use App\Modules\Catalog\Contracts\ThreadedRequest;
 use App\Modules\Catalog\Database\Factories\BrandRequestFactory;
 use App\Modules\Catalog\Enums\BrandRequestStatus;
 use App\Modules\Catalog\Enums\RequestKind;
+use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Concerns\HasRequestThread;
 use App\Shared\Tenancy\Concerns\BelongsToCurrentTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
@@ -21,6 +23,9 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property string $brand_name
  * @property string|null $description
  * @property string|null $website
+ * @property int|null $category_id
+ * @property list<int>|null $target_country_ids
+ * @property-read Category|null $category
  * @property string|null $admin_notes
  * @property BrandRequestStatus $status
  * @property string|null $submitted_by
@@ -60,12 +65,21 @@ class BrandRequest extends Model implements ThreadedRequest
     }
 
     /**
+     * @return BelongsTo<Category, $this>
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
             'status' => BrandRequestStatus::class,
+            'target_country_ids' => 'array',
             'admin_seen_at' => 'datetime',
             'last_message_at' => 'datetime',
         ];

@@ -5,18 +5,28 @@ namespace App\Modules\Catalog\Policies;
 use App\Modules\Catalog\Enums\RequestKind;
 use App\Modules\Catalog\Models\Requests\RequestAttachment;
 use App\Modules\Identity\Models\Admin;
+use App\Modules\Identity\Models\VendorStaff;
 
 /**
- * Request attachments live on the private disk: an admin may open one only with the
- * view permission of the request type it belongs to (vendor access lands with VEN-0xx,
- * limited to the store's own requests).
+ * Request attachments live on the private disk: an admin may open one with the view
+ * permission of the request type it belongs to; a store member only for the store's own
+ * requests (current tenant) and with the same view permission on the vendor guard.
  */
 class RequestAttachmentPolicy
 {
-    public function view(Admin $admin, RequestAttachment $attachment): bool
+    public function view(Admin|VendorStaff $user, RequestAttachment $attachment): bool
     {
-        $kind = RequestKind::fromMorphAlias((string) $attachment->message?->requestable_type);
+        $message = $attachment->message;
+        $kind = RequestKind::fromMorphAlias((string) $message?->requestable_type);
 
-        return $kind !== null && $admin->can($kind->permission('view'));
+        if ($kind === null || ! $user->can($kind->permission('view'))) {
+            return false;
+        }
+
+        if ($user instanceof Admin) {
+            return true;
+        }
+
+        return tenancy()->initialized && (string) $message?->tenant_id === (string) tenant()?->getTenantKey();
     }
 }

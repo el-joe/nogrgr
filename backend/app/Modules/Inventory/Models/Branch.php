@@ -104,7 +104,7 @@ class Branch extends Model implements AiTranslatable
     }
 
     /**
-     * Shipping zones the branch serves (decision #63).
+     * Shipping zones the branch serves (decision #65).
      *
      * @return BelongsToMany<ShippingZone, $this>
      */

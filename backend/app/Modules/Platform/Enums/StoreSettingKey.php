@@ -22,4 +22,7 @@ enum StoreSettingKey: string
 
     /** ISO timestamp: "Skip for now" on the payment-readiness step. */
     case PaymentReadinessSkippedAt = 'payment_readiness_skipped_at';
+
+    /** ISO timestamp: the store was launched from the setup wizard (VEN-007 step 4). */
+    case LaunchedAt = 'launched_at';
 }

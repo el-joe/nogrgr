@@ -90,6 +90,15 @@ enum RequestKind: string
         return null;
     }
 
+    /**
+     * Kind of a vendor route name ("vendor.requests.brand.show",
+     * "vendor-central.requests.manufacturing.data" → Brand / Manufacturing).
+     */
+    public static function fromVendorRouteName(?string $name): ?self
+    {
+        return preg_match('/(?:^|\.)requests\.(product|manufacturing|brand)\./', (string) $name, $match) === 1 ? self::from($match[1]) : null;
+    }
+
     public static function fromMorphAlias(string $alias): ?self
     {
         foreach (self::cases() as $kind) {

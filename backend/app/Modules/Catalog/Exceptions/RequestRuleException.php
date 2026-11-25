@@ -57,4 +57,19 @@ class RequestRuleException extends RuntimeException
     {
         return new self(__('catalog::requests.errors.attachment_missing'));
     }
+
+    public static function notCancellable(): self
+    {
+        return new self(__('catalog::requests.errors.not_cancellable'));
+    }
+
+    public static function notDeletable(): self
+    {
+        return new self(__('catalog::requests.errors.not_deletable'));
+    }
+
+    public static function paymentNotPayable(): self
+    {
+        return new self(__('catalog::requests.errors.payment_not_payable'));
+    }
 }

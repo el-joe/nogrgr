@@ -35,4 +35,14 @@ class VendorStaffRepository extends BaseRepository implements VendorStaffReposit
             ->orderBy('id')
             ->get();
     }
+
+    public function activeWithPermission(string $permission): Collection
+    {
+        return $this->query()
+            ->where('status', AccountStatus::Active)
+            ->orderBy('id')
+            ->get()
+            ->filter(static fn (VendorStaff $staff): bool => $staff->can($permission))
+            ->values();
+    }
 }

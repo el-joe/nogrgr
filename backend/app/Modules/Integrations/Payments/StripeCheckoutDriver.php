@@ -178,7 +178,7 @@ class StripeCheckoutDriver implements PaymentGatewayDriver
     /**
      * @param  callable(PendingRequest): Response  $call
      */
-    private function send(callable $call, PaymentGatewayConfig $config): Response
+    protected function send(callable $call, PaymentGatewayConfig $config): Response
     {
         $secret = $config->credential('secret_key');
 

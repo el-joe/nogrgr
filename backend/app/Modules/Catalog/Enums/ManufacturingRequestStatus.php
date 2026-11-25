@@ -38,6 +38,14 @@ enum ManufacturingRequestStatus: string
     }
 
     /**
+     * The store may still cancel its request (nothing is in production yet).
+     */
+    public function isCancellableByVendor(): bool
+    {
+        return in_array($this, [self::Requested, self::Quoted, self::Sampling, self::AwaitingPayment], true);
+    }
+
+    /**
      * Pipeline steps shown in the stepper (terminal "stopped" states excluded).
      *
      * @return list<self>

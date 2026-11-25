@@ -83,6 +83,12 @@ final class RequestMessageRepository extends BaseRepository implements RequestMe
             ->get();
     }
 
+    public function deleteThread(Model&ThreadedRequest $request): void
+    {
+        RequestAttachment::query()->whereIn('message_id', $this->forRequest($request)->select('id'))->delete();
+        $this->forRequest($request)->delete();
+    }
+
     /**
      * @return Builder<RequestMessage>
      */

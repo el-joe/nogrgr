@@ -52,7 +52,7 @@ enum SetupStep: string
     {
         return match ($this) {
             self::StoreDetails => 'settings.store.edit',
-            self::CountriesLanguages => 'settings.countries.edit',
+            self::CountriesLanguages => 'onboarding.setup',
             self::Theme => 'store.themes.index',
             self::ImportProducts => 'catalog.products.new',
             self::PaymentReadiness => 'settings.payment-gateways.index',

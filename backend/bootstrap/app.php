@@ -1,5 +1,8 @@
 <?php
 
+use App\Modules\Api\Http\Middleware\InitializeStoreApiTenancy;
+use App\Modules\Api\Http\Middleware\SetStoreApiLocale;
+use App\Modules\Api\Http\Middleware\StartStoreApiSession;
 use App\Modules\Identity\Http\Middleware\ApplyCustomerLocale;
 use App\Modules\Identity\Http\Middleware\EnsureCustomerSessionTenant;
 use App\Modules\Identity\Http\Middleware\EnsureVendorSessionTenant;
@@ -45,6 +48,14 @@ return Application::configure(basePath: dirname(__DIR__))
             InitializeTenancyByRequestData::class,
         ]);
 
+        /* Store JSON API /store-api/v1 (themes on the store domain + mobile app with X-Tenant). */
+        $middleware->group('store.api', [
+            InitializeStoreApiTenancy::class,
+            StartStoreApiSession::class,
+            SetStoreApiLocale::class,
+            'throttle:store-api',
+        ]);
+
         /* `theme` (dark/light) and `locale` are written by JS / ?lang= and read on render. */
         $middleware->encryptCookies(except: ['theme', SetLocale::COOKIE]);
         $middleware->web(append: [SetLocale::class]);
@@ -68,12 +79,12 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+            fn (Request $request) => $request->is('api/*', 'store-api/*') || $request->expectsJson(),
         );
 
         /* 401 JSON carries the login URL of the current surface / host mode for resources/js/core/http.js. */
         $exceptions->render(function (AuthenticationException $exception, Request $request) {
-            if (! $request->expectsJson() || $request->is('api/*')) {
+            if (! $request->expectsJson() || $request->is('api/*', 'store-api/*')) {
                 return null;
             }
 

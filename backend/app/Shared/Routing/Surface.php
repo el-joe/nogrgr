@@ -32,6 +32,9 @@ enum Surface: string
 
     case Storefront = 'storefront';
 
+    /** Store JSON API for themes and the mobile app: `/store-api/v1` (tenant by domain or X-Tenant). */
+    case StoreApi = 'store-api';
+
     /**
      * Central surfaces are served on the central domain(s); the others on tenant domains.
      */
@@ -49,6 +52,7 @@ enum Surface: string
     {
         return match ($this) {
             self::Api => 'api.mobile.v1.',
+            self::StoreApi => 'store-api.v1.',
             self::Vendor, self::VendorAuth => 'vendor.',
             default => $this->value.'.',
         };
@@ -66,6 +70,7 @@ enum Surface: string
             self::Vendor, self::VendorAuth => 'vendor',
             self::Storefront => 'customer',
             self::Api => 'sanctum',
+            self::StoreApi => 'customer',
             self::Central => null,
         };
     }
@@ -89,6 +94,7 @@ enum Surface: string
             self::Affiliate => [new RouteMount($this, 'affiliate', 'affiliate.', ['web', 'audit.requests'], $centralDomain)],
             self::Owner => [new RouteMount($this, 'my-account', 'owner.', ['web', 'audit.requests'], $centralDomain)],
             self::Api => [new RouteMount($this, 'api/mobile/v1', 'api.mobile.v1.', ['tenant.api', 'api'])],
+            self::StoreApi => [new RouteMount($this, 'store-api/v1', 'store-api.v1.', ['store.api'])],
             self::Vendor => [
                 new RouteMount(
                     $this,
@@ -114,6 +120,6 @@ enum Surface: string
      */
     public static function mountOrder(): array
     {
-        return [self::Central, self::Admin, self::Affiliate, self::Owner, self::Vendor, self::Api, self::VendorAuth, self::Storefront];
+        return [self::Central, self::Admin, self::Affiliate, self::Owner, self::Vendor, self::Api, self::StoreApi, self::VendorAuth, self::Storefront];
     }
 }

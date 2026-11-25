@@ -121,6 +121,11 @@ return [
         'compliance' => 'مركز الامتثال',
         'language_purchases' => 'مشتريات اللغات',
         'roles' => 'الأدوار والصلاحيات',
+        'requests' => 'الطلبات',
+        'product_requests' => 'طلبات المنتجات',
+        'manufacturing' => 'التصنيع',
+        'brand_requests' => 'طلبات العلامات التجارية',
+        'notifications' => 'الإشعارات',
     ],
     'owner' => [
         'dashboard' => 'متاجري',

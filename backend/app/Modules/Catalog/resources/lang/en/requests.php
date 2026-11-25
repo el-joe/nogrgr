@@ -215,6 +215,9 @@ return [
         'payments_not_supported' => 'This request type has no payment requests.',
         'empty_message' => 'Write a message or attach a file.',
         'attachment_missing' => 'The file is no longer available.',
+        'not_cancellable' => 'This request can no longer be cancelled.',
+        'not_deletable' => 'Only pending requests without payment requests can be deleted.',
+        'payment_not_payable' => 'This payment request is not open for payment.',
     ],
     'notifications' => [
         'admin_replied' => ['title' => 'New reply on :reference', 'body' => 'The platform replied to ":subject": :excerpt'],
@@ -226,5 +229,7 @@ return [
         'edit_rejected' => ['title' => 'Edit request :reference rejected', 'body' => 'Your changes to :product were rejected: :reason'],
         'tenant_change_approved' => ['title' => ':type change approved', 'body' => 'Your :type change was applied to :store. :note'],
         'tenant_change_rejected' => ['title' => ':type change rejected', 'body' => 'Your :type change for :store was rejected: :note'],
+        'vendor_submitted' => ['title' => ':store sent :reference', 'body' => 'New :kind: ":subject".'],
+        'vendor_cancelled' => ['title' => ':store cancelled :reference', 'body' => 'The store cancelled ":subject".'],
     ],
 ];

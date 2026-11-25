@@ -38,6 +38,19 @@ return [
             'report' => false,
         ],
 
+        /*
+         * Central private files read and written from both central and tenant context
+         * (request conversation attachments): same root as the central `local` disk but not
+         * in tenancy.filesystem.disks, so a store request never re-roots it.
+         */
+        'central' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'),
+            'serve' => false,
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -49,7 +49,7 @@ class GatewayPaymentService extends BaseService
     {
         return match ($purpose) {
             PaymentPurpose::Registration, PaymentPurpose::Renewal => GatewayPurpose::TenantRegistration,
-            PaymentPurpose::Addon, PaymentPurpose::Settlement => GatewayPurpose::VendorPayments,
+            PaymentPurpose::Addon, PaymentPurpose::Settlement, PaymentPurpose::Invoice => GatewayPurpose::VendorPayments,
         };
     }
 
@@ -70,7 +70,7 @@ class GatewayPaymentService extends BaseService
         }
 
         $config = $this->drivers->config($data->gateway, $purpose);
-        $log = $this->paymentLogs->record($data->tenantId, $logGateway, $data->purpose, $data->amount, payload: [
+        $log = $this->paymentLogs->record($data->tenantId, $logGateway, $data->purpose, $data->amount, invoice: $data->invoice, payload: [
             ...$data->meta,
             'mode' => $config->mode->value,
             'fee_minor' => $gateway->feeFor($data->amount)->minor,
