@@ -1,11 +1,11 @@
 # Multi-Agent Recovery Report
 
-Last updated: 2026-11-25 · Branch: **main** at `623b074` (+ this docs commit)
+Last updated: 2026-11-25 · Branch: **main** at `e794206` (+ this docs commit)
 
 ## Current state
 
 - All work lives on `main`; every worktree/`rebuild` branch is merged. No code was discarded.
-- P0 done (QA gate PASS). P2 and P3 partially done (schema/models/repos; no services, controllers or UI yet). Everything else pending.
+- P0 done (QA gate PASS). Recovered WIP verified: suite 660/660 green. P2 and P3 partially done (schema/models/repos; no services, controllers or UI yet). Everything else pending.
 - See `MULTI_AGENT_PROGRESS.md` (completed/pending/dependencies) and `MULTI_AGENT_FAILURES.md` (open issues).
 
 ## Architectural decisions (unchanged)
@@ -18,8 +18,9 @@ Last updated: 2026-11-25 · Branch: **main** at `623b074` (+ this docs commit)
 
 ## Exact next steps
 
-1. **Verify WIP** (1 agent, qa-engineer): `php artisan migrate:fresh` on the test DB, `php artisan test --parallel`, `vendor/bin/pint --dirty`; fix failures in the recovered Catalog/Localization/Billing code. Commit on main.
-2. **Small fixes** (same batch): QA-P0-016 (`confirm.js:117`), flaky `CustomerAuthTest`.
+1. ~~Verify WIP~~ — done (`e794206`, 660/660).
+2. ~~Small fixes~~ — QA-P0-016 already fixed; CustomerAuthTest not reproducible.
+   Note: there is no `.env.testing`; run migrations against the test DB with `APP_ENV=testing DB_DATABASE=nogrgr_testing`, never `--env=testing` (falls back to the dev DB).
 3. **Finish P2** (2 agents max, split by files):
    - Agent A: Localization — services/controllers/requests/DTOs/UI for languages, currencies, countries, tenant languages + tests.
    - Agent B: Billing/Platform — plans, subscriptions, add-ons, tenant provisioning + tests.
