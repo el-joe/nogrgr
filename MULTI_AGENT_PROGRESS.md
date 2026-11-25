@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| **P4 Shipping** | Fixed costs/gram, rules/zones/bands, companies + day rules + stop periods, estimator, settings, popup days; pure quote/estimator with golden tests; branches on real zones (ADM-031…035) | `4dd7689` |
 | P2 Vendor panel foundation | VEN-001…008: vendor auth, one-time impersonation + timed banner, shell + bell, onboarding tour/checklist, setup widget, dashboard (VEN-007 wizard + VEN-009 KPIs partial) | `4031059` |
 | P3 Requests & import | Requests center ADM-018…018i (shared thread, payments → invoices, overrides, tenant changes), Neozena import ADM-013, products bulk actions | `dab5afa` |
 | P2 QA fixes | QA-P2-004…008: PHPStan 0 outside P3 WIP, resumable provisioning, modal pages, categories at sign-up, gateway tiles, select2 chevron, OWN-009 | `25ef1cf` |
@@ -36,7 +37,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 
 - **P2 Platform & Identity (rest):** services, controllers, FormRequests, DTOs, panel UI + DataTables for admins/roles, languages, countries, currencies, plans, tenant provisioning, subscriptions, integrations, notifications settings; tests.
 - **P3 Catalog & Inventory (rest):** repositories, services, controllers, panel UI, imports, media conversions, inventory; tests.
-- **P4 Shipping · P5 Commerce · P6 Central website · P7 Themes · P8 Vendor panel · P9 Affiliates/Support/Content/Reports · P10 AI · P11 Mobile · P12 Migration & launch:** not started.
+- **P4 Shipping · P5 rest: cart/checkout, orders, returns, refunds, ledger/settlements/payouts · P6 Central website · P7 Themes · P8 Vendor panel · P9 Affiliates/Support/Content/Reports · P10 AI · P11 Mobile · P12 Migration & launch:** not started.
 - **P1 Design:** Figma additions as needed per module (never edit existing client frames).
 
 ## Dependencies
@@ -51,6 +52,6 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
 - **vendorcatalog** (P3): vendor catalog VEN-010…016 (central products + markup price list, import new, overrides edit, edit requests, sort, opportunities, own products).
-- **shipping** (P4): fixed costs, rules/zones, companies + day rules + stop periods + estimator, settings, delivery popup days; ShippingQuoteService + DeliveryDateEstimator.
+- **commerce** (P5 batch 1): OrderComposer/OrderPricing engine with ORDER_FORMULAS golden + invariant tests; coupons & flash sales central+tenant merge (#65) + admin ADM-025/026; OwnerSupportTest fix.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
 - Next: Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
