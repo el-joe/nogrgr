@@ -87,4 +87,11 @@ return [
         'compliance_review' => 'Compliance review',
         'other' => 'Other',
     ],
+    'owner_store_state' => [
+        'live' => 'Live',
+        'trial' => 'Trial',
+        'past_due' => 'Past due',
+        'suspended' => 'Suspended',
+        'not_launched' => 'Not launched',
+    ],
 ];

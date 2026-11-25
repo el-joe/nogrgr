@@ -118,6 +118,24 @@ class OwnerService extends BaseService
         return $owner;
     }
 
+    /**
+     * Attach a Google / Apple identity to the signed-in owner (profile "Link").
+     *
+     * @throws ValidationException the identity already belongs to another owner
+     */
+    public function linkSocial(Owner $owner, SocialProfileData $profile): Owner
+    {
+        $existing = $this->owners->findBySocialId($profile->provider, $profile->id);
+
+        if ($existing !== null && $existing->id !== $owner->id) {
+            throw ValidationException::withMessages(['provider' => __('identity::owner_profile.linked_elsewhere', ['provider' => $profile->provider->brand()])]);
+        }
+
+        $this->owners->update($owner, [$profile->provider->idColumn() => $profile->id]);
+
+        return $owner;
+    }
+
     public function login(Owner $owner, Request $request, bool $regenerate = true): void
     {
         if ($regenerate) {

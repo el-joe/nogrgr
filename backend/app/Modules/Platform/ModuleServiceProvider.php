@@ -14,6 +14,7 @@ use App\Modules\Platform\Listeners\AdvanceRegistrationOnPayment;
 use App\Modules\Platform\Listeners\AlertProvisioningFailure;
 use App\Modules\Platform\Listeners\NotifyOwnerOfComplianceDecision;
 use App\Modules\Platform\Listeners\WelcomeProvisionedVendor;
+use App\Modules\Platform\Policies\OwnerStorePolicy;
 use App\Modules\Platform\Repositories\Contracts\AuditEventRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\ComplianceProfileRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\DnsRecordTemplateRepositoryContract;
@@ -62,5 +63,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         // Owner portal: an active owner may add stores (one owner, many stores).
         Gate::define('owner.stores.create', static fn (mixed $user): bool => $user instanceof Owner && $user->isActive());
+        Gate::define('owner.portal', [OwnerStorePolicy::class, 'portal']);
+        Gate::define('owner.stores.manage', [OwnerStorePolicy::class, 'manageStore']);
+        Gate::define('owner.domains.manage', [OwnerStorePolicy::class, 'manageDomain']);
     }
 }

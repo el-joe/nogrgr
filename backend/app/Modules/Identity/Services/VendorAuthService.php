@@ -187,6 +187,18 @@ class VendorAuthService extends BaseService
     }
 
     /**
+     * Owner portal "Open store panel" (OWN-001): the signed-in owner opens one of their
+     * own active stores as its owner staff account, whatever a password login left
+     * pending in the picker.
+     */
+    public function openOwnedStore(int $tenantId, Request $request): Tenant
+    {
+        $request->session()->forget(self::PENDING_SESSION_KEY);
+
+        return $this->selectOwnedStore($tenantId, $request);
+    }
+
+    /**
      * Log the vendor out in either host mode. Other guards on the same host (e.g. an admin
      * session on the central host) stay signed in.
      */

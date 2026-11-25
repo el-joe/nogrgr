@@ -87,4 +87,11 @@ return [
         'compliance_review' => 'مراجعة الامتثال',
         'other' => 'أخرى',
     ],
+    'owner_store_state' => [
+        'live' => 'مباشر',
+        'trial' => 'تجربة',
+        'past_due' => 'متأخر السداد',
+        'suspended' => 'معلّق',
+        'not_launched' => 'لم يُطلق بعد',
+    ],
 ];

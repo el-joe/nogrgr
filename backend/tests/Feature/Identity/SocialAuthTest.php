@@ -204,7 +204,9 @@ it('signs an owner with stores in and opens one from the store picker', function
         ->assertOk()
         ->assertSee(route('central.tenant.stores'), false);
 
-    $this->get(route('central.tenant.stores'))
+    $this->get(route('central.tenant.stores'))->assertRedirect(route('owner.select-store'));
+
+    $this->get(route('owner.select-store'))
         ->assertOk()
         ->assertSee('Acme Store')
         ->assertSee('Beta Store')

@@ -3,6 +3,11 @@
  */
 const pages = {
     'owner-add-store': () => import('./add-store.js'),
+    'owner-select-store': () => import('./select-store.js'),
+    'owner-subscriptions': () => import('./subscriptions.js'),
+    'owner-invoices': () => import('./invoices.js'),
+    'owner-domains': () => import('./domains.js'),
+    'owner-profile': () => import('./profile.js'),
 };
 
 export function initOwner() {

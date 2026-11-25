@@ -18,7 +18,7 @@ interface SubscriptionRepositoryContract extends RepositoryContract
     /**
      * List query (admin): plan + latest invoice eager loaded, filters applied.
      *
-     * @param  array<string, mixed>  $filters  status, plan_id, gateway, search
+     * @param  array<string, mixed>  $filters  status, plan_id, gateway, search, owner_id, tenant_id
      * @return Builder<Subscription>
      */
     public function listing(array $filters = []): Builder;

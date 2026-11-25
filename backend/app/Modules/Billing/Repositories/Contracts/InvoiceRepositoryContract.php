@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 interface InvoiceRepositoryContract extends RepositoryContract
 {
     /**
-     * @param  array<string, mixed>  $filters  status, type, search
+     * @param  array<string, mixed>  $filters  status, type, search, owner_id, tenant_id
      * @return Builder<Invoice>
      */
     public function listing(array $filters = []): Builder;

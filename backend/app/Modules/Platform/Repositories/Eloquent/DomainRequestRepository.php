@@ -29,12 +29,14 @@ class DomainRequestRepository extends BaseRepository implements DomainRequestRep
         $status = DomainRequestStatus::tryFrom((string) ($filters['status'] ?? ''));
         $tenantId = filter_var($filters['tenant_id'] ?? null, FILTER_VALIDATE_INT);
         $search = is_string($filters['search'] ?? null) ? trim($filters['search']) : '';
+        $ownerId = filter_var($filters['owner_id'] ?? null, FILTER_VALIDATE_INT);
 
         return $this->query()
             ->select('domain_requests.*', 'tenants.name as store_name', 'tenants.slug as store_slug')
             ->join('tenants', 'tenants.id', '=', 'domain_requests.tenant_id')
             ->when($status !== null, fn (Builder $query) => $query->where('domain_requests.status', $status?->value))
             ->when($tenantId !== false && $tenantId !== null, fn (Builder $query) => $query->where('domain_requests.tenant_id', $tenantId))
+            ->when($ownerId !== false && $ownerId !== null, fn (Builder $query) => $query->where('tenants.owner_id', $ownerId))
             ->when($search !== '', function (Builder $query) use ($search): void {
                 $term = '%'.addcslashes($search, '%_\\').'%';
                 $query->where(fn (Builder $query) => $query->where('domain_requests.host', 'like', $term)->orWhere('tenants.name', 'like', $term)->orWhere('tenants.slug', 'like', $term));

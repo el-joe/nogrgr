@@ -53,7 +53,11 @@ class SocialAuthController extends Controller
                 'provider' => $social,
                 'state' => $exception->cancelled ? 'cancelled' : 'error',
                 'message' => $exception->userMessage,
-                'continueUrl' => $intent === SocialIntent::Login ? route('central.tenant.login') : route('central.register'),
+                'continueUrl' => match ($intent) {
+                    SocialIntent::Login => route('central.tenant.login'),
+                    SocialIntent::Link => route('owner.profile.edit'),
+                    SocialIntent::Register => route('central.register'),
+                },
             ]);
         }
 
@@ -79,6 +83,10 @@ class SocialAuthController extends Controller
 
     private function continueUrl(SocialIntent $intent, SocialProvider $provider): string
     {
+        if ($intent === SocialIntent::Link) {
+            return route('owner.profile.edit');
+        }
+
         $owner = $this->owners->current();
 
         if ($intent === SocialIntent::Login && $owner !== null && $this->owners->stores($owner)->isNotEmpty()) {

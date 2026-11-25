@@ -54,7 +54,7 @@ final class GuardRedirector
             Surface::Vendor, Surface::VendorAuth => VendorPanel::route('dashboard', mode: VendorPanel::mode($request)),
             Surface::Admin => self::named('admin.dashboard'),
             Surface::Affiliate => self::named('affiliate.dashboard'),
-            Surface::Owner => self::named('owner.stores.create'),
+            Surface::Owner => self::named('owner.dashboard'),
             Surface::Storefront => self::named('storefront.home'),
             default => url('/'),
         };

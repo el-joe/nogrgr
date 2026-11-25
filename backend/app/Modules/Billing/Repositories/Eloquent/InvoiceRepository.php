@@ -48,8 +48,13 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryContr
         $status = $filters['status'] ?? null;
         $type = $filters['type'] ?? null;
         $search = $filters['search'] ?? null;
+        $ownerId = filter_var($filters['owner_id'] ?? null, FILTER_VALIDATE_INT);
+        $tenantId = filter_var($filters['tenant_id'] ?? null, FILTER_VALIDATE_INT);
 
         return $query
+            // Owner portal: the owner's stores only (set by the server, never by the request).
+            ->when($ownerId !== false && $ownerId !== null, fn (Builder $q) => $q->whereIn('invoices.tenant_id', Tenant::query()->select('id')->where('owner_id', $ownerId)))
+            ->when($tenantId !== false && $tenantId !== null, fn (Builder $q) => $q->where('invoices.tenant_id', $tenantId))
             ->when(is_string($status) && InvoiceStatus::tryFrom($status) !== null, fn (Builder $q) => $q->where('invoices.status', $status))
             ->when(is_string($type) && InvoiceType::tryFrom($type) !== null, fn (Builder $q) => $q->where('invoices.type', $type))
             ->when(is_string($search) && $search !== '', function (Builder $q) use ($search): void {

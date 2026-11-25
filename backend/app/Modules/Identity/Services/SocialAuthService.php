@@ -25,7 +25,9 @@ use Illuminate\Validation\ValidationException;
  *               sent: the POST parameters are parked in the cache under a random key and
  *               the browser is redirected to the GET callback (same site, session back)
  *   complete()  state check → code exchange → owner found / linked / created → owner
- *               guard signed in; returns the owner and the intent
+ *               guard signed in; returns the owner and the intent. Intent "link"
+ *               (owner portal profile) only attaches the provider to the signed-in
+ *               owner instead.
  */
 class SocialAuthService extends BaseService
 {
@@ -126,6 +128,22 @@ class SocialAuthService extends BaseService
         }
 
         $profile = $this->client($provider)->profile($code, (string) $pending['nonce'], SocialRedirectUri::for($provider->value), $parameters);
+
+        if (($pending['intent'] ?? null) === SocialIntent::Link->value) {
+            $owner = $this->owners->current();
+
+            if ($owner === null) {
+                throw SocialAuthException::failed('Link without an owner session.');
+            }
+
+            try {
+                $this->owners->linkSocial($owner, $profile);
+            } catch (ValidationException $exception) {
+                throw SocialAuthException::failed($exception->getMessage(), $exception->getMessage());
+            }
+
+            return ['owner' => $owner, 'intent' => SocialIntent::Link];
+        }
 
         try {
             $owner = $this->owners->fromSocial($profile);

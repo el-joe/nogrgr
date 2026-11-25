@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 interface DomainRequestRepositoryContract extends RepositoryContract
 {
     /**
-     * Filters: status, tenant_id, search (host, store name / slug).
+     * Filters: status, tenant_id, owner_id (owner portal), search (host, store name / slug).
      *
      * @param  array<string, mixed>  $filters
      * @return Builder<DomainRequest>

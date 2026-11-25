@@ -1,0 +1,56 @@
+<?php
+
+/*
+ * Owner portal › Subscriptions (OWN-003) and Invoices (OWN-005).
+ */
+return [
+    'all_stores' => 'Store: All',
+    'search_store' => 'Search store…',
+    'columns' => [
+        'store' => 'Store',
+        'plan' => 'Plan',
+        'billing' => 'Billing',
+        'renews_on' => 'Renews on',
+        'amount' => 'Amount',
+        'status' => 'Status',
+        'invoice' => 'Invoice',
+        'type' => 'Type',
+    ],
+    'subscriptions' => [
+        'title' => 'Subscriptions',
+        'subtitle' => 'One place for every store’s plan. Renew from here with a card or PayPal.',
+        'trial' => 'Trial',
+        'overdue' => 'Overdue',
+        'renew' => 'Renew',
+        'pay_now' => 'Pay now',
+        'view_invoice' => 'View the latest invoice of :store',
+        'past_due' => ':store is past due. Renew the subscription to keep the store online.',
+        'past_due_invoice' => ':store is past due. The store is suspended until :number (:amount) is paid.',
+        'renew_title' => 'Renew subscription',
+        'renew_subtitle' => 'Pay for the next term. Your current period is extended, nothing is lost.',
+        'gateway' => 'Pay with',
+        'secure_checkout' => 'You are redirected to the payment provider’s secure checkout and brought back here afterwards.',
+        'continue_payment' => 'Continue to payment',
+        'no_gateways_title' => 'Online payment unavailable',
+        'no_gateways' => 'No payment method is available right now. Please contact support to renew.',
+        'not_renewable' => 'This subscription cannot be renewed online.',
+        'gateway_error' => 'The payment provider could not be reached. Please try again.',
+        'renewed' => 'Payment received — the subscription has been renewed.',
+        'payment_pending' => 'Your payment is being confirmed. The subscription updates as soon as it is captured.',
+        'payment_failed' => 'The payment was not completed. You have not been charged.',
+        'payment_description' => ':app :plan plan — :term renewal',
+        'empty_title' => 'No subscriptions yet',
+        'empty_description' => 'Subscriptions of your stores appear here.',
+        'add_store' => 'Add a store',
+    ],
+    'invoices' => [
+        'title' => 'Invoices',
+        'subtitle' => 'Subscription invoices for all your stores.',
+        'search' => 'Search invoice…',
+        'issued' => 'Issued :date',
+        'view' => 'View invoice :number',
+        'download' => 'Download invoice :number',
+        'empty_title' => 'No invoices yet',
+        'empty_description' => 'Invoices for your stores’ subscriptions appear here.',
+    ],
+];

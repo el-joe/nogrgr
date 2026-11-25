@@ -3,10 +3,13 @@
 namespace App\Modules\Billing;
 
 use App\Modules\Billing\Events\InvoicePaid;
+use App\Modules\Billing\Events\PaymentCaptured;
+use App\Modules\Billing\Listeners\RenewSubscriptionOnPayment;
 use App\Modules\Billing\Listeners\SendBillingNotifications;
 use App\Modules\Billing\Listeners\SettleInvoiceBillable;
 use App\Modules\Billing\Models\AddonPurchase;
 use App\Modules\Billing\Models\Subscription;
+use App\Modules\Billing\Policies\OwnerBillingPolicy;
 use App\Modules\Billing\Repositories\Contracts\AddonPurchaseRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\InvoiceRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\PaymentLogRepositoryContract;
@@ -20,6 +23,7 @@ use App\Modules\Billing\Repositories\Eloquent\SubscriptionRepository;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 
 class ModuleServiceProvider extends BaseModuleServiceProvider
 {
@@ -48,5 +52,10 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         Event::listen(InvoicePaid::class, SettleInvoiceBillable::class);
         Event::subscribe(SendBillingNotifications::class);
+        Event::listen(PaymentCaptured::class, RenewSubscriptionOnPayment::class);
+
+        // Owner portal: only subscriptions / invoices of the owner's own stores.
+        Gate::define('owner.subscriptions.manage', [OwnerBillingPolicy::class, 'subscription']);
+        Gate::define('owner.invoices.view', [OwnerBillingPolicy::class, 'invoice']);
     }
 }

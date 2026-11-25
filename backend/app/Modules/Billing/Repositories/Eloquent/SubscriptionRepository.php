@@ -71,8 +71,13 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
         $plan = $filters['plan_id'] ?? null;
         $gateway = $filters['gateway'] ?? null;
         $search = $filters['search'] ?? null;
+        $ownerId = filter_var($filters['owner_id'] ?? null, FILTER_VALIDATE_INT);
+        $tenantId = filter_var($filters['tenant_id'] ?? null, FILTER_VALIDATE_INT);
 
         return $query
+            // Owner portal: the owner's stores only (set by the server, never by the request).
+            ->when($ownerId !== false && $ownerId !== null, fn (Builder $q) => $q->whereIn('subscriptions.tenant_id', Tenant::query()->select('id')->where('owner_id', $ownerId)))
+            ->when($tenantId !== false && $tenantId !== null, fn (Builder $q) => $q->where('subscriptions.tenant_id', $tenantId))
             ->when(is_string($status) && SubscriptionStatus::tryFrom($status) !== null, fn (Builder $q) => $q->where('subscriptions.status', $status))
             ->when(is_numeric($plan), fn (Builder $q) => $q->where('subscriptions.plan_id', (int) $plan))
             ->when(is_string($gateway) && $gateway !== '', fn (Builder $q) => $q->where('subscriptions.gateway', $gateway))

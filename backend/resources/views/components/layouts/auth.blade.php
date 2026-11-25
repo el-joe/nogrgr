@@ -6,7 +6,7 @@
 @props(['surface' => 'admin', 'title' => null])
 @php
     $entry = $surface === 'storefront' ? 'storefront-'.\App\Modules\Storefront\Support\StorefrontTheme::family() : $surface;
-    $isPanel = in_array($surface, ['admin', 'vendor', 'affiliate'], true);
+    $isPanel = in_array($surface, ['admin', 'vendor', 'affiliate', 'owner'], true);
 @endphp
 <x-layouts.document
     :surface="$surface"

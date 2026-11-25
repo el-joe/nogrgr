@@ -84,6 +84,7 @@ return [
         'localization' => 'اللغات والمناطق',
         'languages' => 'اللغات',
         'translations' => 'الترجمات',
+        'translation_locks' => 'أقفال مفاتيح الترجمة',
         'currencies' => 'العملات',
         'countries' => 'الدول',
         'settings' => 'الإعدادات',
@@ -112,6 +113,11 @@ return [
         'roles' => 'الأدوار والصلاحيات',
     ],
     'owner' => [
+        'dashboard' => 'متاجري',
+        'subscriptions' => 'الاشتراكات',
+        'domains' => 'النطاقات',
+        'invoices' => 'الفواتير',
+        'profile' => 'الملف الشخصي',
         'add_store' => 'إضافة متجر آخر',
     ],
 ];

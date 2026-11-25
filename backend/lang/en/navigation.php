@@ -84,6 +84,7 @@ return [
         'localization' => 'Localization',
         'languages' => 'Languages',
         'translations' => 'Translations',
+        'translation_locks' => 'Translation key locks',
         'currencies' => 'Currencies',
         'countries' => 'Countries',
         'settings' => 'Settings',
@@ -112,6 +113,11 @@ return [
         'roles' => 'Roles & permissions',
     ],
     'owner' => [
+        'dashboard' => 'My stores',
+        'subscriptions' => 'Subscriptions',
+        'domains' => 'Domains',
+        'invoices' => 'Invoices',
+        'profile' => 'Profile',
         'add_store' => 'Add another store',
     ],
 ];

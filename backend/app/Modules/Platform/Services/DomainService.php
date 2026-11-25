@@ -79,6 +79,38 @@ class DomainService extends BaseService
         return $request;
     }
 
+    /**
+     * Correct the host of a request that is not connected yet (owner portal edit,
+     * OWN-004b): the previous check no longer applies.
+     */
+    public function changeHost(DomainRequest $request, string $host): DomainRequest
+    {
+        $host = Str::lower(trim($host));
+
+        if ($request->status !== DomainRequestStatus::Pending) {
+            throw PlatformRuleException::invalidTransition($request->status->label(), DomainRequestStatus::Pending->label());
+        }
+
+        if ($host === $request->host) {
+            return $request;
+        }
+
+        if ($this->requests->hostInUse($host, $request->id)) {
+            throw PlatformRuleException::domainTaken($host);
+        }
+
+        $this->requests->update($request, [
+            'host' => $host,
+            'dns_status' => DnsCheckStatus::Unchecked,
+            'dns_result' => null,
+            'ssl_status' => SslStatus::Unknown,
+            'ssl_expires_at' => null,
+            'last_checked_at' => null,
+        ]);
+
+        return $request;
+    }
+
     public function markConnected(DomainRequest $request): DomainRequest
     {
         $this->guard($request, DomainRequestStatus::Connected);
