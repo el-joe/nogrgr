@@ -116,7 +116,9 @@ describe('onboarding (VEN-007)', function (): void {
         // store details + countries done → 2 of 8.
         $response->assertSee(__('platform::onboarding.of', ['done' => 2, 'total' => 8]));
         // Steps whose page ships later say so instead of linking.
-        $response->assertSee(__('platform::onboarding.steps.import_products.available_after'));
+        $response->assertSee(__('platform::onboarding.steps.theme.available_after'));
+        // The import step links to the new central products page (VEN-011).
+        $response->assertSee($this->tenantUrl($tenant, 'admin/catalog/products/new'), false);
     });
 
     it('completes and dismisses the tour', function (): void {

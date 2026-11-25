@@ -53,7 +53,7 @@ class ProductExportService
     public function writePriceList($stream, array $rows): void
     {
         fwrite($stream, "\xEF\xBB\xBF");
-        fputcsv($stream, ['country', 'iso2', 'variant', 'sku', 'weight_g', 'base_usd', 'fixed_shipping_usd', 'shopper_usd'], escape: '\\');
+        fputcsv($stream, ['country', 'iso2', 'variant', 'sku', 'weight_g', 'base_usd', 'ship_per_gram_usd', 'fixed_shipping_usd', 'shopper_usd'], escape: '\\');
 
         foreach ($rows as $row) {
             fputcsv($stream, [
@@ -63,6 +63,7 @@ class ProductExportService
                 $row['sku'],
                 $row['weight'],
                 $row['base']->toDecimal(),
+                $row['rate'] ?? '',
                 $row['shipping']->toDecimal(),
                 $row['shopper']->toDecimal(),
             ], escape: '\\');

@@ -1,0 +1,2 @@
+@php($tone = match ($request->status) { \App\Modules\Catalog\Enums\EditRequestStatus::Approved => 'success', \App\Modules\Catalog\Enums\EditRequestStatus::Rejected => 'danger', default => 'warning' })
+<x-ui::badge :tone="$tone" dot>{{ $request->status->label() }}@if ($request->status === \App\Modules\Catalog\Enums\EditRequestStatus::Rejected) · {{ __('catalog::vendor.edit_requests.see_note') }}@endif</x-ui::badge>

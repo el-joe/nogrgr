@@ -119,7 +119,7 @@
                                 @if ($otherOverrides->isEmpty())
                                     {{ __('catalog::requests.edits.other_overrides_none') }}
                                 @else
-                                    {{ $otherOverrides->count() }} ({{ $otherOverrides->map(fn ($override) => EditableProductField::tryFrom($override->field)?->label() ?? $override->field)->unique()->implode(', ') }})
+                                    {{ $otherOverrides->count() }} ({{ $otherOverrides->map(fn (array $override) => EditableProductField::tryFrom($override['field'])?->label() ?? $override['field'])->unique()->implode(', ') }})
                                 @endif
                             </dd>
                         </div>

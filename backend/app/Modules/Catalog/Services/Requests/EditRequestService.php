@@ -11,25 +11,29 @@ use App\Modules\Catalog\Models\CatalogMedia;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Models\Requests\EditRequest;
-use App\Modules\Catalog\Models\Requests\ProductOverride;
 use App\Modules\Catalog\Repositories\Contracts\EditRequestRepositoryContract;
+use App\Modules\Catalog\Repositories\Contracts\ProductOverrideRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\ProductRepositoryContract;
 use App\Modules\Identity\Models\Admin;
+use App\Modules\Platform\Models\Tenant;
 use App\Shared\Services\BaseService;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Throwable;
 
 /**
  * Product edit requests → tenant overrides.
  *
  *  - submit(): vendor API (VEN-013). Builds the field diff against the central product
  *    (only real changes are kept), stores new images on the private disk.
- *  - approve(): writes one catalog_product_overrides row per changed field / locale for
- *    that tenant only; requested images are published to the public disk. The central
+ *  - approve(): writes the changed fields into the store's TENANT override tables
+ *    (product_overrides / variant_overrides, decision #65) inside that tenant's context;
+ *    requested images are published to the central public disk first. The central
  *    product is never modified.
  *  - reject(): requires a reason, shown to the vendor.
  */
@@ -42,6 +46,7 @@ class EditRequestService extends BaseService
     public function __construct(
         private readonly EditRequestRepositoryContract $editRequests,
         private readonly ProductRepositoryContract $products,
+        private readonly ProductOverrideRepositoryContract $overrides,
     ) {}
 
     /**
@@ -59,14 +64,36 @@ class EditRequestService extends BaseService
     }
 
     /**
-     * Other approved overrides of the same store + product (detail sidebar).
+     * Other approved changes of the same store + product (detail sidebar), read from the
+     * store's tenant override rows: list of {field, locale, edit_request_id}.
      *
-     * @return Collection<int, ProductOverride>
+     * @return Collection<int, array{field: string, locale: string|null, edit_request_id: int|null}>
      */
     public function otherOverrides(EditRequest $editRequest): Collection
     {
-        return $this->editRequests->overridesFor($editRequest->tenant_id, $editRequest->product_id)
-            ->filter(static fn (ProductOverride $override): bool => $override->edit_request_id !== $editRequest->id)
+        $tenant = Tenant::query()->find($editRequest->tenant_id);
+
+        if (! $tenant instanceof Tenant) {
+            return collect();
+        }
+
+        try {
+            $approvals = $this->inTenant($tenant, function () use ($editRequest): array {
+                $row = $editRequest->variant_id !== null ? $this->overrides->forVariant($editRequest->variant_id) : $this->overrides->forProduct($editRequest->product_id);
+
+                return (array) ($row?->getAttribute('approvals') ?? []);
+            });
+        } catch (Throwable) {
+            return collect();
+        }
+
+        return collect($approvals)
+            ->map(static function (mixed $approval, string $key): array {
+                [$field, $locale] = array_pad(explode(':', $key, 2), 2, null);
+
+                return ['field' => (string) $field, 'locale' => $locale, 'edit_request_id' => is_array($approval) && isset($approval['edit_request_id']) ? (int) $approval['edit_request_id'] : null];
+            })
+            ->filter(static fn (array $row): bool => $row['edit_request_id'] !== $editRequest->id)
             ->values();
     }
 
@@ -85,7 +112,9 @@ class EditRequestService extends BaseService
 
         if ($data->images !== []) {
             foreach ($data->images as $image) {
-                $path = $image->storeAs('edit-requests/'.$data->tenantId, Str::uuid()->toString().'.'.($image->guessExtension() ?: 'jpg'), self::PRIVATE_DISK);
+                // Always the central private disk (the vendor submits from tenant context, the admin reviews centrally).
+                $store = static fn (): string|false => $image->storeAs('edit-requests/'.$data->tenantId, Str::uuid()->toString().'.'.($image->guessExtension() ?: 'jpg'), self::PRIVATE_DISK);
+                $path = tenancy()->initialized ? tenancy()->central($store) : $store();
 
                 if ($path !== false) {
                     $files[] = ['path' => $path, 'name' => Str::limit($image->getClientOriginalName(), 180, ''), 'size' => (int) $image->getSize(), 'mime_type' => $image->getMimeType()];
@@ -123,27 +152,30 @@ class EditRequestService extends BaseService
     {
         $this->guardPending($editRequest);
 
-        $this->transaction(function () use ($editRequest, $admin): void {
-            foreach ($editRequest->changes as $change) {
-                $field = EditableProductField::tryFrom((string) $change['field']);
+        /** @var Tenant $tenant */
+        $tenant = Tenant::query()->findOrFail($editRequest->tenant_id);
+        $changes = [];
 
-                if ($field === null) {
-                    continue;
-                }
+        foreach ($editRequest->changes as $change) {
+            $field = EditableProductField::tryFrom((string) $change['field']);
 
-                $requested = $field === EditableProductField::Images
-                    ? json_encode($this->publishImages($editRequest, (array) $change['requested']), JSON_THROW_ON_ERROR)
-                    : (is_scalar($change['requested']) ? (string) $change['requested'] : null);
-                $current = is_array($change['current']) ? json_encode($change['current'], JSON_THROW_ON_ERROR) : (is_scalar($change['current']) ? (string) $change['current'] : null);
-
-                $this->editRequests->upsertOverride($editRequest->tenant_id, $editRequest->product_id, $editRequest->variant_id, $field->value, (string) ($change['locale'] ?? ''), [
-                    'value' => $requested,
-                    'central_value' => $current,
-                    'edit_request_id' => $editRequest->id,
-                    'approved_by' => $admin->id,
-                ]);
+            if ($field === null) {
+                continue;
             }
 
+            $changes[] = [
+                'field' => $field,
+                'locale' => $field->isTranslatable() ? (string) ($change['locale'] ?? '') : null,
+                'value' => $field === EditableProductField::Images
+                    ? $this->publishImages($editRequest, (array) $change['requested'])
+                    : $change['requested'],
+                'central' => $change['current'],
+            ];
+        }
+
+        $this->inTenant($tenant, fn () => $this->writeOverrides($editRequest, $admin, $changes));
+
+        $this->transaction(function () use ($editRequest, $admin): void {
             $this->editRequests->update($editRequest, [
                 'status' => EditRequestStatus::Approved,
                 'reviewed_by' => $admin->id,
@@ -154,6 +186,42 @@ class EditRequestService extends BaseService
         }, $editRequest->getConnectionName());
 
         return $editRequest;
+    }
+
+    /**
+     * Tenant context: per-field writes into product_overrides / variant_overrides.
+     *
+     * @param  list<array{field: EditableProductField, locale: string|null, value: mixed, central: mixed}>  $changes
+     */
+    private function writeOverrides(EditRequest $editRequest, Admin $admin, array $changes): void
+    {
+        $row = $editRequest->variant_id !== null
+            ? $this->overrides->variantRow($editRequest->product_id, $editRequest->variant_id)
+            : $this->overrides->productRow($editRequest->product_id);
+        $approvals = (array) ($row->getAttribute('approvals') ?? []);
+
+        foreach ($changes as $change) {
+            $field = $change['field'];
+            $column = $editRequest->variant_id !== null && $field === EditableProductField::Name ? 'title' : $field->value;
+
+            if ($field->isTranslatable()) {
+                $row->setTranslation($column, (string) $change['locale'], (string) $change['value']);
+            } elseif ($field === EditableProductField::Weight) {
+                $row->setAttribute($column, max(0, (int) $change['value']));
+            } else {
+                $row->setAttribute($column, array_values((array) $change['value']));
+            }
+
+            $approvals[$field->value.($change['locale'] !== null ? ':'.$change['locale'] : '')] = [
+                'edit_request_id' => $editRequest->id,
+                'approved_by' => $admin->id,
+                'approved_at' => now()->toIso8601String(),
+                'central_value' => $change['central'],
+            ];
+        }
+
+        $row->setAttribute('approvals', $approvals);
+        $row->save();
     }
 
     public function reject(EditRequest $editRequest, Admin $admin, string $reason): EditRequest
@@ -214,7 +282,22 @@ class EditRequestService extends BaseService
         foreach ($values as $fieldName => $locales) {
             $field = EditableProductField::tryFrom((string) $fieldName);
 
-            if ($field === null || ! $field->isTranslatable() || ! in_array($field, $allowed, true)) {
+            if ($field === null || ! in_array($field, $allowed, true)) {
+                continue;
+            }
+
+            if ($field->isNumeric()) {
+                $value = trim((string) (array_values($locales)[0] ?? ''));
+                $current = $variant !== null ? $variant->effectiveWeightGrams() : (int) ($product->weight_grams ?? 0);
+
+                if ($value !== '' && ctype_digit($value) && (int) $value !== $current) {
+                    $changes[] = ['field' => $field->value, 'locale' => null, 'current' => $current, 'requested' => (int) $value];
+                }
+
+                continue;
+            }
+
+            if (! $field->isTranslatable()) {
                 continue;
             }
 
@@ -268,6 +351,28 @@ class EditRequestService extends BaseService
         }
 
         return $published;
+    }
+
+    /**
+     * Runs a callback in the store's tenant context and always restores the previous
+     * context (also when the callback throws).
+     *
+     * @template TReturn
+     *
+     * @param  Closure(): TReturn  $callback
+     * @return TReturn
+     */
+    private function inTenant(Tenant $tenant, Closure $callback): mixed
+    {
+        $previous = tenant();
+
+        try {
+            tenancy()->initialize($tenant);
+
+            return $callback();
+        } finally {
+            $previous instanceof Tenant ? tenancy()->initialize($previous) : tenancy()->end();
+        }
     }
 
     private function guardPending(EditRequest $editRequest): void

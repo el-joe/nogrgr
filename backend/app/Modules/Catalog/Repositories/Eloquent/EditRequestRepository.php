@@ -4,11 +4,9 @@ namespace App\Modules\Catalog\Repositories\Eloquent;
 
 use App\Modules\Catalog\Enums\EditRequestStatus;
 use App\Modules\Catalog\Models\Requests\EditRequest;
-use App\Modules\Catalog\Models\Requests\ProductOverride;
 use App\Modules\Catalog\Repositories\Contracts\EditRequestRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @extends BaseRepository<EditRequest>
@@ -65,21 +63,5 @@ final class EditRequestRepository extends BaseRepository implements EditRequestR
             ->where('variant_id', $variantId)
             ->where('status', EditRequestStatus::Pending->value)
             ->first();
-    }
-
-    public function upsertOverride(int $tenantId, int $productId, ?int $variantId, string $field, string $locale, array $values): ProductOverride
-    {
-        /** @var ProductOverride $override */
-        $override = ProductOverride::withoutTenantScope()->updateOrCreate(
-            ['tenant_id' => $tenantId, 'product_id' => $productId, 'variant_key' => $variantId ?? 0, 'field' => $field, 'locale' => $locale],
-            [...$values, 'variant_id' => $variantId, 'approved_at' => now()],
-        );
-
-        return $override;
-    }
-
-    public function overridesFor(int $tenantId, int $productId): Collection
-    {
-        return ProductOverride::withoutTenantScope()->where('tenant_id', $tenantId)->where('product_id', $productId)->get();
     }
 }

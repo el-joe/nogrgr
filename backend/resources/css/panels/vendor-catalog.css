@@ -1,0 +1,255 @@
+/*
+ * Vendor catalog (VEN-010 … 016): server-side DataTables rendered as the Tenant Panel
+ * product card grid (Figma 12:12968 / 12:13462 / 12:12050), card micro-interactions,
+ * price-list progress. Vendor entry only.
+ */
+@layer components {
+    .vnd-card-grid.ui-datatable {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .vnd-card-grid.ui-datatable > div:first-of-type {
+        overflow: visible;
+    }
+
+    :root .vnd-card-grid table.dataTable thead {
+        display: none;
+    }
+
+    :root .vnd-card-grid table.dataTable tbody {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+        gap: 24px;
+    }
+
+    :root .vnd-card-grid[data-state='loading'] table.dataTable tbody {
+        display: none;
+    }
+
+    :root .vnd-card-grid table.dataTable tbody tr {
+        position: relative;
+        display: block;
+    }
+
+    :root .vnd-card-grid table.dataTable tbody tr:hover > * {
+        background-color: transparent;
+    }
+
+    :root .vnd-card-grid table.dataTable tbody tr:has(td.dt-empty) {
+        grid-column: 1 / -1;
+    }
+
+    :root .vnd-card-grid table.dataTable tbody td {
+        display: block;
+        height: auto;
+        padding: 0 !important;
+        border: 0;
+    }
+
+    :root .vnd-card-grid table.dataTable tbody td.w-12 {
+        position: absolute;
+        top: 12px;
+        inset-inline-start: 12px;
+        z-index: 2;
+        width: auto;
+        border-radius: 8px;
+        background-color: var(--color-surface);
+        padding: 6px !important;
+        box-shadow: var(--shadow-card);
+    }
+
+    .vnd-card-grid [data-dt-skeleton] {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+        gap: 24px;
+    }
+
+    .vnd-card-grid > footer {
+        border-top: 0;
+        padding-inline: 0;
+    }
+
+    .vnd-product-card {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 24px;
+        background-color: var(--color-surface);
+        box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+        transition:
+            transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+            box-shadow 220ms ease-out;
+    }
+
+    .vnd-product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 40px -18px rgb(11 11 11 / 28%);
+    }
+
+    .vnd-product-card-media {
+        position: relative;
+        aspect-ratio: 369 / 256;
+        overflow: hidden;
+        background-color: var(--color-subtle);
+    }
+
+    .vnd-product-card-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .vnd-product-card:hover .vnd-product-card-media img {
+        transform: scale(1.05);
+    }
+
+    .vnd-ribbon {
+        position: absolute;
+        top: 12px;
+        inset-inline-end: 12px;
+        border-radius: 999px;
+        background-color: #8a00d4;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .vnd-price-chip {
+        position: absolute;
+        bottom: 16px;
+        inset-inline-start: 0;
+        border-start-end-radius: 999px;
+        border-end-end-radius: 999px;
+        background-color: #ff0000;
+        padding: 8px 20px;
+        font-size: 13px;
+        color: #fff;
+        line-height: 1.4;
+    }
+
+    .vnd-stat-dark {
+        border-radius: 12px;
+        background-color: #1a1a1a;
+        padding: 8px 12px;
+        color: #f5f5f5;
+    }
+
+    .vnd-stat-light {
+        border-radius: 12px;
+        background-color: var(--color-subtle);
+        padding: 8px 12px;
+        color: var(--color-ink);
+    }
+
+    .vnd-card-cta {
+        display: inline-flex;
+        height: 56px;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 12px;
+        background-color: var(--color-primary);
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--color-on-primary);
+        transition:
+            background-color 150ms ease-out,
+            transform 150ms ease-out;
+    }
+
+    .vnd-card-cta:hover {
+        background-color: var(--color-primary-hover);
+    }
+
+    .vnd-card-cta:active {
+        transform: scale(0.98);
+    }
+
+    .vnd-card-cta[data-added] {
+        background-color: #8a00d4;
+    }
+
+    .vnd-card-cta[data-added]:hover {
+        background-color: #7300b0;
+    }
+
+    .vnd-tabs-pill {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .vnd-tabs-pill a {
+        display: inline-flex;
+        height: 54px;
+        align-items: center;
+        border-radius: 999px;
+        padding-inline: 40px;
+        font-size: 20px;
+        color: var(--color-ink-secondary);
+        transition: background-color 150ms ease-out;
+    }
+
+    .vnd-tabs-pill a:hover {
+        background-color: var(--color-primary-subtle);
+    }
+
+    .vnd-tabs-pill a[aria-current='page'] {
+        height: 60px;
+        background-color: var(--color-primary);
+        font-weight: 600;
+        color: var(--color-on-primary);
+    }
+
+    .vnd-market-flag {
+        display: inline-grid;
+        width: 32px;
+        height: 22px;
+        place-items: center;
+        border-radius: 4px;
+        background-color: var(--color-subtle);
+        font-size: 15px;
+        line-height: 1;
+    }
+
+    .vnd-run-bar {
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background-color: var(--color-subtle);
+    }
+
+    .vnd-run-bar > span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background-color: var(--color-primary);
+        transition: width 300ms ease-out;
+    }
+
+    .vnd-sort-item[data-dragging] {
+        border-color: var(--color-primary);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .vnd-product-card,
+        .vnd-product-card-media img,
+        .vnd-card-cta {
+            transition: none;
+        }
+
+        .vnd-product-card:hover {
+            transform: none;
+        }
+
+        .vnd-product-card:hover .vnd-product-card-media img {
+            transform: none;
+        }
+    }
+}

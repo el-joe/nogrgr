@@ -60,4 +60,7 @@ return [
     'motion.carousel' => 'carousel',
     'motion.slide' => 'slide',
     'motion.countdown' => ':days days :hours hours :minutes minutes',
+    'catalog.all' => 'All',
+    'catalog.markup_applied' => 'Markup applied to your prices.',
+    'catalog.select_products' => 'Select at least one product.',
 ];

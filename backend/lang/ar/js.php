@@ -57,4 +57,7 @@ return [
     'motion.carousel' => 'عرض دوّار',
     'motion.slide' => 'شريحة',
     'motion.countdown' => ':days يوم :hours ساعة :minutes دقيقة',
+    'catalog.all' => 'الكل',
+    'catalog.markup_applied' => 'تم تطبيق الهامش على أسعارك.',
+    'catalog.select_products' => 'اختر منتجًا واحدًا على الأقل.',
 ];

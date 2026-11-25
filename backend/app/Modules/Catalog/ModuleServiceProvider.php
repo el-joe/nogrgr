@@ -14,7 +14,9 @@ use App\Modules\Catalog\Models\Requests\ManufacturingRequest;
 use App\Modules\Catalog\Models\Requests\ProductRequest;
 use App\Modules\Catalog\Models\Requests\RequestAttachment;
 use App\Modules\Catalog\Models\Requests\RequestPayment;
+use App\Modules\Catalog\Models\StoreProduct;
 use App\Modules\Catalog\Policies\RequestAttachmentPolicy;
+use App\Modules\Catalog\Policies\StoreProductPolicy;
 use App\Modules\Catalog\Repositories\Contracts\AttributeRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\BrandRequestRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\CatalogImportRepositoryContract;
@@ -23,10 +25,13 @@ use App\Modules\Catalog\Repositories\Contracts\EditRequestRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\ManufacturingRequestRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\ProductBadgeRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\ProductLabelRepositoryContract;
+use App\Modules\Catalog\Repositories\Contracts\ProductOverrideRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\ProductRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\ProductRequestRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\RequestMessageRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\RequestPaymentRepositoryContract;
+use App\Modules\Catalog\Repositories\Contracts\StorePriceListRunRepositoryContract;
+use App\Modules\Catalog\Repositories\Contracts\StoreProductRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\TenantChangeRequestRepositoryContract;
 use App\Modules\Catalog\Repositories\Eloquent\AttributeRepository;
 use App\Modules\Catalog\Repositories\Eloquent\BrandRequestRepository;
@@ -36,10 +41,13 @@ use App\Modules\Catalog\Repositories\Eloquent\EditRequestRepository;
 use App\Modules\Catalog\Repositories\Eloquent\ManufacturingRequestRepository;
 use App\Modules\Catalog\Repositories\Eloquent\ProductBadgeRepository;
 use App\Modules\Catalog\Repositories\Eloquent\ProductLabelRepository;
+use App\Modules\Catalog\Repositories\Eloquent\ProductOverrideRepository;
 use App\Modules\Catalog\Repositories\Eloquent\ProductRepository;
 use App\Modules\Catalog\Repositories\Eloquent\ProductRequestRepository;
 use App\Modules\Catalog\Repositories\Eloquent\RequestMessageRepository;
 use App\Modules\Catalog\Repositories\Eloquent\RequestPaymentRepository;
+use App\Modules\Catalog\Repositories\Eloquent\StorePriceListRunRepository;
+use App\Modules\Catalog\Repositories\Eloquent\StoreProductRepository;
 use App\Modules\Catalog\Repositories\Eloquent\TenantChangeRequestRepository;
 use App\Modules\Catalog\Support\RequestsBadgeCounter;
 use App\Modules\Identity\Models\Admin;
@@ -77,6 +85,9 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         RequestPaymentRepositoryContract::class => RequestPaymentRepository::class,
         EditRequestRepositoryContract::class => EditRequestRepository::class,
         TenantChangeRequestRepositoryContract::class => TenantChangeRequestRepository::class,
+        StoreProductRepositoryContract::class => StoreProductRepository::class,
+        StorePriceListRunRepositoryContract::class => StorePriceListRunRepository::class,
+        ProductOverrideRepositoryContract::class => ProductOverrideRepository::class,
     ];
 
     public function register(): void
@@ -93,6 +104,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Event::listen(CatalogImportFinished::class, NotifyCatalogImportFinished::class);
 
         $this->bootRequests();
+
+        Gate::policy(StoreProduct::class, StoreProductPolicy::class);
 
         $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
             $schedule->job(new RefreshBadgeAutoFill)->dailyAt(self::BADGE_REFRESH_AT)->name('catalog:refresh-badge-auto-fill')->onOneServer();
@@ -111,6 +124,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
             RequestKind::Manufacturing->morphAlias() => ManufacturingRequest::class,
             RequestKind::Brand->morphAlias() => BrandRequest::class,
             'request_payment' => RequestPayment::class,
+            'store_product' => StoreProduct::class,
         ]);
 
         Event::subscribe(SendRequestNotifications::class);

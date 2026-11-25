@@ -40,7 +40,7 @@
                     <ul class="grid gap-2" data-support-socials>
                         @foreach ($socials as $social)
                             <li>
-                                <a href="{{ $social['url'] }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between gap-3 rounded-control px-3 py-2.5 text-sm text-ink transition-colors hover:bg-subtle focus-visible:outline-2 focus-visible:outline-primary">
+                                <a href="{{ $social['url'] }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between gap-3 rounded-control px-3 py-2.5 text-sm text-ink transition-colors hover:bg-subtle focus-visible:outline-2 focus-visible:outline-primary" data-support-social="{{ $social['network'] }}">
                                     <span class="font-medium">{{ __('integrations::general.socials.'.$social['network']) }}</span>
                                     <x-ui::icon name="link" :size="16" class="text-ink-secondary" />
                                 </a>

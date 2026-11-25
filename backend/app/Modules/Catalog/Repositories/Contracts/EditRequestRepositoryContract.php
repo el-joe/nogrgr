@@ -3,13 +3,12 @@
 namespace App\Modules\Catalog\Repositories\Contracts;
 
 use App\Modules\Catalog\Models\Requests\EditRequest;
-use App\Modules\Catalog\Models\Requests\ProductOverride;
 use App\Shared\Repositories\Contracts\RepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
- * Product edit requests + the tenant overrides they produce (central DB).
+ * Product edit requests (central DB); approved changes land in the tenant override
+ * tables (ProductOverrideRepositoryContract, decision #65).
  *
  * @extends RepositoryContract<EditRequest>
  */
@@ -26,16 +25,4 @@ interface EditRequestRepositoryContract extends RepositoryContract
     public function pendingCount(): int;
 
     public function pendingFor(int $tenantId, int $productId, ?int $variantId): ?EditRequest;
-
-    /**
-     * Inserts or replaces the override of one field / locale.
-     *
-     * @param  array{value: string|null, central_value: string|null, edit_request_id: int|null, approved_by: int|null}  $values
-     */
-    public function upsertOverride(int $tenantId, int $productId, ?int $variantId, string $field, string $locale, array $values): ProductOverride;
-
-    /**
-     * @return Collection<int, ProductOverride>
-     */
-    public function overridesFor(int $tenantId, int $productId): Collection;
 }

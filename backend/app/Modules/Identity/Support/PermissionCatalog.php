@@ -70,6 +70,9 @@ final class PermissionCatalog
                 'shipping.stop-periods.view', 'shipping.stop-periods.manage',
                 'shipping.delivery-popup.view', 'shipping.delivery-popup.manage',
                 'shipping.settings.view', 'shipping.settings.manage',
+                // Commerce: promotions (P5)
+                'coupons.view', 'coupons.manage',
+                'flash-sales.view', 'flash-sales.manage',
             ],
             Guard::Affiliate->value => ['dashboard.view', 'notifications.view'],
         ];

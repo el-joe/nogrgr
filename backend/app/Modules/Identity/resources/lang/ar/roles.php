@@ -115,5 +115,7 @@ return [
         'shipping.stop-periods' => 'فترات توقف الشحن',
         'shipping.delivery-popup' => 'أيام نافذة التوصيل',
         'shipping.settings' => 'إعدادات الشحن',
+        'coupons' => 'القسائم',
+        'flash-sales' => 'التخفيضات السريعة',
     ],
 ];

@@ -4,8 +4,8 @@ use App\Modules\Catalog\DTOs\Requests\EditRequestSubmissionData;
 use App\Modules\Catalog\Enums\EditRequestStatus;
 use App\Modules\Catalog\Exceptions\RequestRuleException;
 use App\Modules\Catalog\Models\Product;
+use App\Modules\Catalog\Models\ProductOverride;
 use App\Modules\Catalog\Models\Requests\EditRequest;
-use App\Modules\Catalog\Models\Requests\ProductOverride;
 use App\Modules\Catalog\Notifications\RequestUpdateNotification;
 use App\Modules\Catalog\Services\Requests\EditRequestService;
 use Illuminate\Http\UploadedFile;
@@ -74,25 +74,26 @@ it('lists edit requests and renders the diff page', function (): void {
         ->assertDontSee('edit-reject-modal', false);
 });
 
-it('approves an edit request into a tenant override without touching the central product', function (): void {
+it('approves an edit request into the store tenant override table without touching the central product', function (): void {
     Notification::fake();
-    $request = submitEditRequest($this, ['name' => ['ar' => 'سماعات ميغز برو']], [UploadedFile::fake()->image('front.jpg')]);
+    $this->tenant = $this->createTenant('megz', ['owner_id' => $this->owner->id, 'owner_name' => $this->owner->name, 'owner_email' => $this->owner->email]);
+    $request = submitEditRequest($this, ['name' => ['ar' => 'سماعات ميغز برو'], 'weight_grams' => ['' => '250']], [UploadedFile::fake()->image('front.jpg')]);
     $this->actingAs(catalogAdmin(['requests.edits.manage']), 'admin');
 
     $this->postJson($this->centralUrl("/admin/requests/edits/{$request->id}/approve"))->assertOk();
 
-    $overrides = ProductOverride::withoutTenantScope()->where('edit_request_id', $request->id)->get()->keyBy('field');
-    $images = json_decode((string) $overrides['images']->value, true);
+    /** @var ProductOverride $override */
+    $override = $this->tenant->run(fn () => ProductOverride::query()->where('product_id', $this->product->id)->firstOrFail());
 
     expect($request->refresh()->status)->toBe(EditRequestStatus::Approved)
-        ->and($overrides)->toHaveCount(2)
-        ->and($overrides['name']->tenant_id)->toBe($this->tenant->id)
-        ->and($overrides['name']->locale)->toBe('ar')
-        ->and($overrides['name']->value)->toBe('سماعات ميغز برو')
-        ->and($overrides['name']->central_value)->toBe('سماعات لاسلكية برو')
-        ->and($images)->toHaveCount(1)
+        ->and($override->getTranslation('name', 'ar', false))->toBe('سماعات ميغز برو')
+        ->and($override->getTranslation('name', 'en', false))->toBe('')
+        ->and($override->weight_grams)->toBe(250)
+        ->and($override->approvals['name:ar']['central_value'])->toBe('سماعات لاسلكية برو')
+        ->and($override->approvals['name:ar']['edit_request_id'])->toBe($request->id)
+        ->and($override->images)->toHaveCount(1)
         ->and($this->product->refresh()->getTranslation('name', 'ar'))->toBe('سماعات لاسلكية برو');
-    Storage::disk('public')->assertExists($images[0]);
+    Storage::disk('public')->assertExists($override->images[0]);
     Notification::assertSentTo($this->owner, RequestUpdateNotification::class, fn (RequestUpdateNotification $notification): bool => $notification->eventName === 'edit_approved');
 
     $this->postJson($this->centralUrl("/admin/requests/edits/{$request->id}/approve"))->assertUnprocessable();
@@ -109,8 +110,7 @@ it('requires a reason to reject', function (): void {
     $this->postJson($this->centralUrl("/admin/requests/edits/{$request->id}/reject"), ['reason' => 'Brand names are not allowed in titles.'])->assertOk();
 
     expect($request->refresh()->status)->toBe(EditRequestStatus::Rejected)
-        ->and($request->reason)->toBe('Brand names are not allowed in titles.')
-        ->and(ProductOverride::withoutTenantScope()->count())->toBe(0);
+        ->and($request->reason)->toBe('Brand names are not allowed in titles.');
     Notification::assertSentTo($this->owner, RequestUpdateNotification::class, fn (RequestUpdateNotification $notification): bool => $notification->eventName === 'edit_rejected');
 });
 

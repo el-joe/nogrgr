@@ -115,5 +115,7 @@ return [
         'shipping.stop-periods' => 'Shipping stop periods',
         'shipping.delivery-popup' => 'Delivery popup days',
         'shipping.settings' => 'Shipping settings',
+        'coupons' => 'Coupons',
+        'flash-sales' => 'Flash sales',
     ],
 ];
