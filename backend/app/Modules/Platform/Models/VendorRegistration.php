@@ -32,6 +32,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property string|null $slug
  * @property string|null $custom_domain
  * @property int|null $profit_percent_bps
+ * @property list<int>|null $selling_category_ids
  * @property string|null $token_hash
  * @property Carbon|null $expires_at
  * @property Carbon|null $link_sent_at
@@ -60,7 +61,7 @@ class VendorRegistration extends Model
      */
     protected $fillable = [
         'owner_id', 'email', 'phone', 'locale', 'plan_id', 'term', 'status', 'owner_name', 'password', 'store_name', 'slug',
-        'custom_domain', 'profit_percent_bps', 'token_hash', 'expires_at', 'link_sent_at', 'link_sent_count',
+        'custom_domain', 'profit_percent_bps', 'selling_category_ids', 'token_hash', 'expires_at', 'link_sent_at', 'link_sent_count',
         'email_verified_at', 'completed_at', 'tenant_id', 'meta',
     ];
 
@@ -84,6 +85,7 @@ class VendorRegistration extends Model
             'status' => RegistrationStatus::class,
             'password' => 'hashed',
             'profit_percent_bps' => 'integer',
+            'selling_category_ids' => 'array',
             'link_sent_count' => 'integer',
             'expires_at' => 'datetime',
             'link_sent_at' => 'datetime',

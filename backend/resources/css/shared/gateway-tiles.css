@@ -1,0 +1,48 @@
+/*
+ * Payment gateway monogram tiles (Figma Admin Panel 51:18657): each gateway uses its
+ * official brand colour. Brand colours do not change in dark mode. No trademark logos
+ * are shipped; the tile shows the gateway's initials (PaymentGatewayCode::initials()).
+ * Markup: <span class="ui-gateway-tile" data-gateway="stripe">ST</span>
+ */
+:root {
+    --gateway-cod: #5c5552;
+    --gateway-cod-ink: #ffffff;
+    --gateway-stripe: #635bff;
+    --gateway-stripe-ink: #ffffff;
+    --gateway-paypal: #003087;
+    --gateway-paypal-ink: #ffffff;
+    --gateway-paymob: #1e4db7;
+    --gateway-paymob-ink: #ffffff;
+    --gateway-tap: #111111;
+    --gateway-tap-ink: #ffffff;
+    --gateway-myfatoorah: #0b7a75;
+    --gateway-myfatoorah-ink: #ffffff;
+    --gateway-moyasar: #0a2540;
+    --gateway-moyasar-ink: #ffffff;
+    --gateway-tabby: #3bffc1;
+    --gateway-tabby-ink: #41251e;
+    --gateway-tamara: #f5a37c;
+    --gateway-tamara-ink: #ffffff;
+}
+
+@layer components {
+    .ui-gateway-tile {
+        background-color: var(--gateway-tile, var(--color-inverse));
+        color: var(--gateway-tile-ink, var(--color-on-inverse));
+    }
+
+    .ui-gateway-tile[data-gateway='cod'] { --gateway-tile: var(--gateway-cod); --gateway-tile-ink: var(--gateway-cod-ink); }
+    .ui-gateway-tile[data-gateway='stripe'] { --gateway-tile: var(--gateway-stripe); --gateway-tile-ink: var(--gateway-stripe-ink); }
+    .ui-gateway-tile[data-gateway='paypal'] { --gateway-tile: var(--gateway-paypal); --gateway-tile-ink: var(--gateway-paypal-ink); }
+    .ui-gateway-tile[data-gateway='paymob'] { --gateway-tile: var(--gateway-paymob); --gateway-tile-ink: var(--gateway-paymob-ink); }
+    .ui-gateway-tile[data-gateway='tap'] { --gateway-tile: var(--gateway-tap); --gateway-tile-ink: var(--gateway-tap-ink); }
+    .ui-gateway-tile[data-gateway='myfatoorah'] { --gateway-tile: var(--gateway-myfatoorah); --gateway-tile-ink: var(--gateway-myfatoorah-ink); }
+    .ui-gateway-tile[data-gateway='moyasar'] { --gateway-tile: var(--gateway-moyasar); --gateway-tile-ink: var(--gateway-moyasar-ink); }
+    .ui-gateway-tile[data-gateway='tabby'] { --gateway-tile: var(--gateway-tabby); --gateway-tile-ink: var(--gateway-tabby-ink); }
+    .ui-gateway-tile[data-gateway='tamara'] { --gateway-tile: var(--gateway-tamara); --gateway-tile-ink: var(--gateway-tamara-ink); }
+
+    /* Near-black tiles need an edge on the dark canvas. */
+    .dark .ui-gateway-tile {
+        box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+    }
+}

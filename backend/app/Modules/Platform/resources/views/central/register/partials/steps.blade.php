@@ -1,20 +1,23 @@
 {{--
     Register steps (Figma "Register steps" 125:11306): Account · Plan · Payment · Store.
-    Input: $current (1-based). Earlier steps show a check; on phones only the current
-    step keeps its label (Figma 125:11865).
+    Input: $current (1-based) and optional $done (step keys already finished; defaults
+    to the steps before $current). The account step is finished last (verify + complete
+    come after plan / payment), so those pages pass $done explicitly. Finished steps
+    show a check; on phones only the current step keeps its label (Figma 125:11865).
 --}}
 @php
     $stepKeys = ['account', 'plan', 'payment', 'store'];
+    $doneKeys = $done ?? array_slice($stepKeys, 0, max(0, $current - 1));
 @endphp
 <ol class="flex items-center gap-2 sm:gap-3" aria-label="{{ __('platform::register.steps.label') }}" data-reveal="fade-up">
     @foreach ($stepKeys as $index => $key)
         @php
             $number = $index + 1;
-            $isDone = $number < $current;
             $isCurrent = $number === $current;
+            $isDone = ! $isCurrent && in_array($key, $doneKeys, true);
         @endphp
         @if ($index > 0)
-            <li aria-hidden="true" @class(['h-0.5 w-4 shrink-0 sm:w-10', 'bg-primary' => $number <= $current, 'bg-(--reg-rail)' => $number > $current])></li>
+            <li aria-hidden="true" @class(['h-0.5 w-4 shrink-0 sm:w-10', 'bg-primary' => $isDone || $isCurrent, 'bg-(--reg-rail)' => ! $isDone && ! $isCurrent])></li>
         @endif
         <li class="flex items-center gap-2" @if ($isCurrent) aria-current="step" @endif>
             <span @class([

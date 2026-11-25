@@ -2,6 +2,7 @@
 
 namespace App\Modules\Platform\Http\Controllers\Central;
 
+use App\Modules\Catalog\Services\CategoryService;
 use App\Modules\Platform\DTOs\RegistrationAccountData;
 use App\Modules\Platform\DTOs\RegistrationStoreData;
 use App\Modules\Platform\Enums\RegistrationStatus;
@@ -27,7 +28,10 @@ class CompleteRegistrationController extends Controller
     /** Query keys that may be added to the signed link without breaking it. */
     private const UNSIGNED_QUERY = ['lang', 'step'];
 
-    public function __construct(private readonly VendorRegistrationService $registrations) {}
+    public function __construct(
+        private readonly VendorRegistrationService $registrations,
+        private readonly CategoryService $categories,
+    ) {}
 
     public function show(Request $request): View
     {
@@ -65,6 +69,7 @@ class CompleteRegistrationController extends Controller
                 'token' => $token,
                 'accountUrl' => $request->fullUrlWithQuery(['step' => 'account']),
                 'baseDomain' => (string) config('tenancy.base_domain'),
+                'categoryOptions' => $this->categories->topLevelOptions(),
             ]);
         }
 
@@ -113,6 +118,7 @@ class CompleteRegistrationController extends Controller
                 slug: (string) $request->validated('slug'),
                 customDomain: $request->validated('custom_domain') ?: null,
                 profitPercentBps: $request->profitPercentBps(),
+                sellingCategoryIds: $request->categoryIds(),
             ));
         } catch (PlatformRuleException $exception) {
             return back()->withInput($request->except('token'))->with('error', $exception->getMessage());

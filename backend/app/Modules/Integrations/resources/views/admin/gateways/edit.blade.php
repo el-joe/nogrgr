@@ -23,7 +23,7 @@
             <x-ui::card>
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div class="flex min-w-0 items-center gap-3">
-                        <span class="grid size-11 shrink-0 place-items-center rounded-control bg-inverse text-xs font-semibold text-on-inverse" aria-hidden="true">{{ $current->code->initials() }}</span>
+                        <span class="ui-gateway-tile grid size-11 shrink-0 place-items-center rounded-control text-sm font-semibold" data-gateway="{{ $current->code->value }}" aria-hidden="true">{{ $current->code->initials() }}</span>
                         <div class="min-w-0">
                             <div class="flex flex-wrap items-center gap-2">
                                 <h2 class="text-lg font-semibold text-ink">{{ $name }}</h2>

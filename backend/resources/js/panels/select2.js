@@ -4,7 +4,7 @@
  * (Not data-select2: Select2 reads data-* into its own data store and would treat
  * data-select2="" as an existing instance.)
  */
-import { $ } from './vendor-libs';
+import { $ } from '../core/select2-lib.js';
 import { t } from '../core/i18n';
 
 export function initSelect2(root = document) {

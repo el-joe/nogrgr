@@ -59,7 +59,7 @@ final class SubscriptionsCsvExport
                         $subscription->status->label(),
                         $subscription->current_period_starts_at?->toDateString() ?? '',
                         $subscription->nextBillingAt()?->toDateString() ?? '',
-                        $subscription->latestInvoice?->number ?? '',
+                        $subscription->latestInvoice->number ?? '',
                         $subscription->created_at?->toDateTimeString() ?? '',
                     ], escape: '');
                 }

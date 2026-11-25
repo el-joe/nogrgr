@@ -274,6 +274,7 @@ class VendorRegistrationService extends BaseService
                 registrationId: $registration->id,
                 ownerId: $owner->id,
                 paymentLogId: $paymentLogId,
+                sellingCategoryIds: $data->sellingCategoryIds,
             ));
 
             $this->registrations->update($registration, [
@@ -281,6 +282,7 @@ class VendorRegistrationService extends BaseService
                 'slug' => Str::lower($data->slug),
                 'custom_domain' => $data->customDomain,
                 'profit_percent_bps' => $data->profitPercentBps,
+                'selling_category_ids' => $data->sellingCategoryIds === [] ? null : $data->sellingCategoryIds,
                 'status' => RegistrationStatus::Completed,
                 'completed_at' => now(),
                 'tenant_id' => $tenant->id,

@@ -100,7 +100,11 @@ describe('plan step', function (): void {
 
         Notification::assertSentOnDemand(RegistrationLinkNotification::class);
 
-        $this->get(route('central.register.verify'))->assertOk()->assertSee('founder@example.com');
+        $verify = $this->get(route('central.register.verify'))->assertOk()->assertSee('founder@example.com');
+
+        // QA-P2-008: plan and payment are finished, the account (e-mail check) is current.
+        expect(substr_count((string) $verify->getContent(), '('.__('platform::register.steps.done').')'))->toBe(2)
+            ->and(substr_count((string) $verify->getContent(), 'aria-current="step"'))->toBe(1);
     });
 
     it('refuses a trial on a plan without one', function (): void {

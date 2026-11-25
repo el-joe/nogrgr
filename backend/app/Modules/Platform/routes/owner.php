@@ -5,6 +5,7 @@ use App\Modules\Platform\Http\Controllers\Owner\OwnerDashboardController;
 use App\Modules\Platform\Http\Controllers\Owner\OwnerDomainController;
 use App\Modules\Platform\Http\Controllers\Owner\OwnerSelectStoreController;
 use App\Modules\Platform\Http\Controllers\Owner\OwnerSessionController;
+use App\Modules\Platform\Http\Controllers\Owner\OwnerSupportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,9 @@ Route::middleware(['auth:owner', 'can:owner.portal'])->group(function (): void {
     // Select store after sign-in (OWN-002)
     Route::get('select-store', [OwnerSelectStoreController::class, 'show'])->name('select-store');
     Route::post('select-store', [OwnerSelectStoreController::class, 'store'])->middleware('throttle:30,1')->name('select-store.store');
+
+    // Help & support (OWN-009)
+    Route::get('support', OwnerSupportController::class)->name('support');
 
     // Domains (OWN-004 / 004a / 004b / 004c)
     Route::prefix('domains')->name('domains.')->controller(OwnerDomainController::class)->group(function (): void {

@@ -98,6 +98,7 @@ class TenantProvisioningService extends BaseService
                 'owner_phone' => $data->ownerPhone,
                 'default_country_id' => $data->defaultCountryId,
                 'selling_country_ids' => $data->sellingCountryIds === [] ? null : array_values(array_map('intval', $data->sellingCountryIds)),
+                'selling_category_ids' => $data->sellingCategoryIds === [] ? null : array_values(array_unique(array_map('intval', $data->sellingCategoryIds))),
                 'profit_percent_bps' => $data->profitPercentBps,
             ]);
             $tenant->setAttribute(self::PAYLOAD, [

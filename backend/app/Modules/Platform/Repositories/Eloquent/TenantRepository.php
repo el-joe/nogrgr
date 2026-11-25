@@ -29,6 +29,7 @@ class TenantRepository extends BaseRepository implements TenantRepositoryContrac
 
     /**
      * @param  list<int>  $ids
+     * @return TenantCollection<int, Tenant>
      */
     public function findMany(array $ids): TenantCollection
     {

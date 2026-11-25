@@ -34,6 +34,18 @@ return [
     'base_domain' => strtolower((string) env('TENANT_BASE_DOMAIN', CentralDomains::parse(env('CENTRAL_DOMAINS', 'localhost,127.0.0.1'))[0] ?? 'localhost')),
 
     /*
+     * Default DNS records for a vendor's custom domain, used while the admin has not
+     * defined any DNS record templates (Admin › Settings › Domains). Same placeholders
+     * as the templates: {domain}, {subdomain} (store default host), {token}.
+     * The apex A record is only listed when TENANT_EDGE_IPV4 is set.
+     */
+    'custom_domain_records' => [
+        ['type' => 'A', 'host' => '@', 'value' => (string) env('TENANT_EDGE_IPV4', ''), 'ttl' => 3600, 'priority' => null],
+        ['type' => 'CNAME', 'host' => 'www', 'value' => '{subdomain}', 'ttl' => 3600, 'priority' => null],
+        ['type' => 'TXT', 'host' => '_nogrgr-verify', 'value' => '{token}', 'ttl' => 3600, 'priority' => null],
+    ],
+
+    /*
      * Sub-domain labels (and tenant slugs) registration must refuse.
      */
     'reserved_subdomains' => [

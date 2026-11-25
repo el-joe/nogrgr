@@ -2,6 +2,7 @@
 
 namespace App\Shared\Navigation;
 
+use App\Shared\Navigation\Contracts\PanelBadgeCounter;
 use App\Shared\Navigation\Contracts\PanelNotificationFeed;
 use App\Shared\Support\Ui;
 use Illuminate\Contracts\Auth\Access\Authorizable;
@@ -54,11 +55,29 @@ final class PanelShell
             'role' => $role,
             'sections' => $sections,
             'commands' => $this->builder->flatten($sections),
-            'counts' => [],
+            'counts' => $user !== null ? $this->counts($surface, $user) : [],
             'tag' => (string) __('ui.tags.'.$surface),
             'homeUrl' => $this->url($surface, 'dashboard'),
             'notifications' => $this->feed()->for($surface, $user),
         ];
+    }
+
+    /**
+     * Sidebar badge counts from every PanelBadgeCounter of the surface (tagged services).
+     *
+     * @return array<string, int>
+     */
+    private function counts(string $surface, Authenticatable $user): array
+    {
+        $counts = [];
+
+        foreach (app()->tagged(PanelBadgeCounter::TAG) as $counter) {
+            if ($counter instanceof PanelBadgeCounter && $counter->surface() === $surface) {
+                $counts = [...$counts, ...$counter->counts($user)];
+            }
+        }
+
+        return $counts;
     }
 
     private function feed(): PanelNotificationFeed

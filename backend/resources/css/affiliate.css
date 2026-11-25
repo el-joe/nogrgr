@@ -6,3 +6,5 @@
 @import './shared/reveal.css';
 @import './shared/toast.css';
 @import './panels/base.css';
+@import './shared/select2.css';
+@import './shared/gateway-tiles.css';

@@ -1,13 +1,16 @@
 {{--
     WEB-018a Complete registration — store (Figma Central Website additions 125:11537,
     validation 125:11701, custom domain / DNS check / profit % 133:12577, mobile
-    125:11865). Categories are not part of this release and stay hidden.
-    Inputs: $registration, $token, $accountUrl, $baseDomain.
+    125:11865), store categories (Select2 multi-select with search over the active
+    top-level catalog categories; hidden while none exist).
+    Inputs: $registration, $token, $accountUrl, $baseDomain, $categoryOptions.
 --}}
 @extends('platform::central.register._page', ['title' => __('platform::register.page_title'), 'page' => 'register-store'])
 
 @php
     $domainType = old('domain_type', $registration->custom_domain ? 'custom' : 'subdomain');
+    $selectedCategories = array_map('intval', (array) old('category_ids', $registration->selling_category_ids ?? []));
+    $categoryError = $errors->first('category_ids') ?: $errors->first('category_ids.*');
     $profitDefault = $registration->profit_percent_bps !== null ? rtrim(rtrim(number_format($registration->profit_percent_bps / 100, 2, '.', ''), '0'), '.') : null;
     $config = [
         'availabilityUrl' => route('central.register.availability'),
@@ -123,6 +126,20 @@
                     'placeholder' => '25',
                     'hint' => __('platform::register.store.profit_hint'),
                 ])
+
+                @if ($categoryOptions !== [])
+                    <div class="grid gap-1.5" data-field="category_ids">
+                        <label for="reg-category-ids" class="text-sm leading-5 font-medium text-ink">{{ __('platform::register.store.categories') }} *</label>
+                        <select id="reg-category-ids" name="category_ids[]" multiple aria-required="true" data-select data-placeholder="{{ __('platform::register.store.categories_placeholder') }}"
+                            aria-describedby="reg-category-ids-hint reg-category-ids-message" @if ($categoryError) aria-invalid="true" @endif>
+                            @foreach ($categoryOptions as $id => $name)
+                                <option value="{{ $id }}" @selected(in_array($id, $selectedCategories, true))>{{ $name }}</option>
+                            @endforeach
+                        </select>
+                        <p id="reg-category-ids-hint" class="text-[13px] leading-[18px] text-(--reg-muted)">{{ __('platform::register.store.categories_hint') }}</p>
+                        <p id="reg-category-ids-message" class="text-[13px] leading-[18px] text-danger" role="alert" @if (! $categoryError) hidden @endif>{{ $categoryError }}</p>
+                    </div>
+                @endif
 
                 <button type="submit" class="group mt-1 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-7 text-base leading-[22px] font-medium text-white transition hover:bg-primary-hover active:scale-[0.99] disabled:cursor-wait disabled:opacity-80" data-submit>
                     <span class="hidden size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" data-spinner aria-hidden="true"></span>

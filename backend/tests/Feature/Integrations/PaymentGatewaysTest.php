@@ -78,6 +78,20 @@ it('lists every launch gateway, inactive by default', function (): void {
         ->and(PaymentGateway::query()->where('is_active', true)->exists())->toBeFalse();
 });
 
+it('renders each gateway tile with its brand colour token (QA-P2-007)', function (): void {
+    $response = $this->actingAs(integrationsAdmin('integrations.view'), 'admin')
+        ->get($this->centralUrl('/admin/integrations/gateways'))
+        ->assertOk();
+
+    $css = (string) file_get_contents(resource_path('css/shared/gateway-tiles.css'));
+
+    foreach (PaymentGatewayCode::cases() as $code) {
+        $response->assertSee('class="ui-gateway-tile grid size-8 shrink-0 place-items-center rounded-lg text-xs font-medium" data-gateway="'.$code->value.'"', false);
+        expect($css)->toContain('--gateway-'.$code->value.':')
+            ->toContain(".ui-gateway-tile[data-gateway='".$code->value."']");
+    }
+});
+
 it('returns 404 for an unknown gateway', function (): void {
     $this->actingAs(integrationsAdmin('integrations.manage'), 'admin')
         ->get($this->centralUrl('/admin/integrations/gateways/bitcoin/edit'))

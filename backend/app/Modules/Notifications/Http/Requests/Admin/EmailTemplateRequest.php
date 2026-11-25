@@ -67,7 +67,7 @@ class EmailTemplateRequest extends FormRequest
     public function after(): array
     {
         return [function (Validator $validator): void {
-            $event = $this->template()?->event ?? EmailTemplateEvent::tryFrom((string) $this->input('event'));
+            $event = $this->template()->event ?? EmailTemplateEvent::tryFrom((string) $this->input('event'));
 
             if ($event === null) {
                 return;
@@ -106,7 +106,7 @@ class EmailTemplateRequest extends FormRequest
     public function payload(): EmailTemplateData
     {
         return new EmailTemplateData(
-            event: $this->template()?->event ?? EmailTemplateEvent::from((string) $this->input('event')),
+            event: $this->template()->event ?? EmailTemplateEvent::from((string) $this->input('event')),
             subject: array_filter(['en' => trim((string) $this->input('subject.en')), 'ar' => trim((string) $this->input('subject.ar'))], static fn (string $value): bool => $value !== ''),
             body: array_filter(['en' => (string) $this->input('body.en'), 'ar' => (string) $this->input('body.ar')], static fn (string $value): bool => trim(strip_tags($value)) !== ''),
             status: EmailTemplateStatus::from((string) $this->input('status')),

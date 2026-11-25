@@ -5,6 +5,7 @@ use App\Modules\Billing\Enums\SubscriptionStatus;
 use App\Modules\Billing\Models\Plan;
 use App\Modules\Billing\Models\Subscription;
 use App\Modules\Identity\Models\VendorStaff;
+use App\Modules\Identity\Support\PermissionCatalog;
 use App\Modules\Localization\Models\TenantLanguage;
 use App\Modules\Platform\DTOs\ProvisionTenantData;
 use App\Modules\Platform\Enums\DomainRequestStatus;
@@ -16,9 +17,12 @@ use App\Modules\Platform\Exceptions\PlatformRuleException;
 use App\Modules\Platform\Jobs\ProvisionTenant;
 use App\Modules\Platform\Models\DomainRequest;
 use App\Modules\Platform\Services\TenantProvisioningService;
+use App\Modules\Platform\Support\PartialMigrationCleaner;
 use App\Modules\Platform\Support\TenantDatabaseProvisioner;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\Models\Permission;
 
 require_once __DIR__.'/VendorHelpers.php';
 
@@ -105,7 +109,7 @@ it('records a failure and lets an admin retry it', function (): void {
     Event::fake([TenantProvisioningFailed::class]);
     $tenant = app(TenantProvisioningService::class)->provision(provisionData(['custom_domain' => null]));
 
-    app()->instance(TenantDatabaseProvisioner::class, new class extends TenantDatabaseProvisioner
+    app()->instance(TenantDatabaseProvisioner::class, new class(app(PartialMigrationCleaner::class)) extends TenantDatabaseProvisioner
     {
         public function ensure($tenant): void
         {
@@ -132,4 +136,48 @@ it('never resolves a pending custom domain', function (): void {
 
     expect(DomainRequest::query()->withoutGlobalScopes()->where('tenant_id', $tenant->id)->value('status'))->toBe(DomainRequestStatus::Pending)
         ->and($tenant->domains()->where('domain', 'desertrose.sa')->exists())->toBeFalse();
+});
+
+it('resumes a run that crashed in the middle of a migration (QA-P2-006)', function (): void {
+    cleanUpProvisionedTenants();
+    Event::fake([TenantProvisioned::class, TenantProvisioningFailed::class]);
+    config([
+        'tenancy.migration_parameters.--path' => [...(array) config('tenancy.migration_parameters.--path'), base_path('tests/Fixtures/tenant-migrations')],
+        'testing.flaky_tenant_migration' => true,
+    ]);
+    $service = app(TenantProvisioningService::class);
+
+    $tenant = $service->provision(provisionData(['custom_domain' => null]))->refresh();
+
+    expect($tenant->status)->toBe(TenantStatus::Failed)
+        ->and($tenant->provisioning_error)->toContain('Simulated crash');
+    Event::assertDispatched(TenantProvisioningFailed::class);
+
+    // Earlier migrations stay recorded; the half-run one left nothing behind.
+    $tenant->run(function (): void {
+        expect(Schema::hasTable('permissions'))->toBeTrue()
+            ->and(Schema::hasTable('flaky_provisioning_a'))->toBeFalse()
+            ->and(Schema::hasTable('flaky_provisioning_b'))->toBeFalse();
+    });
+
+    config(['testing.flaky_tenant_migration' => false]);
+    $service->run($tenant);
+    $tenant->refresh();
+
+    expect($tenant->status)->toBe(TenantStatus::Active)
+        ->and($tenant->provisioning_attempts)->toBe(2)
+        ->and($tenant->provisioning_error)->toBeNull();
+    Event::assertDispatched(TenantProvisioned::class);
+
+    $tenant->run(function (): void {
+        expect(Schema::hasTable('flaky_provisioning_b'))->toBeTrue()
+            ->and(Permission::query()->where('guard_name', 'vendor')->count())->toBe(count(PermissionCatalog::tenant()['vendor']))
+            ->and(VendorStaff::query()->where('email', 'reem@desertrose.sa')->count())->toBe(1);
+    });
+
+    // Seeders are idempotent: a full re-run of the database step adds no duplicates.
+    app(TenantDatabaseProvisioner::class)->ensure($tenant);
+    $tenant->run(function (): void {
+        expect(Permission::query()->where('guard_name', 'vendor')->count())->toBe(count(PermissionCatalog::tenant()['vendor']));
+    });
 });

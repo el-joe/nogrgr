@@ -85,7 +85,7 @@ class SendBillingNotifications
     private function invoice(Invoice $invoice, string $name, EmailTemplateEvent $template): void
     {
         $tenant = $this->tenant($invoice->tenant_id);
-        $store = $tenant?->name ?? (string) $invoice->bill_to_name;
+        $store = $tenant->name ?? (string) $invoice->bill_to_name;
         $total = $invoice->total()->format();
 
         $this->notifyAdmins('finance.invoices.view', new BillingAlertNotification(
@@ -111,7 +111,7 @@ class SendBillingNotifications
         $this->notifyAdmins('finance.payment-logs.view', new BillingAlertNotification(
             NotificationCategory::Payments,
             $name,
-            ['reference' => $log->reference(), 'store' => $tenant?->name ?? '—', 'amount' => $amount, 'gateway' => $log->gateway->label()],
+            ['reference' => $log->reference(), 'store' => $tenant->name ?? '—', 'amount' => $amount, 'gateway' => $log->gateway->label()],
             route('admin.finance.payment-logs.show', $log->id),
         ));
 
@@ -132,7 +132,7 @@ class SendBillingNotifications
         $this->notifyAdmins('subscriptions.view', new BillingAlertNotification(
             NotificationCategory::Vendors,
             $name,
-            ['store' => $tenant?->name ?? '—', 'plan' => $plan, 'date' => $endsAt],
+            ['store' => $tenant->name ?? '—', 'plan' => $plan, 'date' => $endsAt],
             route('admin.billing.subscriptions.index'),
         ));
 
@@ -166,8 +166,8 @@ class SendBillingNotifications
             $template,
             $name,
             [
-                'vendor.name' => (string) ($tenant?->owner_name ?? ''),
-                'store.name' => (string) ($tenant?->name ?? ''),
+                'vendor.name' => (string) ($tenant->owner_name ?? ''),
+                'store.name' => (string) ($tenant->name ?? ''),
                 ...$variables,
             ],
             (string) config('app.locale', 'en'),

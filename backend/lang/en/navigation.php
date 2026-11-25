@@ -119,5 +119,6 @@ return [
         'invoices' => 'Invoices',
         'profile' => 'Profile',
         'add_store' => 'Add another store',
+        'support' => 'Help & support',
     ],
 ];

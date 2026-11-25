@@ -17,7 +17,7 @@
                     'border-primary bg-primary-subtle' => $selected,
                     'border-transparent hover:bg-subtle' => ! $selected,
                 ]) @if ($selected) aria-current="page" @endif>
-                    <span class="grid size-8 shrink-0 place-items-center rounded-chip bg-inverse text-[10px] font-semibold text-on-inverse" aria-hidden="true">{{ $gateway->code->initials() }}</span>
+                    <span class="ui-gateway-tile grid size-8 shrink-0 place-items-center rounded-lg text-xs font-medium" data-gateway="{{ $gateway->code->value }}" aria-hidden="true">{{ $gateway->code->initials() }}</span>
                     <span class="min-w-0 flex-1 truncate text-sm font-medium text-ink">{{ $gateway->code->brand() }}</span>
                     @include('integrations::admin.gateways._badge', ['gateway' => $gateway])
                 </a>

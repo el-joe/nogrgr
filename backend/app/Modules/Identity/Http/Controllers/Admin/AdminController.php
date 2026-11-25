@@ -11,8 +11,10 @@ use App\Modules\Identity\Http\Requests\Admin\AdminStatusRequest;
 use App\Modules\Identity\Models\Admin;
 use App\Modules\Identity\Services\AdminService;
 use App\Modules\Identity\Services\RoleService;
+use App\Shared\Http\Concerns\RendersRemoteModals;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
+use App\Shared\Http\RemoteModalPage;
 use DomainException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -27,6 +29,7 @@ use Illuminate\Support\Facades\Gate;
 class AdminController extends Controller
 {
     use AnswersDomainErrors;
+    use RendersRemoteModals;
 
     public function __construct(
         private readonly AdminService $admins,
@@ -49,11 +52,11 @@ class AdminController extends Controller
 
     public function create(Request $request): View
     {
-        return view('identity::admin.admins._form', [
+        return $this->remoteModal($request, 'identity::admin.admins._form', [
             'admin' => null,
             'role' => null,
             'roleOptions' => $this->assignableRoles($request),
-        ]);
+        ], $this->modalPage(__('identity::admins.create_title'), __('identity::admins.actions.invite')));
     }
 
     public function store(AdminRequest $request): JsonResponse
@@ -71,11 +74,11 @@ class AdminController extends Controller
     {
         Gate::forUser($this->actor($request))->authorize('update', $admin);
 
-        return view('identity::admin.admins._form', [
+        return $this->remoteModal($request, 'identity::admin.admins._form', [
             'admin' => $admin,
             'role' => $this->admins->roleOf($admin),
             'roleOptions' => $this->assignableRoles($request, $this->admins->roleOf($admin)),
-        ]);
+        ], $this->modalPage(__('identity::admins.edit_title', ['name' => $admin->name]), __('identity::admins.actions.save')));
     }
 
     public function update(AdminRequest $request, Admin $admin): JsonResponse
@@ -131,5 +134,20 @@ class AdminController extends Controller
         $admin = $request->user('admin');
 
         return $admin;
+    }
+
+    private function modalPage(string $title, string $submitLabel): RemoteModalPage
+    {
+        $index = route('admin.system.admins.index');
+
+        return new RemoteModalPage(
+            surface: 'admin',
+            title: $title,
+            backUrl: $index,
+            pageModule: 'admin-admins',
+            formId: 'admin-form',
+            submitLabel: $submitLabel,
+            breadcrumbs: [__('navigation.sections.system') => null, __('identity::admins.title') => $index, $title => null],
+        );
     }
 }

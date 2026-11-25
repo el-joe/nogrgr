@@ -22,6 +22,7 @@ return [
         'items' => [
             ['key' => 'profile', 'label' => 'navigation.owner.profile', 'icon' => 'users', 'route' => 'owner.profile.edit', 'permission' => 'owner.portal', 'active' => 'owner.profile.*'],
             ['key' => 'add_store', 'label' => 'navigation.owner.add_store', 'icon' => 'plus', 'route' => 'owner.stores.create', 'permission' => 'owner.stores.create', 'active' => ['owner.stores.create', 'owner.stores.store']],
+            ['key' => 'support', 'label' => 'navigation.owner.support', 'icon' => 'lifebuoy', 'route' => 'owner.support', 'permission' => 'owner.portal', 'active' => 'owner.support'],
         ],
     ],
 ];

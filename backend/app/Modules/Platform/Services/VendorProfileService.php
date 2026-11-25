@@ -134,7 +134,7 @@ class VendorProfileService extends BaseService
         foreach ([...self::CORE_LANGUAGES, ...$paid] as $code) {
             $rows[] = [
                 'code' => $code,
-                'name' => $this->languages->findByCode($code)?->name ?? strtoupper($code),
+                'name' => $this->languages->findByCode($code)->name ?? strtoupper($code),
                 'paid' => ! in_array($code, self::CORE_LANGUAGES, true),
             ];
         }

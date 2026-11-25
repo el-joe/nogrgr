@@ -9,7 +9,8 @@
  *     (not data-columns / data-order / data-page-length: DataTables would read those as its own HTML5 options)
  *     [data-dt-skeleton] [data-dt-info] [data-dt-length] [data-dt-pagination]
  *     <template data-dt-empty> <template data-dt-empty-filtered> <template data-dt-error>
- *     [data-dt-bulk] [data-dt-bulk-count] [data-dt-bulk-clear] [data-bulk-action][data-url][data-method]
+ *     [data-dt-bulk] [data-dt-bulk-count] [data-dt-bulk-clear] [data-bulk-action="<action>"][data-url][data-method]
+ *     [data-bulk-confirm="message"][data-bulk-confirm-title] (asks before sending)
  *
  * Filters: every [data-filter] of the filters bar bound to the table (see filters.js)
  * is sent with each request. `datatable:reload` on the card reloads it in place.
@@ -18,6 +19,7 @@ import { $, DataTable } from './vendor-libs';
 import { t, numberLocale } from '../core/i18n';
 import { http } from '../core/http';
 import { collectFilters, hasActiveFilters } from './ui/filters';
+import { confirmDialog } from './ui/confirm';
 
 const PAGE_WINDOW = 1;
 
@@ -221,8 +223,26 @@ export function initDataTable(table, options = {}) {
 
         event.preventDefault();
 
+        /* data-bulk-confirm="message" (+ data-bulk-confirm-title) asks first; a value on
+           data-bulk-action is sent as `action` next to the selected `ids`. */
+        if (action.dataset.bulkConfirm !== undefined) {
+            const ok = await confirmDialog({ title: action.dataset.bulkConfirmTitle, message: action.dataset.bulkConfirm, tone: 'danger' });
+
+            if (!ok) {
+                return;
+            }
+        }
+
+        const data = { ids: selectedIds(card) };
+
+        if (action.dataset.bulkAction) {
+            data.action = action.dataset.bulkAction;
+        }
+
         try {
-            await http.request(action.dataset.method || 'POST', action.dataset.url, { data: { ids: selectedIds(card) } });
+            await http.request(action.dataset.method || 'POST', action.dataset.url, { data });
+            card.querySelectorAll('input[data-dt-select]').forEach((box) => (box.checked = false));
+            syncSelection(card);
             api.ajax.reload(null, false);
         } catch {
             // toast already shown by http.js

@@ -15,7 +15,7 @@
 
 @section('content')
     <div class="flex flex-col items-center gap-6 px-4 pt-6 pb-16 sm:gap-8 sm:px-6 lg:px-[120px] lg:pt-14 lg:pb-24">
-        @include('platform::central.register.partials.steps', ['current' => 1])
+        @include('platform::central.register.partials.steps', ['current' => 1, 'done' => ['plan', 'payment']])
 
         <section class="reg-enter grid w-full max-w-[560px] gap-4 rounded-[20px] bg-white p-5 shadow-(--reg-card-shadow) sm:rounded-[24px] sm:p-10" aria-labelledby="reg-account-title">
             <h1 id="reg-account-title" class="text-[22px] leading-8 font-semibold text-ink sm:text-[26px] sm:leading-9">{{ __('platform::register.account.title') }}</h1>

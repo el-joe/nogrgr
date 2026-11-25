@@ -16,6 +16,7 @@ final class ProvisionTenantData extends BaseDTO
 {
     /**
      * @param  list<int>  $sellingCountryIds
+     * @param  list<int>  $sellingCategoryIds  top-level catalog categories the store sells
      */
     public function __construct(
         public readonly string $storeName,
@@ -37,5 +38,6 @@ final class ProvisionTenantData extends BaseDTO
         public readonly ?int $adminId = null,
         public readonly ?int $ownerId = null,
         public readonly ?int $paymentLogId = null,
+        public readonly array $sellingCategoryIds = [],
     ) {}
 }

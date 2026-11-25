@@ -12,8 +12,10 @@ use App\Modules\Platform\Models\DomainRequest;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Services\DomainService;
 use App\Modules\Platform\Services\OwnerPortalService;
+use App\Shared\Http\Concerns\RendersRemoteModals;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
+use App\Shared\Http\RemoteModalPage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +27,8 @@ use Illuminate\Http\Request;
  */
 class OwnerDomainController extends Controller
 {
+    use RendersRemoteModals;
+
     public function __construct(
         private readonly DomainService $domains,
         private readonly OwnerPortalService $portal,
@@ -98,7 +102,17 @@ class OwnerDomainController extends Controller
     {
         $this->authorizeDomain($request, $domain);
 
-        return view('platform::owner.domains._edit-form', ['request' => $domain->loadMissing('tenant')]);
+        $show = route('owner.domains.show', $domain->id);
+
+        return $this->remoteModal($request, 'platform::owner.domains._edit-form', ['request' => $domain->loadMissing('tenant')], new RemoteModalPage(
+            surface: 'owner',
+            title: __('platform::owner.domains.edit_title'),
+            backUrl: $show,
+            pageModule: 'owner-domains',
+            formId: 'domain-edit-form',
+            submitLabel: __('platform::owner.domains.save'),
+            breadcrumbs: [__('platform::owner.domains.title') => route('owner.domains.index'), $domain->host => $show, __('platform::owner.domains.edit_title') => null],
+        ));
     }
 
     public function update(OwnerDomainUpdateRequest $request, DomainRequest $domain): JsonResponse

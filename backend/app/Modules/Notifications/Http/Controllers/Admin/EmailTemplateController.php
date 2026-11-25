@@ -32,7 +32,7 @@ class EmailTemplateController extends Controller
 
     public function index(Request $request): View
     {
-        $tab = EmailAudience::tryFrom((string) $request->query('tab'))?->value ?? 'all';
+        $tab = EmailAudience::tryFrom((string) $request->query('tab'))->value ?? 'all';
 
         return view('notifications::admin.email-templates.index', [
             'tab' => $tab,

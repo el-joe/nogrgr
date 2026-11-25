@@ -68,6 +68,7 @@ return [
         'records_intro' => 'Add these records at your domain provider:',
         'records_loading' => 'Loading the records…',
         'records_error' => 'The records could not be loaded. Choose the store again.',
+        'records_empty' => 'The DNS records are not available yet. You can add the domain now and find the records on its page later.',
         'search' => 'Search domain…',
         'columns' => [
             'domain' => 'Domain',
@@ -118,5 +119,17 @@ return [
             'auto_renew' => 'Auto-renew',
             'on' => 'On',
         ],
+    ],
+    'support' => [
+        'title' => 'Help & support',
+        'subtitle' => 'Questions about your stores, billing or domains? Reach the platform team.',
+        'contacts_title' => 'Contact us',
+        'email' => 'E-mail',
+        'email_hint' => 'Write to us any time. Include your store name.',
+        'phone' => 'Phone',
+        'phone_hint' => 'Call the support line.',
+        'socials_title' => 'Follow us',
+        'empty_title' => 'Support contacts are not set up yet',
+        'empty_description' => 'The platform team has not published a support e-mail or phone number yet. Please check back later.',
     ],
 ];

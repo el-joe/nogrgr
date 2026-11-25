@@ -3,4 +3,5 @@
 @import './tokens/central.css';
 @import './shared/base.css';
 @import './shared/reveal.css';
+@import './shared/select2.css';
 @import './central/register.css';

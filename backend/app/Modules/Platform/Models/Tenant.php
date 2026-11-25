@@ -27,6 +27,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property string|null $owner_phone
  * @property int|null $default_country_id
  * @property list<int>|null $selling_country_ids
+ * @property list<int>|null $selling_category_ids
  * @property int $profit_percent_bps
  * @property int $affiliate_commission_bps
  * @property int $provisioning_attempts
@@ -57,7 +58,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return [
             'id', 'name', 'slug', 'owner_id', 'status', 'owner_name', 'owner_email', 'owner_phone', 'default_country_id',
-            'selling_country_ids', 'profit_percent_bps', 'affiliate_commission_bps', 'provisioning_attempts',
+            'selling_country_ids', 'selling_category_ids', 'profit_percent_bps', 'affiliate_commission_bps', 'provisioning_attempts',
             'provisioning_error', 'provisioned_at', 'suspended_at', 'created_at', 'updated_at',
         ];
     }
@@ -77,6 +78,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return [
             'status' => TenantStatus::class,
             'selling_country_ids' => 'array',
+            'selling_category_ids' => 'array',
             'profit_percent_bps' => 'integer',
             'affiliate_commission_bps' => 'integer',
             'provisioning_attempts' => 'integer',

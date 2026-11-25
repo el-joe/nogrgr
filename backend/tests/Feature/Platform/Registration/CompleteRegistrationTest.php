@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Catalog\Models\Category;
 use App\Modules\Platform\Enums\RegistrationStatus;
 use App\Modules\Platform\Enums\TenantStatus;
 use App\Modules\Platform\Jobs\ProvisionTenant;
@@ -114,13 +115,16 @@ describe('completion link', function (): void {
     it('marks the e-mail verified and shows the account step on first visit', function (): void {
         [$registration, $token] = completionRegistration(['phone' => '+966551234567']);
 
-        $this->get(completionLink($token).'&lang=ar')
+        $page = $this->get(completionLink($token).'&lang=ar')
             ->assertOk()
             ->assertSee(__('platform::register.account.title', [], 'ar'))
             ->assertSee($registration->email)
             ->assertSee('+966551234567')
             ->assertSee('dir="rtl"', false)
             ->assertSee('data-page="register-account"', false);
+
+        // QA-P2-008: plan and payment show as finished on the account step.
+        expect(substr_count((string) $page->getContent(), '('.__('platform::register.steps.done', [], 'ar').')'))->toBe(2);
 
         $registration->refresh();
         expect($registration->status)->toBe(RegistrationStatus::Incomplete)
@@ -283,6 +287,57 @@ describe('store step', function (): void {
             ->and($tenant->owner_name)->toBe('Mohamed Saleh');
 
         Queue::assertPushed(ProvisionTenant::class, fn (ProvisionTenant $job): bool => $job->tenantId === $tenant->id);
+    });
+
+    it('offers the active top-level categories in ar / en with search (QA-P2-005)', function (): void {
+        $kids = Category::factory()->create(['name' => ['en' => 'Kids & baby', 'ar' => 'الأطفال والرضع']]);
+        Category::factory()->childOf($kids)->create(['name' => ['en' => 'Strollers', 'ar' => 'عربات']]);
+        Category::factory()->inactive()->create(['name' => ['en' => 'Archived', 'ar' => 'مؤرشف']]);
+        [, $token] = accountReadyRegistration();
+
+        $this->get(completionLink($token))
+            ->assertOk()
+            ->assertSee('name="category_ids[]"', false)
+            ->assertSee('data-select', false)
+            ->assertSee('Kids &amp; baby', false)
+            ->assertDontSee('Strollers')
+            ->assertDontSee('Archived');
+
+        $this->get(completionLink($token).'&lang=ar')->assertOk()->assertSee('الأطفال والرضع');
+    });
+
+    it('requires a valid category and stores the choice on the sign-up and the store (QA-P2-005)', function (): void {
+        Queue::fake();
+        $kids = Category::factory()->create();
+        $toys = Category::factory()->create();
+        $child = Category::factory()->childOf($kids)->create();
+        $inactive = Category::factory()->inactive()->create();
+        [$registration, $token] = accountReadyRegistration();
+
+        $this->post(route('central.register.complete.store'), storePayload($token))->assertSessionHasErrors('category_ids');
+
+        foreach ([$child->id, $inactive->id, 999999] as $invalid) {
+            $this->post(route('central.register.complete.store'), storePayload($token, ['category_ids' => [$kids->id, $invalid]]))
+                ->assertSessionHasErrors('category_ids.1');
+        }
+
+        $this->post(route('central.register.complete.store'), storePayload($token, ['category_ids' => [(string) $kids->id, (string) $toys->id]]))
+            ->assertRedirect();
+
+        $registration->refresh();
+        $tenant = Tenant::query()->findOrFail($registration->tenant_id);
+
+        expect($registration->selling_category_ids)->toBe([$kids->id, $toys->id])
+            ->and($tenant->selling_category_ids)->toBe([$kids->id, $toys->id]);
+    });
+
+    it('does not require categories while the catalog has none', function (): void {
+        Queue::fake();
+        [$registration, $token] = accountReadyRegistration();
+
+        $this->post(route('central.register.complete.store'), storePayload($token))->assertRedirect()->assertSessionHasNoErrors();
+
+        expect($registration->refresh()->selling_category_ids)->toBeNull();
     });
 
     it('ignores the custom domain on the sub-domain option', function (): void {

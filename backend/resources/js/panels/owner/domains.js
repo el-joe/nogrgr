@@ -14,6 +14,7 @@ function bindRecordsPreview(form) {
     const host = form.querySelector('[data-domain-host]');
     const box = form.querySelector('[data-domain-records]');
     const error = form.querySelector('[data-records-error]');
+    const empty = form.querySelector('[data-records-empty]');
     const loading = box?.querySelector('[data-records-loading]');
     let timer = null;
     let sequence = 0;
@@ -24,6 +25,11 @@ function bindRecordsPreview(form) {
 
     const render = (records) => {
         box.replaceChildren();
+        box.hidden = records.length === 0;
+
+        if (empty) {
+            empty.hidden = records.length > 0;
+        }
 
         records.forEach((record) => {
             const line = document.createElement('div');
@@ -38,7 +44,12 @@ function bindRecordsPreview(form) {
             const current = ++sequence;
             const url = form.dataset.instructionsUrl.replace('__TENANT__', encodeURIComponent(store.value));
             box.replaceChildren(loading ?? '');
+            box.hidden = false;
             error.hidden = true;
+
+            if (empty) {
+                empty.hidden = true;
+            }
 
             try {
                 const payload = await http.get(url, host?.value ? { host: host.value } : null, { toast: false, silent: true });

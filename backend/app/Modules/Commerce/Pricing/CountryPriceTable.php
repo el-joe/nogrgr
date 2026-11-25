@@ -20,7 +20,7 @@ final class CountryPriceTable
     /**
      * @param  array<string, mixed>|null  $existing  stored profit JSON
      * @param  list<string>  $keys  active country keys
-     * @return array<string, ProfitRule>
+     * @return array<array-key, ProfitRule>
      */
     public static function seedProfit(?array $existing, array $keys, float $tenantPercentage): array
     {
@@ -42,9 +42,9 @@ final class CountryPriceTable
     }
 
     /**
-     * @param  array<string, ProfitRule>  $profit
-     * @param  array<string, Money>  $shipping
-     * @return array{prices: array<string, Money>, profit: array<string, array{profit_type: string, profit_value: float, total_profit: float}>}
+     * @param  array<array-key, ProfitRule>  $profit
+     * @param  array<array-key, Money>  $shipping
+     * @return array{prices: array<array-key, Money>, profit: array<array-key, array{profit_type: string, profit_value: float, total_profit: float}>}
      */
     public static function compute(Money $base, array $profit, array $shipping): array
     {
@@ -68,10 +68,10 @@ final class CountryPriceTable
     /**
      * Full derivation used by the vendor price list, imports and the recompute jobs.
      *
-     * @param  array<string, Money>  $shipping  fixed shipping per country key
+     * @param  array<array-key, Money>  $shipping  fixed shipping per country key
      * @param  array<string, mixed>|null  $existingProfit
      * @param  list<string|int>  $activeCountryKeys  countries with an active fixed-shipping rate
-     * @return array{prices: array<string, Money>, default: Money, profit: array<string, array{profit_type: string, profit_value: float, total_profit: float}>}
+     * @return array{prices: array<array-key, Money>, default: Money, profit: array<array-key, array{profit_type: string, profit_value: float, total_profit: float}>}
      */
     public static function forCatalog(
         Money $base,

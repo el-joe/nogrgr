@@ -4,12 +4,22 @@ namespace App\Modules\Notifications\Models;
 
 use App\Modules\Notifications\Enums\NotificationCategory;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 /**
  * A central user's inbox row (Laravel `notifications` table on the central DB).
  * `data` = PanelNotification::toArray(): category, icon, title/body translation keys
  * + params, url.
+ *
+ * @property string $id
+ * @property string $type
+ * @property string $notifiable_type
+ * @property int $notifiable_id
+ * @property array<string, mixed> $data
+ * @property Carbon|null $read_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class PanelNotificationRecord extends DatabaseNotification
 {

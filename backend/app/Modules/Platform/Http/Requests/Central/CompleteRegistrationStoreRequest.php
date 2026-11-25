@@ -2,6 +2,9 @@
 
 namespace App\Modules\Platform\Http\Requests\Central;
 
+use App\Modules\Catalog\Enums\RecordStatus;
+use App\Modules\Catalog\Models\Category;
+use App\Modules\Catalog\Services\CategoryService;
 use App\Modules\Platform\Rules\ValidTenantSlug;
 use App\Modules\Platform\Services\VendorRegistrationService;
 use Closure;
@@ -11,7 +14,8 @@ use Illuminate\Validation\Rule;
 /**
  * Complete registration › store step (WEB-018a): store name, sub-domain (always: the
  * store also lives there while a custom domain is connected), optional custom domain
- * and the default profit margin (percent with up to two decimals → basis points).
+ * the default profit margin (percent with up to two decimals → basis points) and the
+ * store categories (active top-level catalog categories; required while any exist).
  */
 class CompleteRegistrationStoreRequest extends FormRequest
 {
@@ -56,7 +60,17 @@ class CompleteRegistrationStoreRequest extends FormRequest
                 }
             }],
             'profit_percent' => ['required', 'numeric', 'between:0,100', 'decimal:0,2'],
+            'category_ids' => [Rule::requiredIf(fn (): bool => app(CategoryService::class)->topLevelOptions() !== []), 'nullable', 'array', 'max:50'],
+            'category_ids.*' => ['integer', 'distinct', Rule::exists(Category::class, 'id')->whereNull('parent_id')->where('status', RecordStatus::Active->value)],
         ];
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function categoryIds(): array
+    {
+        return array_values(array_map('intval', (array) $this->validated('category_ids', [])));
     }
 
     public function profitPercentBps(): int
@@ -75,6 +89,8 @@ class CompleteRegistrationStoreRequest extends FormRequest
             'domain_type' => __('platform::register.store.domain_type'),
             'custom_domain' => __('platform::register.store.custom_domain'),
             'profit_percent' => __('platform::register.store.profit'),
+            'category_ids' => __('platform::register.store.categories'),
+            'category_ids.*' => __('platform::register.store.categories'),
         ];
     }
 }

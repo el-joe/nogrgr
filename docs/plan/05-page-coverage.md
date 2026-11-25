@@ -406,6 +406,7 @@
 | OWN-006 | Profile & password / linked Google-Apple | `owner.profile` | save | — (new) | designed: Affiliate & Owner 122:104562 | P2 | done |
 | OWN-007 | Add another store | `owner.stores.create` | → register flow WEB-016 | — (new, §D one owner many stores) | designed: Affiliate & Owner 122:104860 | P2 | done |
 | OWN-008 | Notifications | `owner.notifications` | Std | — (new) | designed: Affiliate & Owner 122:105109 | P9 | todo |
+| OWN-009 | Help & support (contact channels from General settings; tickets action added in P9) | `owner.support` | empty state when no channel configured | — (new, QA-P2-007) | new (owner portal design language) | P2 | todo |
 
 ## 5. Central website (`{central}/`)
 

@@ -60,7 +60,7 @@ class SignUpController extends Controller
         }
 
         $this->flow->start($session, new SignUpDraftData(
-            email: $owner?->email ?? (string) $request->validated('email'),
+            email: $owner->email ?? (string) $request->validated('email'),
             phone: $phone,
             locale: app()->getLocale(),
             complianceAcceptedAt: $acceptedAt,

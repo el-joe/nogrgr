@@ -60,6 +60,49 @@ it('previews the DNS records for an owned store only', function (): void {
     $this->getJson(route('owner.domains.instructions', ['tenant' => $this->foreign->id]))->assertForbidden();
 });
 
+it('falls back to the platform default records when no DNS templates exist (QA-P2-008)', function (): void {
+    config(['tenancy.custom_domain_records' => [
+        ['type' => 'A', 'host' => '@', 'value' => '', 'ttl' => 3600, 'priority' => null],
+        ['type' => 'CNAME', 'host' => 'www', 'value' => '{subdomain}', 'ttl' => 3600, 'priority' => null],
+        ['type' => 'TXT', 'host' => '_nogrgr-verify', 'value' => '{token}', 'ttl' => 600, 'priority' => null],
+    ]]);
+
+    $records = $this->getJson(route('owner.domains.instructions', ['tenant' => $this->store->id, 'host' => 'oudhouse.sa']))
+        ->assertOk()
+        ->json('data.records');
+
+    // The A record has no edge IP configured, so it is left out.
+    expect(array_column($records, 'type'))->toBe(['CNAME', 'TXT'])
+        ->and($records[0]['value'])->toBe($this->store->subdomainHost())
+        ->and($records[1]['ttl'])->toBe(600);
+
+    // An admin template set replaces the defaults.
+    DnsRecordTemplate::factory()->create(['type' => DnsRecordType::A, 'host' => '@', 'value' => '203.0.113.10']);
+    $this->getJson(route('owner.domains.instructions', ['tenant' => $this->store->id, 'host' => 'oudhouse.sa']))
+        ->assertJsonCount(1, 'data.records')
+        ->assertJsonPath('data.records.0.value', '203.0.113.10');
+});
+
+it('shows an empty-state message in the add modal when there are no records', function (): void {
+    $this->get(route('owner.domains.index'))
+        ->assertOk()
+        ->assertSee('data-records-empty', false)
+        ->assertSee(__('platform::owner.domains.records_empty'));
+});
+
+it('frames the edit form in the full owner page when opened by URL (QA-P2-008)', function (): void {
+    $domain = DomainRequest::factory()->create(['tenant_id' => $this->store->id, 'host' => 'shop.oudhouse.sa']);
+
+    $this->get(route('owner.domains.edit', $domain->id))
+        ->assertOk()
+        ->assertSee('ui-shell-main', false)
+        ->assertSee('form="domain-edit-form"', false)
+        ->assertSee('data-success-url="'.route('owner.domains.show', $domain->id).'"', false);
+
+    $this->get(route('owner.domains.edit', $domain->id), ['X-Requested-With' => 'XMLHttpRequest'])
+        ->assertOk()->assertSee('domain-edit-form', false)->assertDontSee('ui-shell-main', false);
+});
+
 it('validates the added domain', function (array $payload, string $field): void {
     DomainRequest::factory()->create(['tenant_id' => $this->foreign->id, 'host' => 'taken.example.com']);
 

@@ -4,7 +4,7 @@
  *  - every form: submit spinner + double-submit guard, password show/hide
  *  - store step: sub-domain / own-domain switch, slug clean-up + suggestion from the
  *    store name, debounced live availability (GET register/availability) and the
- *    "Check DNS" lookup
+ *    "Check DNS" lookup, and the store categories multi-select (Select2, lazy-loaded)
  *  - provisioning: polls the signed status URL and ticks the checklist
  *
  * Motion is CSS-driven (resources/css/central/register.css) and reduced-motion aware.
@@ -144,6 +144,11 @@ function initStoreForm(root) {
 
     if (!form || !config) {
         return;
+    }
+
+    // Store categories: Select2 (search) is loaded only on this step.
+    if (form.querySelector('select[data-select]')) {
+        import('../panels/select2.js').then(({ initSelect2 }) => initSelect2(form));
     }
 
     const segment = form.querySelector('[data-segment]');

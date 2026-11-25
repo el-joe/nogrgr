@@ -27,9 +27,12 @@ use App\Modules\Platform\Repositories\Eloquent\DnsRecordTemplateRepository;
 use App\Modules\Platform\Repositories\Eloquent\DomainRequestRepository;
 use App\Modules\Platform\Repositories\Eloquent\TenantRepository;
 use App\Modules\Platform\Repositories\Eloquent\VendorRegistrationRepository;
+use App\Modules\Platform\Support\PartialMigrationCleaner;
 use App\Modules\Platform\Support\StreamCertificateInspector;
 use App\Modules\Platform\Support\SystemDnsResolver;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
+use Illuminate\Database\Events\MigrationFailed;
+use Illuminate\Database\Events\MigrationStarted;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 
@@ -51,10 +54,19 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         CertificateInspector::class => StreamCertificateInspector::class,
     ];
 
+    /**
+     * @var array<class-string, class-string>
+     */
+    public $singletons = [
+        PartialMigrationCleaner::class => PartialMigrationCleaner::class,
+    ];
+
     public function boot(): void
     {
         parent::boot();
 
+        Event::listen(MigrationStarted::class, [PartialMigrationCleaner::class, 'started']);
+        Event::listen(MigrationFailed::class, [PartialMigrationCleaner::class, 'failed']);
         Event::listen(TenantProvisioned::class, WelcomeProvisionedVendor::class);
         Event::listen(TenantProvisioningFailed::class, AlertProvisioningFailure::class);
         Event::listen(ComplianceReviewed::class, NotifyOwnerOfComplianceDecision::class);

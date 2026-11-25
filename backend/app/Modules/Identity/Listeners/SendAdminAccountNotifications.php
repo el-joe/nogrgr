@@ -36,7 +36,7 @@ class SendAdminAccountNotifications
             $this->dispatcher->send($others, new AdminTeamMemberAddedNotification(
                 $event->admin->name,
                 (string) $event->admin->email,
-                $event->createdBy?->name ?? '—',
+                $event->createdBy->name ?? '—',
             ));
         }
     }

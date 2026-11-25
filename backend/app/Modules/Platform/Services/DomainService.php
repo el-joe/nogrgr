@@ -230,10 +230,47 @@ class DomainService extends BaseService
             '{token}' => $request->verification_token,
         ];
 
-        return $this->templates->ordered()
+        $templates = $this->templates->ordered();
+
+        if ($templates->isEmpty()) {
+            return $this->defaultRecords($replacements);
+        }
+
+        return $templates
             ->map(fn (DnsRecordTemplate $template): array => $template->render($replacements))
             ->values()
             ->all();
+    }
+
+    /**
+     * Platform default record set (tenancy.custom_domain_records) used until the admin
+     * defines templates; entries with an unknown type or an empty value are skipped.
+     *
+     * @param  array<string, string>  $replacements
+     * @return list<array{type: string, host: string, value: string, ttl: int, priority: int|null}>
+     */
+    private function defaultRecords(array $replacements): array
+    {
+        $records = [];
+
+        foreach ((array) config('tenancy.custom_domain_records', []) as $record) {
+            $type = DnsRecordType::tryFrom(strtoupper((string) ($record['type'] ?? '')));
+            $value = strtr(trim((string) ($record['value'] ?? '')), $replacements);
+
+            if ($type === null || $value === '') {
+                continue;
+            }
+
+            $records[] = [
+                'type' => $type->value,
+                'host' => strtr((string) ($record['host'] ?? '@'), $replacements),
+                'value' => $value,
+                'ttl' => (int) ($record['ttl'] ?? 3600),
+                'priority' => isset($record['priority']) ? (int) $record['priority'] : null,
+            ];
+        }
+
+        return $records;
     }
 
     /**

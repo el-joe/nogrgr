@@ -35,6 +35,8 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property Carbon|null $deleted_at
  * @property-read Country $country
  * @property-read City|null $city
+ * @property-read int|null $skus_count  withCount alias (admin branches list)
+ * @property-read int|string|null $units_sum  withSum alias (admin branches list)
  */
 class Branch extends Model implements AiTranslatable
 {

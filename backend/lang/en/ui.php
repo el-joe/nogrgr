@@ -7,6 +7,8 @@ return [
     'saving' => 'Saving…',
     'close' => 'Close',
     'cancel' => 'Cancel',
+    'back' => 'Back',
+    'save' => 'Save',
     'confirm' => 'Confirm',
     'delete' => 'Delete',
     'confirm_title' => 'Are you sure?',
@@ -37,7 +39,7 @@ return [
         'admin' => 'Admin',
         'vendor' => 'Store',
         'affiliate' => 'Partner',
-        'owner' => 'Store owner',
+        'owner' => 'Owner',
     ],
     'date' => [
         'placeholder' => 'DD MMM YYYY',

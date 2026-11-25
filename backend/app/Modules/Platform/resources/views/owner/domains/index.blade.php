@@ -54,6 +54,7 @@
                         <span class="text-white/70" data-records-loading>{{ __('platform::owner.domains.records_loading') }}</span>
                     </div>
                     <p class="text-xs text-danger" data-records-error hidden>{{ __('platform::owner.domains.records_error') }}</p>
+                    <p class="text-xs text-ink-secondary" data-records-empty hidden>{{ __('platform::owner.domains.records_empty') }}</p>
                 </div>
             </form>
             <x-slot:footer>

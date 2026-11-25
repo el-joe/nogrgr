@@ -102,6 +102,26 @@ it('serves the create and edit modal forms', function (): void {
         ->assertOk()->assertSee('Omar Haddad')->assertSee(__('identity::admins.fields.password_keep'));
 });
 
+it('frames the modal form in the full panel page when opened by URL (QA-P2-008)', function (): void {
+    $actor = superAdmin();
+    $target = Admin::factory()->create(['name' => 'Omar Haddad']);
+    $this->actingAs($actor, 'admin');
+
+    $this->get($this->centralUrl('/admin/system/admins/create'))
+        ->assertOk()
+        ->assertSee('ui-shell-main', false)
+        ->assertSee('data-success-url="'.route('admin.system.admins.index').'"', false)
+        ->assertSee('form="admin-form"', false)
+        ->assertSee(__('identity::admins.create_title'));
+
+    $this->get($this->centralUrl("/admin/system/admins/{$target->id}/edit"))
+        ->assertOk()->assertSee('ui-shell-main', false)->assertSee('Omar Haddad');
+
+    // The remote-modal loader still gets the bare fragment.
+    $this->get($this->centralUrl('/admin/system/admins/create'), ['X-Requested-With' => 'XMLHttpRequest'])
+        ->assertOk()->assertSee('id="admin-form"', false)->assertDontSee('ui-shell-main', false)->assertDontSee('<html', false);
+});
+
 it('creates an admin with a role, audits it and notifies', function (): void {
     Notification::fake();
     $actor = superAdmin();

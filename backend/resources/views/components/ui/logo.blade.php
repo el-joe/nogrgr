@@ -11,7 +11,7 @@
     @unless ($compact)
         <span @class(['ui-sidebar-wordmark text-xl font-semibold tracking-[0.04em]', 'text-white' => $onColor, 'text-ink' => ! $onColor])>NOGRGR</span>
         @if ($tag)
-            <span @class(['ui-sidebar-wordmark rounded-[5px] px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em]', 'bg-white/15 text-sidebar-ink' => $variant === 'dark', 'bg-white/20 text-white' => $variant === 'hero', 'bg-primary-subtle text-ink-brand' => $variant === 'light'])>{{ $tag }}</span>
+            <span @class(['ui-sidebar-wordmark shrink-0 whitespace-nowrap rounded-[5px] px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em]', 'bg-white/15 text-sidebar-ink' => $variant === 'dark', 'bg-white/20 text-white' => $variant === 'hero', 'bg-primary-subtle text-ink-brand' => $variant === 'light'])>{{ $tag }}</span>
         @endif
     @endunless
 </span>

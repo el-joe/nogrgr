@@ -17,6 +17,7 @@ interface TenantRepositoryContract extends RepositoryContract
 
     /**
      * @param  list<int>  $ids
+     * @return TenantCollection<int, Tenant>
      */
     public function findMany(array $ids): TenantCollection;
 

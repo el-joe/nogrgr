@@ -13,7 +13,7 @@
 
 @section('content')
     <div class="flex flex-col items-center gap-6 px-4 pt-6 pb-16 sm:gap-8 sm:px-6 lg:pt-14 lg:pb-24">
-        @include('platform::central.register.partials.steps', ['current' => 1])
+        @include('platform::central.register.partials.steps', ['current' => 1, 'done' => ['plan', 'payment']])
 
         <section class="reg-enter grid w-full max-w-[544px] justify-items-center gap-4 rounded-[24px] bg-white p-6 text-center shadow-(--reg-card-shadow) sm:p-12" x-data="{ editing: {{ $errors->has('email') ? 'true' : 'false' }} }">
             @include('platform::central.signup._state-icon', ['tone' => 'primary', 'icon' => 'mail'])

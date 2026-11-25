@@ -7,6 +7,8 @@ return [
     'saving' => 'جارٍ الحفظ…',
     'close' => 'إغلاق',
     'cancel' => 'إلغاء',
+    'back' => 'رجوع',
+    'save' => 'حفظ',
     'confirm' => 'تأكيد',
     'delete' => 'حذف',
     'confirm_title' => 'هل أنت متأكد؟',
@@ -37,7 +39,7 @@ return [
         'admin' => 'مشرف',
         'vendor' => 'المتجر',
         'affiliate' => 'الشريك',
-        'owner' => 'مالك المتجر',
+        'owner' => 'المالك',
     ],
     'date' => [
         'placeholder' => 'يوم شهر سنة',

@@ -1,0 +1,195 @@
+/*
+ * Select2 skin (Figma Select 27:10284), shared by the panels and the central website.
+ * Unlayered and prefixed with :root so it beats Select2's own unlayered stylesheet.
+ */
+/* ---------- Select2 skin (Figma Select 27:10284) ---------- */
+:root .select2-container {
+    width: 100% !important;
+    font-size: 14px;
+}
+
+:root .select2-container .select2-selection--single,
+:root .select2-container .select2-selection--multiple {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    height: auto;
+    padding-inline: 12px 36px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-control);
+    background-color: var(--color-field);
+    transition: border-color 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+:root .select2-container .select2-selection--single .select2-selection__rendered {
+    padding: 0;
+    color: var(--color-ink);
+    line-height: 20px;
+}
+
+:root .select2-container .select2-selection__placeholder {
+    color: var(--color-ink-muted);
+}
+
+:root .select2-container.select2-container .select2-selection--single .select2-selection__arrow {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 12px;
+    inset-inline-start: auto;
+    height: auto;
+    width: 16px;
+    display: grid;
+    place-items: center;
+}
+
+/*
+ * Select2's own triangle is drawn with borders on <b>, and its rules (open state, RTL)
+ * tie with ours on specificity, so the order of the two stylesheets decided which
+ * one won. The <b> is hidden instead and the design-system chevron (Figma Select
+ * 27:10284) is drawn on the arrow box itself.
+ */
+:root .select2-container .select2-selection__arrow b {
+    display: none;
+}
+
+:root .select2-container .select2-selection__arrow::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    background-color: var(--color-ink-secondary);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: transform 160ms ease-out;
+}
+
+:root .select2-container--open .select2-selection__arrow::after {
+    transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root .select2-container .select2-selection__arrow::after {
+        transition: none;
+    }
+}
+
+:root .select2-container--focus .select2-selection,
+:root .select2-container--open .select2-selection {
+    border-color: var(--color-focus) !important;
+    box-shadow: inset 0 0 0 0.5px var(--color-focus), var(--shadow-focus);
+    outline: none;
+}
+
+:root select[aria-invalid='true'] + .select2-container .select2-selection {
+    border-color: var(--color-danger);
+    box-shadow: inset 0 0 0 0.5px var(--color-danger);
+}
+
+:root .select2-container--disabled .select2-selection {
+    background-color: var(--color-field-disabled) !important;
+    cursor: not-allowed !important;
+}
+
+:root .select2-container--disabled .select2-selection__rendered {
+    color: var(--color-ink-muted) !important;
+}
+
+:root .select2-container .select2-selection--multiple .select2-selection__rendered {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 6px 0;
+}
+
+:root .select2-container .select2-selection--multiple .select2-selection__choice {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 2px 8px;
+    border: 0;
+    border-radius: var(--radius-chip);
+    background-color: var(--color-primary-subtle);
+    color: var(--color-ink-brand);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+:root .select2-container .select2-selection--multiple .select2-selection__choice__remove {
+    position: static;
+    border: 0;
+    padding: 0;
+    color: var(--color-ink-brand);
+    background: transparent;
+}
+
+:root .select2-container .select2-search--inline .select2-search__field {
+    margin: 0;
+    height: 24px;
+    font-family: inherit;
+    color: var(--color-ink);
+}
+
+:root .select2-dropdown {
+    padding: 8px;
+    border: 1px solid var(--color-line) !important;
+    border-radius: var(--radius-control) !important;
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-pop);
+    color: var(--color-ink);
+    margin-block-start: 4px;
+}
+
+:root .select2-container--open .select2-dropdown--above {
+    margin-block: 0 4px;
+}
+
+:root .select2-search--dropdown {
+    padding: 0 0 6px;
+}
+
+:root .select2-search--dropdown .select2-search__field {
+    height: 32px;
+    padding-inline: 10px;
+    border: 0 !important;
+    border-radius: var(--radius-chip);
+    background-color: var(--color-subtle);
+    color: var(--color-ink);
+    font-family: inherit;
+    outline: none;
+}
+
+:root .select2-results__option {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding-block: 0;
+    padding-inline: 10px;
+    border-radius: var(--radius-chip);
+    font-size: 14px;
+}
+
+:root .select2-results__option--highlighted,
+:root .select2-container .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--color-subtle) !important;
+    color: var(--color-ink) !important;
+}
+
+:root .select2-results__option--selected,
+:root .select2-container .select2-results__option--selected {
+    background-color: var(--color-primary-subtle) !important;
+    color: var(--color-ink-brand) !important;
+}
+
+:root .select2-results__option--selected::after {
+    content: '';
+    margin-inline-start: auto;
+    width: 14px;
+    height: 14px;
+    background-color: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+:root .select2-results__message {
+    color: var(--color-ink-secondary);
+}
