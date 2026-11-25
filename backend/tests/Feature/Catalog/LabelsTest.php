@@ -60,6 +60,24 @@ it('renders the modal form fragments', function (): void {
     $this->get($this->centralUrl("/admin/catalog/labels/{$label->id}/edit"))->assertOk()->assertSee('Delivered by {delivery_date}');
 });
 
+it('frames the label form in the full panel page when opened by URL (QA-P2-008)', function (): void {
+    $this->actingAs(catalogAdmin(), 'admin');
+    $label = ProductLabel::factory()->create();
+
+    $this->get($this->centralUrl('/admin/catalog/labels/create'))
+        ->assertOk()
+        ->assertSee('ui-shell-main', false)
+        ->assertSee('data-page="admin-catalog"', false)
+        ->assertSee('data-success-url="'.route('admin.catalog.labels.index').'"', false)
+        ->assertSee('form="label-form"', false);
+
+    $this->get($this->centralUrl("/admin/catalog/labels/{$label->id}/edit"))
+        ->assertOk()->assertSee('ui-shell-main', false)->assertSee(__('catalog::labels.edit_title'));
+
+    $this->get($this->centralUrl('/admin/catalog/labels/create'), ['X-Requested-With' => 'XMLHttpRequest'])
+        ->assertOk()->assertSee('label-form', false)->assertDontSee('ui-shell-main', false)->assertDontSee('<html', false);
+});
+
 it('creates and updates a label with countries and a computed position', function (): void {
     $this->actingAs(catalogAdmin(['catalog.labels.manage']), 'admin');
     ProductLabel::factory()->create(['sort_order' => 4]);

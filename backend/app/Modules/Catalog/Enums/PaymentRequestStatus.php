@@ -5,7 +5,7 @@ namespace App\Modules\Catalog\Enums;
 use App\Shared\Enums\Concerns\HasEnumHelpers;
 
 /**
- * Payment request raised by the platform on a brand/manufacturing request; paid through a gateway in P5.
+ * Payment request on a manufacturing / brand request; settled through its Billing invoice.
  */
 enum PaymentRequestStatus: string
 {
@@ -14,4 +14,13 @@ enum PaymentRequestStatus: string
     case Pending = 'pending';
     case Paid = 'paid';
     case Cancelled = 'cancelled';
+
+    public function tone(): string
+    {
+        return match ($this) {
+            self::Pending => 'warning',
+            self::Paid => 'success',
+            self::Cancelled => 'neutral',
+        };
+    }
 }

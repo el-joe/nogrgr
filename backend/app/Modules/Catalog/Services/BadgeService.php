@@ -17,8 +17,8 @@ use App\Modules\Catalog\Repositories\Contracts\ProductRepositoryContract;
 use App\Modules\Catalog\Support\CatalogLocales;
 use App\Shared\Services\BaseService;
 use DomainException;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Badges hub (ADM-017…017g): one list per BadgeType (rows created on demand), products

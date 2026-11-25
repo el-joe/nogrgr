@@ -7,6 +7,7 @@
 @php
     $user = auth('admin')->user();
     $canManage = (bool) $user?->can('catalog.products.manage');
+    $canBulk = $canManage && $tab !== \App\Modules\Catalog\Enums\ProductListTab::Trash;
     $canExport = (bool) $user?->can('catalog.products.export');
     $tabItems = [];
     foreach (\App\Modules\Catalog\Enums\ProductListTab::cases() as $case) {
@@ -36,6 +37,7 @@
         <x-ui::datatable
             id="products"
             :url="route('admin.catalog.products.data', ['tab' => $tab->value])"
+            :selectable="$canBulk"
             :columns="[
                 ['data' => 'name', 'title' => __('catalog::products.columns.product')],
                 ['data' => 'category', 'title' => __('catalog::products.columns.category'), 'orderable' => false, 'searchable' => false],
@@ -45,7 +47,7 @@
                 ['data' => 'updated_at', 'title' => __('catalog::products.columns.updated'), 'searchable' => false],
                 ['data' => 'actions', 'title' => '', 'orderable' => false, 'searchable' => false],
             ]"
-            :order="[[5, 'desc']]"
+            :order="[[$canBulk ? 6 : 5, 'desc']]"
             :empty-title="__('catalog::products.empty_title')"
             :empty-description="__('catalog::products.empty_description')"
         >
@@ -59,6 +61,13 @@
                     <x-ui::select name="stock" :label="__('catalog::products.filters.stock')" label-hidden :options="\App\Modules\Catalog\Enums\StockState::options()" :placeholder="__('catalog::products.filters.stock')" :search="false" allow-clear data-filter :data-filter-label="__('catalog::products.filters.stock')" class="w-40" />
                 </x-ui::filters-bar>
             </x-slot:filters>
+            @if ($canBulk)
+                <x-slot:bulk>
+                    <x-ui::button size="sm" variant="ghost" icon="check" data-bulk-action="activate" :data-url="route('admin.catalog.products.bulk')">{{ __('catalog::products.bulk.activate') }}</x-ui::button>
+                    <x-ui::button size="sm" variant="ghost" icon="x" data-bulk-action="deactivate" :data-url="route('admin.catalog.products.bulk')">{{ __('catalog::products.bulk.deactivate') }}</x-ui::button>
+                    <x-ui::button size="sm" variant="danger" icon="trash" data-bulk-action="delete" :data-url="route('admin.catalog.products.bulk')" :data-bulk-confirm="__('catalog::products.bulk.delete_message')" :data-bulk-confirm-title="__('catalog::products.bulk.delete_title')">{{ __('catalog::products.bulk.delete') }}</x-ui::button>
+                </x-slot:bulk>
+            @endif
             @if ($canManage && $tab !== \App\Modules\Catalog\Enums\ProductListTab::Trash)
                 <x-slot:empty>
                     <x-ui::button icon="plus" :href="route('admin.catalog.products.create')">{{ __('catalog::products.add') }}</x-ui::button>

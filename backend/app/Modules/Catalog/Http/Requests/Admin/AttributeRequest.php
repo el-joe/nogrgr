@@ -76,7 +76,7 @@ class AttributeRequest extends FormRequest
 
         foreach (array_values((array) $this->validated('options')) as $option) {
             $options[] = [
-                'id' => isset($option['id']) && $option['id'] !== '' && $option['id'] !== null ? (int) $option['id'] : null,
+                'id' => isset($option['id']) && $option['id'] !== '' ? (int) $option['id'] : null,
                 'name' => $locales->clean((array) ($option['name'] ?? [])),
                 'swatch' => isset($option['swatch']) && $option['swatch'] !== '' ? strtoupper((string) $option['swatch']) : null,
                 'is_active' => filter_var($option['is_active'] ?? true, FILTER_VALIDATE_BOOL),

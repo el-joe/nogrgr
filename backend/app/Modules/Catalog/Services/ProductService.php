@@ -2,11 +2,13 @@
 
 namespace App\Modules\Catalog\Services;
 
+use App\Modules\Catalog\DTOs\ProductBulkData;
 use App\Modules\Catalog\DTOs\ProductData;
 use App\Modules\Catalog\DTOs\ProductVariantData;
 use App\Modules\Catalog\Enums\AssignmentScope;
 use App\Modules\Catalog\Enums\BadgeType;
 use App\Modules\Catalog\Enums\MediaConversionStatus;
+use App\Modules\Catalog\Enums\ProductStatus;
 use App\Modules\Catalog\Enums\RecordStatus;
 use App\Modules\Catalog\Events\ProductCreated;
 use App\Modules\Catalog\Events\ProductUpdated;
@@ -99,6 +101,51 @@ class ProductService extends BaseService
     {
         $this->products->delete($product);
         $this->dispatchAfterCommit(new ProductUpdated($product->id));
+    }
+
+    /**
+     * Products list bulk action. Activate publishes (keeps the first published_at),
+     * deactivate moves to draft, delete trashes; each changed product fires
+     * ProductUpdated so tenant copies follow.
+     *
+     * @return int products changed
+     */
+    public function bulk(ProductBulkData $data): int
+    {
+        $products = $this->products->findManyForBulk($data->productIds);
+        $target = $data->action->targetStatus();
+
+        /** @var list<int> $changed */
+        $changed = $this->transaction(function () use ($products, $target): array {
+            $ids = [];
+
+            foreach ($products as $product) {
+                if ($target === null) {
+                    $this->products->delete($product);
+                    $ids[] = $product->id;
+
+                    continue;
+                }
+
+                if ($product->status === $target) {
+                    continue;
+                }
+
+                $this->products->update($product, [
+                    'status' => $target,
+                    'published_at' => $target === ProductStatus::Published ? ($product->published_at ?? now()) : $product->published_at,
+                ]);
+                $ids[] = $product->id;
+            }
+
+            return $ids;
+        }, $this->connection());
+
+        foreach ($changed as $id) {
+            $this->dispatchAfterCommit(new ProductUpdated($id));
+        }
+
+        return count($changed);
     }
 
     public function restore(Product $product): void

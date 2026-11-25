@@ -24,7 +24,7 @@ class RefreshBadgeAutoFill implements ShouldBeUnique, ShouldQueue
 
     public function uniqueId(): string
     {
-        return $this->type?->value ?? 'all';
+        return $this->type->value ?? 'all';
     }
 
     public function handle(BadgeService $badges): void

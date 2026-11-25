@@ -12,8 +12,9 @@ use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Repositories\Contracts\ProductRepositoryContract;
 use App\Modules\Platform\Models\Tenant;
 use App\Shared\Repositories\BaseRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
 
@@ -58,6 +59,11 @@ class ProductRepository extends BaseRepository implements ProductRepositoryContr
             ->orderBy('products.id')
             ->pluck('products.id')
             ->all())));
+    }
+
+    public function findManyForBulk(array $ids): EloquentCollection
+    {
+        return $this->query()->whereKey($ids)->orderBy('id')->get();
     }
 
     public function existingIds(array $ids): array

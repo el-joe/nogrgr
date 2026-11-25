@@ -20,6 +20,13 @@ interface CategoryRepositoryContract extends RepositoryContract
     public function allForTree(): Collection;
 
     /**
+     * Active top-level categories in menu order (sign-up "store categories" picker).
+     *
+     * @return Collection<int, Category>
+     */
+    public function activeTopLevel(): Collection;
+
+    /**
      * id => parent_id of every category.
      *
      * @return array<int, int|null>

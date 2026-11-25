@@ -46,11 +46,11 @@ return [
         'label' => 'navigation.sections.requests',
         'items' => [
             ['key' => 'requests', 'label' => 'navigation.admin.requests_center', 'icon' => 'message', 'badge' => 'requests', 'children' => [
-                ['key' => 'requests.product', 'label' => 'navigation.admin.product_requests', 'route' => 'admin.requests.products.index', 'permission' => 'requests.products.view'],
-                ['key' => 'requests.edit', 'label' => 'navigation.admin.edit_requests', 'route' => 'admin.requests.edits.index', 'permission' => 'requests.edits.view'],
-                ['key' => 'requests.manufacturing', 'label' => 'navigation.admin.manufacturing_requests', 'route' => 'admin.requests.manufacturing.index', 'permission' => 'requests.manufacturing.view'],
-                ['key' => 'requests.brand', 'label' => 'navigation.admin.brand_requests', 'route' => 'admin.requests.brands.index', 'permission' => 'requests.brands.view'],
-                ['key' => 'requests.tenant', 'label' => 'navigation.admin.tenant_change_requests', 'route' => 'admin.requests.tenant-changes.index', 'permission' => 'requests.tenant-changes.view'],
+                ['key' => 'requests.product', 'label' => 'navigation.admin.product_requests', 'route' => 'admin.requests.products.index', 'permission' => 'requests.products.view', 'badge' => 'requests.products'],
+                ['key' => 'requests.edit', 'label' => 'navigation.admin.edit_requests', 'route' => 'admin.requests.edits.index', 'permission' => 'requests.edits.view', 'badge' => 'requests.edits'],
+                ['key' => 'requests.manufacturing', 'label' => 'navigation.admin.manufacturing_requests', 'route' => 'admin.requests.manufacturing.index', 'permission' => 'requests.manufacturing.view', 'badge' => 'requests.manufacturing'],
+                ['key' => 'requests.brand', 'label' => 'navigation.admin.brand_requests', 'route' => 'admin.requests.brands.index', 'permission' => 'requests.brands.view', 'badge' => 'requests.brands'],
+                ['key' => 'requests.tenant', 'label' => 'navigation.admin.tenant_change_requests', 'route' => 'admin.requests.tenant-changes.index', 'permission' => 'requests.tenant-changes.view', 'badge' => 'requests.tenant-changes'],
             ]],
         ],
     ],

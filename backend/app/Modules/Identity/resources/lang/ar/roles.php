@@ -89,6 +89,10 @@ return [
         'vendors.kyc' => 'امتثال التجار (KYC)',
         'vendors.domains' => 'نطاقات التجار',
         'requests.tenant-changes' => 'طلبات تعديل المتاجر',
+        'requests.products' => 'طلبات المنتجات',
+        'requests.edits' => 'طلبات تعديل المنتجات',
+        'requests.manufacturing' => 'طلبات التصنيع',
+        'requests.brands' => 'طلبات العلامات التجارية',
         'plans' => 'الباقات',
         'subscriptions' => 'الاشتراكات',
         'finance.invoices' => 'الفواتير',
@@ -102,6 +106,7 @@ return [
         'catalog.labels' => 'ملصقات المنتجات',
         'catalog.badges' => 'شارات المنتجات',
         'catalog.products' => 'المنتجات',
+        'catalog.imports' => 'استيراد المنتجات',
         'shipping.branches' => 'الفروع',
     ],
 ];

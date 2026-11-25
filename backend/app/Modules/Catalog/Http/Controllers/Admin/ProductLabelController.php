@@ -12,10 +12,13 @@ use App\Modules\Catalog\Models\ProductLabel;
 use App\Modules\Catalog\Services\ProductLabelService;
 use App\Modules\Catalog\Support\CatalogLocales;
 use App\Modules\Localization\Services\CountryService;
+use App\Shared\Http\Concerns\RendersRemoteModals;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
+use App\Shared\Http\RemoteModalPage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Admin › Catalog › Labels (ADM-016 / 016a, Figma 65:27123 / 65:29682): sortable list with
@@ -24,6 +27,7 @@ use Illuminate\Http\JsonResponse;
 class ProductLabelController extends Controller
 {
     use AnswersDomainErrors;
+    use RendersRemoteModals;
 
     public function __construct(
         private readonly ProductLabelService $labels,
@@ -40,9 +44,9 @@ class ProductLabelController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        return $this->form(new ProductLabel(['is_active' => true]));
+        return $this->form($request, new ProductLabel(['is_active' => true]));
     }
 
     public function store(ProductLabelRequest $request): JsonResponse
@@ -52,9 +56,9 @@ class ProductLabelController extends Controller
         return JsonResponder::created(__('catalog::labels.created', ['name' => $label->text]), redirect: route('admin.catalog.labels.index'));
     }
 
-    public function edit(ProductLabel $label): View
+    public function edit(Request $request, ProductLabel $label): View
     {
-        return $this->form($label);
+        return $this->form($request, $label);
     }
 
     public function update(ProductLabelRequest $request, ProductLabel $label): JsonResponse
@@ -83,13 +87,24 @@ class ProductLabelController extends Controller
         return $this->attempt(fn () => $this->labels->saveOrder($request->ids()), __('catalog::labels.order_saved'));
     }
 
-    private function form(ProductLabel $label): View
+    private function form(Request $request, ProductLabel $label): View
     {
-        return view('catalog::admin.labels._form', [
+        $title = __($label->exists ? 'catalog::labels.edit_title' : 'catalog::labels.create_title');
+        $index = route('admin.catalog.labels.index');
+
+        return $this->remoteModal($request, 'catalog::admin.labels._form', [
             'label' => $label,
             'locales' => $this->locales->all(),
             'countries' => $this->countries->options(),
             'samples' => LabelPlaceholder::samples(),
-        ]);
+        ], new RemoteModalPage(
+            surface: 'admin',
+            title: $title,
+            backUrl: $index,
+            pageModule: 'admin-catalog',
+            formId: 'label-form',
+            submitLabel: __('catalog::common.save'),
+            breadcrumbs: [__('navigation.sections.catalog') => null, __('catalog::labels.title') => $index, $title => null],
+        ));
     }
 }

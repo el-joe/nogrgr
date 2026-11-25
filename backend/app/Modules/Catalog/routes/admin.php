@@ -6,6 +6,7 @@ use App\Modules\Catalog\Http\Controllers\Admin\BadgeController;
 use App\Modules\Catalog\Http\Controllers\Admin\CategoryController;
 use App\Modules\Catalog\Http\Controllers\Admin\CategorySortController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductController;
+use App\Modules\Catalog\Http\Controllers\Admin\ProductImportController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductLabelController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductSortController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,7 @@ Route::middleware('auth:admin')->prefix('catalog')->name('catalog.')->group(func
             Route::middleware('permission:catalog.products.manage,admin')->group(function (): void {
                 Route::get('create', 'create')->name('create');
                 Route::post('/', 'store')->name('store');
+                Route::post('bulk', 'bulk')->name('bulk');
                 Route::post('validate/{product?}', 'validateField')->whereNumber('product')->name('validate');
                 Route::get('tenants', 'tenants')->name('tenants');
                 Route::get('{product}/edit', 'edit')->whereNumber('product')->name('edit');
@@ -115,3 +117,29 @@ Route::middleware('auth:admin')->prefix('catalog')->name('catalog.')->group(func
         });
     });
 });
+
+/*
+| Catalog › Products › Import (ADM-013): {central}/admin/catalog/imports, names
+| "admin.catalog.imports.*". `catalog.imports.view` reads runs / logs; `.manage` runs,
+| previews (calls the external API, throttled), pauses / cancels and maps categories.
+*/
+Route::middleware('auth:admin')->prefix('catalog/imports')->name('catalog.imports.')->controller(ProductImportController::class)->group(function (): void {
+    Route::middleware('permission:catalog.imports.view,admin')->group(function (): void {
+        Route::get('/', 'index')->name('index');
+        Route::get('runs', 'runs')->name('runs');
+        Route::get('runs/{run}/progress', 'progress')->whereNumber('run')->name('progress');
+        Route::get('runs/{run}/logs', 'logs')->whereNumber('run')->name('logs');
+        Route::get('categories', 'categories')->name('categories');
+    });
+
+    Route::middleware('permission:catalog.imports.manage,admin')->group(function (): void {
+        Route::post('/', 'store')->name('store');
+        Route::get('preview', 'preview')->middleware('throttle:12,1')->name('preview');
+        Route::patch('runs/{run}/pause', 'pause')->whereNumber('run')->name('pause');
+        Route::patch('runs/{run}/resume', 'resume')->whereNumber('run')->name('resume');
+        Route::patch('runs/{run}/cancel', 'cancel')->whereNumber('run')->name('cancel');
+        Route::put('categories', 'saveCategories')->name('categories.save');
+    });
+});
+
+require __DIR__.'/admin/requests.php';

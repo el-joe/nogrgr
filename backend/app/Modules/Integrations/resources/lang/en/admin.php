@@ -21,6 +21,7 @@ return [
         'verified_ago' => 'Verified :time',
         'model_missing' => 'Model ":model" is not available for this key.',
         'models_found' => '{1} :count model available.|[2,*] :count models available.',
+        'products_found' => '{1} :count product in the catalog.|[2,*] :count products in the catalog.',
     ],
     'mail' => [
         'send_test' => 'Send test email',
@@ -142,6 +143,20 @@ return [
                 'provider' => 'Used when a purpose has no provider of its own.',
                 'freellmapi_api_key' => 'Optional when the gateway runs without authentication.',
                 'freellmapi_model' => '"auto" lets the gateway pick the model.',
+            ],
+        ],
+        'neozena' => [
+            'title' => 'Neozena catalog',
+            'description' => 'External product catalog read by Catalog › Products › Import.',
+            'test' => 'Test connection',
+            'fields' => [
+                'enabled' => 'Enabled',
+                'base_url' => 'API base URL',
+                'api_token' => 'API token',
+            ],
+            'help' => [
+                'base_url' => 'Catalog API root, e.g. https://neozena.com/api/catalog.',
+                'api_token' => 'Optional. Sent as a bearer token when the API requires one.',
             ],
         ],
     ],

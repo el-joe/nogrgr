@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Repositories\Eloquent;
 
+use App\Modules\Catalog\Enums\RecordStatus;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Repositories\Contracts\CategoryRepositoryContract;
@@ -25,6 +26,16 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryCon
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
+    }
+
+    public function activeTopLevel(): Collection
+    {
+        return $this->query()
+            ->whereNull('parent_id')
+            ->where('status', RecordStatus::Active)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['id', 'name']);
     }
 
     public function parentMap(): array

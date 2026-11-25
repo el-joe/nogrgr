@@ -49,7 +49,7 @@ class ProductPriceListService
                 $rows[] = [
                     'country' => $country,
                     'variant' => $variant?->label(),
-                    'sku' => $variant?->sku ?? $product->sku,
+                    'sku' => $variant->sku ?? $product->sku,
                     'base' => $base,
                     'shipping' => $shipping[(string) $country->id],
                     'shopper' => $table['prices'][(string) $country->id],

@@ -21,6 +21,8 @@ const pages = {
     'admin-products': () => import('./products.js'),
     'admin-branches': () => import('./branches.js'),
     'admin-translations': () => import('./translations.js'),
+    'admin-requests': () => import('./requests.js'),
+    'admin-catalog-import': () => import('./catalog-import.js'),
 };
 
 export function initAdmin() {

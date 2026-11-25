@@ -58,7 +58,7 @@ final class ProductsDataTable extends BaseDataTable
             ->orderColumn('stock', static fn (Builder $query, string $order) => $query->orderBy('stock', $direction($order)))
             ->orderColumn('updated_at', static fn (Builder $query, string $order) => $query->orderBy('products.updated_at', $direction($order)))
             ->editColumn('name', fn (Product $product): string => view('catalog::admin.products._product-cell', ['product' => $product])->render())
-            ->addColumn('category', fn (Product $product): string => e((string) ($product->categories->first()?->name ?? '—')))
+            ->addColumn('category', fn (Product $product): string => e((string) ($product->categories->first()->name ?? '—')))
             ->addColumn('price', fn (Product $product): string => view('catalog::admin.products._price-cell', ['product' => $product])->render())
             ->editColumn('stock', fn (Product $product): string => '<span dir="ltr" class="font-medium">'.e(number_format($product->stock)).'</span>')
             ->editColumn('status', fn (Product $product): string => view('catalog::admin.products._status-cell', ['product' => $product])->render())

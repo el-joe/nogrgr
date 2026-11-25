@@ -25,7 +25,7 @@ class BadgeProductSearchResource extends JsonResource
             'id' => $product->id,
             'name' => (string) $product->name,
             'sku' => $product->sku,
-            'category' => (string) ($product->categories->first()?->name ?? ''),
+            'category' => (string) ($product->categories->first()->name ?? ''),
             'price' => $product->costBasis()->format(),
             'image' => $product->primaryImageUrl(),
         ];

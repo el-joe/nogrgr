@@ -22,6 +22,7 @@ enum IntegrationSection: string
     case Broadcasting = 'broadcasting';
     case Cloudflare = 'cloudflare';
     case Ai = 'ai';
+    case Neozena = 'neozena';
 
     public function icon(): string
     {
@@ -32,6 +33,7 @@ enum IntegrationSection: string
             self::Broadcasting => 'bell',
             self::Cloudflare => 'globe',
             self::Ai => 'sparkles',
+            self::Neozena => 'download',
         };
     }
 
@@ -104,6 +106,11 @@ enum IntegrationSection: string
                 new SettingField('freellmapi_api_key', SettingFieldType::Secret),
                 new SettingField('freellmapi_model', required: true, maxLength: 120, default: TranslationProvider::FreeLlmApi->defaultModel()),
             ],
+            self::Neozena => [
+                $enabled,
+                new SettingField('base_url', SettingFieldType::Url, true, default: 'https://neozena.com/api/catalog'),
+                new SettingField('api_token', SettingFieldType::Secret),
+            ],
         };
     }
 
@@ -168,6 +175,7 @@ enum IntegrationSection: string
                 'freellmapi_api_key' => ['ai.providers.freellmapi.api_key'],
                 'freellmapi_model' => ['ai.providers.freellmapi.model'],
             ],
+            self::Neozena => [],
         };
     }
 

@@ -40,6 +40,10 @@ final class PermissionCatalog
                 'vendors.kyc.view', 'vendors.kyc.manage',
                 'vendors.domains.view', 'vendors.domains.manage',
                 'requests.tenant-changes.view', 'requests.tenant-changes.manage',
+                'requests.products.view', 'requests.products.manage',
+                'requests.edits.view', 'requests.edits.manage',
+                'requests.manufacturing.view', 'requests.manufacturing.manage',
+                'requests.brands.view', 'requests.brands.manage',
                 // Billing (plans, subscriptions)
                 'plans.view', 'plans.manage',
                 'subscriptions.view', 'subscriptions.manage', 'subscriptions.export',
@@ -56,6 +60,7 @@ final class PermissionCatalog
                 'catalog.labels.view', 'catalog.labels.manage',
                 'catalog.badges.view', 'catalog.badges.manage',
                 'catalog.products.view', 'catalog.products.manage', 'catalog.products.export',
+                'catalog.imports.view', 'catalog.imports.manage',
                 // Inventory: branches
                 'shipping.branches.view', 'shipping.branches.manage',
             ],
@@ -71,6 +76,7 @@ final class PermissionCatalog
         return [
             Guard::Vendor->value => [
                 'dashboard.view',
+                'onboarding.manage', 'settings.store.manage',
                 'notifications.view',
                 'settings.languages.view', 'settings.languages.manage',
                 'settings.countries.view', 'settings.countries.manage',

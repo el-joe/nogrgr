@@ -177,5 +177,19 @@ return [
     'updated' => 'Product “:name” saved.',
     'deleted' => 'Product “:name” moved to Trash.',
     'restored' => 'Product “:name” restored.',
+    'bulk' => [
+        'action' => 'bulk action',
+        'selection' => 'selected products',
+        'activate' => 'Activate',
+        'deactivate' => 'Deactivate',
+        'delete' => 'Delete',
+        'delete_title' => 'Delete the selected products?',
+        'delete_message' => 'The selected products move to Trash. You can restore them from the Trash tab.',
+        'done' => [
+            'activate' => '{0} The selected products were already active.|{1} 1 product activated.|[2,*] :count products activated.',
+            'deactivate' => '{0} The selected products were already inactive.|{1} 1 product deactivated.|[2,*] :count products deactivated.',
+            'delete' => '{0} No product was deleted.|{1} 1 product moved to Trash.|[2,*] :count products moved to Trash.',
+        ],
+    ],
     'not_trashed' => 'This product is not in Trash.',
 ];

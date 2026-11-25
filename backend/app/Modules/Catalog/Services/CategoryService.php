@@ -112,6 +112,19 @@ class CategoryService extends BaseService
         return $options;
     }
 
+    /**
+     * Active top-level categories as id => name in the current locale (sign-up store
+     * step: what the vendor sells).
+     *
+     * @return array<int, string>
+     */
+    public function topLevelOptions(): array
+    {
+        return $this->categories->activeTopLevel()
+            ->mapWithKeys(static fn (Category $category): array => [$category->id => (string) $category->name])
+            ->all();
+    }
+
     public function count(): int
     {
         return $this->categories->query()->count();

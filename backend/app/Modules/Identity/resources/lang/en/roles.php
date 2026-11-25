@@ -89,6 +89,10 @@ return [
         'vendors.kyc' => 'Vendor compliance (KYC)',
         'vendors.domains' => 'Vendor domains',
         'requests.tenant-changes' => 'Store change requests',
+        'requests.products' => 'Product requests',
+        'requests.edits' => 'Product edit requests',
+        'requests.manufacturing' => 'Manufacturing requests',
+        'requests.brands' => 'Brand requests',
         'plans' => 'Plans',
         'subscriptions' => 'Subscriptions',
         'finance.invoices' => 'Invoices',
@@ -102,6 +106,7 @@ return [
         'catalog.labels' => 'Product labels',
         'catalog.badges' => 'Product badges',
         'catalog.products' => 'Products',
+        'catalog.imports' => 'Product import',
         'shipping.branches' => 'Branches',
     ],
 ];

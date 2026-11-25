@@ -8,6 +8,7 @@ return [
         'broadcasting' => 'Reverb / Pusher',
         'cloudflare' => 'Cloudflare / DNS',
         'ai' => 'AI translation',
+        'neozena' => 'Neozena catalog',
     ],
     'setting_field_type' => [
         'text' => 'Text',

@@ -132,6 +132,6 @@ class Category extends Model implements AiTranslatable
      */
     public function translatedLocales(): array
     {
-        return array_values(array_keys(array_filter($this->getTranslations('name'), static fn (mixed $value): bool => is_string($value) && $value !== '')));
+        return array_keys(array_filter($this->getTranslations('name'), static fn (mixed $value): bool => is_string($value) && $value !== ''));
     }
 }

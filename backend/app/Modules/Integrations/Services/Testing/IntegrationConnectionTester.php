@@ -55,6 +55,7 @@ class IntegrationConnectionTester
                 IntegrationSection::Broadcasting => $this->broadcasting($settings),
                 IntegrationSection::Cloudflare => $this->cloudflare($settings),
                 IntegrationSection::Ai => $this->ai($settings, TranslationProvider::from((string) $target)),
+                IntegrationSection::Neozena => $this->neozena($settings),
             };
         } catch (ConnectionTestFailed $exception) {
             return ConnectionTestResult::failure($exception->type, $exception->detail);
@@ -68,7 +69,7 @@ class IntegrationConnectionTester
     /**
      * @param  array<string, mixed>  $settings
      */
-    private function mail(array $settings, string $recipient): ?string
+    private function mail(array $settings, string $recipient): string
     {
         $driver = MailDriver::tryFrom((string) ($settings['mailer'] ?? '')) ?? MailDriver::Smtp;
 
@@ -109,7 +110,7 @@ class IntegrationConnectionTester
     /**
      * @param  array<string, mixed>  $settings
      */
-    private function google(array $settings): ?string
+    private function google(array $settings): null
     {
         $this->require($settings, ['client_id', 'client_secret']);
 
@@ -127,7 +128,7 @@ class IntegrationConnectionTester
     /**
      * @param  array<string, mixed>  $settings
      */
-    private function apple(array $settings): ?string
+    private function apple(array $settings): null
     {
         $this->require($settings, ['client_id', 'team_id', 'key_id', 'private_key']);
 
@@ -144,7 +145,7 @@ class IntegrationConnectionTester
         return $this->oauthProbe($response);
     }
 
-    private function oauthProbe(Response $response): ?string
+    private function oauthProbe(Response $response): null
     {
         $error = $response->json('error');
 
@@ -162,7 +163,7 @@ class IntegrationConnectionTester
     /**
      * @param  array<string, mixed>  $settings
      */
-    private function broadcasting(array $settings): ?string
+    private function broadcasting(array $settings): null
     {
         $this->require($settings, ['app_id', 'key', 'secret']);
 
@@ -219,7 +220,7 @@ class IntegrationConnectionTester
     /**
      * @param  array<string, mixed>  $settings
      */
-    private function ai(array $settings, TranslationProvider $provider): ?string
+    private function ai(array $settings, TranslationProvider $provider): string
     {
         $prefix = $provider->value.'_';
         $key = $settings[$prefix.'api_key'] ?? null;
@@ -251,6 +252,33 @@ class IntegrationConnectionTester
         }
 
         return trans_choice('integrations::admin.test.models_found', count($models), ['count' => count($models)]);
+    }
+
+    /**
+     * Reads the first product page of the catalog API (optional bearer token).
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    private function neozena(array $settings): ?string
+    {
+        $this->require($settings, ['base_url']);
+
+        $token = $settings['api_token'] ?? null;
+        $response = $this->http()
+            ->when(is_string($token) && $token !== '', static fn (PendingRequest $request) => $request->withToken((string) $token))
+            ->get(rtrim((string) $settings['base_url'], '/').'/products', ['page' => 1]);
+
+        if (! $response->successful()) {
+            throw new ConnectionTestFailed(ConnectionErrorType::fromStatus($response->status()), 'HTTP '.$response->status());
+        }
+
+        if (! is_array($response->json('data'))) {
+            throw new ConnectionTestFailed(ConnectionErrorType::UnexpectedResponse);
+        }
+
+        $total = $response->json('meta.total');
+
+        return is_numeric($total) ? trans_choice('integrations::admin.test.products_found', (int) $total, ['count' => number_format((int) $total)]) : null;
     }
 
     /**

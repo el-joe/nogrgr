@@ -6,6 +6,7 @@ use App\Modules\Catalog\DataTables\ProductsDataTable;
 use App\Modules\Catalog\DTOs\ProductData;
 use App\Modules\Catalog\DTOs\ProductVariantData;
 use App\Modules\Catalog\Http\Concerns\AnswersDomainErrors;
+use App\Modules\Catalog\Http\Requests\Admin\ProductBulkRequest;
 use App\Modules\Catalog\Http\Requests\Admin\ProductFieldRequest;
 use App\Modules\Catalog\Http\Requests\Admin\ProductListRequest;
 use App\Modules\Catalog\Http\Requests\Admin\ProductRequest;
@@ -15,8 +16,10 @@ use App\Modules\Catalog\Services\ProductExportService;
 use App\Modules\Catalog\Services\ProductFormService;
 use App\Modules\Catalog\Services\ProductPriceListService;
 use App\Modules\Catalog\Services\ProductService;
+use App\Shared\Http\Concerns\RendersRemoteModals;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
+use App\Shared\Http\RemoteModalPage;
 use DomainException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -32,6 +35,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ProductController extends Controller
 {
     use AnswersDomainErrors;
+    use RendersRemoteModals;
 
     public function __construct(
         private readonly ProductService $products,
@@ -103,6 +107,14 @@ class ProductController extends Controller
         return JsonResponder::success(__('catalog::products.deleted', ['name' => $product->name]));
     }
 
+    public function bulk(ProductBulkRequest $request): JsonResponse
+    {
+        $data = $request->bulkData();
+        $count = $this->products->bulk($data);
+
+        return JsonResponder::success(trans_choice('catalog::products.bulk.done.'.$data->action->value, $count, ['count' => $count]), ['count' => $count]);
+    }
+
     public function restore(int $product): JsonResponse
     {
         $model = $this->form->findWithTrashed($product);
@@ -113,9 +125,18 @@ class ProductController extends Controller
         );
     }
 
-    public function prices(Product $product): View
+    public function prices(Request $request, Product $product): View
     {
-        return view('catalog::admin.products._price-list', ['product' => $product, 'rows' => $this->priceList->rows($product)]);
+        $title = __('catalog::products.prices.title', ['name' => $product->name]);
+        $index = route('admin.catalog.products.index');
+
+        return $this->remoteModal($request, 'catalog::admin.products._price-list', ['product' => $product, 'rows' => $this->priceList->rows($product)], new RemoteModalPage(
+            surface: 'admin',
+            title: $title,
+            backUrl: $index,
+            pageModule: 'admin-products',
+            breadcrumbs: [__('navigation.sections.catalog') => null, __('catalog::products.title') => $index, $title => null],
+        ));
     }
 
     public function pricesExport(Product $product): StreamedResponse

@@ -30,7 +30,7 @@
 | ADM-011g | ↳ Tab: Tenant assignment (all / selected) | tab | tenant picker | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
 | ADM-011h | ↳ Tab: Stock per branch | tab | per-branch/variant qty | AddEditProduct, branch_products | designed: Admin Panel 65:28688 | P3 | done |
 | ADM-012 | Product sort | `admin.catalog.products.sort` | drag & drop, save | admin.products.sort | designed: Admin Panel 65:21308 | P3 | done |
-| ADM-013 | Product import (external catalog, Neozena driver) | `admin.catalog.import.index` | run import, progress, log, errors | /prod (DevTools@importNeozenaProducts) | designed: Admin Panel 65:22120 | P3 | todo |
+| ADM-013 | Product import (external catalog, Neozena driver) | `admin.catalog.imports.index` | run import, progress, log, errors | /prod (DevTools@importNeozenaProducts) | designed: Admin Panel 65:22120 | P3 | done (unverified in browser) |
 | ADM-014 | Categories list (tree) | `admin.catalog.categories.index` | Std; list, delete, toggle featured | admin.categories.index | designed: Admin Panel 65:22996 | P3 | done |
 | ADM-014a | ↳ Category create / edit | `admin.catalog.categories.create` / `.edit` | translations, thumbnail, parent | admin.categories.create, admin.categories.edit | designed: Admin Panel 65:23866 | P3 | done |
 | ADM-014b | ↳ Category sort | `admin.catalog.categories.sort` | drag & drop | admin.categories.sort | designed: Admin Panel 65:24654 | P3 | done |
@@ -47,16 +47,16 @@
 | ADM-017e | ↳ Tab: Trending now | `admin.catalog.badges.show` | assign, remove | admin.badges.trending-now | designed: Admin Panel 65:27887 | P3 | done |
 | ADM-017f | ↳ Assign products modal (search / whole category) | modal | search, bulk add | admin.badges.search | designed: Admin Panel 65:29682 | P3 | done |
 | ADM-017g | ↳ Badge sort | `admin.catalog.badges.sort` | drag & drop | admin.badges.sort | designed: Admin Panel 65:27887 | P3 | done |
-| ADM-018 | Requests center (hub) | `admin.requests.index` | Std; unread counts per tab | — (new, §D) | designed: Admin Panel 68:28760 | P3 | todo |
-| ADM-018a | ↳ Product edit requests list | `admin.requests.edit-requests.index` | Std; filter status | admin.products.edit-requests | designed: Admin Panel 68:29747 | P3 | todo |
-| ADM-018b | ↳ Edit request detail (diff, approve → tenant override, reject) | `admin.requests.edit-requests.show` | approve, reject (reason) | admin.products.edit-requests.show | designed: Admin Panel 68:30673 | P3 | todo |
-| ADM-018c | ↳ Product requests list | `admin.requests.product.index` | Std; filter status, archive | admin.product-requests.index | designed: Admin Panel 68:28760 | P3 | todo |
-| ADM-018d | ↳ Product request detail (chat, files, status, priority) | `admin.requests.product.show` | reply, upload, live refresh, file download | admin.product-requests.show, admin.product-requests.file | designed: Admin Panel 68:31430 | P3 | todo |
-| ADM-018e | ↳ Manufacturing requests list | `admin.requests.manufacturing.index` | Std; filter status/tenant, status modal | admin.manufacturing.index | designed: Admin Panel 68:32218 | P3 | todo |
-| ADM-018f | ↳ Manufacturing detail (chat, notes, payment requests modal) | `admin.requests.manufacturing.show` | reply, status, create/cancel payment request, file | admin.manufacturing.show, admin.manufacturing.file | designed: Admin Panel 68:33125 | P3 | todo |
-| ADM-018g | ↳ Brand requests list | `admin.requests.brand.index` | Std; filter, status modal | admin.brand-requests.index | designed: Admin Panel 68:33923 | P3 | todo |
-| ADM-018h | ↳ Brand request detail (chat, payment requests) | `admin.requests.brand.show` | reply, status, payment request | admin.brand-requests.show | designed: Admin Panel 68:33923 | P3 | todo |
-| ADM-018i | ↳ Tenant change requests (countries / categories) | `admin.requests.tenant-changes.index` | approve, reject (note) | admin.plans.tenant-change-requests | designed: Admin Panel 68:34678 | P3 | todo |
+| ADM-018 | Requests center (hub) | `admin.requests.index` | Std; unread counts per tab | — (new, §D) | designed: Admin Panel 68:28760 | P3 | done (unverified in browser) |
+| ADM-018a | ↳ Product edit requests list | `admin.requests.edits.index` | Std; filter status | admin.products.edit-requests | designed: Admin Panel 68:29747 | P3 | done (unverified in browser) |
+| ADM-018b | ↳ Edit request detail (diff, approve → tenant override, reject) | `admin.requests.edits.show` | approve, reject (reason) | admin.products.edit-requests.show | designed: Admin Panel 68:30673 | P3 | done (unverified in browser) |
+| ADM-018c | ↳ Product requests list | `admin.requests.products.index` | Std; filter status, archive | admin.product-requests.index | designed: Admin Panel 68:28760 | P3 | done (unverified in browser) |
+| ADM-018d | ↳ Product request detail (chat, files, status, priority) | `admin.requests.products.show` | reply, upload, live refresh, file download | admin.product-requests.show, admin.product-requests.file | designed: Admin Panel 68:31430 | P3 | done (unverified in browser) |
+| ADM-018e | ↳ Manufacturing requests list | `admin.requests.manufacturing.index` | Std; filter status/tenant, status modal | admin.manufacturing.index | designed: Admin Panel 68:32218 | P3 | done (unverified in browser) |
+| ADM-018f | ↳ Manufacturing detail (chat, notes, payment requests modal) | `admin.requests.manufacturing.show` | reply, status, create/cancel payment request, file | admin.manufacturing.show, admin.manufacturing.file | designed: Admin Panel 68:33125 | P3 | done (unverified in browser) |
+| ADM-018g | ↳ Brand requests list | `admin.requests.brands.index` | Std; filter, status modal | admin.brand-requests.index | designed: Admin Panel 68:33923 | P3 | done (unverified in browser) |
+| ADM-018h | ↳ Brand request detail (chat, payment requests) | `admin.requests.brands.show` | reply, status, payment request | admin.brand-requests.show | designed: Admin Panel 68:33923 | P3 | done (unverified in browser) |
+| ADM-018i | ↳ Tenant change requests (countries / categories) | `admin.requests.tenant-changes.index` | approve, reject (note) | admin.plans.tenant-change-requests | designed: Admin Panel 68:34678 | P3 | done (unverified in browser) |
 | ADM-020 | Orders list (all tenants, from facts) | `admin.sales.orders.index` | Std; filter status/payment/gateway/tenant, export | admin.orders.index | designed: Admin Panel 48:16236 | P5 | todo |
 | ADM-021 | Order detail | `admin.sales.orders.show` | Std; timeline, tracking no., own-product orders read-only | admin.orders.show | designed: Admin Panel 49:17280 | P5 | todo |
 | ADM-021a | ↳ Cancel order modal (2-step, reason codes) | modal | reason, note if "other" | OrderDetailPage cancel | designed: Admin Panel 70:41386 | P5 | todo |

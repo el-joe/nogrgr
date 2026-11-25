@@ -7,8 +7,9 @@ use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Platform\Models\Tenant;
 use App\Shared\Repositories\Contracts\RepositoryContract;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\LazyCollection;
 
 /**
@@ -39,6 +40,14 @@ interface ProductRepositoryContract extends RepositoryContract
      * @return list<int> the ids that exist
      */
     public function existingIds(array $ids): array;
+
+    /**
+     * Products (not trashed) with these ids, for a bulk action.
+     *
+     * @param  list<int>  $ids
+     * @return EloquentCollection<int, Product>
+     */
+    public function findManyForBulk(array $ids): EloquentCollection;
 
     /**
      * Published products, newest first.
