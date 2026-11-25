@@ -2,6 +2,7 @@
 
 use App\Modules\Identity\Http\Controllers\Central\ImpersonationAcceptController;
 use App\Modules\Identity\Http\Controllers\Central\SocialAuthController;
+use App\Modules\Identity\Http\Controllers\Central\StoreLoginPasswordController;
 use App\Modules\Identity\Http\Controllers\Central\StorePickerController;
 use App\Modules\Identity\Http\Controllers\Central\TenantLoginController;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -11,6 +12,17 @@ use Illuminate\Support\Facades\Route;
 | Central-host vendor entry: {central}/tenant/login (+ store picker, logout).
 | Registered before the /tenant/{store} panel mount; these words are reserved slugs.
 */
+
+/*
+| Store login on the central website (WEB-022 … 024): /login shows the same form as
+| /tenant/login; forgot / reset passwords of the store accounts sharing the e-mail.
+*/
+
+Route::get('login', [TenantLoginController::class, 'create'])->name('login');
+Route::get('forgot-password', [StoreLoginPasswordController::class, 'request'])->name('password.request');
+Route::post('forgot-password', [StoreLoginPasswordController::class, 'email'])->middleware('throttle:6,1')->name('password.email');
+Route::get('reset-password/{token}', [StoreLoginPasswordController::class, 'edit'])->where('token', '[A-Za-z0-9]{64}')->name('password.reset');
+Route::post('reset-password', [StoreLoginPasswordController::class, 'update'])->middleware('throttle:10,1')->name('password.update');
 
 Route::prefix('tenant')->name('tenant.')->group(function (): void {
     Route::get('login', [TenantLoginController::class, 'create'])->name('login');

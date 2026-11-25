@@ -75,6 +75,19 @@ final class PermissionCatalog
                 'flash-sales.view', 'flash-sales.manage',
                 // Commerce: orders (P5)
                 'orders.view', 'orders.manage',
+                // Commerce / AfterSales: fulfilment, returns, refunds, return policy (P5 batch 3)
+                'orders.export',
+                'shipping-queue.view', 'shipping-queue.manage',
+                'returns.view', 'returns.manage',
+                'refunds.view', 'refunds.manage',
+                'storefront.return-policy.view', 'storefront.return-policy.manage',
+                // Content: central website (P6)
+                'content.posts.view', 'content.posts.manage',
+                'content.post-categories.view', 'content.post-categories.manage',
+                'content.pages.view', 'content.pages.manage',
+                'content.faqs.view', 'content.faqs.manage',
+                'content.newsletter.view', 'content.newsletter.manage', 'content.newsletter.export',
+                'content.contact.view',
             ],
             Guard::Affiliate->value => ['dashboard.view', 'notifications.view'],
         ];
@@ -103,7 +116,9 @@ final class PermissionCatalog
                 'finance.subscription.view',
                 'catalog.products.view', 'catalog.products.manage', 'catalog.products.export',
                 'catalog.own-products.view', 'catalog.own-products.manage',
-                'orders.view', 'orders.manage',
+                'orders.view', 'orders.manage', 'orders.export',
+                'returns.view', 'returns.manage',
+                'refunds.view', 'refunds.manage',
             ],
         ];
     }

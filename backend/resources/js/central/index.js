@@ -6,6 +6,7 @@ import { boot, initReveal } from '../core/index.js';
 
 const pages = {
     'register-': () => import('./register.js'),
+    'site-': () => import('./site.js'),
 };
 
 export function initCentral() {

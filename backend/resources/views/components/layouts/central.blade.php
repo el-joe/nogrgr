@@ -6,5 +6,8 @@
     :entries="['resources/css/central.css', 'resources/js/central.js']"
     body-class="bg-surface text-ink"
 >
+    @isset($head)
+        <x-slot:head>{{ $head }}</x-slot:head>
+    @endisset
     {{ $slot }}
 </x-layouts.document>

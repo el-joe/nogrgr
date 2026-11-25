@@ -104,6 +104,10 @@ return [
         'ui_kit' => 'Component library',
     ],
     'vendor' => [
+        'orders' => 'Orders',
+        'all_orders' => 'All orders',
+        'returns' => 'Returns',
+        'refunds' => 'Refunds',
         'opportunities' => "Today's chances",
         'products' => 'Products',
         'all_products' => 'All products',

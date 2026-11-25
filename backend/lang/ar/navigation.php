@@ -104,6 +104,10 @@ return [
         'ui_kit' => 'مكتبة المكونات',
     ],
     'vendor' => [
+        'orders' => 'الطلبات',
+        'all_orders' => 'كل الطلبات',
+        'returns' => 'المرتجعات',
+        'refunds' => 'المبالغ المستردة',
         'opportunities' => 'فرص اليوم',
         'products' => 'المنتجات',
         'all_products' => 'كل المنتجات',

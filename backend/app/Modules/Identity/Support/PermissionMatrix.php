@@ -23,7 +23,7 @@ final class PermissionMatrix
         'vendors' => ['vendors', 'tenants'],
         'billing' => ['plans', 'subscriptions', 'finance'],
         'localization' => ['localization'],
-        'content' => ['email-templates', 'notifications'],
+        'content' => ['email-templates', 'notifications', 'content'],
         'integrations' => ['integrations'],
         'identity' => ['admins', 'roles', 'audit'],
         'system' => ['system', 'horizon', 'settings'],

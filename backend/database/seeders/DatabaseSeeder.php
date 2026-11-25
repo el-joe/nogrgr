@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Modules\Content\Database\Seeders\ContentStarterSeeder;
 use App\Modules\Identity\Database\Seeders\CentralPermissionSeeder;
 use App\Modules\Localization\Database\Seeders\CitySeeder;
 use App\Modules\Localization\Database\Seeders\CountrySeeder;
@@ -22,6 +23,7 @@ class DatabaseSeeder extends Seeder
             CitySeeder::class,
             CurrencySeeder::class,
             LanguageSeeder::class,
+            ContentStarterSeeder::class,
         ]);
     }
 }

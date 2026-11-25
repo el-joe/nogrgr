@@ -17,6 +17,7 @@ use App\Modules\Identity\Repositories\Contracts\CustomerAddressRepositoryContrac
 use App\Modules\Identity\Repositories\Contracts\CustomerRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\OwnerRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\RoleRepositoryContract;
+use App\Modules\Identity\Repositories\Contracts\StoreLoginPasswordResetRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffDirectoryRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffRepositoryContract;
 use App\Modules\Identity\Repositories\Eloquent\AdminRepository;
@@ -24,6 +25,7 @@ use App\Modules\Identity\Repositories\Eloquent\CustomerAddressRepository;
 use App\Modules\Identity\Repositories\Eloquent\CustomerRepository;
 use App\Modules\Identity\Repositories\Eloquent\OwnerRepository;
 use App\Modules\Identity\Repositories\Eloquent\RoleRepository;
+use App\Modules\Identity\Repositories\Eloquent\StoreLoginPasswordResetRepository;
 use App\Modules\Identity\Repositories\Eloquent\VendorStaffDirectoryRepository;
 use App\Modules\Identity\Repositories\Eloquent\VendorStaffRepository;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
@@ -39,6 +41,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
      * @var array<class-string, class-string>
      */
     public $bindings = [
+        StoreLoginPasswordResetRepositoryContract::class => StoreLoginPasswordResetRepository::class,
         AdminRepositoryContract::class => AdminRepository::class,
         RoleRepositoryContract::class => RoleRepository::class,
         CustomerAddressRepositoryContract::class => CustomerAddressRepository::class,

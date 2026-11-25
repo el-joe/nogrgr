@@ -16,10 +16,16 @@ const demoImages = readdirSync('resources/images/demo')
     .filter((file) => file.endsWith('.webp'))
     .map((file) => `resources/images/demo/${file}`);
 
+/** Central website imagery (Figma exports + docs/plan/comfyui.md generations). */
+const centralImages = readdirSync('resources/images/central', { recursive: true })
+    .map((file) => String(file).replaceAll('\\', '/'))
+    .filter((file) => /\.(webp|avif|svg|png)$/.test(file))
+    .map((file) => `resources/images/central/${file}`);
+
 export default defineConfig({
     plugins: [
         laravel({
-            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages],
+            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages],
             refresh: ['resources/views/**', 'app/Modules/**/resources/views/**', 'app/Modules/**/routes/**', 'lang/**'],
         }),
         tailwindcss(),
