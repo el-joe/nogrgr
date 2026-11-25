@@ -16,6 +16,7 @@ use App\Modules\Billing\Services\SubscriptionService;
 use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffRepositoryContract;
+use App\Modules\Localization\Services\StaticTexts\StaticTextSyncService;
 use App\Modules\Localization\Services\TenantLanguageService;
 use App\Modules\Platform\DTOs\ProvisionTenantData;
 use App\Modules\Platform\Enums\DomainType;
@@ -41,7 +42,7 @@ use Throwable;
  *   provision()  tenant row (pending) + primary sub-domain + optional custom-domain request,
  *                then queues ProvisionTenant on the "provisioning" queue.
  *   run()        (the job) pending|failed → provisioning → active | failed:
- *                create/migrate/seed DB → enable ar/en → owner account (role owner) →
+ *                create/migrate/seed DB → enable ar/en → copy storefront static texts → owner account (role owner) →
  *                plan via Billing → active + TenantProvisioned. Any error → failed +
  *                TenantProvisioningFailed. Every step is idempotent.
  *   retry()      failed / pending / stale provisioning → queues the job again.
@@ -70,6 +71,7 @@ class TenantProvisioningService extends BaseService
         private readonly SubscriptionService $subscriptionService,
         private readonly PaymentLogRepositoryContract $paymentLogs,
         private readonly PaymentLogService $paymentLogService,
+        private readonly StaticTextSyncService $staticTexts,
     ) {}
 
     public function provision(ProvisionTenantData $data): Tenant
@@ -154,6 +156,7 @@ class TenantProvisioningService extends BaseService
 
             $tenant->run(function () use ($tenant, $payload): void {
                 $this->languages->enableCoreLanguages();
+                $this->staticTexts->syncCurrentTenant();
                 $this->ensureOwner($tenant, $payload);
             });
 

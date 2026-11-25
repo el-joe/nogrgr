@@ -6,10 +6,10 @@
     data-title-billing-new="{{ __('identity::addresses.billing_add') }}" data-title-billing-edit="{{ __('identity::addresses.billing_edit') }}">
     <x-sf::address.form :id="$id.'-form'" :countries="$countries" :phone-country="$phoneCountry" :urls="$urls" />
 </x-sf::modal>
-<x-sf::modal id="{{ $id }}-delete" :title="__('storefront::account.delete_address_title')" size="sm" data-address-delete-modal>
-    <p class="text-sm text-sf-muted" data-delete-message data-template="{{ __('storefront::account.delete_address_message', ['address' => '__ADDRESS__']) }}"></p>
+<x-sf::modal id="{{ $id }}-delete" :title="__st('account.delete_address_title')" size="sm" data-address-delete-modal>
+    <p class="text-sm text-sf-muted" data-delete-message data-template="{{ __st('account.delete_address_message', ['address' => '__ADDRESS__']) }}"></p>
     <div class="mt-5 grid grid-cols-2 gap-3">
-        <x-sf::form.button variant="outline" data-sheet-close>{{ __('storefront::account.cancel') }}</x-sf::form.button>
-        <x-sf::form.button variant="danger" data-confirm-delete :busy="__('storefront::account.deleting')">{{ __('identity::addresses.delete') }}</x-sf::form.button>
+        <x-sf::form.button variant="outline" data-sheet-close>{{ __st('account.cancel') }}</x-sf::form.button>
+        <x-sf::form.button variant="danger" data-confirm-delete :busy="__st('account.deleting')">{{ __('identity::addresses.delete') }}</x-sf::form.button>
     </div>
 </x-sf::modal>

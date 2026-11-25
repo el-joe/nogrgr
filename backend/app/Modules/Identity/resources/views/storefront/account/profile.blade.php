@@ -12,8 +12,8 @@
     <section class="sf-card grid gap-4 p-5" aria-labelledby="profile-details" data-profile-card>
         <div class="flex items-center justify-between gap-3">
             <h2 id="profile-details" class="text-lg font-semibold text-sf-ink">{{ __('identity::account.profile.details') }}</h2>
-            <span class="text-xs font-medium text-sf-accent" data-profile-editing hidden>{{ __('storefront::account.editing') }}</span>
-            <button type="button" class="sf-btn sf-btn-outline sf-btn-sm" data-profile-edit><x-ui::icon name="edit" :size="16" />{{ __('storefront::account.edit') }}</button>
+            <span class="text-xs font-medium text-sf-accent" data-profile-editing hidden>{{ __st('account.editing') }}</span>
+            <button type="button" class="sf-btn sf-btn-outline sf-btn-sm" data-profile-edit><x-ui::icon name="edit" :size="16" />{{ __st('account.edit') }}</button>
         </div>
 
         <dl class="grid gap-4 sm:grid-cols-2" data-profile-view>
@@ -41,7 +41,7 @@
                 </x-sf::form.field>
             </div>
             <div class="flex flex-wrap justify-end gap-3">
-                <x-sf::form.button variant="outline" data-profile-cancel>{{ __('storefront::account.cancel') }}</x-sf::form.button>
+                <x-sf::form.button variant="outline" data-profile-cancel>{{ __st('account.cancel') }}</x-sf::form.button>
                 <x-sf::form.button type="submit">{{ __('identity::account.save') }}</x-sf::form.button>
             </div>
         </form>
@@ -53,8 +53,8 @@
             @csrf
             @method('PUT')
             <x-sf::form.input name="current_password" type="password" :label="__('identity::account.fields.current_password')" autocomplete="current-password" required dir="ltr" />
-            <x-sf::form.input name="password" type="password" :label="__('identity::account.fields.new_password')" autocomplete="new-password" required minlength="8" dir="ltr" :helper="__('storefront::account.password_hint')" />
-            <x-sf::form.input name="password_confirmation" type="password" :label="__('storefront::account.confirm_new_password')" autocomplete="new-password" required minlength="8" dir="ltr" />
+            <x-sf::form.input name="password" type="password" :label="__('identity::account.fields.new_password')" autocomplete="new-password" required minlength="8" dir="ltr" :helper="__st('account.password_hint')" />
+            <x-sf::form.input name="password_confirmation" type="password" :label="__st('account.confirm_new_password')" autocomplete="new-password" required minlength="8" dir="ltr" />
             <div><x-sf::form.button type="submit">{{ __('identity::account.password.submit') }}</x-sf::form.button></div>
         </form>
     </section>
@@ -65,15 +65,15 @@
         <div><x-sf::form.button variant="danger-outline" icon="trash" data-sheet-open="sf-delete-account">{{ __('identity::account.delete.submit') }}</x-sf::form.button></div>
     </section>
 
-    <x-sf::modal id="sf-delete-account" :title="__('storefront::account.delete_title')" size="sm">
+    <x-sf::modal id="sf-delete-account" :title="__st('account.delete_title')" size="sm">
         <form method="POST" action="{{ route('storefront.account.destroy') }}" class="grid gap-4" data-ajax data-delete-account-form novalidate>
             @csrf
             @method('DELETE')
-            <p class="text-sm text-sf-muted">{{ __('storefront::account.delete_message') }}</p>
-            <x-sf::form.input name="password" id="sf-delete-password" type="password" :label="__('storefront::account.delete_password')" autocomplete="current-password" required dir="ltr" :use-old="false" :server-error="false" />
+            <p class="text-sm text-sf-muted">{{ __st('account.delete_message') }}</p>
+            <x-sf::form.input name="password" id="sf-delete-password" type="password" :label="__st('account.delete_password')" autocomplete="current-password" required dir="ltr" :use-old="false" :server-error="false" />
             <div class="grid grid-cols-2 gap-3">
-                <x-sf::form.button variant="outline" data-sheet-close>{{ __('storefront::account.cancel') }}</x-sf::form.button>
-                <x-sf::form.button type="submit" variant="danger" :busy="__('storefront::account.deleting')">{{ __('storefront::account.delete_confirm') }}</x-sf::form.button>
+                <x-sf::form.button variant="outline" data-sheet-close>{{ __st('account.cancel') }}</x-sf::form.button>
+                <x-sf::form.button type="submit" variant="danger" :busy="__st('account.deleting')">{{ __st('account.delete_confirm') }}</x-sf::form.button>
             </div>
         </form>
     </x-sf::modal>

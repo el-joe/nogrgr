@@ -12,7 +12,7 @@
     $placeholder ??= __('identity::addresses.choose_country');
 @endphp
 <x-sf::form.field :label="$label" :for="$id" :required="$required" :error="$error" :error-key="$errorKey" {{ $attributes->only('class') }}>
-    <div class="relative" data-sf-combobox data-empty-text="{{ __('storefront::shell.no_countries') }}" data-search-text="{{ __('storefront::shell.search_country') }}" data-clear-text="{{ __('storefront::shell.clear') }}">
+    <div class="relative" data-sf-combobox data-empty-text="{{ __st('shell.no_countries') }}" data-search-text="{{ __st('shell.search_country') }}" data-clear-text="{{ __st('shell.clear') }}">
         <select id="{{ $id }}" name="{{ $name }}" data-country-select class="sf-control" @if ($error) aria-invalid="true" @endif @required($required) aria-describedby="{{ $id }}-error" {{ $attributes->except('class') }}>
             <option value="">{{ $placeholder }}</option>
             @foreach ($countries as $country)

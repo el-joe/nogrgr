@@ -7,7 +7,7 @@
         <div class="ms-auto flex items-center gap-8">
             <x-sf::lang-switch />
             @if (Route::has('storefront.account.wishlist'))
-                <a href="{{ route('storefront.account.wishlist') }}" class="inline-flex items-center gap-2 text-base text-sf-ink"><x-ui::icon name="star" :size="24" />{{ __('storefront::shell.favorite') }}</a>
+                <a href="{{ route('storefront.account.wishlist') }}" class="inline-flex items-center gap-2 text-base text-sf-ink"><x-ui::icon name="star" :size="24" />{{ __st('shell.favorite') }}</a>
             @endif
             <x-sf::header.cart />
             <x-sf::account-link />

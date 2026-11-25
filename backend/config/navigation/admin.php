@@ -147,6 +147,7 @@ return [
             ['key' => 'localization', 'label' => 'navigation.admin.localization', 'icon' => 'languages', 'children' => [
                 ['key' => 'localization.languages', 'label' => 'navigation.admin.languages', 'route' => 'admin.localization.languages.index', 'permission' => 'localization.languages.view'],
                 ['key' => 'localization.translations', 'label' => 'navigation.admin.translations', 'route' => 'admin.localization.translations.index', 'permission' => 'localization.translations.view'],
+                ['key' => 'localization.key-locks', 'label' => 'navigation.admin.translation_locks', 'route' => 'admin.localization.key-locks.index', 'permission' => 'localization.key-locks.view'],
                 ['key' => 'localization.currencies', 'label' => 'navigation.admin.currencies', 'route' => 'admin.localization.currencies.index', 'permission' => 'localization.currencies.view'],
                 ['key' => 'localization.countries', 'label' => 'navigation.admin.countries', 'route' => 'admin.localization.countries.index', 'permission' => 'localization.countries.view'],
                 ['key' => 'localization.purchases', 'label' => 'navigation.vendor.language_purchases', 'route' => 'admin.localization.purchases.index', 'permission' => 'localization.purchases.view'],

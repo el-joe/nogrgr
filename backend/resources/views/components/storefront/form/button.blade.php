@@ -6,6 +6,6 @@
 @else
     <button type="{{ $type }}" {{ $attributes->class($classes) }}>
         <span class="sf-btn-idle inline-flex items-center gap-2">@if ($icon)<x-ui::icon :name="$icon" :size="18" />@endif{{ $slot }}</span>
-        <span class="sf-btn-busy items-center gap-2"><x-ui::icon name="refresh" :size="16" class="mo-spin" />{{ $busy ?? __('storefront::shell.saving') }}</span>
+        <span class="sf-btn-busy items-center gap-2"><x-ui::icon name="refresh" :size="16" class="mo-spin" />{{ $busy ?? __st('shell.saving') }}</span>
     </button>
 @endif

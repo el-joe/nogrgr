@@ -83,6 +83,8 @@ return [
         'localization.currencies' => 'Currencies',
         'localization.countries' => 'Countries',
         'localization.purchases' => 'Language purchases',
+        'localization.translations' => 'Translations',
+        'localization.key-locks' => 'Translation key locks',
         'vendors' => 'Vendors',
         'vendors.kyc' => 'Vendor compliance (KYC)',
         'vendors.domains' => 'Vendor domains',

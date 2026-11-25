@@ -26,4 +26,19 @@ return [
         'ltr' => 'من اليسار لليمين',
         'rtl' => 'من اليمين لليسار',
     ],
+    'static_text_source' => [
+        'base' => 'نص المنصة',
+        'ai' => 'ترجمة بالذكاء الاصطناعي',
+        'manual' => 'عدّله المتجر',
+    ],
+    'translation_file_kind' => [
+        'storefront' => 'نصوص واجهة المتجر',
+        'php' => 'ملف اللوحة',
+        'json' => 'نصوص JSON',
+    ],
+    'translation_key_status' => [
+        'translated' => 'مترجم',
+        'overridden' => 'معدّل',
+        'missing' => 'ناقص',
+    ],
 ];

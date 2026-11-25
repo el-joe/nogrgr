@@ -83,6 +83,8 @@ return [
         'localization.currencies' => 'العملات',
         'localization.countries' => 'الدول',
         'localization.purchases' => 'مشتريات اللغات',
+        'localization.translations' => 'الترجمات',
+        'localization.key-locks' => 'أقفال مفاتيح الترجمة',
         'vendors' => 'التجار',
         'vendors.kyc' => 'امتثال التجار (KYC)',
         'vendors.domains' => 'نطاقات التجار',

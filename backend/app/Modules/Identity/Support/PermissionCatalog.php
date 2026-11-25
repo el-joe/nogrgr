@@ -33,6 +33,8 @@ final class PermissionCatalog
                 'localization.currencies.view', 'localization.currencies.manage',
                 'localization.countries.view', 'localization.countries.manage',
                 'localization.purchases.view',
+                'localization.translations.view', 'localization.translations.manage',
+                'localization.key-locks.view', 'localization.key-locks.manage',
                 // Platform: vendors, registrations, domains, compliance, change requests
                 'vendors.view', 'vendors.manage', 'vendors.delete', 'vendors.export',
                 'vendors.kyc.view', 'vendors.kyc.manage',

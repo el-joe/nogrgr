@@ -11,7 +11,7 @@
             <table class="w-full min-w-[420px]">
                 <thead>
                     <tr class="border-b border-sf-border text-xs text-sf-muted">
-                        <th scope="col" class="py-3 text-start font-normal">{{ __('storefront::account.notification_type') }}</th>
+                        <th scope="col" class="py-3 text-start font-normal">{{ __st('account.notification_type') }}</th>
                         @foreach ($channels as $channel)
                             <th scope="col" class="w-20 py-3 text-center font-normal">{{ $channel->label() }}</th>
                         @endforeach
@@ -35,6 +35,6 @@
                 </tbody>
             </table>
         </div>
-        <div><x-sf::form.button type="submit">{{ __('storefront::account.save_preferences') }}</x-sf::form.button></div>
+        <div><x-sf::form.button type="submit">{{ __st('account.save_preferences') }}</x-sf::form.button></div>
     </form>
 </x-sf::account.layout>

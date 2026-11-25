@@ -4,7 +4,9 @@ namespace App\Modules\Billing\Repositories\Contracts;
 
 use App\Modules\Billing\Enums\AddonType;
 use App\Modules\Billing\Models\AddonPurchase;
+use App\Modules\Billing\Models\PaymentLog;
 use App\Shared\Repositories\Contracts\RepositoryContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -23,4 +25,27 @@ interface AddonPurchaseRepositoryContract extends RepositoryContract
      * @return Collection<int, AddonPurchase>
      */
     public function forTenant(int $tenantId): Collection;
+
+    /**
+     * Admin list of language / AI translation purchases (all stores) with the store and
+     * the latest invoice number / payment gateway. Filters: type, status, gateway, search.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return Builder<AddonPurchase>
+     */
+    public function adminListing(array $filters = []): Builder;
+
+    /**
+     * Purchase counts for the admin list.
+     */
+    public function adminCount(): int;
+
+    public function findForAdmin(int $id): AddonPurchase;
+
+    /**
+     * Payment attempts of the purchase's invoices, newest first.
+     *
+     * @return Collection<int, PaymentLog>
+     */
+    public function paymentLogsFor(AddonPurchase $purchase): Collection;
 }

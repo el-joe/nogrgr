@@ -20,6 +20,7 @@ const pages = {
     'admin-catalog': () => import('./catalog.js'),
     'admin-products': () => import('./products.js'),
     'admin-branches': () => import('./branches.js'),
+    'admin-translations': () => import('./translations.js'),
 };
 
 export function initAdmin() {

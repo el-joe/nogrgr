@@ -17,7 +17,7 @@
       data-geo-ip-url="{{ $urls['ip'] ?? '' }}">
     @csrf
     <input type="hidden" name="_method" value="POST" data-method-field>
-    <x-sf::alert tone="danger" data-form-error hidden>{{ __('storefront::account.fix_fields') }}</x-sf::alert>
+    <x-sf::alert tone="danger" data-form-error hidden>{{ __st('account.fix_fields') }}</x-sf::alert>
 
     <div class="grid gap-4 sm:grid-cols-2">
         <x-sf::form.input name="full_name" :id="$id.'-full_name'" :label="__('identity::addresses.fields.full_name')" :value="$v('full_name')" autocomplete="name" required maxlength="120" :use-old="false" />
@@ -30,10 +30,10 @@
         @if (! empty($urls['reverse']))
             <button type="button" data-address-map class="sf-btn sf-btn-accent sf-btn-sm">
                 <span class="sf-map-idle inline-flex items-center gap-2"><x-ui::icon name="map" :size="16" />{{ __('identity::addresses.select_on_map') }}<x-ui::icon name="chevron-right" :size="14" class="rtl:-scale-x-100" /></span>
-                <span class="sf-map-busy items-center gap-2"><x-ui::icon name="refresh" :size="16" class="mo-spin" />{{ __('storefront::account.detecting') }}</span>
+                <span class="sf-map-busy items-center gap-2"><x-ui::icon name="refresh" :size="16" class="mo-spin" />{{ __st('account.detecting') }}</span>
             </button>
-            <x-sf::alert tone="warning" class="w-full" data-map-approximate hidden>{{ __('storefront::account.approximate') }}</x-sf::alert>
-            <x-sf::alert tone="danger" class="w-full" data-map-error hidden><span data-map-error-text>{{ __('storefront::account.location_failed') }}</span></x-sf::alert>
+            <x-sf::alert tone="warning" class="w-full" data-map-approximate hidden>{{ __st('account.approximate') }}</x-sf::alert>
+            <x-sf::alert tone="danger" class="w-full" data-map-error hidden><span data-map-error-text>{{ __st('account.location_failed') }}</span></x-sf::alert>
         @endif
         <p class="flex w-full items-center gap-3 text-sm text-sf-muted"><span class="h-px flex-1 bg-sf-border"></span>{{ __('identity::addresses.or_manual') }}<span class="h-px flex-1 bg-sf-border"></span></p>
     </div>

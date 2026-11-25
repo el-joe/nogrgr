@@ -3,7 +3,7 @@
     $redirect (same-host target or null), $socialError (flash from a failed social sign-in).
     Submits as JSON (data-ajax): 422 field errors render inline, success follows `redirect`.
 --}}
-<x-sf::auth.card :title="__('storefront::account.welcome_back')" active="login" :redirect="$redirect">
+<x-sf::auth.card :title="__st('account.welcome_back')" active="login" :redirect="$redirect">
     @if (session('status'))
         <x-sf::alert tone="success">{{ session('status') }}</x-sf::alert>
     @endif
@@ -22,7 +22,7 @@
             <label class="inline-flex items-center gap-2 text-sm text-sf-ink"><input type="checkbox" name="remember" value="1" class="sf-check" @checked(old('remember'))>{{ __('identity::auth.remember') }}</label>
             <a href="{{ route('storefront.account.password.request') }}" class="sf-link text-sm">{{ __('identity::auth.forgot') }}</a>
         </div>
-        <x-sf::form.button type="submit" size="lg" block :busy="__('storefront::account.signing_in')">{{ __('identity::auth.login') }}</x-sf::form.button>
+        <x-sf::form.button type="submit" size="lg" block :busy="__st('account.signing_in')">{{ __('identity::auth.login') }}</x-sf::form.button>
     </form>
 
     <x-sf::auth.social :redirect="$redirect" />

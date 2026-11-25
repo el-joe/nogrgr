@@ -38,12 +38,12 @@
         'shipping' => $shipping,
         'gatewayAvailable' => (bool) $gatewayAvailable,
         'messages' => [
-            'no_country' => __('storefront::checkout.shipping.no_country'),
-            'unavailable' => __('storefront::checkout.shipping.unavailable'),
-            'not_sold' => __('storefront::checkout.shipping.not_sold', ['products' => '__PRODUCTS__']),
-            'reason_address' => __('storefront::checkout.reasons.no_address'),
-            'reason_shipping' => __('storefront::checkout.reasons.shipping'),
-            'reason_gateway' => __('storefront::checkout.reasons.no_gateway'),
+            'no_country' => __st('checkout.shipping.no_country'),
+            'unavailable' => __st('checkout.shipping.unavailable'),
+            'not_sold' => __st('checkout.shipping.not_sold', ['products' => '__PRODUCTS__']),
+            'reason_address' => __st('checkout.reasons.no_address'),
+            'reason_shipping' => __st('checkout.reasons.shipping'),
+            'reason_gateway' => __st('checkout.reasons.no_gateway'),
         ],
     ];
 @endphp
@@ -55,7 +55,7 @@
 
     {{-- Shipping address --}}
     <section class="grid gap-3" aria-labelledby="{{ $id }}-shipping-title" data-address-group="shipping">
-        <h2 id="{{ $id }}-shipping-title" class="text-lg font-semibold text-sf-ink">{{ __('storefront::checkout.shipping_address') }}</h2>
+        <h2 id="{{ $id }}-shipping-title" class="text-lg font-semibold text-sf-ink">{{ __st('checkout.shipping_address') }}</h2>
         <div class="grid gap-3" data-address-list role="radiogroup" aria-labelledby="{{ $id }}-shipping-title">
             @foreach ($addresses as $address)
                 <x-sf::address.card :address="$address" mode="select" group="{{ $id }}-shipping" :selected="$address['id'] === $selected" />
@@ -64,9 +64,9 @@
         <div class="sf-card grid justify-items-center gap-3 p-8 text-center" data-address-empty @if (count($addresses) > 0) hidden @endif>
             <x-ui::icon name="map" :size="28" class="text-sf-muted" />
             <p class="text-sm text-sf-muted">{{ __('identity::addresses.empty') }}</p>
-            <button type="button" class="sf-add-dashed px-6" data-address-add data-address-purpose="shipping"><x-ui::icon name="plus" :size="16" />{{ __('storefront::account.add_address') }}</button>
+            <button type="button" class="sf-add-dashed px-6" data-address-add data-address-purpose="shipping"><x-ui::icon name="plus" :size="16" />{{ __st('account.add_address') }}</button>
         </div>
-        <button type="button" class="sf-add-dashed" data-address-add data-address-purpose="shipping" @if (count($addresses) === 0) hidden @endif data-add-when-filled><x-ui::icon name="plus" :size="16" />{{ __('storefront::account.add_address') }}</button>
+        <button type="button" class="sf-add-dashed" data-address-add data-address-purpose="shipping" @if (count($addresses) === 0) hidden @endif data-add-when-filled><x-ui::icon name="plus" :size="16" />{{ __st('account.add_address') }}</button>
         <template data-address-template><x-sf::address.card :address="$template" mode="select" group="{{ $id }}-shipping" /></template>
     </section>
 
@@ -85,13 +85,13 @@
     {{-- Billing --}}
     <label class="inline-flex items-center gap-2 text-sm text-sf-ink"><input type="checkbox" class="sf-check" checked data-billing-same>{{ __('identity::addresses.billing_same') }}</label>
     <section class="grid gap-3" aria-labelledby="{{ $id }}-billing-title" data-address-group="billing" hidden>
-        <h2 id="{{ $id }}-billing-title" class="text-lg font-semibold text-sf-ink">{{ __('storefront::checkout.billing_address') }}</h2>
+        <h2 id="{{ $id }}-billing-title" class="text-lg font-semibold text-sf-ink">{{ __st('checkout.billing_address') }}</h2>
         <div class="grid gap-3" data-address-list role="radiogroup" aria-labelledby="{{ $id }}-billing-title">
             @foreach ($addresses as $address)
                 <x-sf::address.card :address="$address" mode="select" group="{{ $id }}-billing" :selected="$address['id'] === $selected" />
             @endforeach
         </div>
-        <button type="button" class="sf-add-dashed" data-address-add data-address-purpose="billing"><x-ui::icon name="plus" :size="16" />{{ __('storefront::account.add_address') }}</button>
+        <button type="button" class="sf-add-dashed" data-address-add data-address-purpose="billing"><x-ui::icon name="plus" :size="16" />{{ __st('account.add_address') }}</button>
         <template data-address-template><x-sf::address.card :address="$template" mode="select" group="{{ $id }}-billing" /></template>
     </section>
 
@@ -99,7 +99,7 @@
     {{ $payment ?? '' }}
 
     <div class="grid gap-2">
-        <button type="submit" class="sf-btn sf-btn-cta sf-btn-lg w-full" data-pay-button aria-describedby="{{ $id }}-pay-reason" @disabled($payBlocked)>{{ $payLabel ?? __('storefront::checkout.pay') }}</button>
+        <button type="submit" class="sf-btn sf-btn-cta sf-btn-lg w-full" data-pay-button aria-describedby="{{ $id }}-pay-reason" @disabled($payBlocked)>{{ $payLabel ?? __st('checkout.pay') }}</button>
         <p id="{{ $id }}-pay-reason" class="flex items-center gap-1.5 text-xs text-sf-danger" data-pay-reason hidden><x-ui::icon name="info" :size="14" /><span></span></p>
     </div>
 

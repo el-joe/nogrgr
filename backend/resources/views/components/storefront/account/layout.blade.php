@@ -8,9 +8,9 @@
 @php
     $customer = auth('customer')->user();
     $links = collect([
-        'orders' => ['route' => 'storefront.account.orders', 'icon' => 'cart', 'label' => 'storefront::account.nav.orders'],
-        'returns' => ['route' => 'storefront.account.returns', 'icon' => 'return', 'label' => 'storefront::account.nav.returns'],
-        'wishlist' => ['route' => 'storefront.account.wishlist', 'icon' => 'star', 'label' => 'storefront::account.nav.wishlist'],
+        'orders' => ['route' => 'storefront.account.orders', 'icon' => 'cart', 'label' => 'account.nav.orders'],
+        'returns' => ['route' => 'storefront.account.returns', 'icon' => 'return', 'label' => 'account.nav.returns'],
+        'wishlist' => ['route' => 'storefront.account.wishlist', 'icon' => 'star', 'label' => 'account.nav.wishlist'],
         'addresses' => ['route' => 'storefront.account.addresses', 'icon' => 'map', 'label' => 'identity::account.nav.addresses'],
         'profile' => ['route' => 'storefront.account.profile', 'icon' => 'users', 'label' => 'identity::account.nav.profile'],
         'notifications' => ['route' => 'storefront.account.notifications', 'icon' => 'bell', 'label' => 'identity::account.nav.notifications'],
@@ -20,9 +20,9 @@
 @endphp
 <x-sf::layout :title="$title" :mobile-title="$title" :back="$home" nav="account" :page="$page">
     <div class="mx-auto max-w-[1280px] px-4 pb-16 pt-4 sm:px-6 lg:pt-6">
-        <nav aria-label="{{ __('storefront::shell.breadcrumb') }}" class="mb-5 hidden text-xs text-sf-muted lg:block">
+        <nav aria-label="{{ __st('shell.breadcrumb') }}" class="mb-5 hidden text-xs text-sf-muted lg:block">
             <ol class="flex items-center gap-2">
-                @if ($home)<li><a href="{{ $home }}" class="hover:text-sf-ink">{{ __('storefront::shell.home') }}</a></li><li aria-hidden="true"><x-ui::icon name="chevron-right" :size="12" class="rtl:-scale-x-100" /></li>@endif
+                @if ($home)<li><a href="{{ $home }}" class="hover:text-sf-ink">{{ __st('shell.home') }}</a></li><li aria-hidden="true"><x-ui::icon name="chevron-right" :size="12" class="rtl:-scale-x-100" /></li>@endif
                 <li>@if ($accountHome)<a href="{{ $accountHome }}" class="hover:text-sf-ink">{{ __('identity::account.nav.label') }}</a>@else{{ __('identity::account.nav.label') }}@endif</li>
                 <li aria-hidden="true"><x-ui::icon name="chevron-right" :size="12" class="rtl:-scale-x-100" /></li>
                 <li aria-current="page" class="text-sf-ink">{{ $title }}</li>
@@ -31,7 +31,7 @@
 
         <nav aria-label="{{ __('identity::account.nav.label') }}" class="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:hidden">
             @foreach ($links as $key => $link)
-                <a href="{{ route($link['route']) }}" class="sf-pill-tab" @if ($active === $key) aria-current="page" @endif>{{ __($link['label']) }}</a>
+                <a href="{{ route($link['route']) }}" class="sf-pill-tab" @if ($active === $key) aria-current="page" @endif>{{ __st($link['label']) }}</a>
             @endforeach
         </nav>
 
@@ -45,7 +45,7 @@
                 @endif
                 <nav class="sf-card grid gap-1 p-2">
                     @foreach ($links as $key => $link)
-                        <a href="{{ route($link['route']) }}" class="sf-account-link" @if ($active === $key) aria-current="page" @endif><x-ui::icon :name="$link['icon']" :size="18" />{{ __($link['label']) }}</a>
+                        <a href="{{ route($link['route']) }}" class="sf-account-link" @if ($active === $key) aria-current="page" @endif><x-ui::icon :name="$link['icon']" :size="18" />{{ __st($link['label']) }}</a>
                     @endforeach
                     <form method="POST" action="{{ route('storefront.account.logout') }}">
                         @csrf

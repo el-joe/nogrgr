@@ -14,8 +14,8 @@
 <x-sf::form.field :label="$label" :for="$id" :required="$required" :helper="$helper" :error="$error" :error-key="$errorKey" {{ $attributes->only('class') }}>
     <div class="sf-control sf-phone px-0 pe-3" dir="ltr" data-phone-wrapper>
         <input id="{{ $id }}" type="tel" name="{{ $name }}" @if ($current) value="{{ $current }}" @endif autocomplete="tel" data-phone-input data-phone-country-field="{{ $countryField }}" aria-describedby="{{ $id }}-error" @if ($error) aria-invalid="true" @endif @required($required) {{ $attributes->except('class') }}>
-        <span class="sf-phone-valid" role="img" aria-label="{{ __('storefront::shell.phone_valid') }}"><x-ui::icon name="check-circle" :size="18" /></span>
-        <span class="sf-phone-invalid" role="img" aria-label="{{ __('storefront::shell.phone_invalid') }}"><x-ui::icon name="x-circle" :size="18" /></span>
+        <span class="sf-phone-valid" role="img" aria-label="{{ __st('shell.phone_valid') }}"><x-ui::icon name="check-circle" :size="18" /></span>
+        <span class="sf-phone-invalid" role="img" aria-label="{{ __st('shell.phone_invalid') }}"><x-ui::icon name="x-circle" :size="18" /></span>
     </div>
     <input type="hidden" name="{{ $countryField }}" value="{{ $countryValue }}">
 </x-sf::form.field>

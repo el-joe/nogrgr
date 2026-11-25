@@ -11,7 +11,7 @@
         @if ($icon)<x-ui::icon :name="$icon" :size="18" class="text-sf-muted" />@endif
         <input id="{{ $id }}" name="{{ $name }}" type="{{ $type }}" @if ($current !== null) value="{{ $current }}" @endif aria-describedby="{{ $helper ? $id.'-helper ' : '' }}{{ $id }}-error" @if ($error) aria-invalid="true" @endif @required($required) {{ $attributes->except('class') }}>
         @if ($type === 'password')
-            <button type="button" data-password-toggle="#{{ $id }}" aria-pressed="false" class="grid size-8 place-items-center text-sf-muted hover:text-sf-ink" aria-label="{{ __('storefront::shell.show_password') }}" title="{{ __('storefront::shell.show_password') }}"><x-ui::icon name="eye" :size="18" /></button>
+            <button type="button" data-password-toggle="#{{ $id }}" aria-pressed="false" class="grid size-8 place-items-center text-sf-muted hover:text-sf-ink" aria-label="{{ __st('shell.show_password') }}" title="{{ __st('shell.show_password') }}"><x-ui::icon name="eye" :size="18" /></button>
         @endif
     </div>
 </x-sf::form.field>

@@ -19,10 +19,11 @@
             </x-slot:actions>
         @endif
         <x-slot:tabs>
-            <x-ui::tabs id="languages-tabs" :active="$tab" :label="__('localization::admin.languages.title')" :items="[
+            <x-ui::tabs id="languages-tabs" :active="$tab" :label="__('localization::admin.languages.title')" :items="array_filter([
                 'active' => ['label' => __('localization::admin.tabs.active'), 'count' => $counts['active'], 'href' => route('admin.localization.languages.index')],
                 'all' => ['label' => __('localization::admin.languages.tab_all'), 'count' => $counts['all'], 'href' => route('admin.localization.languages.index', ['tab' => 'all'])],
-            ]" />
+                'purchases' => auth('admin')->user()?->can('localization.purchases.view') ? ['label' => __('localization::purchases.tab'), 'href' => route('admin.localization.purchases.index')] : null,
+            ])" />
         </x-slot:tabs>
     </x-ui::page-header>
 

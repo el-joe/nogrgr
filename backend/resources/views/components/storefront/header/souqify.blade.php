@@ -10,7 +10,7 @@
         <div class="mx-auto flex h-[88px] max-w-[1440px] items-center gap-5 px-8">
             <x-sf::logo tone="accent" size="lg" data-header-shrink />
             @if (Route::has('storefront.categories.index'))
-                <a href="{{ route('storefront.categories.index') }}" class="inline-flex h-[52px] items-center gap-3 rounded-sm bg-sf-accent px-5 text-sm font-medium text-white"><x-ui::icon name="menu" :size="18" />{{ __('storefront::shell.nav.shop_by_categories') }}</a>
+                <a href="{{ route('storefront.categories.index') }}" class="inline-flex h-[52px] items-center gap-3 rounded-sm bg-sf-accent px-5 text-sm font-medium text-white"><x-ui::icon name="menu" :size="18" />{{ __st('shell.nav.shop_by_categories') }}</a>
             @endif
             <x-sf::header.search variant="souqify" class="flex-1" />
             <div class="ms-auto flex items-center gap-8">
@@ -18,7 +18,7 @@
                 @php($customer = auth('customer')->user())
                 @if (Route::has('storefront.account.login'))
                     <a href="{{ $customer ? route('storefront.account.profile') : route('storefront.account.login') }}" class="inline-flex items-center gap-2 text-sm uppercase tracking-wide text-sf-ink">
-                        <x-ui::icon name="users" :size="24" />{{ $customer ? $customer->name : __('storefront::shell.account') }}
+                        <x-ui::icon name="users" :size="24" />{{ $customer ? $customer->name : __st('shell.account') }}
                     </a>
                 @endif
             </div>

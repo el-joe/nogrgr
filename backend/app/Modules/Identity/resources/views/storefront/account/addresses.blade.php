@@ -20,7 +20,7 @@
 @endphp
 <x-sf::account.layout :title="__('identity::addresses.title')" active="addresses" page="addresses">
     <x-slot:actions>
-        <x-sf::form.button icon="plus" size="sm" class="hidden lg:inline-flex" data-address-add>{{ __('storefront::account.add_address') }}</x-sf::form.button>
+        <x-sf::form.button icon="plus" size="sm" class="hidden lg:inline-flex" data-address-add>{{ __st('account.add_address') }}</x-sf::form.button>
     </x-slot:actions>
 
     <script type="application/json" id="address-book">@json($addressBook)</script>
@@ -35,7 +35,7 @@
             <x-ui::icon name="map" :size="28" class="text-sf-muted" />
             <p class="text-sm text-sf-muted">{{ __('identity::addresses.empty') }}</p>
         </div>
-        <button type="button" class="sf-add-dashed" data-address-add><x-ui::icon name="plus" :size="16" />{{ __('storefront::account.add_address') }}</button>
+        <button type="button" class="sf-add-dashed" data-address-add><x-ui::icon name="plus" :size="16" />{{ __st('account.add_address') }}</button>
         <template data-address-template><x-sf::address.card :address="$template" mode="manage" /></template>
     </section>
 

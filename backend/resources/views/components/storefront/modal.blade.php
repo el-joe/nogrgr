@@ -11,7 +11,7 @@
             <span class="mo-sheet-grabber" aria-hidden="true"></span>
             <div class="flex items-start justify-between gap-4 pb-4">
                 <h2 id="{{ $id }}-title" class="text-xl font-semibold text-sf-ink" data-modal-title>{{ $title }}</h2>
-                <button type="button" data-sheet-close class="grid size-8 place-items-center rounded-full text-sf-ink hover:bg-black/5" aria-label="{{ __('storefront::shell.close') }}"><x-ui::icon name="x" :size="20" /></button>
+                <button type="button" data-sheet-close class="grid size-8 place-items-center rounded-full text-sf-ink hover:bg-black/5" aria-label="{{ __st('shell.close') }}"><x-ui::icon name="x" :size="20" /></button>
             </div>
         </div>
         <div class="px-5 pb-5 sm:px-6 sm:pb-6">

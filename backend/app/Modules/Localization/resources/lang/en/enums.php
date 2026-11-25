@@ -26,4 +26,19 @@ return [
         'ltr' => 'LTR',
         'rtl' => 'RTL',
     ],
+    'static_text_source' => [
+        'base' => 'Platform text',
+        'ai' => 'AI translation',
+        'manual' => 'Edited by the store',
+    ],
+    'translation_file_kind' => [
+        'storefront' => 'Storefront texts',
+        'php' => 'Panel file',
+        'json' => 'JSON strings',
+    ],
+    'translation_key_status' => [
+        'translated' => 'Translated',
+        'overridden' => 'Edited',
+        'missing' => 'Missing',
+    ],
 ];
