@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| Settings from DB (#69) | env → DB settings + admin pages (Geocoding, Platform Billing/Checkout/Domains), EnvUsageTest, central-key webhook routing, store robots, og image (#73) | `3d00bd4` |
 | P5 batch 3 | Admin orders/shipping queue/returns/refunds/return policy, vendor orders/returns/refunds/settle/gateways, AfterSales module, branch stock deduction (#71) | `32334b0` |
 | **P6 Central website** | Home, templates, pricing, about, contact, FAQs, legal, blog, newsletter, SEO, errors; Content admin; store login reset (#70); suite 1787 green | `5ae4bfa` |
 | P5 batch 2 + vendor requests | Cart/checkout/orders/payments + /store-api/v1 (decision #68); vendor requests hub, inbox, setup wizard (#67); suite 1674 green | `d7d9f18` |
@@ -57,7 +58,7 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
 - **vendorrequests**: vendor requests hub VEN-050…050j (+ vendor channel auth, pay requests), notifications inbox VEN-090, setup wizard VEN-007, real ImportProducts step.
-- **settings**: decision #69 audit (env → DB settings + admin UI, arch test), central-keys webhook routing, store robots.txt, og-default image.
+- **qa2**: QA gate P3–P6 + vendor panel on `nogrgr_qa` (browser, Figma, #65 check, coverage statuses, owner role re-sync).
 - **finance** (P5 batch 4): ledger, settlements, payouts, transactions ADM-050…053, vendor coupons/flash VEN-040/041, customer returns API, refund webhooks.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
-- Next: P5 QA gate (+ P3/P4/P6 browser pass) · P7 themes · P8 vendor panel rest · P9 · P10 AI · P11 mobile · P12 · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
+- Next: P7 themes · P8 vendor panel rest · P9 · P10 AI · P11 mobile · P12 · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
