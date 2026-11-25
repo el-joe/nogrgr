@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| P2 Registration | Central sign-up wizard (trial/paid), Stripe/PayPal checkout + idempotent webhooks, Owner identity + guard, Google/Apple sign-in, add another store (WEB-016…019b, OWN-007); suite 1210 green | `f29d9cf` |
 | P3 Catalog taxonomy | Categories tree/sort/product order, attributes, labels, badges hub (ADM-014…017g); suite 1154 green | `4adb0eb` |
 | P2 Integrations | Gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider + TranslationClient, general settings, email templates, billing notifications; suite 1117 green | `36ae948` |
 | P2 Vendors | Provisioning service/job, vendors list/create/profile tabs, pending registrations, compliance, domains + DNS templates, central WEB-018/018a/020; suite 1071 green | `95488be` |
@@ -42,7 +43,7 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 ## In progress (batch P2-1, started 2026-11-25, agent team of 2)
 
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
-- **registration**: central sign-up WEB-016/016b/016c/017/019/019a/019b, OWN-007, Google/Apple callbacks, Stripe/PayPal drivers.
+- **owner**: owner portal OWN-001…006 (stores + SSO, select store, subscriptions renew, domains, invoices, profile + social links).
 - **catalog** (P3 batch 2): branches (ADM-030/030a), products list/price list/create-edit tabs/sort (ADM-010…012) via Commerce\Pricing.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
-- Next: Owner OWN-007 · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
+- Next: Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
