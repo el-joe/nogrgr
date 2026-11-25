@@ -1,0 +1,55 @@
+/*
+ * Storefront family "elora" tokens (Figma: primary #FF4D00, text #121212, bg #FDFDFD,
+ * subtitle #ADADAD, stroke #D4D4D4, shadow 0 4 7 #0000001A). Variants (home v1–v6)
+ * and tenants override the raw --nog-* values at runtime.
+ *
+ * Motion character: soft and editorial — longer glides, expo-out ease, deeper lift,
+ * slower Ken Burns.
+ */
+:root {
+    --nog-radius-card: 0.75rem;
+    --nog-primary: #ff4d00;
+    --nog-primary-hover: #e64500;
+    --nog-ink: #121212;
+    --nog-ink-muted: #adadad;
+    --nog-surface: #fdfdfd;
+    --nog-line: #d4d4d4;
+    --nog-shadow-card: 0 4px 7px rgb(0 0 0 / 0.1);
+
+    --motion-fast: 160ms;
+    --motion-base: 320ms;
+    --motion-slow: 720ms;
+    --motion-stagger: 70ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-lift: -6px;
+    --motion-reveal-distance: 28px;
+    --motion-kenburns: 1.1;
+    --motion-card-shadow: 0 16px 32px rgb(18 18 18 / 0.14);
+
+    /* Storefront additions tokens (Figma collection "Storefront" 97:10148, mode Elora): var(--sf-*) */
+    --sf-cta: #ff4d00;
+    --sf-cta-hover: #e64500;
+    --sf-on-cta: #ffffff;
+    --sf-accent: #ff4d00;
+    --sf-accent-subtle: #fff1eb;
+    --sf-ink: #121212;
+    --sf-muted: #8f8f8f;
+    --sf-border: #d4d4d4;
+    --sf-bg: #fdfdfd;
+    --sf-surface: #ffffff;
+    --sf-radius-input: 6px;
+    --sf-radius-card: 10px;
+    --sf-success: #2aaf2f;
+    --sf-success-bg: #eaf7eb;
+    --sf-danger: #dc2626;
+    --sf-danger-bg: #fdecec;
+    --sf-warning: #b7791f;
+    --sf-warning-bg: #fff6e0;
+    --sf-info: #2563eb;
+    --sf-info-bg: #eaf1fe;
+    --sf-header: #ffffff;
+    --sf-topbar: #121212;
+    --sf-footer: #3a3a3a;
+    --sf-footer-bar: #3a3a3a;
+    --sf-footer-bottom: #3a3a3a;
+}

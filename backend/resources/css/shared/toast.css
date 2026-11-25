@@ -1,0 +1,79 @@
+/* Toasts (Figma Toast 31:10312) for every surface — markup from resources/js/core/notify.js and <x-ui::toast>. */
+@layer components {
+    /* ---------- Toasts ---------- */
+    .ui-toasts {
+        position: fixed;
+        z-index: 80;
+        inset-block-start: 16px;
+        inset-inline-end: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 380px;
+        max-width: calc(100vw - 32px);
+        pointer-events: none;
+    }
+
+    @media (max-width: 639.98px) {
+        .ui-toasts {
+            inset-inline: 16px;
+            width: auto;
+        }
+    }
+
+    .ui-toast {
+        position: relative;
+        display: flex;
+        gap: 12px;
+        padding: 14px 16px;
+        padding-inline-start: 20px;
+        overflow: hidden;
+        border-radius: var(--radius-control);
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-line);
+        box-shadow: var(--shadow-overlay);
+        pointer-events: auto;
+        animation: ui-toast-in 220ms var(--ease-out-soft);
+    }
+
+    .ui-toast::before {
+        content: '';
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 0;
+        width: 4px;
+        background-color: var(--toast-accent, var(--color-info));
+    }
+
+    .ui-toast[data-leaving] {
+        animation: ui-toast-out 160ms ease-in forwards;
+    }
+
+    @keyframes ui-toast-in {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+    }
+
+    @keyframes ui-toast-out {
+        to {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+    }
+
+
+    .ui-toast-action {
+        align-self: center;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+
+    .ui-toast-action:hover {
+        background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    }
+}

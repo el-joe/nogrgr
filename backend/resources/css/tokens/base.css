@@ -1,0 +1,196 @@
+/*
+ * Semantic design tokens → Tailwind v4 utilities.
+ *
+ * Utilities (bg-primary, text-ink, border-line, rounded-card, shadow-pop …) read
+ * the raw --nog-* custom properties below. Each surface file
+ * (tokens/{admin,vendor,affiliate,central,storefront-*}.css) overrides the raw
+ * values; tenants/themes may override them again at runtime (e.g. a store's
+ * brand colour) without rebuilding CSS. Dark mode: `.dark` on <html>.
+ *
+ * Panel names follow the Figma "Admin" variable collection (file 2wXSYbP5gQSJHiVQWJJpSf,
+ * docs/plan/design-specs.md §1): color/bg/subtle → bg-subtle, color/text/secondary →
+ * text-ink-secondary, color/border/strong → border-line-strong, and so on.
+ */
+@theme inline {
+    /* brand */
+    --color-primary: var(--nog-primary);
+    --color-primary-hover: var(--nog-primary-hover);
+    --color-primary-pressed: var(--nog-primary-pressed);
+    --color-primary-subtle: var(--nog-primary-subtle);
+    --color-on-primary: var(--nog-on-primary);
+    --color-secondary: var(--nog-secondary);
+
+    /* backgrounds */
+    --color-canvas: var(--nog-canvas);
+    --color-surface: var(--nog-surface);
+    --color-surface-raised: var(--nog-surface-raised);
+    --color-surface-sunken: var(--nog-surface-sunken);
+    --color-subtle: var(--nog-subtle);
+    --color-muted: var(--nog-muted);
+    --color-field: var(--nog-field);
+    --color-field-disabled: var(--nog-field-disabled);
+    --color-overlay: var(--nog-overlay);
+    --color-inverse: var(--nog-inverse);
+
+    /* text */
+    --color-ink: var(--nog-ink);
+    --color-ink-secondary: var(--nog-ink-secondary);
+    --color-ink-muted: var(--nog-ink-muted);
+    --color-ink-brand: var(--nog-ink-brand);
+    --color-on-inverse: var(--nog-on-inverse);
+
+    /* borders */
+    --color-line: var(--nog-line);
+    --color-line-strong: var(--nog-line-strong);
+    --color-focus: var(--nog-focus);
+
+    /* status */
+    --color-success: var(--nog-success);
+    --color-success-bg: var(--nog-success-bg);
+    --color-warning: var(--nog-warning);
+    --color-warning-bg: var(--nog-warning-bg);
+    --color-danger: var(--nog-danger);
+    --color-danger-bg: var(--nog-danger-bg);
+    --color-danger-hover: var(--nog-danger-hover);
+    --color-info: var(--nog-info);
+    --color-info-bg: var(--nog-info-bg);
+
+    /* panel sidebar */
+    --color-sidebar: var(--nog-sidebar);
+    --color-sidebar-hover: var(--nog-sidebar-hover);
+    --color-sidebar-active: var(--nog-sidebar-active);
+    --color-sidebar-ink: var(--nog-sidebar-ink);
+    --color-sidebar-ink-active: var(--nog-sidebar-ink-active);
+    --color-sidebar-muted: var(--nog-sidebar-muted);
+    --color-sidebar-line: var(--nog-sidebar-line);
+
+    --font-sans: var(--nog-font-sans);
+    --font-display: var(--nog-font-display);
+
+    --radius-chip: var(--nog-radius-chip);
+    --radius-control: var(--nog-radius-control);
+    --radius-card: var(--nog-radius-card);
+
+    --shadow-card: var(--nog-shadow-card);
+    --shadow-raised: var(--nog-shadow-raised);
+    --shadow-pop: var(--nog-shadow-pop);
+    --shadow-overlay: var(--nog-shadow-overlay);
+    --shadow-focus: var(--nog-shadow-focus);
+
+    --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+:root {
+    --nog-primary: #ff522c;
+    --nog-primary-hover: #e8401b;
+    --nog-primary-pressed: #c23113;
+    --nog-primary-subtle: #fff2ef;
+    --nog-on-primary: #ffffff;
+    --nog-secondary: #41251e;
+
+    --nog-canvas: #ffffff;
+    --nog-surface: #ffffff;
+    --nog-surface-raised: #ffffff;
+    --nog-surface-sunken: #faf8f7;
+    --nog-subtle: #f4f1f0;
+    --nog-muted: #e9e4e2;
+    --nog-field: #ffffff;
+    --nog-field-disabled: #f4f1f0;
+    --nog-overlay: #110d0c;
+    --nog-inverse: #41251e;
+
+    --nog-ink: #41251e;
+    --nog-ink-secondary: #717171;
+    --nog-ink-muted: #a9a09d;
+    --nog-ink-brand: #ff522c;
+    --nog-on-inverse: #ffffff;
+
+    --nog-line: #e9e4e2;
+    --nog-line-strong: #d6cfcc;
+    --nog-focus: #ff522c;
+
+    --nog-success: #16a34a;
+    --nog-success-bg: #e8f7ee;
+    --nog-warning: #d98a06;
+    --nog-warning-bg: #fef5e6;
+    --nog-danger: #dc2626;
+    --nog-danger-bg: #fdecec;
+    --nog-danger-hover: #c81e1e;
+    --nog-info: #2563eb;
+    --nog-info-bg: #eaf1fe;
+
+    --nog-sidebar: #41251e;
+    --nog-sidebar-hover: #7a2a17;
+    --nog-sidebar-active: #ff522c;
+    --nog-sidebar-ink: #ffe3db;
+    --nog-sidebar-ink-active: #ffffff;
+    --nog-sidebar-muted: #ffa189;
+    --nog-sidebar-line: #7a2a17;
+
+    --nog-font-latin: 'Outfit', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --nog-font-arabic: 'IBM Plex Sans Arabic', 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --nog-font-sans: var(--nog-font-latin);
+    --nog-font-display: var(--nog-font-sans);
+
+    --nog-radius-chip: 0.375rem;
+    --nog-radius-control: 0.625rem;
+    --nog-radius-card: 1rem;
+
+    --nog-shadow-color: 65 37 30;
+    --nog-shadow-card: 0 1px 2px rgb(var(--nog-shadow-color) / 0.06);
+    --nog-shadow-raised: 0 2px 8px rgb(var(--nog-shadow-color) / 0.08);
+    --nog-shadow-pop: 0 8px 24px rgb(var(--nog-shadow-color) / 0.1);
+    --nog-shadow-overlay: 0 16px 40px rgb(var(--nog-shadow-color) / 0.16);
+    --nog-shadow-focus: 0 0 0 3px rgb(255 82 44 / 0.24);
+
+    /* Motion tokens (docs/plan/07-motion-guidelines.md); families tune them. */
+    --motion-fast: 150ms;
+    --motion-base: 280ms;
+    --motion-slow: 600ms;
+    --motion-stagger: 60ms;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --motion-lift: -4px;
+    --motion-press: 0.97;
+    --motion-reveal-distance: 24px;
+    --motion-kenburns: 1.08;
+    --motion-card-shadow: 0 12px 28px rgb(0 0 0 / 0.12);
+
+    color-scheme: light;
+}
+
+[dir='rtl'] {
+    --nog-font-sans: var(--nog-font-arabic);
+}
+
+.dark {
+    --nog-canvas: #110d0c;
+    --nog-surface: #1a1513;
+    --nog-surface-raised: #211c1a;
+    --nog-surface-sunken: #110d0c;
+    --nog-subtle: #211c1a;
+    --nog-muted: #2a2421;
+    --nog-field: #1a1513;
+    --nog-field-disabled: #211c1a;
+    --nog-inverse: #faf8f7;
+
+    --nog-ink: #faf8f7;
+    --nog-ink-secondary: #a9a09d;
+    --nog-ink-muted: #717171;
+    --nog-ink-brand: #ff7a5b;
+    --nog-on-inverse: #41251e;
+
+    --nog-line: #2a2421;
+    --nog-line-strong: #3f3835;
+    --nog-focus: #ff7a5b;
+
+    --nog-shadow-color: 0 0 0;
+    --nog-shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+    --nog-shadow-raised: 0 2px 8px rgb(0 0 0 / 0.4);
+    --nog-shadow-pop: 0 8px 24px rgb(0 0 0 / 0.45);
+    --nog-shadow-overlay: 0 16px 40px rgb(0 0 0 / 0.55);
+
+    color-scheme: dark;
+}

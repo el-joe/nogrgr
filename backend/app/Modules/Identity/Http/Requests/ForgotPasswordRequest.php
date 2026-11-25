@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Modules\Identity\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class ForgotPasswordRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->input('email'))) {
+            $this->merge(['email' => mb_strtolower(trim($this->input('email')))]);
+        }
+    }
+
+    /**
+     * @return array<string, list<string>>
+     */
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'string', 'email', 'max:191'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return ['email' => __('identity::auth.email')];
+    }
+}

@@ -1,0 +1,52 @@
+/*
+ * Storefront family "souqify" tokens (Figma: primary #0159ED, text #001537, orange
+ * #FF570F, bg #F1F1F1). Variants (home v1–v6) and tenants override the raw --nog-*
+ * values at runtime.
+ *
+ * Motion character: lively marketplace — snappy timings and a springy overshoot.
+ */
+:root {
+    --nog-radius-card: 0.75rem;
+    --nog-primary: #0159ed;
+    --nog-primary-hover: #014bcc;
+    --nog-ink: #001537;
+    --nog-secondary: #ff570f;
+    --nog-surface-sunken: #f1f1f1;
+
+    --motion-fast: 120ms;
+    --motion-base: 220ms;
+    --motion-slow: 480ms;
+    --motion-stagger: 45ms;
+    --ease-out: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --motion-lift: -4px;
+    --motion-reveal-distance: 20px;
+    --motion-kenburns: 1.06;
+    --motion-card-shadow: 0 12px 26px rgb(0 21 55 / 0.14);
+
+    /* Storefront additions tokens (Figma collection "Storefront" 97:10148, mode Souqify): var(--sf-*) */
+    --sf-cta: #0159ed;
+    --sf-cta-hover: #014bcc;
+    --sf-on-cta: #ffffff;
+    --sf-accent: #0159ed;
+    --sf-accent-subtle: #e8f0fe;
+    --sf-ink: #001537;
+    --sf-muted: #5b6b85;
+    --sf-border: #d9dee8;
+    --sf-bg: #f1f1f1;
+    --sf-surface: #ffffff;
+    --sf-radius-input: 8px;
+    --sf-radius-card: 14px;
+    --sf-success: #16a34a;
+    --sf-success-bg: #e8f7ee;
+    --sf-danger: #dc2626;
+    --sf-danger-bg: #fdecec;
+    --sf-warning: #b7791f;
+    --sf-warning-bg: #fff6e0;
+    --sf-info: #0159ed;
+    --sf-info-bg: #e8f0fe;
+    --sf-header: #ffffff;
+    --sf-topbar: #0b0f17;
+    --sf-footer: #020f25;
+    --sf-footer-bar: #0159ed;
+    --sf-footer-bottom: #020f25;
+}

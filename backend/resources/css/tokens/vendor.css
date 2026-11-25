@@ -1,0 +1,104 @@
+/*
+ * Vendor (store) panel tokens — Tenant Panel Layout (Figma page 12:10147,
+ * docs/plan/03-figma-inventory.md): primary #FD6F04 (50 #FFF1E6), text #0B0B0B /
+ * #363636, neutrals #F5F5F5 … #0B0B0B, success #03AA00. White sidebar with an
+ * orange pill, square controls. Tenants may override --nog-primary* at runtime.
+ */
+:root {
+    --nog-primary: #fd6f04;
+    --nog-primary-hover: #e46303;
+    --nog-primary-pressed: #c65603;
+    --nog-primary-subtle: #fff1e6;
+    --nog-on-primary: #ffffff;
+    --nog-secondary: #0b0b0b;
+
+    --nog-canvas: #f5f5f5;
+    --nog-surface: #ffffff;
+    --nog-surface-raised: #ffffff;
+    --nog-surface-sunken: #f5f5f5;
+    --nog-subtle: #f5f5f5;
+    --nog-muted: #e6e6e6;
+    --nog-field: #ffffff;
+    --nog-field-disabled: #f5f5f5;
+    --nog-overlay: #0b0b0b;
+    --nog-inverse: #0b0b0b;
+
+    --nog-ink: #0b0b0b;
+    --nog-ink-secondary: #363636;
+    --nog-ink-muted: #8a8a8a;
+    --nog-ink-brand: #fd6f04;
+    --nog-on-inverse: #ffffff;
+
+    --nog-line: #ebebeb;
+    --nog-line-strong: #d4d4d4;
+    --nog-focus: #fd6f04;
+
+    --nog-success: #03aa00;
+    --nog-success-bg: #e6f7e6;
+    --nog-warning: #d98a06;
+    --nog-warning-bg: #fef5e6;
+    --nog-danger: #dc2626;
+    --nog-danger-bg: #fdecec;
+    --nog-danger-hover: #dc2626;
+    --nog-info: #2563eb;
+    --nog-info-bg: #eaf1fe;
+
+    --nog-sidebar: #ffffff;
+    --nog-sidebar-hover: #fff1e6;
+    --nog-sidebar-active: #fd6f04;
+    --nog-sidebar-ink: #363636;
+    --nog-sidebar-ink-active: #ffffff;
+    --nog-sidebar-muted: #8a8a8a;
+    --nog-sidebar-line: #ebebeb;
+
+    --nog-radius-chip: 4px;
+    --nog-radius-control: 4px;
+    --nog-radius-card: 12px;
+
+    --nog-shadow-color: 11 11 11;
+    --nog-shadow-focus: 0 0 0 3px rgb(253 111 4 / 0.24);
+
+    --nog-highlight-from: #fd6f04;
+    --nog-highlight-to: #c65603;
+}
+
+.dark {
+    --nog-primary-hover: #ff8a33;
+    --nog-primary-subtle: #2b1b0e;
+
+    --nog-canvas: #0b0b0b;
+    --nog-surface: #161616;
+    --nog-surface-raised: #1f1f1f;
+    --nog-surface-sunken: #0b0b0b;
+    --nog-subtle: #1f1f1f;
+    --nog-muted: #2a2a2a;
+    --nog-field: #161616;
+    --nog-field-disabled: #1f1f1f;
+    --nog-inverse: #f5f5f5;
+
+    --nog-ink: #f5f5f5;
+    --nog-ink-secondary: #bdbdbd;
+    --nog-ink-muted: #8a8a8a;
+    --nog-ink-brand: #ff8a33;
+    --nog-on-inverse: #0b0b0b;
+
+    --nog-line: #2a2a2a;
+    --nog-line-strong: #3d3d3d;
+    --nog-focus: #ff8a33;
+
+    --nog-success: #34c26a;
+    --nog-success-bg: #0e2a1a;
+    --nog-warning: #f5a524;
+    --nog-warning-bg: #33240a;
+    --nog-danger: #f05252;
+    --nog-danger-bg: #3a1212;
+    --nog-danger-hover: #f05252;
+    --nog-info: #4f8bf5;
+    --nog-info-bg: #111f3d;
+
+    --nog-sidebar: #161616;
+    --nog-sidebar-hover: #2b1b0e;
+    --nog-sidebar-ink: #d4d4d4;
+    --nog-sidebar-muted: #8a8a8a;
+    --nog-sidebar-line: #2a2a2a;
+}

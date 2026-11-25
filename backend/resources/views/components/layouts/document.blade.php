@@ -1,0 +1,32 @@
+{{--
+    Root HTML document shared by every surface. Do not use directly; use
+    <x-layouts.panel>, <x-layouts.central> or <x-layouts.storefront>.
+    No inline <script>/<style>: everything goes through Vite entries.
+--}}
+@props([
+    'entries' => [],
+    'title' => null,
+    'surface' => 'central',
+    'bodyClass' => '',
+])
+<!DOCTYPE html>
+<html
+    lang="{{ \App\Shared\Support\Locale::htmlLang() }}"
+    dir="{{ \App\Shared\Support\Locale::direction() }}"
+    data-surface="{{ $surface }}"
+    data-country="{{ \App\Shared\Support\Locale::visitorCountry() }}"
+    @class(['dark' => request()->cookie('theme') === 'dark'])
+>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $title ? $title.' · ' : '' }}{{ config('app.name') }}</title>
+    {{ $head ?? '' }}
+    <script type="application/json" id="app-i18n">@json(trans('js'))</script>
+    @vite($entries)
+</head>
+<body {{ $attributes->class(['min-h-screen antialiased', $bodyClass]) }}>
+    {{ $slot }}
+</body>
+</html>

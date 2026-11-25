@@ -1,0 +1,57 @@
+/*
+ * Storefront family "ecommet" tokens (Figma: text #242424, green #2AAF2F, red #DE1709,
+ * yellow #FFB00A, stroke #E8E8E8, greys #808080 / #C4C4C4). Primary #FF4D00 = the old
+ * project's default --color-primary; vendors override it via Appearance → colours. Variants (home v1–v6) and tenants override the raw
+ * --nog-* values at runtime via a [data-theme-variant] block or inline JSON → CSS vars.
+ *
+ * Motion character: crisp and utilitarian — short durations, standard ease, small lift.
+ */
+:root {
+    --nog-radius-card: 0.75rem;
+    --nog-primary: #ff4d00;
+    --nog-primary-hover: #e64500;
+    --nog-ink: #242424;
+    --nog-ink-muted: #808080;
+    --nog-line: #e8e8e8;
+    --nog-line-strong: #c4c4c4;
+    --nog-success: #2aaf2f;
+    --nog-danger: #de1709;
+    --nog-warning: #ffb00a;
+
+    --motion-fast: 140ms;
+    --motion-base: 240ms;
+    --motion-slow: 520ms;
+    --motion-stagger: 50ms;
+    --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    --motion-lift: -3px;
+    --motion-reveal-distance: 18px;
+    --motion-kenburns: 1.05;
+    --motion-card-shadow: 0 10px 24px rgb(36 36 36 / 0.12);
+
+    /* Storefront additions tokens (Figma collection "Storefront" 97:10148, mode Ecommet): var(--sf-*) */
+    --sf-cta: #242424;
+    --sf-cta-hover: #000000;
+    --sf-on-cta: #ffffff;
+    --sf-accent: #de1709;
+    --sf-accent-subtle: #ffecea;
+    --sf-ink: #242424;
+    --sf-muted: #717171;
+    --sf-border: #e8e8e8;
+    --sf-bg: #ffffff;
+    --sf-surface: #ffffff;
+    --sf-radius-input: 8px;
+    --sf-radius-card: 12px;
+    --sf-success: #2aaf2f;
+    --sf-success-bg: #eaf7eb;
+    --sf-danger: #de1709;
+    --sf-danger-bg: #fdecea;
+    --sf-warning: #b7791f;
+    --sf-warning-bg: #fff6e0;
+    --sf-info: #2563eb;
+    --sf-info-bg: #eaf1fe;
+    --sf-header: #de1709;
+    --sf-topbar: #242424;
+    --sf-footer: #3a3a3a;
+    --sf-footer-bar: #5a5a5a;
+    --sf-footer-bottom: #2b2b2b;
+}

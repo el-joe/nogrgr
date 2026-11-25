@@ -1,0 +1,48 @@
+# Checkout Payment Section — replicate the old project 1:1 (client 2026-11-25)
+
+**Rule:** the payment-method section, order summary and pay button look and behave exactly like the old project, per theme family. No redesign. Reference screenshot (Elora, Arabic): `references/old-checkout-payment-rtl.png`. Old source root: `/var/www/multi-vendor`.
+
+## 1. Markup per family (port to Blade + Tailwind, same classes/colors)
+Common data per gateway item: `source (tenant|central), id, code, name, mode, logo_url, payment_methods[]`. Nothing pre-selected. Order = alphabetical by name.
+
+| Part | Ecommet (`themes/ecommet/pages/checkout.blade.php:204-328`) | Elora (`themes/elora/pages/checkout.blade.php:203-300`, summary 484-571) | Souqify (`themes/souqify/pages/checkout.blade.php:272-392`, summary 474-571) |
+|---|---|---|---|
+| Title | `h2 text-[20px] font-[500] text-[#242424] mb-4` "Payment details / تفاصيل الدفع" | same as Ecommet | `h2 text-lg sm:text-xl font-medium text-slate-900` |
+| List | `flex flex-col gap-2.5` | same | `flex flex-col gap-3` |
+| Option | `<label>` `flex items-center gap-3 rounded-[6px] border px-4 py-3 bg-white hover:border-[#242424]`; selected `border-[#242424]` else `border-[#dcdcdc]`; native radio `accent-black`; card SVG `w-4 h-4 text-[#555]`; name `text-[14px] font-medium text-[#242424]`; method badges (xs); logo `img h-6 object-contain ml-auto` | same | `rounded-2xl border px-4 py-4`; selected `border-[--sq-primary] ring-2 ring-[--sq-primary-soft-2]` else `border-neutral-200`; sr-only radio + custom 20px dot; icon tile `w-10 h-7 rounded-lg border-neutral-300`; name `font-medium text-slate-900`; badges; logo |
+| Errors | `p text-[11px] text-[#dc2626] mt-2` (server + JS `#payment-method-error`) | same | `p text-xs text-red-600 mt-2` |
+| Empty | "No payment method is available right now. Please try again later." `text-red-600 text-sm font-medium text-center mt-4` | same | in pay area |
+| Flash banner | `rounded-[10px] border-[#fecaca] bg-[#fef2f2] px-4 py-3 text-[13px] text-[#dc2626]` | same | — |
+
+Method badges component (old `components/payment-method-badges.blade.php` + `payment-method-icon.blade.php`, labels `app/PaymentGateway/PaymentMethodIcons.php`): pill `padding 2px 7px; radius 6px; border #e5e7eb; bg #fff; 10.5px/600; #374151; height 16px (xs) / 20px (sm); gap 4px`, 12px icon + label (Card, Wallet, PayPal, Apple Pay, Google Pay, Wallets, …). Methods per driver from driver `meta()['payment_methods']` (e.g. Stripe: card, apple_pay, google_pay, wallets). Gateway logo = central gateway logo upload (AVIF, ≤400×400).
+
+Summary (as screenshot): cart lines (qty stepper + trash), coupon input + "تطبيق / Apply", Subtotal, Discount (green #16a34a), Shipping + zone/rate sub-label (e.g. "CAIRO / Standard") or "Free", **Total due / الإجمالي المستحق**, red notices (no address: "Please add a shipping address before placing your order." / "يرجى إضافة عنوان شحن قبل تقديم طلبك."), pay button, "Powered by {store} | Terms Privacy", info cards: "Payment methods:" merged badge list (size sm; fallback card images per family), "Privacy & security:" (Secure payment, Privacy protection), "Free returns" cards. **No gateway-fee row** (fees are internal).
+
+Pay button: label `Pay {symbol total}` / `ادفع` for every method; disabled (`opacity-50 cursor-not-allowed`, Souqify `opacity-60`) when no shipping availability, no address, or no gateway; loading = spinner + "Processing... / جارٍ المعالجة..." (Souqify keeps label + spinner) + full-screen `#checkout-overlay` lock. Ecommet `w-full bg-[var(--color-primary)] text-white rounded-full py-4 mt-6 text-[14px] font-[600]`; Elora desktop `rounded-[32px] h-16 text-3xl font-medium` + mobile fixed buy-bar `py-4 rounded-full font-bold text-[15px] uppercase` with "You save {discount}" tag (#FFB00A); Souqify `h-14 sm:h-16 rounded-full text-xl sm:text-2xl bg-[--sq-primary]`.
+
+Mobile: Ecommet `flex-col-reverse md:flex-row` (summary first, inline button); Elora same + fixed bottom buy-bar (offset above bottom nav); Souqify grid 1→5 cols, summary `lg:sticky lg:top-28`, fixed buy-bar on mobile (add the bottom-nav offset the old one missed).
+
+## 2. Inline card panel (Stripe, Authorize.Net, 2Checkout)
+Shown under the list only when that gateway is selected: `#inline-card-form mt-4 border-[#dcdcdc] rounded-[8px] p-4 bg-[#fafafe]` (Souqify `rounded-2xl border-neutral-200 bg-slate-50 p-5`); heading lock icon (#16a34a) + "Secure card details / تفاصيل البطاقة الآمنة". Stripe: Card Element box (`rounded-[6px] px-4 py-3 min-h-[42px]`), errors under it. Authorize.Net / 2Checkout: Card number (groups of 4), `MM / YY`, `CVC` inputs (numeric, cc autocomplete), errors `#card-errors`. Submit: no method → "Please select a payment method."; tokenise via SDK, then place order.
+Strings: Card number/رقم البطاقة, MM / YY/شهر / سنة, CVC/رمز التحقق, Card error/خطأ في البطاقة.
+
+## 3. Behaviour that stays identical vs. backend-only fixes (UI unchanged)
+Identical: gateway filtering (tenant rows active, not hidden, type orders, centrally active, ready = connected + required keys), alphabetical order, nothing preselected, label never changes for redirect gateways, guards order in placeOrder (plan limit → validation → empty cart → shipping → country rules → gateways → still listed → live ping) with the same messages, flow `checkout/payment/{gateway}/{orderUuid}` → success / cancel → order status with toasts "Payment completed successfully." / "Payment was cancelled.", gateway-blocked page from limits, charges in USD.
+Backend-only improvements (invisible to the customer; tech-lead approved direction): Stripe via PaymentIntents with 3-D Secure (`handleCardAction` inside the same panel), SDKs loaded on demand when a gateway is selected, webhooks verified and able to mark orders paid idempotently, 2Checkout publishable key bug fixed, Luhn/expiry hints only as SDK errors (no new UI).
+**COD (client confirmed 2026-11-25): hidden at checkout**, exactly like the old UI. Server-side COD support stays (admin/vendor manual orders), no storefront option.
+
+## 4. Drivers (28)
+Inline: stripe, authorize_net, 2checkout. Hosted view: razorpay, iyzico, midtrans, paytm, perfect_money, hyperpay, amazon_payment_services, cashfree. Redirect: paypal, mollie, flutterwave, paystack, instamojo, mercadopago, myfatoorah, paytabs, phonepe, toyyibpay, xendit, yoco, checkout_com, adyen, moyasar, tap, paymob.
+
+## 5. Addendum — the client screenshot is **Elora** (`themes/elora/pages/checkout.blade.php`)
+Elora-only parts visible there: "Powered by {store} | Terms Privacy" footer (541-549), 4 trust cards (552-636), faded pill pay button in the summary (527-538). Ecommet shares the gateway card markup but not these three; Souqify differs.
+- Layout row `flex flex-col-reverse md:flex-row gap-10 md:gap-[40px] lg:gap-[130px] items-start` (34); summary wrapper `flex-1 w-full max-w-full pt-1 flex flex-col gap-4` (341).
+- Cart line stepper pill `flex items-center gap-4 p-2 rounded-3xl border border-[#E0E0E0]`, trash (aria "Remove item"), −/+ stroked `var(--color-primary)`.
+- Coupon pill `border border-gray-300 rounded-full h-[48px] bg-white`; button `bg-[var(--color-primary)] text-white px-5 h-full text-sm font-medium`; applied state green box `bg-[#f0fdf4] border-[#bbf7d0] rounded-[12px]` + Remove.
+- Rows: Subtotal `text-[#171717] text-base`; Discount green; Shipping label `text-[#8F8F8F] text-sm`, sub-label `text-xs` "zone / rate" (fallback "Ground shipping (3-5 business days)"), value `text-[#ADADAD] text-sm` or "Free"; Total due `border-t border-[#C4C4C4] py-3`, value `text-2xl font-bold`.
+- Address warning `hidden sm:block text-red-600 text-sm font-medium text-center mb-2`.
+- Trust cards `w-full sm:w-[228px] bg-[#FDFDFD] border-[#EEEEEE] rounded-lg`; green (#2AAF2F) titles + icons; card 1 = merged method chips (sm; fallback pay-mastercard/visa/applepay svgs); card 2 Privacy & Secure (Secure payment, Privacy protection); card 3 Free returns (Refund for lost packages, Coupon for late delivery); card 4 Free returns (Easy and free return in 15 days.) — duplicate title kept 1:1.
+- Chips: driver `meta()['payment_methods']` → `PaymentMethodIcons` map (card, wallet, wallets, paypal_balance→PayPal, apple_pay, google_pay; unknown → ucfirst); inline styles as §1; labels English in both locales; gateway names untranslated (DB). Logo: central gateway upload only (tenants can't set), none → nothing rendered.
+
+### Strings (en → ar)
+Payment details تفاصيل الدفع · Enter coupon or promo code أدخل رمز القسيمة أو العرض الترويجي · Apply تطبيق · Subtotal المجموع الفرعي · Discount الخصم · Shipping الشحن · Free مجاناً · Ground shipping (3-5 business days) الشحن البري (3-5 أيام عمل) · Total due الإجمالي المستحق · Total الإجمالي · Please add a shipping address before placing your order. يرجى إضافة عنوان شحن قبل تقديم طلبك. · No payment method is available right now. Please try again later. لا توجد طريقة دفع متاحة حالياً. يرجى المحاولة لاحقاً. · Pay ادفع · Processing... جارٍ المعالجة... · Powered by مشغل بواسطة · Terms الشروط · Privacy الخصوصية · Payment methods: طرق الدفع: · Privacy & Secure: الخصوصية والأمان: · Secure payment دفع آمن · Privacy protection حماية الخصوصية · Free returns: إرجاع مجاني: · Refund for lost packages استرداد أموال الطرود المفقودة · Coupon for late delivery قسيمة للتأخير في التوصيل · Easy and free return in 15 days. إرجاع سهل ومجاني خلال 15 يومًا. · Remove item إزالة العنصر · You save توفر · Check out الدفع · Secure card details تفاصيل البطاقة الآمنة · Card number رقم البطاقة · MM / YY شهر / سنة · CVC رمز التحقق · Please select a payment method. يرجى اختيار طريقة الدفع. · Card error خطأ في البطاقة

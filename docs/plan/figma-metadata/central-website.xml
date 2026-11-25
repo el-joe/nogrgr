@@ -1,0 +1,2422 @@
+<canvas id="12:41054" name="Central Website" x="0" y="0" width="0" height="0">
+  <frame id="12:41421" name="Home" x="7210" y="17801" width="1440" height="7382">
+    <frame id="12:41422" name="Hero Section" x="0" y="0" width="1440" height="1208">
+      <rounded-rectangle id="12:41423" name="Rectangle 3" x="958" y="299" width="222" height="222" />
+      <frame id="12:41424" name="Content" x="88" y="216" width="688" height="327">
+        <frame id="12:41425" name="Title" x="0" y="0" width="688" height="263">
+          <text id="12:41426" name="Ready-made eCommerce templates to launch your store faster." x="0" y="0" width="688" height="180" />
+          <text id="12:41427" name="Manage products, payments, and sales effortlessly. Everything you need to grow your business is just a click away. Start today and simplify your e-commerce journey." x="0" y="188" width="606" height="75" />
+        </frame>
+        <instance id="12:41428" name="btn" x="0" y="287" width="154" height="40" />
+      </frame>
+      <frame id="12:41429" name="Right Side" x="622.21630859375" y="163" width="729.7838134765625" height="599.2321166992188">
+        <rounded-rectangle id="12:41430" name="Screenshot 2025-12-25 152051 1" x="815.0001220703125" y="163" width="537" height="439" />
+        <rounded-rectangle id="12:41431" name="MacBook Air (15 inch)" x="622.21630859375" y="311.30848693847656" width="538.9107761362611" height="549.23214833167" />
+      </frame>
+      <frame id="12:41432" name="Numbers" x="158" y="810" width="1124" height="348">
+        <frame id="12:41433" name="Frame 12" x="314" y="0" width="496" height="106">
+          <text id="12:41434" name="Our Overall Achievements" x="0" y="0" width="496" height="40" />
+          <text id="12:41435" name="Join thousands of entrepreneurs building their online stores with ease." x="0" y="56" width="496" height="50" />
+        </frame>
+        <frame id="12:41436" name="Cards" x="0" y="154" width="1124" height="194">
+          <frame id="12:41437" name="Frame 5" x="0" y="0" width="266" height="194">
+            <frame id="12:41438" name="Frame 9" x="21" y="45" width="232" height="104">
+              <text id="12:41439" name="500 +" x="0" y="0" width="232" height="40" />
+              <frame id="12:41440" name="Frame 14" x="0" y="56" width="232" height="48">
+                <text id="12:41441" name="Active Users" x="0" y="0" width="232" height="20" />
+                <text id="12:41442" name="Users trust our templates daily" x="0" y="28" width="232" height="20" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="12:41443" name="Frame 9" x="286" y="0" width="266" height="194">
+            <frame id="12:41444" name="Frame 9" x="23" y="45" width="229" height="104">
+              <text id="12:41445" name="900 +" x="0" y="0" width="229" height="40" />
+              <frame id="12:41446" name="Frame 15" x="0" y="56" width="229" height="48">
+                <text id="12:41447" name="Daily Transactions" x="0" y="0" width="229" height="20" />
+                <text id="12:41448" name="Processed through our platform" x="0" y="28" width="229" height="20" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="12:41449" name="Frame 10" x="572" y="0" width="266" height="194">
+            <frame id="12:41450" name="Frame 9" x="46" y="45" width="182" height="104">
+              <text id="12:41451" name="300 +" x="0" y="0" width="182" height="40" />
+              <frame id="12:41452" name="Frame 16" x="0" y="56" width="182" height="48">
+                <text id="12:41453" name="Original Products" x="0" y="0" width="182" height="20" />
+                <text id="12:41454" name="Ready for your store" x="0" y="28" width="182" height="20" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="12:41455" name="Frame 11" x="858" y="0" width="266" height="194">
+            <frame id="12:41456" name="Frame 9" x="42" y="45" width="190" height="104">
+              <text id="12:41457" name="100 %" x="0" y="0" width="190" height="40" />
+              <frame id="12:41458" name="Frame 17" x="0" y="56" width="190" height="48">
+                <text id="12:41459" name="Security Ensured" x="0" y="0" width="190" height="20" />
+                <text id="12:41460" name="Protected &amp; reliable" x="0" y="28" width="190" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <instance id="12:41461" name="Navbar" x="91" y="16" width="1258" height="64" />
+    </frame>
+    <instance id="12:41462" name="Component 15" x="0" y="1208" width="1440" height="829" />
+    <frame id="12:41463" name="Templates" x="0" y="2037" width="1440" height="893">
+      <text id="12:41464" name="Templates" x="646" y="72" width="148" height="40" />
+      <frame id="12:41465" name="Cards" x="208" y="232" width="1023" height="560">
+        <instance id="12:41466" name="Card" x="0" y="0" width="325" height="268" />
+        <instance id="12:41467" name="Card" x="349" y="0" width="325" height="268" />
+        <instance id="12:41468" name="Card" x="698" y="0" width="325" height="268" />
+        <instance id="12:41469" name="Card" x="0" y="292" width="325" height="268" />
+        <instance id="12:41470" name="Card" x="349" y="292" width="325" height="268" />
+        <instance id="12:41471" name="Card" x="698" y="292" width="325" height="268" />
+      </frame>
+      <text id="12:41472" name="See More" x="677" y="832" width="84" height="25" />
+      <frame id="12:41473" name="Categories" x="314" y="144" width="812" height="40">
+        <instance id="12:41474" name="btn" x="0" y="0" width="83" height="40" />
+        <frame id="12:41475" name="For scrolling" x="95" y="0" width="681" height="40">
+          <instance id="12:41476" name="Component 16" x="0" y="0" width="171" height="40" />
+          <instance id="12:41477" name="Component 16" x="187" y="0" width="153" height="40" />
+          <instance id="12:41478" name="Component 11" x="356" y="0" width="149" height="40" />
+          <instance id="12:41479" name="Component 12" x="521" y="0" width="160" height="40" />
+          <instance id="12:41480" name="Component 16" x="697" y="0" width="152" height="40" />
+          <instance id="12:41481" name="Component 13" x="865" y="0" width="159" height="40" />
+          <instance id="12:41482" name="Component 16" x="1040" y="0" width="126" height="40" />
+          <instance id="12:41483" name="Component 16" x="1182" y="0" width="119" height="40" />
+        </frame>
+        <instance id="12:41484" name="vuesax/linear/arrow-right" x="788" y="8" width="24" height="24" />
+      </frame>
+      <rounded-rectangle id="12:41485" name="Rectangle 5" x="-2" y="832" width="1440" height="61" />
+    </frame>
+    <frame id="12:41486" name="Templates" x="0" y="2930" width="1440" height="866">
+      <text id="12:41487" name="Categories" x="642" y="72" width="157" height="40" />
+      <frame id="12:41488" name="Frame 163" x="244" y="244" width="952" height="550">
+        <frame id="12:41489" name="Frame 161" x="0" y="0" width="952" height="251">
+          <frame id="12:41490" name="Card]" x="0" y="0" width="208" height="251">
+            <text id="12:41491" name="Fashion" x="69" y="209" width="70" height="25" />
+            <frame id="12:41492" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:41493" name="fashion-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:41496" name="Card]" x="248" y="0" width="208" height="251">
+            <text id="12:41497" name="Beauty" x="73" y="209" width="63" height="25" />
+            <frame id="12:41498" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:41499" name="beauty-brush-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:41504" name="Card]" x="496" y="0" width="208" height="251">
+            <text id="12:41505" name="Fitness" x="73" y="209" width="63" height="25" />
+            <frame id="12:41506" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:41507" name="fitness-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:41513" name="Card]" x="744" y="0" width="208" height="251">
+            <text id="12:41514" name="Furniture" x="63" y="209" width="82" height="25" />
+            <frame id="12:41515" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:41516" name="furniture-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:41518" name="Frame 162" x="0" y="299" width="952" height="251">
+          <frame id="12:41519" name="Card]" x="0" y="0" width="208" height="251">
+            <text id="12:41520" name="Grocery" x="67" y="209" width="74" height="25" />
+            <frame id="12:41521" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:41522" name="food-2-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:41527" name="Card]" x="248" y="0" width="208" height="251">
+            <text id="12:41528" name="Electronics" x="55" y="209" width="98" height="25" />
+            <frame id="12:41529" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:41530" name="devices-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:41532" name="Card]" x="496" y="0" width="208" height="251">
+            <text id="12:41533" name="Pets" x="85" y="209" width="38" height="25" />
+            <frame id="12:41534" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:41535" name="pet-14-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:41538" name="Card]" x="744" y="0" width="208" height="251">
+            <text id="12:41539" name="Kids" x="85" y="209" width="39" height="25" />
+            <frame id="12:41540" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:41541" name="kids-couple-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <text id="12:41547" name="Thousands of ready-made products across multiple categories to help you launch and sell with ease." x="381" y="136" width="679" height="64" />
+    </frame>
+    <frame id="12:41548" name="Services" x="0" y="3796" width="1440" height="697">
+      <rounded-rectangle id="12:41549" name="6e99543d2318f688db75d73cf5eb3d53 (1) 1" x="530" y="0" width="910" height="697" />
+      <frame id="12:41550" name="Frame 90" x="0" y="0" width="1025" height="697" />
+      <frame id="12:41551" name="Frame 96" x="88" y="116.5" width="474" height="464">
+        <frame id="12:41552" name="Frame 95" x="0" y="0" width="474" height="368">
+          <frame id="12:41553" name="Frame 91" x="0" y="0" width="474" height="62">
+            <frame id="12:41554" name="customize 1" x="0" y="0" width="40" height="40" />
+            <frame id="12:41558" name="Frame 100" x="56" y="0" width="418" height="62">
+              <text id="12:41559" name="Template Customization" x="0" y="0" width="321.0584716796875" height="25" />
+              <text id="12:41560" name="Tailored designs that fit your brand." x="0" y="37" width="406.0818786621094" height="25" />
+            </frame>
+          </frame>
+          <frame id="12:41561" name="Frame 92" x="0.0000762939453125" y="102" width="473.9998474121094" height="62">
+            <frame id="12:41562" name="setup-assistant-guide 1" x="0" y="0" width="40" height="40" />
+            <frame id="12:41568" name="Frame 99" x="56" y="0" width="417.9998474121094" height="62">
+              <text id="12:41569" name="Store Setup" x="0" y="0" width="321.0584716796875" height="25" />
+              <text id="12:41570" name="From setup to launch, we’ve got you covered." x="0" y="37" width="406.0818786621094" height="25" />
+            </frame>
+          </frame>
+          <frame id="12:41571" name="Frame 93" x="0.0000762939453125" y="204" width="473.9998474121094" height="62">
+            <frame id="12:41572" name="optimization-search 1" x="0" y="0" width="40" height="40" />
+            <frame id="12:41580" name="Frame 98" x="56" y="0" width="417.9998474121094" height="62">
+              <text id="12:41581" name="Optimization" x="0" y="0" width="321.0584716796875" height="25" />
+              <text id="12:41582" name="Better performance, better results." x="0" y="37" width="406.0818786621094" height="25" />
+            </frame>
+          </frame>
+          <frame id="12:41583" name="Frame 94" x="0.0000762939453125" y="306" width="473.9998474121094" height="62">
+            <frame id="12:41584" name="support 1" x="0" y="0" width="40" height="40" />
+            <frame id="12:41588" name="Frame 101" x="56" y="0" width="417.9998474121094" height="62">
+              <text id="12:41589" name="Expert Support" x="0" y="0" width="321.0584716796875" height="25" />
+              <text id="12:41590" name="Guidance whenever you need it." x="0" y="37" width="406.0818786621094" height="25" />
+            </frame>
+          </frame>
+        </frame>
+        <instance id="12:41591" name="btn" x="0" y="416" width="207" height="48" />
+      </frame>
+    </frame>
+    <frame id="12:41592" name="Features" x="0" y="4493" width="1440" height="1019">
+      <text id="12:41593" name="Choose Your Perfect Business Plan" x="477" y="72" width="485" height="40" />
+      <instance id="12:41594" name="Component 1" x="485" y="144" width="470" height="48" />
+      <rounded-rectangle id="12:41595" name="Rectangle 5" x="-2" y="883" width="1440" height="136" />
+      <frame id="12:41596" name="Plans" x="206" y="280" width="1028" height="667">
+        <frame id="12:41597" name="Card" x="0" y="48" width="308" height="571">
+          <frame id="12:41598" name="Content" x="28" y="27" width="252" height="517">
+            <frame id="12:41599" name="1" x="0" y="0" width="252" height="150">
+              <frame id="12:41600" name="Frame 27" x="0" y="0" width="166" height="134">
+                <frame id="12:41601" name="Frame 43" x="0" y="0" width="166" height="48">
+                  <frame id="12:41602" name="Frame 41" x="0" y="0" width="48" height="48">
+                    <frame id="12:41603" name="proicons:wrench" x="10" y="10" width="28" height="28" />
+                  </frame>
+                  <text id="12:41605" name="Basic" x="58" y="11.5" width="48" height="25" />
+                </frame>
+                <text id="12:41606" name="$9 / month" x="0" y="56" width="166" height="50" />
+                <text id="12:41607" name="What&#39;s Included" x="0" y="114" width="166" height="20" />
+              </frame>
+              <vector id="12:41608" name="Vector 25" x="0" y="150" width="234" height="0" />
+            </frame>
+            <frame id="12:41609" name="2" x="0" y="174" width="197" height="271">
+              <frame id="12:41610" name="Frame 28" x="0" y="0" width="161" height="25">
+                <frame id="12:41611" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41612" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41613" name="Categories Limit : 2" x="32" y="0" width="129" height="25" />
+              </frame>
+              <frame id="12:41614" name="Frame 29" x="0" y="41" width="197" height="25">
+                <frame id="12:41615" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41616" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41617" name="Subcategories Limit : 5" x="32" y="0" width="151" height="25" />
+              </frame>
+              <frame id="12:41618" name="Frame 34" x="0" y="82" width="154" height="25">
+                <frame id="12:41619" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41620" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41621" name="Products Limit : 10" x="32" y="0" width="122" height="25" />
+              </frame>
+              <frame id="12:41622" name="Frame 35" x="0" y="123" width="151" height="25">
+                <frame id="12:41623" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41624" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41625" name="Orders Limit : 100" x="32" y="0" width="119" height="25" />
+              </frame>
+              <frame id="12:41626" name="Frame 37" x="0" y="164" width="62" height="25">
+                <frame id="12:41627" name="icon- no" x="0" y="0" width="24" height="24">
+                  <frame id="12:41628" name="proicons:cancel" x="5" y="5" width="14" height="14" />
+                </frame>
+                <text id="12:41630" name="Blog" x="32" y="0" width="30" height="25" />
+              </frame>
+              <frame id="12:41631" name="Frame 33" x="0" y="205" width="120" height="25">
+                <frame id="12:41632" name="icon- no" x="0" y="0" width="24" height="24">
+                  <frame id="12:41633" name="proicons:cancel" x="5" y="5" width="14" height="14" />
+                </frame>
+                <text id="12:41635" name="Custom Page" x="32" y="0" width="88" height="25" />
+              </frame>
+              <frame id="12:41636" name="Frame 38" x="0" y="246" width="85" height="25">
+                <text id="12:41637" name="Show More +" x="0" y="0" width="85" height="25" />
+              </frame>
+            </frame>
+            <frame id="12:41638" name="Frame 39" x="0" y="469" width="253" height="48">
+              <frame id="12:41639" name="btn" x="0" y="0" width="99" height="48">
+                <text id="12:41640" name="Trail" x="34" y="14" width="31" height="20" />
+              </frame>
+              <frame id="12:41641" name="btn" x="109" y="0" width="144" height="48">
+                <text id="12:41642" name="Purchase" x="39" y="14" width="66" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:41643" name="Card" x="332" y="0" width="364" height="667">
+          <frame id="12:41644" name="Content" x="40" y="44.999969482421875" width="268" height="596">
+            <frame id="12:41645" name="1" x="0" y="0" width="268" height="155">
+              <frame id="12:41646" name="Frame 27" x="0" y="0" width="166" height="139">
+                <frame id="12:41647" name="Frame 42" x="0" y="0" width="166" height="48">
+                  <frame id="12:41648" name="Frame 41" x="0" y="0" width="48" height="48">
+                    <frame id="12:41649" name="cil:chart-line" x="10" y="8" width="28" height="28" />
+                  </frame>
+                  <text id="12:41652" name="Standard" x="58" y="11.5" width="84" height="25" />
+                </frame>
+                <text id="12:41653" name="$19 / month" x="0" y="56" width="166" height="50" />
+                <text id="12:41654" name="What&#39;s Included" x="0" y="114" width="166" height="25" />
+              </frame>
+              <vector id="12:41655" name="Vector 25" x="0" y="155" width="234" height="0" />
+            </frame>
+            <frame id="12:41656" name="2" x="0" y="179" width="268" height="345">
+              <frame id="12:41657" name="Frame 28" x="0" y="0" width="184" height="24">
+                <frame id="12:41658" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41659" name="Vector 27" x="6" y="8" width="12" height="8" />
+                </frame>
+                <text id="12:41660" name="Categories Limit : 10" x="40" y="2" width="144" height="20" />
+              </frame>
+              <frame id="12:41661" name="Frame 29" x="0" y="40" width="268" height="24">
+                <frame id="12:41662" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41663" name="Vector 27" x="6" y="8" width="12" height="8" />
+                </frame>
+                <text id="12:41664" name="Subcategories Limit : 20" x="40" y="2" width="171" height="20" />
+              </frame>
+              <frame id="12:41665" name="Frame 34" x="0" y="80" width="172" height="24">
+                <frame id="12:41666" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41667" name="Vector 27" x="6" y="8" width="12" height="8" />
+                </frame>
+                <text id="12:41668" name="Products Limit : 50" x="40" y="2" width="132" height="20" />
+              </frame>
+              <frame id="12:41669" name="Frame 35" x="0" y="120" width="170" height="24">
+                <frame id="12:41670" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41671" name="Vector 27" x="6" y="8" width="12" height="8" />
+                </frame>
+                <text id="12:41672" name="Orders Limit : 300" x="40" y="2" width="130" height="20" />
+              </frame>
+              <frame id="12:41673" name="Frame 36" x="0" y="160" width="268" height="24">
+                <frame id="12:41674" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41675" name="Vector 27" x="6" y="8" width="12" height="8" />
+                </frame>
+                <text id="12:41676" name="Additional Languages : 2" x="40" y="2" width="175" height="20" />
+              </frame>
+              <frame id="12:41677" name="Frame 38" x="0" y="200" width="268" height="24">
+                <frame id="12:41678" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41679" name="Vector 27" x="6" y="8" width="12" height="8" />
+                </frame>
+                <text id="12:41680" name="Posts Limit: 20" x="40" y="2" width="104" height="20" />
+              </frame>
+              <frame id="12:41681" name="Frame 37" x="0" y="240" width="155" height="24">
+                <frame id="12:41682" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41683" name="Vector 27" x="6" y="8" width="12" height="8" />
+                </frame>
+                <text id="12:41684" name="Custom Domain" x="40" y="2" width="115" height="20" />
+              </frame>
+              <frame id="12:41685" name="Frame 33" x="0" y="280" width="121" height="24">
+                <frame id="12:41686" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41687" name="Vector 27" x="6" y="8" width="12" height="8" />
+                </frame>
+                <text id="12:41688" name="Subdomain" x="40" y="2" width="81" height="20" />
+              </frame>
+              <frame id="12:41689" name="Frame 39" x="0" y="320" width="85" height="25">
+                <text id="12:41690" name="Show More +" x="0" y="0" width="85" height="25" />
+              </frame>
+            </frame>
+            <frame id="12:41691" name="Frame 39" x="0" y="548" width="268" height="48">
+              <frame id="12:41692" name="btn" x="0" y="0" width="99" height="48">
+                <text id="12:41693" name="Trail" x="34" y="14" width="31" height="20" />
+              </frame>
+              <frame id="12:41694" name="btn" x="109" y="0" width="159" height="48">
+                <text id="12:41695" name="Purchase" x="46.5" y="14" width="66" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:41696" name="Card" x="720" y="48" width="308" height="571">
+          <frame id="12:41697" name="Content" x="28" y="27" width="252" height="517">
+            <frame id="12:41698" name="1" x="0" y="0" width="252" height="150">
+              <frame id="12:41699" name="Frame 27" x="0" y="0" width="166" height="134">
+                <frame id="12:41700" name="Frame 40" x="0" y="0" width="166" height="48">
+                  <frame id="12:41701" name="Frame 41" x="0" y="0" width="48" height="48">
+                    <frame id="12:41702" name="game-icons:chess-queen" x="8.232864379882812" y="10.748770713806152" width="31.534271240234375" height="26.502458572387695">
+                      <vector id="12:41703" name="Vector" x="3" y="2" width="25.534271240234375" height="22.502458572387695" />
+                    </frame>
+                  </frame>
+                  <text id="12:41704" name="Premium" x="58" y="11.5" width="81" height="25" />
+                </frame>
+                <text id="12:41705" name="$39 / month" x="0" y="56" width="166" height="50" />
+                <text id="12:41706" name="What&#39;s Included" x="0" y="114" width="166" height="20" />
+              </frame>
+              <vector id="12:41707" name="Vector 25" x="0" y="150" width="234" height="0" />
+            </frame>
+            <frame id="12:41708" name="2" x="0" y="174" width="197" height="271">
+              <frame id="12:41709" name="Frame 28" x="0" y="0" width="215" height="25">
+                <frame id="12:41710" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41711" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41712" name="Categories Limit : unlimited" x="32" y="0" width="183" height="25" />
+              </frame>
+              <frame id="12:41713" name="Frame 29" x="0" y="41" width="197" height="25">
+                <frame id="12:41714" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41715" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41716" name="Subcategories Limit : unlimited" x="32" y="0" width="205" height="25" />
+              </frame>
+              <frame id="12:41717" name="Frame 34" x="0" y="82" width="200" height="25">
+                <frame id="12:41718" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41719" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41720" name="Products Limit : unlimited" x="32" y="0" width="168" height="25" />
+              </frame>
+              <frame id="12:41721" name="Frame 35" x="0" y="123" width="188" height="25">
+                <frame id="12:41722" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41723" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41724" name="Orders Limit : unlimited" x="32" y="0" width="156" height="25" />
+              </frame>
+              <frame id="12:41725" name="Frame 36" x="0" y="164" width="197" height="25">
+                <frame id="12:41726" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41727" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41728" name="Additional Languages : unlimited" x="32" y="0" width="218" height="25" />
+              </frame>
+              <frame id="12:41729" name="Frame 33" x="0" y="205" width="221" height="25">
+                <frame id="12:41730" name="icon-yes" x="0" y="0" width="24" height="24">
+                  <vector id="12:41731" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                </frame>
+                <text id="12:41732" name="Custom Page limit: unlimited" x="32" y="0" width="189" height="25" />
+              </frame>
+              <frame id="12:41733" name="Frame 38" x="0" y="246" width="85" height="25">
+                <text id="12:41734" name="Show More +" x="0" y="0" width="85" height="25" />
+              </frame>
+            </frame>
+            <frame id="12:41735" name="Frame 39" x="0" y="469" width="253" height="48">
+              <frame id="12:41736" name="btn" x="0" y="0" width="99" height="48">
+                <text id="12:41737" name="Trail" x="34" y="14" width="31" height="20" />
+              </frame>
+              <frame id="12:41738" name="btn" x="109" y="0" width="144" height="48">
+                <text id="12:41739" name="Purchase" x="39" y="14" width="66" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="12:41740" name="Comments 2&#39;" x="0" y="5512" width="1440" height="509">
+      <text id="12:41741" name="Customer Reviews" x="590" y="72" width="261" height="40" />
+      <frame id="12:41742" name="Frame 56" x="135" y="175" width="1170" height="226">
+        <frame id="12:41743" name="Component 2" x="0" y="0" width="374" height="226">
+          <text id="12:41744" name="This platform transformed my business! The user-friendly interface made managing my store a breeze, and the customer support is always there when I need help. I highly recommend it to any online seller!" x="16" y="84" width="342" height="90" />
+          <frame id="12:41745" name="entypo:quote" x="175" y="21" width="40" height="40" />
+        </frame>
+        <frame id="12:41747" name="Component 2" x="398" y="0" width="374" height="226">
+          <text id="12:41748" name="Since switching to this platform, our sales have increased by 30%! The integration with payment gateways and the analytics tools have given us the insights we needed to grow." x="16" y="84" width="342" height="72" />
+          <frame id="12:41749" name="entypo:quote" x="167" y="21" width="40" height="40" />
+        </frame>
+        <frame id="12:41751" name="Component 3" x="796" y="0" width="374" height="226">
+          <text id="12:41752" name="This platform transformed my business! The user-friendly interface made managing my store a breeze, and the customer support is always there when I need help. I highly recommend it to any online seller!" x="16" y="84" width="342" height="90" />
+          <frame id="12:41753" name="entypo:quote" x="167" y="21" width="40" height="40" />
+        </frame>
+        <frame id="12:41755" name="Component 5" x="1194" y="0" width="374" height="226">
+          <text id="12:41756" name="This platform transformed my business! The user-friendly interface made managing my store a breeze, and the customer support is always there when I need help. I highly recommend it to any online seller!" x="16" y="84" width="342" height="90" />
+          <frame id="12:41757" name="entypo:quote" x="167" y="21" width="40" height="40" />
+        </frame>
+        <frame id="12:41759" name="Component 4" x="1592" y="0" width="374" height="226">
+          <text id="12:41760" name="Since switching to this platform, our sales have increased by 30%! The integration with payment gateways and the analytics tools have given us the insights we needed to grow." x="16" y="84" width="342" height="72" />
+          <text id="12:41761" name="’’" x="169" y="21" width="36" height="47" />
+        </frame>
+      </frame>
+      <frame id="12:41762" name="indecators" x="652" y="459" width="136" height="8">
+        <frame id="12:41763" name="Frame 58" x="0" y="0" width="40" height="8" />
+        <frame id="12:41764" name="Frame 59" x="48" y="0" width="40" height="8" />
+        <frame id="12:41765" name="Frame 60" x="96" y="0" width="40" height="8" />
+      </frame>
+      <instance id="12:41766" name="vuesax/linear/arrow-right" x="1329" y="279" width="32" height="32" />
+      <instance id="12:41767" name="vuesax/linear/arrow-right" x="111" y="311" width="32" height="32" />
+    </frame>
+    <frame id="12:41768" name="Blogs" x="0" y="6021" width="1440" height="645">
+      <text id="12:41769" name="Blogs" x="681" y="72" width="78" height="40" />
+      <rounded-rectangle id="12:41770" name="Rectangle 5" x="0" y="418" width="1440" height="227" />
+      <frame id="12:41771" name="Frame 65" x="100" y="160" width="1239" height="413">
+        <frame id="12:41772" name="Frame 61" x="0" y="0" width="397" height="413">
+          <rounded-rectangle id="12:41773" name="1654668572 1" x="0" y="0" width="397" height="251" />
+          <frame id="12:41774" name="Frame 63" x="16" y="267" width="372" height="119">
+            <frame id="12:41775" name="Frame 62" x="0" y="0" width="372" height="83">
+              <text id="12:41776" name="On the other hand, we denounce with righteous indignation" x="0" y="0" width="341" height="30" />
+              <text id="12:41777" name="On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment," x="0" y="38" width="372" height="45" />
+            </frame>
+            <frame id="12:41778" name="Frame 64" x="0" y="99" width="372" height="20">
+              <instance id="12:41779" name="vuesax/linear/export" x="0" y="0" width="19" height="19" />
+              <text id="12:41780" name="Read More" x="27" y="0" width="78" height="20" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:41781" name="Frame 62" x="421" y="0" width="397" height="413">
+          <rounded-rectangle id="12:41782" name="1654668714 1" x="0" y="0" width="397" height="251" />
+          <frame id="12:41783" name="Frame 63" x="16" y="267" width="372" height="114">
+            <frame id="12:41784" name="Frame 62" x="0" y="0" width="372" height="78">
+              <text id="12:41785" name="On the other hand, we denounce with righteous indignation" x="0" y="0" width="341" height="30" />
+              <text id="12:41786" name="On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment," x="0" y="38" width="372" height="40" />
+            </frame>
+            <frame id="12:41787" name="Frame 64" x="0" y="94" width="372" height="20">
+              <instance id="12:41788" name="vuesax/linear/export" x="0" y="0" width="19" height="19" />
+              <text id="12:41789" name="Read More" x="27" y="0" width="78" height="20" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:41790" name="Frame 63" x="842" y="0" width="397" height="413">
+          <rounded-rectangle id="12:41791" name="1654668743 1" x="0" y="0" width="397" height="251" />
+          <frame id="12:41792" name="Frame 63" x="16" y="267" width="372" height="118">
+            <frame id="12:41793" name="Frame 62" x="0" y="0" width="372" height="82">
+              <text id="12:41794" name="On the other hand, we denounce with righteous indignation" x="0" y="0" width="341" height="30" />
+              <text id="12:41795" name="On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment," x="0" y="38" width="372" height="44" />
+            </frame>
+            <frame id="12:41796" name="Frame 64" x="0" y="98" width="372" height="20">
+              <instance id="12:41797" name="vuesax/linear/export" x="0" y="0" width="19" height="19" />
+              <text id="12:41798" name="Read More" x="27" y="0" width="78" height="20" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="12:41799" name="Blogs" x="0" y="6666" width="1440" height="305">
+      <rounded-rectangle id="12:41800" name="Rectangle 3" x="0" y="339.8095703125" width="28" height="22.127119064331055" />
+      <frame id="12:41801" name="Frame 77" x="431" y="88" width="577" height="130">
+        <frame id="12:41802" name="Frame 75" x="0" y="0" width="577" height="66">
+          <text id="12:41803" name="Newsletter" x="0" y="0" width="577" height="30" />
+          <text id="12:41804" name="Get latest updates first and stay with us." x="0" y="46" width="577" height="20" />
+        </frame>
+        <frame id="12:41805" name="Frame 76" x="0" y="90" width="577" height="40">
+          <text id="12:41806" name="Enter Your Email" x="20" y="8" width="110" height="25" />
+          <frame id="12:41807" name="Frame 97" x="467" y="0" width="110" height="40">
+            <text id="12:41808" name="Subscribe" x="20.5" y="10" width="69" height="20" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:41809" name="FOOTER" x="0" y="6971" width="1440" height="411" />
+  </frame>
+  <frame id="12:41810" name="How it Works" x="14587" y="17806" width="1440" height="1293">
+    <frame id="12:41811" name="Pricing" x="0" y="0" width="1440" height="882">
+      <frame id="12:41812" name="Card" x="941" y="477" width="320" height="123">
+        <frame id="12:41813" name="content" x="941" y="496" width="304" height="104">
+          <text id="12:41814" name="Upload products, set prices, and configure payment options easily." x="32" y="16" width="228" height="72" />
+        </frame>
+        <frame id="12:41815" name="Frame 89" x="1221" y="477" width="40" height="40">
+          <text id="12:41816" name="3" x="8" y="5" width="24" height="30" />
+        </frame>
+      </frame>
+      <frame id="12:41817" name="Card" x="139" y="556" width="324" height="99">
+        <frame id="12:41818" name="content" x="159" y="575" width="304" height="80">
+          <text id="12:41819" name="Go live, manage orders, and grow your online business." x="32" y="16" width="228" height="48" />
+        </frame>
+        <frame id="12:41820" name="Frame 89" x="139" y="556" width="40" height="40">
+          <text id="12:41821" name="3" x="8" y="5" width="24" height="30" />
+        </frame>
+      </frame>
+      <frame id="12:41822" name="Group 6" x="915.7462158203125" y="618.954833984375" width="99.89244366389539" height="99.89244366389539" />
+      <rounded-rectangle id="12:41824" name="Rectangle 3" x="684" y="405" width="72" height="72" />
+      <instance id="12:41825" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <instance id="12:41826" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:41827" name="OBJECTS" x="416" y="195" width="609" height="687">
+        <rounded-rectangle id="12:41828" name="f9284018556213c2c81689cb5a83bea4 2" x="416" y="195" width="609" height="687" />
+      </frame>
+      <rounded-rectangle id="12:41829" name="Rectangle 5" x="0" y="530" width="1440" height="352" />
+      <frame id="12:41830" name="Card" x="1010" y="216" width="324" height="124">
+        <frame id="12:41831" name="content" x="1010" y="236" width="304" height="104">
+          <text id="12:41832" name="Choose a ready-made theme and customize it to match your brand." x="32" y="16" width="228" height="72" />
+        </frame>
+        <frame id="12:41833" name="Frame 89" x="1294" y="216" width="40" height="40">
+          <text id="12:41834" name="2" x="8" y="5" width="24" height="30" />
+        </frame>
+      </frame>
+      <frame id="12:41835" name="Card" x="179" y="164" width="324" height="100">
+        <frame id="12:41836" name="content" x="199" y="184" width="304" height="80">
+          <text id="12:41837" name="Pick a subscription plan that fits your business needs." x="32" y="16" width="228" height="48" />
+        </frame>
+        <frame id="12:41838" name="Frame 89" x="179" y="164" width="40" height="40">
+          <text id="12:41839" name="1" x="8" y="5" width="24" height="30" />
+        </frame>
+      </frame>
+      <frame id="12:41840" name="mynaui:mouse-pointer" x="941" y="722" width="24" height="24" />
+    </frame>
+    <instance id="12:41841" name="FOOTER" x="0" y="882" width="1440" height="411" />
+  </frame>
+  <frame id="12:41842" name="Contact us" x="17073" y="17806" width="1440" height="1117">
+    <frame id="12:41843" name="Pricing" x="0" y="0" width="1440" height="706">
+      <instance id="12:41844" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:41845" name="mynaui:mouse-pointer" x="941" y="722" width="24" height="24" />
+      <frame id="12:41846" name="Frame 104" x="170" y="168" width="1100" height="454">
+        <frame id="12:41847" name="Frame 103" x="0" y="56" width="467" height="342">
+          <frame id="12:41848" name="Frame 102" x="0" y="0" width="467" height="106">
+            <text id="12:41849" name="Contact Us" x="0" y="0" width="467" height="40" />
+            <text id="12:41850" name="Have a question or need assistance? Our team is ready to help." x="0" y="56" width="467" height="50" />
+          </frame>
+          <frame id="12:41851" name="Frame 73" x="0" y="154" width="467" height="107">
+            <frame id="12:41852" name="Frame 70" x="0" y="0" width="467" height="25">
+              <instance id="12:41853" name="vuesax/linear/location" x="0" y="0" width="24" height="24" />
+              <text id="12:41854" name="Sector - 11, Uttara, Dhaka" x="32" y="0" width="225" height="25" />
+            </frame>
+            <frame id="12:41855" name="Frame 71" x="0" y="41" width="467" height="25">
+              <instance id="12:41856" name="vuesax/linear/call" x="0" y="0.5" width="24" height="24" />
+              <text id="12:41857" name="01300000000" x="32" y="0" width="225" height="25" />
+            </frame>
+            <frame id="12:41858" name="Frame 72" x="0" y="82" width="467" height="25">
+              <instance id="12:41859" name="vuesax/linear/sms" x="0" y="0.5" width="24" height="24" />
+              <text id="12:41860" name="contact@example.com" x="32" y="0" width="225" height="25" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:41861" name="Form" x="630" y="0" width="470" height="454">
+          <frame id="12:41862" name="Name" x="630" y="0" width="470" height="56">
+            <rounded-rectangle id="12:41863" name="text-box-bg" x="630" y="0" width="470" height="56" />
+            <text id="12:41864" name="Name" x="650" y="18.375" width="43" height="17.5" />
+            <text id="12:41865" name="*" x="693.99951171875" y="17.5" width="7" height="19.25" />
+          </frame>
+          <frame id="12:41866" name="Website" x="630" y="158" width="470" height="56">
+            <rounded-rectangle id="12:41867" name="text-box-bg" x="630" y="158" width="470" height="56" />
+            <text id="12:41868" name="What-are-you-working" x="650" y="176.375" width="58" height="17.5" />
+            <text id="12:41869" name="*" x="708.99951171875" y="170.25" width="7" height="19.25" />
+          </frame>
+          <frame id="12:41870" name="Message" x="630" y="237" width="470" height="146">
+            <rounded-rectangle id="12:41871" name="text-box-bg" x="630" y="237" width="470" height="146" />
+            <text id="12:41872" name="Message" x="650" y="257" width="63" height="20" />
+          </frame>
+          <frame id="12:41873" name="Email" x="630" y="79" width="470" height="56">
+            <rounded-rectangle id="12:41874" name="text-box-bg" x="630" y="79" width="470" height="56" />
+            <text id="12:41875" name="dash@ui8.net" x="650" y="97.375" width="40" height="17.5" />
+            <text id="12:41876" name="*" x="688.99951171875" y="91.25" width="7" height="19.25" />
+          </frame>
+          <instance id="12:41877" name="btn" x="630" y="398" width="470" height="56" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:41878" name="FOOTER" x="0" y="706" width="1440" height="411" />
+  </frame>
+  <frame id="12:41879" name="About" x="19134" y="17806" width="1440" height="996">
+    <frame id="12:41880" name="about" x="0" y="0" width="1440" height="585">
+      <instance id="12:41881" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:41882" name="Frame 106" x="115" y="179" width="676" height="297">
+        <text id="12:41883" name="Ecommet is a smart eCommerce platform built to support businesses in Saudi Arabia and the MENA region. " x="0" y="0" width="518" height="47" />
+        <text id="12:41884" name="We help entrepreneurs launch professional online stores using ready-made, customizable templates without technical complexity.  Our platform offers secure payments, flexible subscriptions, and tools designed to grow with your business.  With Ecommet, you can start selling online confidently and focus on what matters most — growing your brand." x="0" y="87" width="676" height="210" />
+      </frame>
+      <frame id="12:41885" name="Group 8" x="871" y="136" width="487" height="418">
+        <ellipse id="12:41886" name="Ellipse 1" x="901" y="163" width="380" height="380" />
+        <ellipse id="12:41887" name="Ellipse 2" x="1220" y="236" width="138" height="138" />
+        <ellipse id="12:41888" name="Ellipse 3" x="1216" y="136" width="54" height="54" />
+        <rounded-rectangle id="12:41889" name="70626 1" x="871" y="136" width="467" height="418" />
+      </frame>
+    </frame>
+    <instance id="12:41890" name="FOOTER" x="0" y="585" width="1440" height="411" />
+  </frame>
+  <frame id="12:41891" name="Terms" x="21432" y="17806" width="1440" height="1610">
+    <frame id="12:41892" name="Pricing" x="0" y="0" width="1440" height="1199">
+      <instance id="12:41893" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:41894" name="Frame 105" x="106" y="160" width="1105" height="966">
+        <text id="12:41895" name="Terms &amp; Conditions" x="0" y="0" width="1105" height="30" />
+        <text id="12:41896" name="Welcome to our website! By accessing and using our services, you agree to comply with the following terms and conditions. Please read them carefully before proceeding." x="0" y="62" width="1105" height="54" />
+        <text id="12:41897" name="Acceptance of Terms By using this website, you agree to be bound by these terms. If you do not agree, please refrain from using our services." x="0" y="148" width="1105" height="54" />
+        <text id="12:41898" name="Account Responsibility You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account." x="0" y="234" width="1105" height="81" />
+        <text id="12:41899" name="Service Availability We strive to provide uninterrupted service, but we do not guarantee that the website will always be available or free from errors." x="0" y="347" width="1105" height="81" />
+        <text id="12:41900" name="Intellectual Property All content on this site, including text, images, logos, and designs, is protected by intellectual property laws. You may not use any content without permission." x="0" y="460" width="1105" height="81" />
+        <text id="12:41901" name="Payment Terms Payments for services are processed securely. You agree to pay all fees associated with your purchases as indicated during checkout." x="0" y="573" width="1105" height="81" />
+        <text id="12:41902" name="Limitation of Liability We are not responsible for any loss, damage, or injury caused by the use of our services or website." x="0" y="686" width="1105" height="54" />
+        <text id="12:41903" name="Modifications We reserve the right to modify these terms at any time. Any changes will be posted on this page, and your continued use of the website signifies acceptance of those changes." x="0" y="772" width="1105" height="81" />
+        <text id="12:41904" name="Governing Law These terms will be governed by the laws of [Your Country], and any disputes will be resolved in the courts of [Your Country]." x="0" y="885" width="1105" height="81" />
+      </frame>
+    </frame>
+    <instance id="12:41905" name="FOOTER" x="0" y="1199" width="1440" height="411" />
+  </frame>
+  <frame id="12:41906" name="FAGs" x="23626" y="17806" width="1440" height="1242">
+    <frame id="12:41907" name="Pricing" x="0" y="0" width="1440" height="831">
+      <frame id="12:41908" name="FAQ List" x="370" y="173" width="701" height="586">
+        <instance id="12:41909" name="FAQ&#39;s Component" x="32" y="40" width="633" height="74" />
+        <frame id="12:41910" name="FAQ&#39;s Component" x="32" y="144" width="637" height="24">
+          <frame id="12:41911" name="Container" x="0" y="0" width="637" height="24">
+            <text id="12:41912" name="Question" x="0" y="3.5" width="605" height="17" />
+            <symbol id="12:41913" name="vuesax/linear/arrow-down" x="637" y="24" width="24" height="24" />
+          </frame>
+          <text id="12:41918" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:41919" name="FAQ&#39;s Component" x="32" y="198" width="637" height="24">
+          <frame id="12:41920" name="Container" x="0" y="0" width="637" height="24">
+            <text id="12:41921" name="Question" x="0" y="3.5" width="605" height="17" />
+            <symbol id="12:41922" name="vuesax/linear/arrow-down" x="637" y="24" width="24" height="24" />
+          </frame>
+          <text id="12:41927" name="Answer" x="0" y="24" width="380" height="15" hidden="true" />
+        </frame>
+        <frame id="12:41928" name="FAQ&#39;s Component" x="32" y="252" width="637" height="24">
+          <frame id="12:41929" name="Container" x="0" y="0" width="637" height="24">
+            <text id="12:41930" name="Question" x="0" y="3.5" width="605" height="17" />
+            <symbol id="12:41931" name="vuesax/linear/arrow-down" x="613" y="0" width="24" height="24" />
+          </frame>
+          <text id="12:41936" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:41937" name="FAQ&#39;s Component" x="32" y="306" width="637" height="24">
+          <frame id="12:41938" name="Container" x="0" y="0" width="637" height="24">
+            <text id="12:41939" name="Question" x="0" y="3.5" width="605" height="17" />
+            <symbol id="12:41940" name="vuesax/linear/arrow-down" x="613" y="0" width="24" height="24" />
+          </frame>
+          <text id="12:41945" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:41946" name="FAQ&#39;s Component" x="32" y="360" width="637" height="24">
+          <frame id="12:41947" name="Container" x="0" y="0" width="637" height="24">
+            <text id="12:41948" name="Question" x="0" y="3.5" width="605" height="17" />
+            <symbol id="12:41949" name="vuesax/linear/arrow-down" x="613" y="0" width="24" height="24" />
+          </frame>
+          <text id="12:41954" name="Answer" x="0" y="24" width="380" height="15" hidden="true" />
+        </frame>
+        <frame id="12:41955" name="FAQ&#39;s Component" x="32" y="414" width="637" height="24">
+          <frame id="12:41956" name="Container" x="0" y="0" width="637" height="24">
+            <text id="12:41957" name="Question" x="0" y="3.5" width="605" height="17" />
+            <symbol id="12:41958" name="vuesax/linear/arrow-down" x="637" y="24" width="24" height="24" />
+          </frame>
+          <text id="12:41963" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:41964" name="FAQ&#39;s Component" x="32" y="468" width="637" height="24">
+          <frame id="12:41965" name="Container" x="0" y="0" width="637" height="24">
+            <text id="12:41966" name="Question" x="0" y="3.5" width="605" height="17" />
+            <symbol id="12:41967" name="vuesax/linear/arrow-down" x="637" y="24" width="24" height="24" />
+          </frame>
+          <text id="12:41972" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:41973" name="FAQ&#39;s Component" x="32" y="522" width="637" height="24">
+          <frame id="12:41974" name="Container" x="0" y="0" width="637" height="24">
+            <text id="12:41975" name="Question" x="0" y="3.5" width="605" height="17" />
+            <symbol id="12:41976" name="vuesax/linear/arrow-down" x="637" y="24" width="24" height="24" />
+          </frame>
+          <text id="12:41981" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+      </frame>
+      <instance id="12:41982" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:41983" name="mynaui:mouse-pointer" x="941" y="722" width="24" height="24" />
+    </frame>
+    <instance id="12:41984" name="FOOTER" x="0" y="831" width="1440" height="411" />
+  </frame>
+  <frame id="12:41985" name="Templates" x="9610" y="17806" width="1440" height="1585">
+    <frame id="12:41986" name="Hero Section" x="0" y="0" width="1440" height="1174">
+      <instance id="12:41987" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:41988" name="Cards" x="208" y="208" width="1023" height="852">
+        <instance id="12:41989" name="Card" x="0" y="0" width="325" height="268" />
+        <instance id="12:41990" name="Card" x="349" y="0" width="325" height="268" />
+        <instance id="12:41991" name="Card" x="698" y="0" width="325" height="268" />
+        <instance id="12:41992" name="Card" x="0" y="292" width="325" height="268" />
+        <instance id="12:41993" name="Card" x="349" y="292" width="325" height="268" />
+        <instance id="12:41994" name="Card" x="698" y="292" width="325" height="268" />
+        <instance id="12:41995" name="Card" x="0" y="584" width="325" height="268" />
+        <instance id="12:41996" name="Card" x="349" y="584" width="325" height="268" />
+        <instance id="12:41997" name="Card" x="698" y="584" width="325" height="268" />
+      </frame>
+      <frame id="12:41998" name="Categories" x="314" y="112" width="812" height="40">
+        <instance id="12:41999" name="btn" x="0" y="0" width="83" height="40" />
+        <frame id="12:42000" name="For scrolling" x="95" y="0" width="681" height="40">
+          <instance id="12:42001" name="Component 16" x="0" y="0" width="171" height="40" />
+          <instance id="12:42002" name="Component 16" x="187" y="0" width="153" height="40" />
+          <instance id="12:42003" name="Component 11" x="356" y="0" width="149" height="40" />
+          <instance id="12:42004" name="Component 12" x="521" y="0" width="160" height="40" />
+          <instance id="12:42005" name="Component 16" x="697" y="0" width="152" height="40" />
+          <instance id="12:42006" name="Component 13" x="865" y="0" width="159" height="40" />
+          <instance id="12:42007" name="Component 16" x="1040" y="0" width="126" height="40" />
+          <instance id="12:42008" name="Component 16" x="1182" y="0" width="119" height="40" />
+        </frame>
+        <instance id="12:42009" name="vuesax/linear/arrow-right" x="788" y="8" width="24" height="24" />
+      </frame>
+    </frame>
+    <instance id="12:42010" name="FOOTER" x="0" y="1174" width="1440" height="411" />
+  </frame>
+  <frame id="12:42011" name="Plans" x="12041" y="17806" width="1440" height="1395">
+    <frame id="12:42012" name="Pricing" x="0" y="0" width="1440" height="984">
+      <instance id="12:42013" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:42014" name="Frame 178" x="206" y="136" width="1028" height="779">
+        <instance id="12:42015" name="Component 1" x="279" y="0" width="470" height="48" />
+        <frame id="12:42016" name="Plans" x="0" y="112" width="1028" height="667">
+          <frame id="12:42017" name="Card" x="0" y="48" width="308" height="571">
+            <frame id="12:42018" name="Content" x="28" y="27" width="252" height="517">
+              <frame id="12:42019" name="1" x="0" y="0" width="252" height="150">
+                <frame id="12:42020" name="Frame 27" x="0" y="0" width="166" height="134">
+                  <frame id="12:42021" name="Frame 43" x="0" y="0" width="166" height="48">
+                    <frame id="12:42022" name="Frame 41" x="0" y="0" width="48" height="48">
+                      <frame id="12:42023" name="proicons:wrench" x="10" y="10" width="28" height="28" />
+                    </frame>
+                    <text id="12:42025" name="Basic" x="58" y="11.5" width="48" height="25" />
+                  </frame>
+                  <text id="12:42026" name="$9 / month" x="0" y="56" width="166" height="50" />
+                  <text id="12:42027" name="What&#39;s Included" x="0" y="114" width="166" height="20" />
+                </frame>
+                <vector id="12:42028" name="Vector 25" x="0" y="150" width="234" height="0" />
+              </frame>
+              <frame id="12:42029" name="2" x="0" y="174" width="197" height="271">
+                <frame id="12:42030" name="Frame 28" x="0" y="0" width="161" height="25">
+                  <frame id="12:42031" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42032" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42033" name="Categories Limit : 2" x="32" y="0" width="129" height="25" />
+                </frame>
+                <frame id="12:42034" name="Frame 29" x="0" y="41" width="197" height="25">
+                  <frame id="12:42035" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42036" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42037" name="Subcategories Limit : 5" x="32" y="0" width="151" height="25" />
+                </frame>
+                <frame id="12:42038" name="Frame 34" x="0" y="82" width="154" height="25">
+                  <frame id="12:42039" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42040" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42041" name="Products Limit : 10" x="32" y="0" width="122" height="25" />
+                </frame>
+                <frame id="12:42042" name="Frame 35" x="0" y="123" width="151" height="25">
+                  <frame id="12:42043" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42044" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42045" name="Orders Limit : 100" x="32" y="0" width="119" height="25" />
+                </frame>
+                <frame id="12:42046" name="Frame 37" x="0" y="164" width="62" height="25">
+                  <frame id="12:42047" name="icon- no" x="0" y="0" width="24" height="24">
+                    <frame id="12:42048" name="proicons:cancel" x="5" y="5" width="14" height="14" />
+                  </frame>
+                  <text id="12:42050" name="Blog" x="32" y="0" width="30" height="25" />
+                </frame>
+                <frame id="12:42051" name="Frame 33" x="0" y="205" width="120" height="25">
+                  <frame id="12:42052" name="icon- no" x="0" y="0" width="24" height="24">
+                    <frame id="12:42053" name="proicons:cancel" x="5" y="5" width="14" height="14" />
+                  </frame>
+                  <text id="12:42055" name="Custom Page" x="32" y="0" width="88" height="25" />
+                </frame>
+                <frame id="12:42056" name="Frame 38" x="0" y="246" width="85" height="25">
+                  <text id="12:42057" name="Show More +" x="0" y="0" width="85" height="25" />
+                </frame>
+              </frame>
+              <frame id="12:42058" name="Frame 39" x="0" y="469" width="253" height="48">
+                <frame id="12:42059" name="btn" x="0" y="0" width="99" height="48">
+                  <text id="12:42060" name="Trail" x="34" y="14" width="31" height="20" />
+                </frame>
+                <frame id="12:42061" name="btn" x="109" y="0" width="144" height="48">
+                  <text id="12:42062" name="Purchase" x="39" y="14" width="66" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="12:42063" name="Card" x="332" y="0" width="364" height="667">
+            <frame id="12:42064" name="Content" x="40" y="44.999969482421875" width="268" height="596">
+              <frame id="12:42065" name="1" x="0" y="0" width="268" height="155">
+                <frame id="12:42066" name="Frame 27" x="0" y="0" width="166" height="139">
+                  <frame id="12:42067" name="Frame 42" x="0" y="0" width="166" height="48">
+                    <frame id="12:42068" name="Frame 41" x="0" y="0" width="48" height="48">
+                      <frame id="12:42069" name="cil:chart-line" x="10" y="8" width="28" height="28" />
+                    </frame>
+                    <text id="12:42072" name="Standard" x="58" y="11.5" width="84" height="25" />
+                  </frame>
+                  <text id="12:42073" name="$19 / month" x="0" y="56" width="166" height="50" />
+                  <text id="12:42074" name="What&#39;s Included" x="0" y="114" width="166" height="25" />
+                </frame>
+                <vector id="12:42075" name="Vector 25" x="0" y="155" width="234" height="0" />
+              </frame>
+              <frame id="12:42076" name="2" x="0" y="179" width="268" height="345">
+                <frame id="12:42077" name="Frame 28" x="0" y="0" width="184" height="24">
+                  <frame id="12:42078" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42079" name="Vector 27" x="6" y="8" width="12" height="8" />
+                  </frame>
+                  <text id="12:42080" name="Categories Limit : 10" x="40" y="2" width="144" height="20" />
+                </frame>
+                <frame id="12:42081" name="Frame 29" x="0" y="40" width="268" height="24">
+                  <frame id="12:42082" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42083" name="Vector 27" x="6" y="8" width="12" height="8" />
+                  </frame>
+                  <text id="12:42084" name="Subcategories Limit : 20" x="40" y="2" width="171" height="20" />
+                </frame>
+                <frame id="12:42085" name="Frame 34" x="0" y="80" width="172" height="24">
+                  <frame id="12:42086" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42087" name="Vector 27" x="6" y="8" width="12" height="8" />
+                  </frame>
+                  <text id="12:42088" name="Products Limit : 50" x="40" y="2" width="132" height="20" />
+                </frame>
+                <frame id="12:42089" name="Frame 35" x="0" y="120" width="170" height="24">
+                  <frame id="12:42090" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42091" name="Vector 27" x="6" y="8" width="12" height="8" />
+                  </frame>
+                  <text id="12:42092" name="Orders Limit : 300" x="40" y="2" width="130" height="20" />
+                </frame>
+                <frame id="12:42093" name="Frame 36" x="0" y="160" width="268" height="24">
+                  <frame id="12:42094" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42095" name="Vector 27" x="6" y="8" width="12" height="8" />
+                  </frame>
+                  <text id="12:42096" name="Additional Languages : 2" x="40" y="2" width="175" height="20" />
+                </frame>
+                <frame id="12:42097" name="Frame 38" x="0" y="200" width="268" height="24">
+                  <frame id="12:42098" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42099" name="Vector 27" x="6" y="8" width="12" height="8" />
+                  </frame>
+                  <text id="12:42100" name="Posts Limit: 20" x="40" y="2" width="104" height="20" />
+                </frame>
+                <frame id="12:42101" name="Frame 37" x="0" y="240" width="155" height="24">
+                  <frame id="12:42102" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42103" name="Vector 27" x="6" y="8" width="12" height="8" />
+                  </frame>
+                  <text id="12:42104" name="Custom Domain" x="40" y="2" width="115" height="20" />
+                </frame>
+                <frame id="12:42105" name="Frame 33" x="0" y="280" width="121" height="24">
+                  <frame id="12:42106" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42107" name="Vector 27" x="6" y="8" width="12" height="8" />
+                  </frame>
+                  <text id="12:42108" name="Subdomain" x="40" y="2" width="81" height="20" />
+                </frame>
+                <frame id="12:42109" name="Frame 39" x="0" y="320" width="85" height="25">
+                  <text id="12:42110" name="Show More +" x="0" y="0" width="85" height="25" />
+                </frame>
+              </frame>
+              <frame id="12:42111" name="Frame 39" x="0" y="548" width="268" height="48">
+                <frame id="12:42112" name="btn" x="0" y="0" width="99" height="48">
+                  <text id="12:42113" name="Trail" x="34" y="14" width="31" height="20" />
+                </frame>
+                <frame id="12:42114" name="btn" x="109" y="0" width="159" height="48">
+                  <text id="12:42115" name="Purchase" x="46.5" y="14" width="66" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="12:42116" name="Card" x="720" y="48" width="308" height="571">
+            <frame id="12:42117" name="Content" x="28" y="27" width="252" height="517">
+              <frame id="12:42118" name="1" x="0" y="0" width="252" height="150">
+                <frame id="12:42119" name="Frame 27" x="0" y="0" width="166" height="134">
+                  <frame id="12:42120" name="Frame 40" x="0" y="0" width="166" height="48">
+                    <frame id="12:42121" name="Frame 41" x="0" y="0" width="48" height="48">
+                      <frame id="12:42122" name="game-icons:chess-queen" x="8.232864379882812" y="10.748770713806152" width="31.534271240234375" height="26.502458572387695">
+                        <vector id="12:42123" name="Vector" x="3" y="2" width="25.534271240234375" height="22.502458572387695" />
+                      </frame>
+                    </frame>
+                    <text id="12:42124" name="Premium" x="58" y="11.5" width="81" height="25" />
+                  </frame>
+                  <text id="12:42125" name="$39 / month" x="0" y="56" width="166" height="50" />
+                  <text id="12:42126" name="What&#39;s Included" x="0" y="114" width="166" height="20" />
+                </frame>
+                <vector id="12:42127" name="Vector 25" x="0" y="150" width="234" height="0" />
+              </frame>
+              <frame id="12:42128" name="2" x="0" y="174" width="252" height="271">
+                <frame id="12:42129" name="Frame 28" x="0" y="0" width="215" height="25">
+                  <frame id="12:42130" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42131" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42132" name="Categories Limit : unlimited" x="32" y="0" width="183" height="25" />
+                </frame>
+                <frame id="12:42133" name="Frame 29" x="0" y="41" width="252" height="25">
+                  <frame id="12:42134" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42135" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42136" name="Subcategories Limit : unlimited" x="32" y="0" width="205" height="25" />
+                </frame>
+                <frame id="12:42137" name="Frame 34" x="0" y="82" width="200" height="25">
+                  <frame id="12:42138" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42139" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42140" name="Products Limit : unlimited" x="32" y="0" width="168" height="25" />
+                </frame>
+                <frame id="12:42141" name="Frame 35" x="0" y="123" width="188" height="25">
+                  <frame id="12:42142" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42143" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42144" name="Orders Limit : unlimited" x="32" y="0" width="156" height="25" />
+                </frame>
+                <frame id="12:42145" name="Frame 36" x="0" y="164" width="252" height="25">
+                  <frame id="12:42146" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42147" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42148" name="Additional Languages : unlimited" x="32" y="0" width="218" height="25" />
+                </frame>
+                <frame id="12:42149" name="Frame 33" x="0" y="205" width="221" height="25">
+                  <frame id="12:42150" name="icon-yes" x="0" y="0" width="24" height="24">
+                    <vector id="12:42151" name="Vector 27" x="6" y="8" width="11.5" height="8" />
+                  </frame>
+                  <text id="12:42152" name="Custom Page limit: unlimited" x="32" y="0" width="189" height="25" />
+                </frame>
+                <frame id="12:42153" name="Frame 38" x="0" y="246" width="85" height="25">
+                  <text id="12:42154" name="Show More +" x="0" y="0" width="85" height="25" />
+                </frame>
+              </frame>
+              <frame id="12:42155" name="Frame 39" x="0" y="469" width="253" height="48">
+                <frame id="12:42156" name="btn" x="0" y="0" width="99" height="48">
+                  <text id="12:42157" name="Trail" x="34" y="14" width="31" height="20" />
+                </frame>
+                <frame id="12:42158" name="btn" x="109" y="0" width="144" height="48">
+                  <text id="12:42159" name="Purchase" x="39" y="14" width="66" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:42160" name="FOOTER" x="0" y="984" width="1440" height="411" />
+  </frame>
+  <frame id="12:42161" name="Category" x="12041" y="19365" width="1440" height="1418">
+    <frame id="12:42162" name="Pricing" x="0" y="0" width="1440" height="1007">
+      <instance id="12:42163" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <text id="12:42164" name="Categories" x="642" y="136" width="157" height="40" />
+      <frame id="12:42165" name="Frame 163" x="244" y="272" width="952" height="550">
+        <frame id="12:42166" name="Frame 161" x="0" y="0" width="952" height="251">
+          <frame id="12:42167" name="Card]" x="0" y="0" width="208" height="251">
+            <text id="12:42168" name="Fashion" x="69" y="209" width="70" height="25" />
+            <frame id="12:42169" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:42170" name="fashion-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:42173" name="Card]" x="248" y="0" width="208" height="251">
+            <text id="12:42174" name="Beauty" x="73" y="209" width="63" height="25" />
+            <frame id="12:42175" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:42176" name="beauty-brush-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:42181" name="Card]" x="496" y="0" width="208" height="251">
+            <text id="12:42182" name="Fitness" x="73" y="209" width="63" height="25" />
+            <frame id="12:42183" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:42184" name="fitness-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <instance id="12:42190" name="Component 19" x="744" y="0" width="208" height="251" />
+        </frame>
+        <frame id="12:42191" name="Frame 162" x="0" y="299" width="952" height="251">
+          <frame id="12:42192" name="Card]" x="0" y="0" width="208" height="251">
+            <text id="12:42193" name="Grocery" x="67" y="209" width="74" height="25" />
+            <frame id="12:42194" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:42195" name="food-2-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:42200" name="Card]" x="248" y="0" width="208" height="251">
+            <text id="12:42201" name="Electronics" x="55" y="209" width="98" height="25" />
+            <frame id="12:42202" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:42203" name="devices-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:42205" name="Card]" x="496" y="0" width="208" height="251">
+            <text id="12:42206" name="Pets" x="85" y="209" width="38" height="25" />
+            <frame id="12:42207" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:42208" name="pet-14-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+          <frame id="12:42211" name="Card]" x="744" y="0" width="208" height="251">
+            <text id="12:42212" name="Kids" x="85" y="209" width="39" height="25" />
+            <frame id="12:42213" name="img" x="16" y="16" width="176" height="184">
+              <frame id="12:42214" name="kids-couple-svgrepo-com 1" x="48" y="52" width="80" height="80" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <text id="12:42220" name="Choose a category for your products to display in your store." x="381" y="200" width="679" height="32" />
+      <instance id="12:42221" name="btn" x="500" y="878" width="441" height="59" />
+    </frame>
+    <instance id="12:42222" name="FOOTER" x="0" y="1007" width="1440" height="411" />
+  </frame>
+  <frame id="12:42223" name="Sign Up" x="12041" y="21125" width="1440" height="1213">
+    <frame id="12:42224" name="Pricing" x="0" y="0" width="1440" height="802">
+      <rounded-rectangle id="12:42225" name="Rectangle 2" x="1032" y="399.8798828125" width="70" height="78.40782928466797" />
+      <instance id="12:42226" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:42227" name="Frame 128" x="115" y="152" width="1146" height="569">
+        <frame id="12:42228" name="Frame 114" x="0" y="182" width="465" height="205">
+          <text id="12:42229" name="Get Started with Ecommet" x="0" y="0" width="465" height="40" />
+          <text id="12:42230" name="Set up your account in just a few steps and start building your online store." x="0" y="64" width="465" height="50" />
+        </frame>
+        <frame id="12:42231" name="Frame 113" x="625" y="0" width="521" height="569">
+          <frame id="12:42232" name="Frame 120" x="40" y="35" width="441" height="314">
+            <text id="12:42233" name="Name" x="0" y="0" width="68" height="25" />
+            <frame id="12:42234" name="name" x="0" y="49" width="441" height="48">
+              <frame id="12:42235" name="Frame 107" x="24" y="11" width="80.8127670288086" height="25">
+                <text id="12:42236" name="Name" x="0" y="0" width="66" height="25" />
+                <text id="12:42237" name="*" x="70" y="2.875" width="10.812766075134277" height="19.25" />
+              </frame>
+            </frame>
+            <frame id="12:42238" name="email" x="0" y="121" width="441" height="49">
+              <frame id="12:42239" name="Frame 108" x="24" y="12" width="107.8127670288086" height="25">
+                <text id="12:42240" name="Name" x="0" y="0" width="93" height="25" />
+                <text id="12:42241" name="*" x="97" y="2.875" width="10.812766075134277" height="19.25" />
+              </frame>
+            </frame>
+            <frame id="12:42242" name="pass" x="0" y="194" width="441" height="48">
+              <frame id="12:42243" name="Frame 108" x="24" y="11" width="78.8127670288086" height="25">
+                <text id="12:42244" name="Name" x="0" y="0" width="64" height="25" />
+                <text id="12:42245" name="*" x="68" y="2.875" width="10.812766075134277" height="19.25" />
+              </frame>
+            </frame>
+            <frame id="12:42246" name="confirm pass" x="0" y="266" width="441" height="48">
+              <frame id="12:42247" name="Frame 108" x="24" y="11" width="132.81275939941406" height="25">
+                <text id="12:42248" name="Name" x="0" y="0" width="118" height="25" />
+                <text id="12:42249" name="*" x="122" y="2.875" width="10.812766075134277" height="19.25" />
+              </frame>
+            </frame>
+          </frame>
+          <instance id="12:42250" name="btn" x="40" y="373" width="441" height="48" />
+          <frame id="12:42251" name="Frame 115" x="65" y="445" width="391" height="25">
+            <line id="12:42252" name="Line 2" x="0.5" y="12.5" width="134" height="0" />
+            <text id="12:42253" name="or with" x="164.5" y="0" width="62" height="25" />
+            <line id="12:42254" name="Line 1" x="256.5" y="12.5" width="134" height="0" />
+          </frame>
+          <frame id="12:42255" name="Frame 118" x="65" y="494" width="391" height="32">
+            <frame id="12:42256" name="Frame 116" x="0" y="0" width="179" height="32">
+              <frame id="12:42257" name="logos:google-icon" x="16" y="8" width="16" height="16" />
+              <text id="12:42262" name="Sign up with Google" x="48" y="8.5" width="115" height="15" />
+            </frame>
+            <frame id="12:42263" name="Frame 117" x="212" y="0" width="179" height="32">
+              <frame id="12:42264" name="logos:apple" x="16" y="6.5" width="16" height="19" />
+              <text id="12:42266" name="Sign up with Google" x="48" y="8.5" width="115" height="15" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:42267" name="FOOTER" x="0" y="802" width="1440" height="411" />
+  </frame>
+  <frame id="12:42268" name="Login" x="14165" y="21196" width="1440" height="1056">
+    <frame id="12:42269" name="Pricing" x="0" y="0" width="1440" height="645">
+      <rounded-rectangle id="12:42270" name="Rectangle 2" x="1032" y="321.5991516113281" width="70" height="63.05866622924805" />
+      <instance id="12:42271" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <frame id="12:42272" name="Frame 128" x="115" y="149" width="1151" height="434">
+        <frame id="12:42273" name="Frame 114" x="0" y="114.5" width="465" height="205">
+          <text id="12:42274" name="Get Started with Ecommet" x="0" y="0" width="465" height="40" />
+          <text id="12:42275" name="Set up your account in just a few steps and start building your online store." x="0" y="64" width="465" height="50" />
+        </frame>
+        <frame id="12:42276" name="Frame 113" x="670" y="0" width="481" height="434">
+          <frame id="12:42277" name="Frame 120" x="40" y="40" width="417" height="169">
+            <text id="12:42278" name="Name" x="0" y="0" width="54" height="25" />
+            <frame id="12:42279" name="name" x="0" y="49" width="417" height="48">
+              <frame id="12:42280" name="Frame 107" x="24" y="11" width="51.812767028808594" height="25">
+                <text id="12:42281" name="Name" x="0" y="0" width="37" height="25" />
+                <text id="12:42282" name="*" x="41" y="2.875" width="10.812766075134277" height="19.25" />
+              </frame>
+            </frame>
+            <frame id="12:42283" name="pass" x="0" y="121" width="417" height="48">
+              <frame id="12:42284" name="Frame 108" x="24" y="11" width="78.8127670288086" height="25">
+                <text id="12:42285" name="Name" x="0" y="0" width="64" height="25" />
+                <text id="12:42286" name="*" x="68" y="2.875" width="10.812766075134277" height="19.25" />
+              </frame>
+            </frame>
+          </frame>
+          <instance id="12:42287" name="btn" x="40" y="233" width="417" height="48" />
+          <frame id="12:42288" name="Frame 115" x="53" y="305" width="391" height="25">
+            <line id="12:42289" name="Line 2" x="0.5" y="12.5" width="134" height="0" />
+            <text id="12:42290" name="or with" x="164.5" y="0" width="62" height="25" />
+            <line id="12:42291" name="Line 1" x="256.5" y="12.5" width="134" height="0" />
+          </frame>
+          <frame id="12:42292" name="Frame 118" x="53" y="354" width="391" height="32">
+            <frame id="12:42293" name="Frame 116" x="0" y="0" width="179" height="32">
+              <frame id="12:42294" name="logos:google-icon" x="16" y="8" width="16" height="16" />
+              <text id="12:42299" name="Sign up with Google" x="48" y="8.5" width="115" height="15" />
+            </frame>
+            <frame id="12:42300" name="Frame 117" x="212" y="0" width="179" height="32">
+              <frame id="12:42301" name="logos:apple" x="16" y="6.5" width="16" height="19" />
+              <text id="12:42303" name="Sign up with Google" x="48" y="8.5" width="115" height="15" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:42304" name="FOOTER" x="0" y="645" width="1440" height="411" />
+  </frame>
+  <frame id="12:42305" name="Loading" x="12041" y="22591" width="1440" height="1213">
+    <frame id="12:42306" name="Pricing" x="0" y="0" width="1440" height="802">
+      <instance id="12:42307" name="Navbar" x="91" y="16" width="1258" height="64" />
+      <instance id="12:42308" name="Frame" x="685" y="183" width="96" height="96" />
+      <text id="12:42309" name="Preparing your plan ..." x="614" y="343" width="237" height="30" />
+      <frame id="12:42310" name="Frame 135" x="410" y="437" width="742" height="206">
+        <frame id="12:42311" name="Frame 133" x="0" y="0" width="236" height="206">
+          <text id="12:42312" name="Currency" x="0" y="0" width="236" height="30" />
+          <frame id="12:42313" name="Frame 132" x="0" y="62" width="236" height="144">
+            <frame id="12:42314" name="Frame 129" x="0" y="0" width="236" height="32">
+              <instance id="12:42315" name="Component 13" x="0" y="0" width="32" height="32" />
+              <text id="12:42316" name="SAR (Saudi Riyal)" x="48" y="0" width="150" height="25" />
+            </frame>
+            <frame id="12:42317" name="Frame 130" x="0" y="56" width="188" height="32">
+              <instance id="12:42318" name="Component 13" x="0" y="0" width="32" height="32" />
+              <text id="12:42319" name="USD (US Dollar)" x="48" y="0" width="140" height="25" />
+            </frame>
+            <frame id="12:42320" name="Frame 131" x="0" y="112" width="144" height="32">
+              <instance id="12:42321" name="Component 13" x="0" y="0" width="32" height="32" />
+              <text id="12:42322" name="EUR (Euro)" x="48" y="0" width="96" height="25" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:42323" name="Frame 134" x="506" y="0" width="236" height="158">
+          <text id="12:42324" name="Language" x="0" y="0" width="236" height="30" />
+          <frame id="12:42325" name="Frame 132" x="0" y="70" width="236" height="88">
+            <frame id="12:42326" name="Frame 129" x="0" y="0" width="236" height="32">
+              <instance id="12:42327" name="Component 13" x="0" y="0" width="32" height="32" />
+              <text id="12:42328" name="English" x="48" y="0" width="63" height="25" />
+            </frame>
+            <frame id="12:42329" name="Frame 130" x="0" y="56" width="99" height="32">
+              <instance id="12:42330" name="Component 13" x="0" y="0" width="32" height="32" />
+              <text id="12:42331" name="العربية" x="48" y="0" width="51" height="25" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:42332" name="FOOTER" x="0" y="802" width="1440" height="411" />
+  </frame>
+  <frame id="12:42333" name="Component 13" x="4176" y="18445" width="59" height="98">
+    <symbol id="12:42334" name="Property 1=yes" x="13" y="16" width="32" height="32" />
+    <symbol id="12:42337" name="Property 1=No" x="13" y="55" width="32" height="32" />
+  </frame>
+  <frame id="12:42338" name="btn" x="3663" y="18205" width="246" height="181">
+    <symbol id="12:42339" name="Property 1=login" x="71" y="19" width="104" height="40" />
+    <symbol id="12:42341" name="Property 1=Explore" x="46" y="72" width="154" height="40" />
+    <symbol id="12:42343" name="Property 1=mobile" x="46" y="125" width="135" height="40" />
+  </frame>
+  <frame id="12:42345" name="Navbar" x="0" y="18302" width="1290" height="1096">
+    <symbol id="12:42346" name="Property 1=Home" x="16" y="17" width="1258" height="64" />
+    <symbol id="12:42359" name="Property 1=Templetes" x="16" y="113" width="1258" height="64" />
+    <symbol id="12:42372" name="Property 1=Pricing" x="16" y="201" width="1258" height="64" />
+    <symbol id="12:42385" name="Property 1=How it" x="16" y="297" width="1258" height="64" />
+    <symbol id="12:42398" name="Property 1=contact us" x="16" y="392" width="1258" height="64" />
+    <symbol id="12:42411" name="Property 1=More" x="24" y="504" width="1258" height="64" />
+    <symbol id="12:42424" name="Property 1=about" x="24" y="817" width="1258" height="64" />
+    <symbol id="12:42437" name="Property 1=Terms" x="24" y="905" width="1258" height="64" />
+    <symbol id="12:42450" name="Property 1=FAQs" x="24" y="1009" width="1258" height="64" />
+    <symbol id="12:42463" name="Property 1=Variant8" x="20" y="617" width="1258" height="200" />
+  </frame>
+  <frame id="12:42481" name="En" x="4146" y="18311" width="87" height="96">
+    <symbol id="12:42482" name="Property 1=En" x="16" y="16" width="55" height="25" />
+    <symbol id="12:42486" name="Property 1=Ar" x="16" y="55" width="55" height="25" />
+  </frame>
+  <frame id="12:42490" name="Component 1" x="3112" y="18302" width="517" height="276">
+    <symbol id="12:42491" name="Property 1=Monthly" x="23" y="33" width="470" height="48" />
+    <symbol id="12:42498" name="Property 1=yearly" x="23" y="114" width="470" height="48" />
+    <symbol id="12:42505" name="Property 1=lifetime" x="23" y="195" width="470" height="48" />
+  </frame>
+  <frame id="12:42512" name="FOOTER" x="1441" y="17983" width="1472" height="1707">
+    <symbol id="12:42513" name="Property 1=black" x="16" y="16" width="1440" height="483" />
+    <symbol id="12:42562" name="Property 1=White" x="16" y="527" width="1440" height="483" />
+    <symbol id="12:42611" name="Property 1=mobile" x="73" y="1122" width="375" height="426" />
+  </frame>
+  <frame id="12:42640" name="Component 7" x="4272" y="18311" width="202" height="176.00636291503906">
+    <symbol id="12:42641" name="Property 1=White" x="16" y="16" width="170" height="67" />
+    <symbol id="12:42643" name="Property 1=Black" x="16" y="93" width="170" height="67.00636291503906" />
+  </frame>
+  <frame id="12:42645" name="btn" x="3668" y="18498" width="471" height="80">
+    <symbol id="12:42646" name="Property 1=BTN1" x="16" y="16" width="207" height="48" />
+    <symbol id="12:42648" name="Property 1=BTN2" x="248" y="16" width="207" height="48" />
+  </frame>
+  <frame id="12:42650" name="Card" x="3166" y="19139" width="954" height="316">
+    <symbol id="12:42651" name="Property 1=Default" x="16" y="16" width="325" height="268" />
+    <symbol id="12:42654" name="Property 1=hovered" x="385" y="16" width="325" height="268" />
+    <symbol id="12:42660" name="Property 1=mobile" x="754" y="16" width="160" height="132" />
+    <symbol id="12:42663" name="Property 1=mob-hover" x="754" y="168" width="160" height="132" />
+  </frame>
+  <frame id="12:42669" name="Component 15" x="0" y="19807" width="3023" height="980">
+    <symbol id="12:42670" name="Property 1=before" x="16" y="16" width="1440" height="829" />
+    <symbol id="12:42720" name="Property 1=after" x="1567" y="16" width="1440" height="829" />
+  </frame>
+  <frame id="12:42770" name="Frame" x="3166" y="18750" width="834" height="276">
+    <symbol id="12:42771" name="Property 1=regular" x="97" y="70" width="96" height="96" />
+    <symbol id="12:42776" name="Property 1=medium" x="347" y="70" width="104" height="104" />
+    <symbol id="12:42781" name="Property 1=large" x="616" y="86" width="120" height="120" />
+  </frame>
+  <frame id="12:42786" name="home" x="6753" y="17801" width="375" height="4591">
+    <rounded-rectangle id="12:42787" name="Rectangle 3" x="267" y="355" width="49" height="49" />
+    <instance id="12:42788" name="status-bar" x="0" y="0" width="375" height="48" />
+    <frame id="12:42789" name="Title" x="16" y="120" width="343" height="138">
+      <text id="12:42790" name="Ready-made eCommerce templates to launch your store faster." x="0" y="0" width="343" height="50" />
+      <text id="12:42791" name="Manage products, payments, and sales effortlessly. Everything you need to grow your business is just a click away. Start today and simplify your e-commerce journey." x="0" y="66" width="343" height="72" />
+    </frame>
+    <instance id="12:42792" name="btn" x="100" y="578" width="176" height="40" />
+    <frame id="12:42793" name="Right Side" x="-32" y="290" width="359.999755859375" height="295.59930419921875">
+      <rounded-rectangle id="12:42794" name="Screenshot 2025-12-25 152051 1" x="63.09495544433594" y="289.9999634921551" width="264.905029296875" height="216.55343627929688" />
+      <rounded-rectangle id="12:42795" name="MacBook Air (15 inch)" x="-32" y="363.1603240966797" width="265.8429144460615" height="270.93441031469774" />
+    </frame>
+    <frame id="12:42796" name="Numbers" x="16" y="658" width="343" height="235">
+      <frame id="12:42797" name="Frame 12" x="9.5" y="24" width="324" height="69">
+        <text id="12:42798" name="Our Overall Achievements" x="0" y="0" width="324" height="25" />
+        <text id="12:42799" name="Join thousands of entrepreneurs building their online stores with ease." x="13" y="33" width="298" height="36" />
+      </frame>
+      <frame id="12:42800" name="Cards" x="0" y="117" width="343" height="94">
+        <frame id="12:42801" name="Frame 12" x="0" y="0" width="133" height="94">
+          <frame id="12:42802" name="Frame 9" x="7" y="8" width="119" height="75">
+            <text id="12:42803" name="500 +" x="0" y="0" width="119" height="20" />
+            <frame id="12:42804" name="Frame 14" x="0" y="28" width="119" height="47">
+              <text id="12:42805" name="Active Users" x="0" y="0" width="119" height="15" />
+              <text id="12:42806" name="Users trust our templates daily" x="0" y="21" width="119" height="26" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:42807" name="Frame 17" x="141" y="0" width="133" height="94">
+          <frame id="12:42808" name="Frame 9" x="7" y="8" width="119" height="75">
+            <text id="12:42809" name="900 +" x="0" y="0" width="119" height="20" />
+            <frame id="12:42810" name="Frame 14" x="0" y="28" width="119" height="47">
+              <text id="12:42811" name="Daily Transactions" x="0" y="0" width="119" height="15" />
+              <text id="12:42812" name="Processed through our platform" x="0" y="21" width="119" height="26" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:42813" name="Frame 15" x="282" y="0" width="133" height="94">
+          <frame id="12:42814" name="Frame 9" x="7" y="15" width="119" height="62">
+            <text id="12:42815" name="300 +" x="0" y="0" width="119" height="20" />
+            <frame id="12:42816" name="Frame 14" x="0" y="28" width="119" height="34">
+              <text id="12:42817" name="Original Products" x="0" y="0" width="119" height="15" />
+              <text id="12:42818" name="Ready for your store" x="0" y="21" width="119" height="13" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:42819" name="Frame 16" x="423" y="0" width="133" height="94">
+          <frame id="12:42820" name="Frame 9" x="7" y="15" width="119" height="62">
+            <text id="12:42821" name="100 %" x="0" y="0" width="119" height="20" />
+            <frame id="12:42822" name="Frame 14" x="0" y="28" width="119" height="34">
+              <text id="12:42823" name="Security Ensured" x="0" y="0" width="119" height="15" />
+              <text id="12:42824" name="Protected &amp; reliable" x="0" y="21" width="119" height="13" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="12:42825" name="Frame 170" x="0" y="1501" width="375" height="434">
+      <frame id="12:42826" name="Frame 169" x="16" y="0" width="359" height="81">
+        <text id="12:42827" name="Templates" x="0" y="0" width="359" height="25" />
+        <frame id="12:42828" name="Categories" x="0" y="41" width="359" height="40">
+          <instance id="12:42829" name="btn" x="0" y="0" width="70" height="40" />
+          <frame id="12:42830" name="For scrolling" x="78" y="0" width="681" height="40">
+            <instance id="12:42831" name="Component 16" x="0" y="0" width="154" height="40" />
+            <instance id="12:42832" name="Component 16" x="162" y="0" width="136" height="40" />
+            <instance id="12:42833" name="Component 11" x="306" y="0" width="133" height="40" />
+            <instance id="12:42834" name="Component 12" x="447" y="0" width="144" height="40" />
+            <instance id="12:42835" name="Component 16" x="599" y="0" width="136" height="40" />
+            <instance id="12:42836" name="Component 13" x="743" y="0" width="143" height="40" />
+            <instance id="12:42837" name="Component 16" x="894" y="0" width="110" height="40" />
+            <instance id="12:42838" name="Component 16" x="1012" y="0" width="103" height="40" />
+          </frame>
+        </frame>
+      </frame>
+      <frame id="12:42839" name="Frame 142" x="0" y="105" width="375" height="329">
+        <frame id="12:42840" name="Cards" x="0" y="0" width="375" height="280">
+          <instance id="12:42841" name="Card" x="19.5" y="0" width="160" height="132" />
+          <instance id="12:42842" name="Card" x="195.5" y="0" width="160" height="132" />
+          <instance id="12:42843" name="Card" x="19.5" y="148" width="160" height="132" />
+          <instance id="12:42844" name="Card" x="195.5" y="148" width="160" height="132" />
+        </frame>
+        <text id="12:42845" name="See More" x="0" y="296" width="375" height="25" />
+      </frame>
+    </frame>
+    <frame id="12:42846" name="Frame 172" x="16" y="2642" width="343" height="486">
+      <frame id="12:42847" name="Frame 148" x="20" y="0" width="303" height="73">
+        <text id="12:42848" name="Choose Your Perfect Business Plan" x="0" y="0" width="303" height="25" />
+        <instance id="12:42849" name="Mobile" x="18.5" y="41" width="266" height="32" />
+      </frame>
+      <frame id="12:42850" name="Plans" x="0" y="97" width="343" height="363.9951477050781">
+        <frame id="12:42851" name="Card" x="-109" y="26.194564819335938" width="168.0817108154297" height="311.60601806640625">
+          <frame id="12:42852" name="Content" x="15.2801513671875" y="9.585113525390625" width="137.5214080810547" height="292.435791015625">
+            <frame id="12:42853" name="1" x="0" y="0" width="137.5214080810547" height="89.6575927734375">
+              <frame id="12:42854" name="Frame 27" x="0" y="0" width="109" height="80.92607116699219">
+                <frame id="12:42855" name="Frame 43" x="0" y="0" width="109" height="26.19455337524414">
+                  <frame id="12:42856" name="Frame 41" x="0" y="0" width="26.19455337524414" height="26.19455337524414">
+                    <frame id="12:42857" name="proicons:wrench" x="5.4571990966796875" y="5.4571990966796875" width="15.280155181884766" height="15.280155181884766" />
+                  </frame>
+                  <text id="12:42859" name="Basic" x="31.651752471923828" y="4.09727668762207" width="33" height="18" />
+                </frame>
+                <text id="12:42860" name="$9 / month" x="0" y="30.560312271118164" width="109" height="28" />
+                <text id="12:42861" name="What&#39;s Included" x="0" y="62.92607116699219" width="109" height="18" />
+              </frame>
+              <vector id="12:42862" name="Vector 25" x="0" y="89.6575927734375" width="127.69844055175781" height="0" />
+            </frame>
+            <frame id="12:42863" name="2" x="0" y="102.75486755371094" width="107.5068130493164" height="150.38909912109375">
+              <frame id="12:42864" name="Frame 28" x="0" y="0" width="108.4630355834961" height="14">
+                <frame id="12:42865" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42866" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42867" name="Categories Limit : 2" x="17.463035583496094" y="0" width="91" height="14" />
+              </frame>
+              <frame id="12:42868" name="Frame 29" x="0" y="22.731517791748047" width="107.5068130493164" height="14">
+                <frame id="12:42869" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42870" name="Vector 27" x="3.2743232250213623" y="4.365705490112305" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42871" name="Subcategories Limit : 5" x="17.46303939819336" y="-0.000053197956731310114" width="106" height="14" />
+              </frame>
+              <frame id="12:42872" name="Frame 34" x="0" y="45.463035583496094" width="103.4630355834961" height="14">
+                <frame id="12:42873" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42874" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42875" name="Products Limit : 10" x="17.463035583496094" y="0" width="86" height="14" />
+              </frame>
+              <frame id="12:42876" name="Frame 35" x="0" y="68.19454956054688" width="101.4630355834961" height="14">
+                <frame id="12:42877" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42878" name="Vector 27" x="3.2743232250213623" y="4.36570930480957" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42879" name="Orders Limit : 100" x="17.46303939819336" y="-0.00004939810241921805" width="84" height="14" />
+              </frame>
+              <frame id="12:42880" name="Frame 37" x="0" y="90.92607116699219" width="38.463035583496094" height="14">
+                <frame id="12:42881" name="icon- no" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <frame id="12:42882" name="proicons:cancel" x="2.7285993099212646" y="2.7285995483398438" width="7.640077590942383" height="7.640077590942383" />
+                </frame>
+                <text id="12:42884" name="Blog" x="17.463035583496094" y="0" width="21" height="14" />
+              </frame>
+              <frame id="12:42885" name="Frame 33" x="0" y="113.6575927734375" width="79.4630355834961" height="14">
+                <frame id="12:42886" name="icon- no" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <frame id="12:42887" name="proicons:cancel" x="2.7286036014556885" y="2.728553533554077" width="7.640077590942383" height="7.640077590942383" />
+                </frame>
+                <text id="12:42889" name="Custom Page" x="17.46303939819336" y="-0.00004559824810712598" width="62" height="14" />
+              </frame>
+              <frame id="12:42890" name="Frame 38" x="0" y="136.3891143798828" width="47" height="14">
+                <text id="12:42891" name="Show More +" x="0" y="0" width="47" height="14" />
+              </frame>
+            </frame>
+            <frame id="12:42892" name="Frame 39" x="0" y="266.2412414550781" width="138.06712341308594" height="26.19455337524414">
+              <frame id="12:42893" name="btn" x="0" y="0" width="54.02626419067383" height="26.19455337524414">
+                <text id="12:42894" name="Trail" x="17.013132095336914" y="6.59727668762207" width="20" height="13" />
+              </frame>
+              <frame id="12:42895" name="btn" x="59.483463287353516" y="0" width="78.58365631103516" height="26.19455337524414">
+                <text id="12:42896" name="Purchase" x="18.791828155517578" y="6.59727668762207" width="41" height="13" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:42897" name="Card" x="72.17898559570312" y="0" width="198.64202880859375" height="363.9951477050781">
+          <frame id="12:42898" name="Content" x="21.828857421875" y="21.84375" width="146.25291442871094" height="330.67706298828125">
+            <frame id="12:42899" name="1" x="0" y="0" width="146.25291442871094" height="89.6575927734375">
+              <frame id="12:42900" name="Frame 27" x="0" y="0" width="103" height="80.92607116699219">
+                <frame id="12:42901" name="Frame 42" x="0" y="0" width="103" height="26.19455337524414">
+                  <frame id="12:42902" name="Frame 41" x="0" y="0" width="26.19455337524414" height="26.19455337524414">
+                    <frame id="12:42903" name="cil:chart-line" x="5.457168102264404" y="4.36551570892334" width="15.280155181884766" height="15.280155181884766" />
+                  </frame>
+                  <text id="12:42906" name="Standard" x="31.651752471923828" y="4.09727668762207" width="71" height="18" />
+                </frame>
+                <text id="12:42907" name="$19 / month" x="0" y="30.560312271118164" width="103" height="28" />
+                <text id="12:42908" name="What&#39;s Included" x="0" y="62.92607116699219" width="110" height="18" />
+              </frame>
+              <vector id="12:42909" name="Vector 25" x="0" y="89.6575927734375" width="127.69844055175781" height="0" />
+            </frame>
+            <frame id="12:42910" name="2" x="0" y="102.75486755371094" width="146.25291442871094" height="188.63035583496094">
+              <frame id="12:42911" name="Frame 28" x="0" y="0" width="111.82879638671875" height="13.09727668762207">
+                <frame id="12:42912" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42913" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+                </frame>
+                <text id="12:42914" name="Categories Limit : 10" x="21.828794479370117" y="0.048638343811035156" width="90" height="13" />
+              </frame>
+              <frame id="12:42915" name="Frame 29" x="0" y="21.828794479370117" width="146.25291442871094" height="13.09727668762207">
+                <frame id="12:42916" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42917" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+                </frame>
+                <text id="12:42918" name="Subcategories Limit : 20" x="21.828794479370117" y="0.048638343811035156" width="107" height="13" />
+              </frame>
+              <frame id="12:42919" name="Frame 34" x="0" y="43.657588958740234" width="104.82879638671875" height="13.09727668762207">
+                <frame id="12:42920" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42921" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+                </frame>
+                <text id="12:42922" name="Products Limit : 50" x="21.828794479370117" y="0.048638343811035156" width="83" height="13" />
+              </frame>
+              <frame id="12:42923" name="Frame 35" x="0" y="65.48638153076172" width="102.82879638671875" height="13.09727668762207">
+                <frame id="12:42924" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42925" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+                </frame>
+                <text id="12:42926" name="Orders Limit : 300" x="21.828794479370117" y="0.048638343811035156" width="81" height="13" />
+              </frame>
+              <frame id="12:42927" name="Frame 36" x="0" y="87.31517791748047" width="146.25291442871094" height="13.09727668762207">
+                <frame id="12:42928" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42929" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+                </frame>
+                <text id="12:42930" name="Additional Languages : 2" x="21.828794479370117" y="0.048638343811035156" width="109" height="13" />
+              </frame>
+              <frame id="12:42931" name="Frame 38" x="0" y="109.14397430419922" width="146.25291442871094" height="13.09727668762207">
+                <frame id="12:42932" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42933" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+                </frame>
+                <text id="12:42934" name="Posts Limit: 20" x="21.828794479370117" y="0.048638343811035156" width="65" height="13" />
+              </frame>
+              <frame id="12:42935" name="Frame 37" x="0" y="130.97276306152344" width="93.82879638671875" height="13.09727668762207">
+                <frame id="12:42936" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42937" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+                </frame>
+                <text id="12:42938" name="Custom Domain" x="21.828794479370117" y="0.048638343811035156" width="72" height="13" />
+              </frame>
+              <frame id="12:42939" name="Frame 33" x="0" y="152.8015594482422" width="72.82879638671875" height="13.09727668762207">
+                <frame id="12:42940" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42941" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+                </frame>
+                <text id="12:42942" name="Subdomain" x="21.828794479370117" y="0.048638343811035156" width="51" height="13" />
+              </frame>
+              <frame id="12:42943" name="Frame 39" x="0" y="174.63035583496094" width="60" height="14">
+                <text id="12:42944" name="Show More +" x="0" y="0" width="60" height="14" />
+              </frame>
+            </frame>
+            <frame id="12:42945" name="Frame 39" x="0" y="304.48248291015625" width="146.25291442871094" height="26.19455337524414">
+              <frame id="12:42946" name="btn" x="0" y="0" width="54.02626419067383" height="26.19455337524414">
+                <text id="12:42947" name="Trail" x="17.013132095336914" y="6.59727668762207" width="20" height="13" />
+              </frame>
+              <frame id="12:42948" name="btn" x="59.483463287353516" y="0" width="86.76945495605469" height="26.19455337524414">
+                <text id="12:42949" name="Purchase" x="18.384727478027344" y="5.59727668762207" width="50" height="15" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:42950" name="Card" x="283.91827392578125" y="26.194564819335938" width="168.0817108154297" height="311.60601806640625">
+          <frame id="12:42951" name="Content" x="11.540855407714844" y="15.3419189453125" width="145" height="280.92218017578125">
+            <frame id="12:42952" name="1" x="0" y="0" width="145" height="82.6575927734375">
+              <frame id="12:42953" name="Frame 27" x="0" y="0" width="90.58949279785156" height="73.92607116699219">
+                <frame id="12:42954" name="Frame 40" x="0" y="0" width="90.58949279785156" height="26.19455337524414">
+                  <frame id="12:42955" name="Frame 41" x="0" y="0" width="26.19455337524414" height="26.19455337524414">
+                    <frame id="12:42956" name="game-icons:chess-queen" x="4.492837905883789" y="5.865818023681641" width="17.208877563476562" height="14.46291732788086">
+                      <vector id="12:42957" name="Vector" x="1.6371814012527466" y="1.091442584991455" width="13.934558868408203" height="12.280037879943848" />
+                    </frame>
+                  </frame>
+                  <text id="12:42958" name="Premium" x="31.651752471923828" y="6.09727668762207" width="44" height="14" />
+                </frame>
+                <text id="12:42959" name="$39 / month" x="0" y="30.560312271118164" width="90.58949279785156" height="28" />
+                <text id="12:42960" name="What&#39;s Included" x="0" y="62.92607116699219" width="90.58949279785156" height="11" />
+              </frame>
+              <vector id="12:42961" name="Vector 25" x="0" y="82.6575927734375" width="127.69844055175781" height="0" />
+            </frame>
+            <frame id="12:42962" name="2" x="0" y="95.75486755371094" width="138" height="145.87548828125">
+              <frame id="12:42963" name="Frame 28" x="0" y="0" width="138.46304321289062" height="13.09727668762207">
+                <frame id="12:42964" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42965" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42966" name="Categories Limit : unlimited" x="17.463035583496094" y="0" width="121" height="13" />
+              </frame>
+              <frame id="12:42967" name="Frame 29" x="0" y="21.828794479370117" width="138" height="14">
+                <frame id="12:42968" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42969" name="Vector 27" x="3.2743372917175293" y="4.365705490112305" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42970" name="Subcategories Limit : unlimited" x="17.46305274963379" y="-0.000053197956731310114" width="136" height="14" />
+              </frame>
+              <frame id="12:42971" name="Frame 34" x="0" y="44.56031036376953" width="129.46304321289062" height="13.09727668762207">
+                <frame id="12:42972" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42973" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42974" name="Products Limit : unlimited" x="17.463035583496094" y="0" width="112" height="13" />
+              </frame>
+              <frame id="12:42975" name="Frame 35" x="0" y="66.38910675048828" width="120.4630355834961" height="13.09727668762207">
+                <frame id="12:42976" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42977" name="Vector 27" x="3.2743372917175293" y="4.36570930480957" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42978" name="Orders Limit : unlimited" x="17.46305274963379" y="-0.00004939810241921805" width="103" height="13" />
+              </frame>
+              <frame id="12:42979" name="Frame 36" x="0" y="88.21790313720703" width="138" height="13.09727668762207">
+                <frame id="12:42980" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42981" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42982" name="Additional Languages : unlimited" x="17.463035583496094" y="0" width="144" height="13" />
+              </frame>
+              <frame id="12:42983" name="Frame 33" x="0" y="110.04669952392578" width="143.46304321289062" height="13.09727668762207">
+                <frame id="12:42984" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                  <vector id="12:42985" name="Vector 27" x="3.2743372917175293" y="4.365713119506836" width="6.275778293609619" height="4.365758895874023" />
+                </frame>
+                <text id="12:42986" name="Custom Page limit: unlimited" x="17.46305274963379" y="-0.00004559824810712598" width="126" height="13" />
+              </frame>
+              <frame id="12:42987" name="Frame 38" x="0" y="131.87548828125" width="47" height="14">
+                <text id="12:42988" name="Show More +" x="0" y="0" width="47" height="14" />
+              </frame>
+            </frame>
+            <frame id="12:42989" name="Frame 39" x="0" y="254.72763061523438" width="138.06712341308594" height="26.19455337524414">
+              <frame id="12:42990" name="btn" x="0" y="0" width="54.02626419067383" height="26.19455337524414">
+                <text id="12:42991" name="Trail" x="17.013132095336914" y="6.59727668762207" width="20" height="13" />
+              </frame>
+              <frame id="12:42992" name="btn" x="59.483463287353516" y="0" width="78.58365631103516" height="26.19455337524414">
+                <text id="12:42993" name="Purchase" x="18.791828155517578" y="6.59727668762207" width="41" height="13" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:42994" name="FOOTER" x="0" y="4165" width="375" height="426" />
+    <text id="12:42995" name="Customer Reviews" x="106" y="3168" width="163" height="25" />
+    <frame id="12:42996" name="Frame 78" x="0" y="3916" width="375" height="249">
+      <frame id="12:42997" name="Frame 75" x="16" y="59.5" width="343" height="66">
+        <text id="12:42998" name="Newsletter" x="0" y="6.5" width="343" height="25" />
+        <text id="12:42999" name="Get latest updates first and stay with us." x="0" y="39.5" width="343" height="20" />
+      </frame>
+      <frame id="12:43000" name="Frame 76" x="24" y="149.5" width="327" height="40">
+        <text id="12:43001" name="Enter Your Email" x="16" y="11.5" width="110" height="18" />
+        <frame id="12:43002" name="Frame 97" x="235" y="0.5" width="92" height="40">
+          <text id="12:43003" name="Subscribe" x="13.5" y="11" width="65" height="18" />
+        </frame>
+      </frame>
+    </frame>
+    <frame id="12:43004" name="Frame 56" x="12" y="3217" width="363" height="158">
+      <frame id="12:43005" name="Component 4" x="0" y="0" width="238" height="158">
+        <frame id="12:43006" name="Frame 164" x="11" y="16" width="216" height="121">
+          <frame id="12:43007" name="entypo:quote" x="96" y="0" width="24" height="24" />
+          <text id="12:43009" name="Since switching to this platform, our sales have increased by 30%! The integration with payment gateways and the analytics tools have given us the insights we needed to grow." x="0" y="41" width="216" height="80" />
+        </frame>
+      </frame>
+      <frame id="12:43010" name="Component 5" x="250" y="0" width="238" height="158">
+        <frame id="12:43011" name="Frame 164" x="11" y="16" width="216" height="121">
+          <frame id="12:43012" name="entypo:quote" x="96" y="0" width="24" height="24" />
+          <text id="12:43014" name="Since switching to this platform, our sales have increased by 30%! The integration with payment gateways and the analytics tools have given us the insights we needed to grow." x="0" y="41" width="216" height="80" />
+        </frame>
+      </frame>
+      <frame id="12:43015" name="Component 6" x="500" y="0" width="238" height="158">
+        <frame id="12:43016" name="Frame 164" x="11" y="16" width="216" height="121">
+          <frame id="12:43017" name="entypo:quote" x="96" y="0" width="24" height="24" />
+          <text id="12:43019" name="Since switching to this platform, our sales have increased by 30%! The integration with payment gateways and the analytics tools have given us the insights we needed to grow." x="0" y="41" width="216" height="80" />
+        </frame>
+      </frame>
+      <frame id="12:43020" name="Component 7" x="750" y="0" width="238" height="158">
+        <frame id="12:43021" name="Frame 164" x="11" y="16" width="216" height="121">
+          <frame id="12:43022" name="entypo:quote" x="96" y="0" width="24" height="24" />
+          <text id="12:43024" name="Since switching to this platform, our sales have increased by 30%! The integration with payment gateways and the analytics tools have given us the insights we needed to grow." x="0" y="41" width="216" height="80" />
+        </frame>
+      </frame>
+      <frame id="12:43025" name="Component 8" x="1000" y="0" width="238" height="158">
+        <frame id="12:43026" name="Frame 164" x="11" y="16" width="216" height="121">
+          <frame id="12:43027" name="entypo:quote" x="96" y="0" width="24" height="24" />
+          <text id="12:43029" name="Since switching to this platform, our sales have increased by 30%! The integration with payment gateways and the analytics tools have given us the insights we needed to grow." x="0" y="41" width="216" height="80" />
+        </frame>
+      </frame>
+    </frame>
+    <frame id="12:43030" name="features" x="16" y="933" width="343" height="528">
+      <frame id="12:43031" name="Frame 168" x="13" y="0" width="317" height="73">
+        <text id="12:43032" name="Features" x="0" y="0" width="317" height="25" />
+        <text id="12:43033" name="With Ecommet, your business is easier and you stay worry-free." x="0" y="33" width="317" height="40" />
+      </frame>
+      <frame id="12:43034" name="Frame 147" x="0" y="97" width="343" height="414">
+        <frame id="12:43035" name="Frame 144" x="0" y="0" width="343" height="199">
+          <frame id="12:43036" name="Frame 11" x="0" y="0" width="164" height="199">
+            <frame id="12:43037" name="growth-graph-increase-svgrepo-com 1" x="66" y="29" width="32" height="32" />
+            <text id="12:43040" name="Scalable for Growth" x="8" y="69" width="148" height="18" />
+            <text id="12:43041" name="Our platform grows with your business, providing the flexibility to add new products, features, and users easily" x="8" y="95" width="148" height="75" />
+          </frame>
+          <frame id="12:43042" name="Frame 12" x="179" y="0" width="164" height="199">
+            <frame id="12:43043" name="available 1" x="66" y="21.5" width="32" height="32" />
+            <text id="12:43053" name="Ready-Made Products" x="8" y="61.5" width="148" height="18" />
+            <text id="12:43054" name="We provide ready-to-use products that you can instantly add to your store. Simply choose a category and start selling right away." x="8" y="87.5" width="148" height="90" />
+          </frame>
+        </frame>
+        <frame id="12:43055" name="Frame 146" x="0" y="215" width="343" height="199">
+          <frame id="12:43056" name="Frame 11" x="0" y="0" width="164" height="199">
+            <instance id="12:43057" name="vuesax/linear/element-2" x="66" y="27.5" width="32" height="32" />
+            <text id="12:43058" name="Easy-to-Use Dashboard" x="8" y="67.5" width="148" height="36" />
+            <text id="12:43059" name="Manage products, orders, and analytics from one simple, intuitive dashboard." x="8" y="111.5" width="148" height="60" />
+          </frame>
+          <frame id="12:43060" name="Frame 12" x="179" y="0" width="164" height="199">
+            <frame id="12:43061" name="debit-card" x="66" y="32.10364532470703" width="32" height="25.792705535888672" />
+            <text id="12:43079" name="Secure Payments" x="8" y="65.89634704589844" width="148" height="18" />
+            <text id="12:43080" name="Ensure your customers&#39; data is protected with top-tier security for seamless and trusted payment processing." x="8" y="91.89634704589844" width="148" height="75" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="12:43081" name="Frame 176" x="16" y="3399" width="343" height="447">
+      <text id="12:43082" name="Blogs" x="0" y="16" width="343" height="25" />
+      <frame id="12:43083" name="Frame 171" x="-16" y="65" width="375" height="374">
+        <frame id="12:43084" name="Frame 65" x="-223" y="0" width="263" height="374">
+          <rounded-rectangle id="12:43085" name="1654668714 1" x="0" y="0" width="263" height="240" />
+          <frame id="12:43086" name="Frame 63" x="12" y="256" width="239" height="102">
+            <frame id="12:43087" name="Frame 62" x="0" y="0" width="239" height="68">
+              <text id="12:43088" name="On the other hand, we denounce with righteous indignation" x="0" y="0" width="239" height="20" />
+              <text id="12:43089" name="On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment," x="0" y="28" width="239" height="40" />
+            </frame>
+            <frame id="12:43090" name="Frame 64" x="0" y="84" width="239" height="18">
+              <instance id="12:43091" name="vuesax/linear/export" x="0" y="0" width="16" height="16" />
+              <text id="12:43092" name="Read More" x="24" y="0" width="72" height="18" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:43093" name="Frame 62" x="56" y="0" width="263" height="374">
+          <rounded-rectangle id="12:43094" name="1654668572 1" x="0" y="0" width="263" height="240" />
+          <frame id="12:43095" name="Frame 63" x="12" y="256" width="239" height="102">
+            <frame id="12:43096" name="Frame 62" x="0" y="0" width="239" height="68">
+              <text id="12:43097" name="On the other hand, we denounce with righteous indignation" x="0" y="0" width="239" height="20" />
+              <text id="12:43098" name="On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment," x="0" y="28" width="239" height="40" />
+            </frame>
+            <frame id="12:43099" name="Frame 64" x="0" y="84" width="239" height="18">
+              <instance id="12:43100" name="vuesax/linear/export" x="0" y="0" width="16" height="16" />
+              <text id="12:43101" name="Read More" x="24" y="0" width="72" height="18" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:43102" name="Frame 64" x="335" y="0" width="263" height="374">
+          <rounded-rectangle id="12:43103" name="1654668743 1" x="0" y="0" width="263" height="240" />
+          <frame id="12:43104" name="Frame 63" x="12" y="256" width="239" height="102">
+            <frame id="12:43105" name="Frame 62" x="0" y="0" width="239" height="68">
+              <text id="12:43106" name="On the other hand, we denounce with righteous indignation" x="0" y="0" width="239" height="20" />
+              <text id="12:43107" name="On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment," x="0" y="28" width="239" height="40" />
+            </frame>
+            <frame id="12:43108" name="Frame 64" x="0" y="84" width="239" height="18">
+              <instance id="12:43109" name="vuesax/linear/export" x="0" y="0" width="16" height="16" />
+              <text id="12:43110" name="Read More" x="24" y="0" width="72" height="18" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="12:43111" name="Frame 174" x="16" y="1975" width="343" height="323">
+      <frame id="12:43112" name="Frame 168" x="0" y="0" width="343" height="93">
+        <text id="12:43113" name="Categories" x="0" y="0" width="343" height="25" />
+        <text id="12:43114" name="Thousands of ready-made products across multiple categories to help you launch and sell with ease." x="0" y="33" width="343" height="60" />
+      </frame>
+      <frame id="12:43115" name="Frame 163" x="0" y="109" width="343" height="214">
+        <frame id="12:43116" name="Frame 161" x="0" y="0" width="344" height="101">
+          <frame id="12:43117" name="Card]" x="0" y="0" width="80" height="101">
+            <text id="12:43118" name="Fashion" x="12" y="75" width="52" height="18" />
+            <frame id="12:43119" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43120" name="fashion-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43123" name="Card]" x="88" y="0" width="80" height="101">
+            <text id="12:43124" name="Beauty" x="15" y="75" width="47" height="18" />
+            <frame id="12:43125" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43126" name="beauty-brush-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43131" name="Card]" x="176" y="0" width="80" height="101">
+            <text id="12:43132" name="Fitness" x="15" y="75" width="47" height="18" />
+            <frame id="12:43133" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43134" name="fitness-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43140" name="Card]" x="264" y="0" width="80" height="101">
+            <text id="12:43141" name="Furniture" x="8" y="75" width="61" height="18" />
+            <frame id="12:43142" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43143" name="furniture-svgrepo-com 1" x="16" y="14" width="32" height="32" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:43145" name="Frame 164" x="0" y="113" width="344" height="101">
+          <frame id="12:43146" name="Card]" x="0" y="0" width="80" height="101">
+            <text id="12:43147" name="Grocery" x="13" y="75" width="55" height="18" />
+            <frame id="12:43148" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43149" name="food-2-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43154" name="Card]" x="88" y="0" width="80" height="101">
+            <text id="12:43155" name="Electronics" x="4" y="75" width="73" height="18" />
+            <frame id="12:43156" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43157" name="devices-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43159" name="Card]" x="176" y="0" width="80" height="101">
+            <text id="12:43160" name="Pets" x="26" y="75" width="28" height="18" />
+            <frame id="12:43161" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43162" name="pet-14-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43165" name="Card]" x="264" y="0" width="80" height="101">
+            <text id="12:43166" name="Kids" x="26" y="75" width="29" height="18" />
+            <frame id="12:43167" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43168" name="kids-couple-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:43174" name="Component 18" x="0" y="48" width="375" height="48" />
+    <frame id="12:43175" name="Frame 173" x="16" y="2338" width="343" height="264">
+      <text id="12:43176" name="Services" x="0" y="0" width="343" height="25" />
+      <frame id="12:43177" name="Frame 165" x="0" y="41" width="343" height="204">
+        <frame id="12:43178" name="Frame 167" x="0" y="0" width="343" height="94">
+          <frame id="12:43179" name="Frame 17" x="0" y="0" width="165" height="94">
+            <frame id="12:43180" name="Frame 9" x="13" y="8" width="139" height="79">
+              <frame id="12:43181" name="customize 1" x="57.5" y="0" width="24" height="24" />
+              <frame id="12:43185" name="Frame 14" x="0" y="32" width="139" height="47">
+                <text id="12:43186" name="Template Customization" x="0" y="0" width="139" height="15" />
+                <text id="12:43187" name="Tailored designs that fit your brand." x="0" y="21" width="139" height="26" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="12:43188" name="Frame 96" x="178" y="0" width="165" height="94">
+            <frame id="12:43189" name="Frame 9" x="11" y="7" width="143" height="79">
+              <frame id="12:43190" name="setup-assistant-guide 1" x="59.5" y="0" width="24" height="24" />
+              <frame id="12:43196" name="Frame 14" x="0" y="32" width="143" height="47">
+                <text id="12:43197" name="Store Setup" x="0" y="0" width="143" height="15" />
+                <text id="12:43198" name="From setup to launch, we’ve got you covered." x="0" y="21" width="143" height="26" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:43199" name="Frame 166" x="0" y="110" width="343" height="94">
+          <frame id="12:43200" name="Frame 97" x="0" y="0" width="165" height="94">
+            <frame id="12:43201" name="Frame 9" x="16" y="7" width="134" height="79">
+              <frame id="12:43202" name="optimization-search 1" x="55" y="0" width="24" height="24" />
+              <frame id="12:43210" name="Frame 14" x="0" y="32" width="134" height="47">
+                <text id="12:43211" name="Optimization" x="0" y="0" width="134" height="15" />
+                <text id="12:43212" name="Better performance, better results." x="0" y="21" width="134" height="26" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="12:43213" name="Frame 98" x="178" y="0" width="165" height="94">
+            <frame id="12:43214" name="Frame 9" x="16" y="8" width="134" height="79">
+              <frame id="12:43215" name="support 1" x="55" y="0" width="24" height="24" />
+              <frame id="12:43219" name="Frame 14" x="0" y="32" width="134" height="47">
+                <text id="12:43220" name="Expert Support" x="0" y="0" width="134" height="15" />
+                <text id="12:43221" name="Guidance whenever you need it." x="0" y="21" width="134" height="26" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+  </frame>
+  <frame id="12:43222" name="plans" x="11577" y="17801" width="375" height="1129">
+    <instance id="12:43223" name="status-bar" x="0" y="0" width="375" height="48" />
+    <frame id="12:43224" name="Frame 148" x="36" y="128" width="303" height="81">
+      <text id="12:43225" name="Choose Your Perfect Business Plan" x="0" y="0" width="303" height="25" />
+      <instance id="12:43226" name="Mobile" x="18.5" y="49" width="266" height="32" />
+    </frame>
+    <frame id="12:43227" name="Plans" x="0" y="241" width="375" height="363.9951477050781">
+      <frame id="12:43228" name="Card" x="-93" y="26.194564819335938" width="168.0817108154297" height="311.60601806640625">
+        <frame id="12:43229" name="Content" x="15.2801513671875" y="9.585113525390625" width="137.5214080810547" height="292.435791015625">
+          <frame id="12:43230" name="1" x="0" y="0" width="137.5214080810547" height="89.6575927734375">
+            <frame id="12:43231" name="Frame 27" x="0" y="0" width="109" height="80.92607116699219">
+              <frame id="12:43232" name="Frame 43" x="0" y="0" width="109" height="26.19455337524414">
+                <frame id="12:43233" name="Frame 41" x="0" y="0" width="26.19455337524414" height="26.19455337524414">
+                  <frame id="12:43234" name="proicons:wrench" x="5.4571990966796875" y="5.4571990966796875" width="15.280155181884766" height="15.280155181884766" />
+                </frame>
+                <text id="12:43236" name="Basic" x="31.651752471923828" y="4.09727668762207" width="33" height="18" />
+              </frame>
+              <text id="12:43237" name="$9 / month" x="0" y="30.560312271118164" width="109" height="28" />
+              <text id="12:43238" name="What&#39;s Included" x="0" y="62.92607116699219" width="109" height="18" />
+            </frame>
+            <vector id="12:43239" name="Vector 25" x="0" y="89.6575927734375" width="127.69844055175781" height="0" />
+          </frame>
+          <frame id="12:43240" name="2" x="0" y="102.75486755371094" width="107.5068130493164" height="150.38909912109375">
+            <frame id="12:43241" name="Frame 28" x="0" y="0" width="108.4630355834961" height="14">
+              <frame id="12:43242" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43243" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43244" name="Categories Limit : 2" x="17.463035583496094" y="0" width="91" height="14" />
+            </frame>
+            <frame id="12:43245" name="Frame 29" x="0" y="22.731517791748047" width="107.5068130493164" height="14">
+              <frame id="12:43246" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43247" name="Vector 27" x="3.2743232250213623" y="4.365705490112305" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43248" name="Subcategories Limit : 5" x="17.46303939819336" y="-0.000053197956731310114" width="106" height="14" />
+            </frame>
+            <frame id="12:43249" name="Frame 34" x="0" y="45.463035583496094" width="103.4630355834961" height="14">
+              <frame id="12:43250" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43251" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43252" name="Products Limit : 10" x="17.463035583496094" y="0" width="86" height="14" />
+            </frame>
+            <frame id="12:43253" name="Frame 35" x="0" y="68.19454956054688" width="101.4630355834961" height="14">
+              <frame id="12:43254" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43255" name="Vector 27" x="3.2743232250213623" y="4.36570930480957" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43256" name="Orders Limit : 100" x="17.46303939819336" y="-0.00004939810241921805" width="84" height="14" />
+            </frame>
+            <frame id="12:43257" name="Frame 37" x="0" y="90.92607116699219" width="38.463035583496094" height="14">
+              <frame id="12:43258" name="icon- no" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <frame id="12:43259" name="proicons:cancel" x="2.7285993099212646" y="2.7285995483398438" width="7.640077590942383" height="7.640077590942383" />
+              </frame>
+              <text id="12:43261" name="Blog" x="17.463035583496094" y="0" width="21" height="14" />
+            </frame>
+            <frame id="12:43262" name="Frame 33" x="0" y="113.6575927734375" width="79.4630355834961" height="14">
+              <frame id="12:43263" name="icon- no" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <frame id="12:43264" name="proicons:cancel" x="2.7286036014556885" y="2.728553533554077" width="7.640077590942383" height="7.640077590942383" />
+              </frame>
+              <text id="12:43266" name="Custom Page" x="17.46303939819336" y="-0.00004559824810712598" width="62" height="14" />
+            </frame>
+            <frame id="12:43267" name="Frame 38" x="0" y="136.3891143798828" width="47" height="14">
+              <text id="12:43268" name="Show More +" x="0" y="0" width="47" height="14" />
+            </frame>
+          </frame>
+          <frame id="12:43269" name="Frame 39" x="0" y="266.2412414550781" width="138.06712341308594" height="26.19455337524414">
+            <frame id="12:43270" name="btn" x="0" y="0" width="54.02626419067383" height="26.19455337524414">
+              <text id="12:43271" name="Trail" x="17.013132095336914" y="6.59727668762207" width="20" height="13" />
+            </frame>
+            <frame id="12:43272" name="btn" x="59.483463287353516" y="0" width="78.58365631103516" height="26.19455337524414">
+              <text id="12:43273" name="Purchase" x="18.791828155517578" y="6.59727668762207" width="41" height="13" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <frame id="12:43274" name="Card" x="88.17898559570312" y="0" width="198.64202880859375" height="363.9951477050781">
+        <frame id="12:43275" name="Content" x="21.828857421875" y="21.84375" width="146.25291442871094" height="330.67706298828125">
+          <frame id="12:43276" name="1" x="0" y="0" width="146.25291442871094" height="89.6575927734375">
+            <frame id="12:43277" name="Frame 27" x="0" y="0" width="103" height="80.92607116699219">
+              <frame id="12:43278" name="Frame 42" x="0" y="0" width="103" height="26.19455337524414">
+                <frame id="12:43279" name="Frame 41" x="0" y="0" width="26.19455337524414" height="26.19455337524414">
+                  <frame id="12:43280" name="cil:chart-line" x="5.457168102264404" y="4.36551570892334" width="15.280155181884766" height="15.280155181884766" />
+                </frame>
+                <text id="12:43283" name="Standard" x="31.651752471923828" y="4.09727668762207" width="71" height="18" />
+              </frame>
+              <text id="12:43284" name="$19 / month" x="0" y="30.560312271118164" width="103" height="28" />
+              <text id="12:43285" name="What&#39;s Included" x="0" y="62.92607116699219" width="110" height="18" />
+            </frame>
+            <vector id="12:43286" name="Vector 25" x="0" y="89.6575927734375" width="127.69844055175781" height="0" />
+          </frame>
+          <frame id="12:43287" name="2" x="0" y="102.75486755371094" width="146.25291442871094" height="188.63035583496094">
+            <frame id="12:43288" name="Frame 28" x="0" y="0" width="111.82879638671875" height="13.09727668762207">
+              <frame id="12:43289" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43290" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+              </frame>
+              <text id="12:43291" name="Categories Limit : 10" x="21.828794479370117" y="0.048638343811035156" width="90" height="13" />
+            </frame>
+            <frame id="12:43292" name="Frame 29" x="0" y="21.828794479370117" width="146.25291442871094" height="13.09727668762207">
+              <frame id="12:43293" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43294" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+              </frame>
+              <text id="12:43295" name="Subcategories Limit : 20" x="21.828794479370117" y="0.048638343811035156" width="107" height="13" />
+            </frame>
+            <frame id="12:43296" name="Frame 34" x="0" y="43.657588958740234" width="104.82879638671875" height="13.09727668762207">
+              <frame id="12:43297" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43298" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+              </frame>
+              <text id="12:43299" name="Products Limit : 50" x="21.828794479370117" y="0.048638343811035156" width="83" height="13" />
+            </frame>
+            <frame id="12:43300" name="Frame 35" x="0" y="65.48638153076172" width="102.82879638671875" height="13.09727668762207">
+              <frame id="12:43301" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43302" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+              </frame>
+              <text id="12:43303" name="Orders Limit : 300" x="21.828794479370117" y="0.048638343811035156" width="81" height="13" />
+            </frame>
+            <frame id="12:43304" name="Frame 36" x="0" y="87.31517791748047" width="146.25291442871094" height="13.09727668762207">
+              <frame id="12:43305" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43306" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+              </frame>
+              <text id="12:43307" name="Additional Languages : 2" x="21.828794479370117" y="0.048638343811035156" width="109" height="13" />
+            </frame>
+            <frame id="12:43308" name="Frame 38" x="0" y="109.14397430419922" width="146.25291442871094" height="13.09727668762207">
+              <frame id="12:43309" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43310" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+              </frame>
+              <text id="12:43311" name="Posts Limit: 20" x="21.828794479370117" y="0.048638343811035156" width="65" height="13" />
+            </frame>
+            <frame id="12:43312" name="Frame 37" x="0" y="130.97276306152344" width="93.82879638671875" height="13.09727668762207">
+              <frame id="12:43313" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43314" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+              </frame>
+              <text id="12:43315" name="Custom Domain" x="21.828794479370117" y="0.048638343811035156" width="72" height="13" />
+            </frame>
+            <frame id="12:43316" name="Frame 33" x="0" y="152.8015594482422" width="72.82879638671875" height="13.09727668762207">
+              <frame id="12:43317" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43318" name="Vector 27" x="3.342534303665161" y="4.318305015563965" width="6.412208080291748" height="4.460666656494141" />
+              </frame>
+              <text id="12:43319" name="Subdomain" x="21.828794479370117" y="0.048638343811035156" width="51" height="13" />
+            </frame>
+            <frame id="12:43320" name="Frame 39" x="0" y="174.63035583496094" width="60" height="14">
+              <text id="12:43321" name="Show More +" x="0" y="0" width="60" height="14" />
+            </frame>
+          </frame>
+          <frame id="12:43322" name="Frame 39" x="0" y="304.48248291015625" width="146.25291442871094" height="26.19455337524414">
+            <frame id="12:43323" name="btn" x="0" y="0" width="54.02626419067383" height="26.19455337524414">
+              <text id="12:43324" name="Trail" x="17.013132095336914" y="6.59727668762207" width="20" height="13" />
+            </frame>
+            <frame id="12:43325" name="btn" x="59.483463287353516" y="0" width="86.76945495605469" height="26.19455337524414">
+              <text id="12:43326" name="Purchase" x="18.384727478027344" y="5.59727668762207" width="50" height="15" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <frame id="12:43327" name="Card" x="299.91827392578125" y="26.194564819335938" width="168.0817108154297" height="311.60601806640625">
+        <frame id="12:43328" name="Content" x="11.540855407714844" y="15.3419189453125" width="145" height="280.92218017578125">
+          <frame id="12:43329" name="1" x="0" y="0" width="145" height="82.6575927734375">
+            <frame id="12:43330" name="Frame 27" x="0" y="0" width="90.58949279785156" height="73.92607116699219">
+              <frame id="12:43331" name="Frame 40" x="0" y="0" width="90.58949279785156" height="26.19455337524414">
+                <frame id="12:43332" name="Frame 41" x="0" y="0" width="26.19455337524414" height="26.19455337524414">
+                  <frame id="12:43333" name="game-icons:chess-queen" x="4.492837905883789" y="5.865818023681641" width="17.208877563476562" height="14.46291732788086">
+                    <vector id="12:43334" name="Vector" x="1.6371814012527466" y="1.091442584991455" width="13.934558868408203" height="12.280037879943848" />
+                  </frame>
+                </frame>
+                <text id="12:43335" name="Premium" x="31.651752471923828" y="6.09727668762207" width="44" height="14" />
+              </frame>
+              <text id="12:43336" name="$39 / month" x="0" y="30.560312271118164" width="90.58949279785156" height="28" />
+              <text id="12:43337" name="What&#39;s Included" x="0" y="62.92607116699219" width="90.58949279785156" height="11" />
+            </frame>
+            <vector id="12:43338" name="Vector 25" x="0" y="82.6575927734375" width="127.69844055175781" height="0" />
+          </frame>
+          <frame id="12:43339" name="2" x="0" y="95.75486755371094" width="138" height="145.87548828125">
+            <frame id="12:43340" name="Frame 28" x="0" y="0" width="138.46304321289062" height="13.09727668762207">
+              <frame id="12:43341" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43342" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43343" name="Categories Limit : unlimited" x="17.463035583496094" y="0" width="121" height="13" />
+            </frame>
+            <frame id="12:43344" name="Frame 29" x="0" y="21.828794479370117" width="138" height="14">
+              <frame id="12:43345" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43346" name="Vector 27" x="3.2743372917175293" y="4.365705490112305" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43347" name="Subcategories Limit : unlimited" x="17.46305274963379" y="-0.000053197956731310114" width="136" height="14" />
+            </frame>
+            <frame id="12:43348" name="Frame 34" x="0" y="44.56031036376953" width="129.46304321289062" height="13.09727668762207">
+              <frame id="12:43349" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43350" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43351" name="Products Limit : unlimited" x="17.463035583496094" y="0" width="112" height="13" />
+            </frame>
+            <frame id="12:43352" name="Frame 35" x="0" y="66.38910675048828" width="120.4630355834961" height="13.09727668762207">
+              <frame id="12:43353" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43354" name="Vector 27" x="3.2743372917175293" y="4.36570930480957" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43355" name="Orders Limit : unlimited" x="17.46305274963379" y="-0.00004939810241921805" width="103" height="13" />
+            </frame>
+            <frame id="12:43356" name="Frame 36" x="0" y="88.21790313720703" width="138" height="13.09727668762207">
+              <frame id="12:43357" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43358" name="Vector 27" x="3.2743191719055176" y="4.365758895874023" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43359" name="Additional Languages : unlimited" x="17.463035583496094" y="0" width="144" height="13" />
+            </frame>
+            <frame id="12:43360" name="Frame 33" x="0" y="110.04669952392578" width="143.46304321289062" height="13.09727668762207">
+              <frame id="12:43361" name="icon-yes" x="0" y="0" width="13.09727668762207" height="13.09727668762207">
+                <vector id="12:43362" name="Vector 27" x="3.2743372917175293" y="4.365713119506836" width="6.275778293609619" height="4.365758895874023" />
+              </frame>
+              <text id="12:43363" name="Custom Page limit: unlimited" x="17.46305274963379" y="-0.00004559824810712598" width="126" height="13" />
+            </frame>
+            <frame id="12:43364" name="Frame 38" x="0" y="131.87548828125" width="47" height="14">
+              <text id="12:43365" name="Show More +" x="0" y="0" width="47" height="14" />
+            </frame>
+          </frame>
+          <frame id="12:43366" name="Frame 39" x="0" y="254.72763061523438" width="138.06712341308594" height="26.19455337524414">
+            <frame id="12:43367" name="btn" x="0" y="0" width="54.02626419067383" height="26.19455337524414">
+              <text id="12:43368" name="Trail" x="17.013132095336914" y="6.59727668762207" width="20" height="13" />
+            </frame>
+            <frame id="12:43369" name="btn" x="59.483463287353516" y="0" width="78.58365631103516" height="26.19455337524414">
+              <text id="12:43370" name="Purchase" x="18.791828155517578" y="6.59727668762207" width="41" height="13" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:43371" name="FOOTER" x="0" y="703" width="375" height="426" />
+    <instance id="12:43372" name="Component 18" x="0" y="48" width="375" height="48" />
+  </frame>
+  <frame id="12:43373" name="category" x="11577" y="19365" width="375" height="982">
+    <instance id="12:43374" name="status-bar" x="0" y="0" width="375" height="48" />
+    <instance id="12:43375" name="FOOTER" x="0" y="556" width="375" height="426" />
+    <instance id="12:43376" name="Component 18" x="0" y="48" width="375" height="48" />
+    <frame id="12:43377" name="Frame 174" x="16" y="128" width="343" height="311">
+      <frame id="12:43378" name="Frame 168" x="0" y="0" width="343" height="73">
+        <text id="12:43379" name="Categories" x="0" y="0" width="343" height="25" />
+        <text id="12:43380" name="Choose a category for your products to display in your store." x="0" y="33" width="343" height="40" />
+      </frame>
+      <frame id="12:43381" name="Frame 163" x="0" y="97" width="343" height="214">
+        <frame id="12:43382" name="Frame 161" x="0" y="0" width="344" height="101">
+          <frame id="12:43383" name="Card]" x="0" y="0" width="80" height="101">
+            <text id="12:43384" name="Fashion" x="12" y="75" width="52" height="18" />
+            <frame id="12:43385" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43386" name="fashion-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43389" name="Card]" x="88" y="0" width="80" height="101">
+            <text id="12:43390" name="Beauty" x="15" y="75" width="47" height="18" />
+            <frame id="12:43391" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43392" name="beauty-brush-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43397" name="Card]" x="176" y="0" width="80" height="101">
+            <text id="12:43398" name="Fitness" x="15" y="75" width="47" height="18" />
+            <frame id="12:43399" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43400" name="fitness-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43406" name="Card]" x="264" y="0" width="80" height="101">
+            <text id="12:43407" name="Furniture" x="8" y="75" width="61" height="18" />
+            <frame id="12:43408" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43409" name="furniture-svgrepo-com 1" x="16" y="14" width="32" height="32" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="12:43411" name="Frame 164" x="0" y="113" width="344" height="101">
+          <frame id="12:43412" name="Card]" x="0" y="0" width="80" height="101">
+            <text id="12:43413" name="Grocery" x="13" y="75" width="55" height="18" />
+            <frame id="12:43414" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43415" name="food-2-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43420" name="Card]" x="88" y="0" width="80" height="101">
+            <text id="12:43421" name="Electronics" x="4" y="75" width="73" height="18" />
+            <frame id="12:43422" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43423" name="devices-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43425" name="Card]" x="176" y="0" width="80" height="101">
+            <text id="12:43426" name="Pets" x="26" y="75" width="28" height="18" />
+            <frame id="12:43427" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43428" name="pet-14-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+          <frame id="12:43431" name="Card]" x="264" y="0" width="80" height="101">
+            <text id="12:43432" name="Kids" x="26" y="75" width="29" height="18" />
+            <frame id="12:43433" name="img" x="8" y="8" width="64" height="59">
+              <frame id="12:43434" name="kids-couple-svgrepo-com 1" x="20" y="18" width="24" height="24" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:43440" name="btn" x="84" y="463" width="207" height="40" />
+  </frame>
+  <frame id="12:43441" name="how it" x="14156" y="17806" width="375" height="1066">
+    <instance id="12:43442" name="status-bar" x="0" y="0" width="375" height="48" />
+    <instance id="12:43443" name="FOOTER" x="0" y="640" width="375" height="426" />
+    <frame id="12:43444" name="Group 7" x="31" y="169" width="311.3382873535156" height="436">
+      <frame id="12:43445" name="Card" x="31" y="169" width="311" height="92">
+        <frame id="12:43446" name="content" x="42" y="182" width="300" height="79">
+          <text id="12:43447" name="Pick a subscription plan that fits your business needs." x="36" y="21.5" width="228" height="36" />
+        </frame>
+        <frame id="12:43448" name="Frame 89" x="31" y="168.99999931454659" width="29.114137649536133" height="29.114137649536133">
+          <text id="12:43449" name="1" x="8" y="4.557068824768066" width="13.114137649536133" height="20" />
+        </frame>
+      </frame>
+      <frame id="12:43450" name="Card" x="42" y="277" width="300.3382873535156" height="103">
+        <frame id="12:43451" name="content" x="42" y="291" width="290" height="89">
+          <text id="12:43452" name="Choose a ready-made theme and customize it to match your brand." x="36.5" y="17.5" width="217" height="54" />
+        </frame>
+        <frame id="12:43453" name="Frame 89" x="312.1235656738281" y="277.0000075743196" width="30.214263916015625" height="30.214258193969727">
+          <text id="12:43454" name="2" x="8" y="5.107129096984863" width="14.214263916015625" height="20" />
+        </frame>
+      </frame>
+      <frame id="12:43455" name="Card" x="32" y="396" width="300" height="101">
+        <frame id="12:43456" name="content" x="43" y="409" width="289" height="88">
+          <text id="12:43457" name="Upload products, set prices, and configure payment options easily." x="35" y="17" width="219" height="54" />
+        </frame>
+        <frame id="12:43458" name="Frame 89" x="32" y="396" width="29.149805068969727" height="29.149795532226562">
+          <text id="12:43459" name="3" x="8" y="4.574897766113281" width="13.149805068969727" height="20" />
+        </frame>
+      </frame>
+      <frame id="12:43460" name="Card" x="42" y="513" width="297" height="92">
+        <frame id="12:43461" name="content" x="42" y="528" width="288" height="77">
+          <text id="12:43462" name="Go live, manage orders, and grow your online business." x="35.5" y="20.5" width="217" height="36" />
+        </frame>
+        <frame id="12:43463" name="Frame 89" x="310" y="513" width="29" height="29">
+          <text id="12:43464" name="4" x="8" y="4.5" width="13" height="20" />
+        </frame>
+      </frame>
+    </frame>
+    <text id="12:43465" name="How it Works" x="129" y="120" width="117" height="25" />
+    <instance id="12:43466" name="Component 18" x="0" y="48" width="375" height="48" />
+  </frame>
+  <frame id="12:43467" name="sign up" x="11577" y="21125" width="375" height="1176">
+    <rounded-rectangle id="12:43468" name="Rectangle 2" x="336" y="590" width="14" height="16" />
+    <instance id="12:43469" name="status-bar" x="0" y="0" width="375" height="48" />
+    <frame id="12:43470" name="Frame 114" x="13" y="128" width="350" height="88">
+      <text id="12:43471" name="Get Started with Ecommet" x="0" y="0" width="350" height="30" />
+      <text id="12:43472" name="Set up your account in just a few steps and start building your online store." x="0" y="38" width="350" height="50" />
+    </frame>
+    <frame id="12:43473" name="Frame 113" x="16" y="240" width="343" height="436">
+      <frame id="12:43474" name="Frame 120" x="16" y="20.5" width="311" height="249">
+        <text id="12:43475" name="Name" x="0" y="0" width="68" height="25" />
+        <frame id="12:43476" name="name" x="0" y="41" width="311" height="40">
+          <frame id="12:43477" name="Frame 107" x="16" y="7.5" width="78.8127670288086" height="25">
+            <text id="12:43478" name="Name" x="0" y="0" width="66" height="25" />
+            <text id="12:43479" name="*" x="68" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+        <frame id="12:43480" name="email" x="0" y="97" width="311" height="40">
+          <frame id="12:43481" name="Frame 108" x="16" y="7.5" width="105.8127670288086" height="25">
+            <text id="12:43482" name="Name" x="0" y="0" width="93" height="25" />
+            <text id="12:43483" name="*" x="95" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+        <frame id="12:43484" name="pass" x="0" y="153" width="311" height="40">
+          <frame id="12:43485" name="Frame 108" x="16" y="7.5" width="76.8127670288086" height="25">
+            <text id="12:43486" name="Name" x="0" y="0" width="64" height="25" />
+            <text id="12:43487" name="*" x="66" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+        <frame id="12:43488" name="confirm pass" x="0" y="209" width="311" height="40">
+          <frame id="12:43489" name="Frame 108" x="16" y="7.5" width="130.81275939941406" height="25">
+            <text id="12:43490" name="Name" x="0" y="0" width="118" height="25" />
+            <text id="12:43491" name="*" x="120" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+      </frame>
+      <instance id="12:43492" name="btn" x="16" y="293.5" width="311" height="40" />
+      <frame id="12:43493" name="Frame 149" x="20" y="357.5" width="303" height="58">
+        <frame id="12:43494" name="Frame 115" x="0" y="0" width="303" height="18">
+          <line id="12:43495" name="Line 2" x="4" y="9" width="94" height="0" />
+          <text id="12:43496" name="or with" x="128" y="0" width="47" height="18" />
+          <line id="12:43497" name="Line 1" x="205" y="9" width="94" height="0" />
+        </frame>
+        <frame id="12:43498" name="Frame 118" x="0" y="26" width="303" height="32">
+          <frame id="12:43499" name="Frame 116" x="0" y="0" width="140" height="32">
+            <frame id="12:43500" name="logos:google-icon" x="8" y="8" width="16" height="16" />
+            <text id="12:43505" name="Sign up with Google" x="32" y="9.5" width="97" height="13" />
+          </frame>
+          <frame id="12:43506" name="Frame 117" x="163" y="0" width="140" height="32">
+            <frame id="12:43507" name="logos:apple" x="8" y="6.5" width="16" height="19" />
+            <text id="12:43509" name="Sign up with Google" x="32" y="9.5" width="97" height="13" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:43510" name="FOOTER" x="0" y="750" width="375" height="426" />
+    <instance id="12:43511" name="Component 18" x="0" y="48" width="375" height="48" />
+  </frame>
+  <frame id="12:43512" name="sign up" x="13737" y="21196" width="375" height="1072">
+    <rounded-rectangle id="12:43513" name="Rectangle 2" x="336" y="470" width="14" height="16" />
+    <instance id="12:43514" name="status-bar" x="0" y="0" width="375" height="48" />
+    <frame id="12:43515" name="Frame 114" x="13" y="128" width="350" height="88">
+      <text id="12:43516" name="Get Started with Ecommet" x="0" y="0" width="350" height="30" />
+      <text id="12:43517" name="Set up your account in just a few steps and start building your online store." x="0" y="38" width="350" height="50" />
+    </frame>
+    <frame id="12:43518" name="Frame 113" x="16" y="240" width="343" height="339">
+      <frame id="12:43519" name="Frame 120" x="16" y="28" width="311" height="137">
+        <text id="12:43520" name="Name" x="0" y="0" width="54" height="25" />
+        <frame id="12:43521" name="email" x="0" y="41" width="311" height="40">
+          <frame id="12:43522" name="Frame 108" x="16" y="7.5" width="49.812767028808594" height="25">
+            <text id="12:43523" name="Name" x="0" y="0" width="37" height="25" />
+            <text id="12:43524" name="*" x="39" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+        <frame id="12:43525" name="pass" x="0" y="97" width="311" height="40">
+          <frame id="12:43526" name="Frame 108" x="16" y="7.5" width="76.8127670288086" height="25">
+            <text id="12:43527" name="Name" x="0" y="0" width="64" height="25" />
+            <text id="12:43528" name="*" x="66" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+      </frame>
+      <instance id="12:43529" name="btn" x="16" y="189" width="311" height="40" />
+      <frame id="12:43530" name="Frame 149" x="20" y="253" width="303" height="58">
+        <frame id="12:43531" name="Frame 115" x="0" y="0" width="303" height="18">
+          <line id="12:43532" name="Line 2" x="4" y="9" width="94" height="0" />
+          <text id="12:43533" name="or with" x="128" y="0" width="47" height="18" />
+          <line id="12:43534" name="Line 1" x="205" y="9" width="94" height="0" />
+        </frame>
+        <frame id="12:43535" name="Frame 118" x="0" y="26" width="303" height="32">
+          <frame id="12:43536" name="Frame 116" x="0" y="0" width="140" height="32">
+            <frame id="12:43537" name="logos:google-icon" x="8" y="8" width="16" height="16" />
+            <text id="12:43542" name="Sign up with Google" x="32" y="9.5" width="97" height="13" />
+          </frame>
+          <frame id="12:43543" name="Frame 117" x="163" y="0" width="140" height="32">
+            <frame id="12:43544" name="logos:apple" x="8" y="6.5" width="16" height="19" />
+            <text id="12:43546" name="Sign up with Google" x="32" y="9.5" width="97" height="13" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:43547" name="FOOTER" x="0" y="646" width="375" height="426" />
+    <instance id="12:43548" name="Component 18" x="0" y="48" width="375" height="48" />
+  </frame>
+  <frame id="12:43549" name="loading" x="11600" y="22591" width="375" height="1213">
+    <instance id="12:43550" name="status-bar" x="0" y="0" width="375" height="48" />
+    <instance id="12:43551" name="Frame" x="150" y="160" width="76" height="76" />
+    <text id="12:43552" name="Preparing your plan ..." x="89" y="271" width="198" height="25" />
+    <frame id="12:43553" name="Frame 135" x="32" y="331" width="218" height="338">
+      <frame id="12:43554" name="Frame 133" x="0" y="0" width="218" height="177">
+        <text id="12:43555" name="Currency" x="0" y="0" width="218" height="25" />
+        <frame id="12:43556" name="Frame 132" x="9" y="49" width="200" height="128">
+          <frame id="12:43557" name="Frame 129" x="0" y="0" width="200" height="32">
+            <instance id="12:43558" name="Component 13" x="0" y="0" width="32" height="32" />
+            <text id="12:43559" name="SAR (Saudi Riyal)" x="48" y="6" width="152" height="20" />
+          </frame>
+          <frame id="12:43560" name="Frame 130" x="0" y="48" width="200" height="32">
+            <instance id="12:43561" name="Component 13" x="1" y="0" width="32" height="32" />
+            <text id="12:43562" name="USD (US Dollar)" x="49" y="6" width="150" height="20" />
+          </frame>
+          <frame id="12:43563" name="Frame 131" x="0" y="96" width="200" height="32">
+            <instance id="12:43564" name="Component 13" x="1" y="0" width="32" height="32" />
+            <text id="12:43565" name="EUR (Euro)" x="49" y="6" width="150" height="20" />
+          </frame>
+        </frame>
+      </frame>
+      <frame id="12:43566" name="Frame 134" x="10" y="209" width="198" height="129">
+        <text id="12:43567" name="Language" x="0" y="0" width="198" height="25" />
+        <frame id="12:43568" name="Frame 132" x="0" y="49" width="198" height="80">
+          <frame id="12:43569" name="Frame 129" x="0" y="0" width="198" height="32">
+            <instance id="12:43570" name="Component 13" x="0" y="0" width="32" height="32" />
+            <text id="12:43571" name="English" x="48" y="6" width="150" height="20" />
+          </frame>
+          <frame id="12:43572" name="Frame 130" x="0" y="48" width="198" height="32">
+            <instance id="12:43573" name="Component 13" x="0" y="0" width="32" height="32" />
+            <text id="12:43574" name="العربية" x="48" y="0" width="41" height="20" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:43575" name="Component 18" x="0" y="48" width="375" height="48" />
+    <instance id="12:43576" name="FOOTER" x="0" y="787" width="375" height="426" />
+  </frame>
+  <frame id="12:43577" name="Component 16" x="4558" y="18330" width="154" height="196">
+    <symbol id="12:43578" name="Property 1=Unselected" x="16" y="16" width="70" height="40" />
+    <symbol id="12:43580" name="Property 1=mobile" x="16" y="140" width="70" height="40" />
+    <symbol id="12:43582" name="Property 1=Selected" x="16" y="78" width="70" height="40" />
+  </frame>
+  <frame id="12:43584" name="templates" x="9177" y="17806" width="375" height="1401">
+    <instance id="12:43585" name="status-bar" x="0" y="0" width="375" height="48" />
+    <frame id="12:43586" name="Categories" x="16" y="112" width="359" height="40">
+      <instance id="12:43587" name="btn" x="0" y="0" width="70" height="40" />
+      <frame id="12:43588" name="For scrolling" x="78" y="0" width="681" height="40">
+        <instance id="12:43589" name="Component 16" x="0" y="0" width="154" height="40" />
+        <instance id="12:43590" name="Component 16" x="162" y="0" width="136" height="40" />
+        <instance id="12:43591" name="Component 11" x="306" y="0" width="133" height="40" />
+        <instance id="12:43592" name="Component 12" x="447" y="0" width="144" height="40" />
+        <instance id="12:43593" name="Component 16" x="599" y="0" width="136" height="40" />
+        <instance id="12:43594" name="Component 13" x="743" y="0" width="143" height="40" />
+        <instance id="12:43595" name="Component 16" x="894" y="0" width="110" height="40" />
+        <instance id="12:43596" name="Component 16" x="1012" y="0" width="103" height="40" />
+      </frame>
+    </frame>
+    <frame id="12:43597" name="Cards" x="0" y="176" width="375" height="724">
+      <instance id="12:43598" name="Card" x="19.5" y="0" width="160" height="132" />
+      <instance id="12:43599" name="Card" x="195.5" y="0" width="160" height="132" />
+      <instance id="12:43600" name="Card" x="19.5" y="148" width="160" height="132" />
+      <instance id="12:43601" name="Card" x="195.5" y="148" width="160" height="132" />
+      <instance id="12:43602" name="Card" x="19.5" y="296" width="160" height="132" />
+      <instance id="12:43603" name="Card" x="195.5" y="296" width="160" height="132" />
+      <instance id="12:43604" name="Card" x="19.5" y="444" width="160" height="132" />
+      <instance id="12:43605" name="Card" x="195.5" y="444" width="160" height="132" />
+      <instance id="12:43606" name="Card" x="19.5" y="592" width="160" height="132" />
+      <instance id="12:43607" name="Card" x="195.5" y="592" width="160" height="132" />
+    </frame>
+    <instance id="12:43608" name="FOOTER" x="0" y="975" width="375" height="426" />
+    <instance id="12:43609" name="Component 18" x="0" y="48" width="375" height="48" />
+  </frame>
+  <frame id="12:43610" name="Mobile" x="3166" y="17983" width="298" height="175">
+    <symbol id="12:43611" name="Mobileee=lifetime" x="16" y="127" width="266" height="32" />
+    <symbol id="12:43618" name="Mobileee=year" x="16" y="71" width="266" height="32" />
+    <symbol id="12:43625" name="Mobileee=month" x="16" y="16" width="266" height="32" />
+  </frame>
+  <frame id="12:43632" name="contact us" x="16661" y="17806" width="375" height="1370">
+    <rounded-rectangle id="12:43633" name="Rectangle 2" x="294" y="604.1505737304688" width="8" height="8.174224853515625" />
+    <instance id="12:43634" name="status-bar" x="0" y="0" width="375" height="48" />
+    <frame id="12:43635" name="Frame 114" x="16" y="128" width="343" height="77">
+      <text id="12:43636" name="Contact Us" x="0" y="0" width="343" height="30" />
+      <text id="12:43637" name="Have a question or need assistance? Our team is ready to help." x="0" y="38" width="343" height="39" />
+    </frame>
+    <frame id="12:43638" name="Frame 113" x="16" y="529" width="343" height="376">
+      <frame id="12:43639" name="Frame 120" x="16" y="24" width="311" height="272">
+        <frame id="12:43640" name="name" x="0" y="0" width="311" height="40">
+          <frame id="12:43641" name="Frame 107" x="16" y="7.5" width="49.812767028808594" height="25">
+            <text id="12:43642" name="Name" x="0" y="0" width="37" height="25" />
+            <text id="12:43643" name="*" x="39" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+        <frame id="12:43644" name="email" x="0" y="56" width="311" height="40">
+          <frame id="12:43645" name="Frame 108" x="16" y="7.5" width="48.812767028808594" height="25">
+            <text id="12:43646" name="Name" x="0" y="0" width="36" height="25" />
+            <text id="12:43647" name="*" x="38" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+        <frame id="12:43648" name="pass" x="0" y="112" width="311" height="40">
+          <frame id="12:43649" name="Frame 108" x="16" y="7.5" width="63.812767028808594" height="25">
+            <text id="12:43650" name="Name" x="0" y="0" width="51" height="25" />
+            <text id="12:43651" name="*" x="53" y="2.875" width="10.812766075134277" height="19.25" />
+          </frame>
+        </frame>
+        <frame id="12:43652" name="confirm pass" x="0" y="168" width="311" height="104">
+          <frame id="12:43653" name="Frame 108" x="16" y="7.5" width="59" height="25">
+            <text id="12:43654" name="Name" x="0" y="0" width="59" height="25" />
+          </frame>
+        </frame>
+      </frame>
+      <instance id="12:43655" name="btn" x="16" y="320" width="311" height="40" />
+    </frame>
+    <instance id="12:43656" name="FOOTER" x="0" y="944" width="375" height="426" />
+    <frame id="12:43657" name="Frame 73" x="59" y="237" width="257" height="252">
+      <frame id="12:43658" name="Frame 70" x="0" y="0" width="257" height="68">
+        <frame id="12:43659" name="Frame 152" x="108.5" y="0" width="40" height="40">
+          <instance id="12:43660" name="vuesax/linear/location" x="8" y="8" width="24" height="24" />
+        </frame>
+        <text id="12:43661" name="Sector - 11, Uttara, Dhaka" x="16" y="48" width="225" height="20" />
+      </frame>
+      <frame id="12:43662" name="Frame 71" x="0" y="92" width="257" height="68">
+        <frame id="12:43663" name="Frame 153" x="108.5" y="0" width="40" height="40">
+          <instance id="12:43664" name="vuesax/linear/call" x="8" y="8" width="24" height="24" />
+        </frame>
+        <text id="12:43665" name="01300000000" x="16" y="48" width="225" height="20" />
+      </frame>
+      <frame id="12:43666" name="Frame 72" x="0" y="184" width="257" height="68">
+        <frame id="12:43667" name="Frame 154" x="108.5" y="0" width="40" height="40">
+          <instance id="12:43668" name="vuesax/linear/sms" x="8" y="8" width="24" height="24" />
+        </frame>
+        <text id="12:43669" name="contact@example.com" x="16" y="48" width="225" height="20" />
+      </frame>
+    </frame>
+    <instance id="12:43670" name="Component 18" x="0" y="48" width="375" height="48" />
+  </frame>
+  <frame id="12:43671" name="about" x="18704" y="17806" width="375" height="1182">
+    <instance id="12:43672" name="status-bar" x="0" y="0" width="375" height="48" />
+    <instance id="12:43673" name="FOOTER" x="0" y="756" width="375" height="426" />
+    <frame id="12:43674" name="Frame 106" x="16" y="120" width="343" height="263">
+      <text id="12:43675" name="Ecommet is a smart eCommerce platform built to support businesses in Saudi Arabia and the MENA region. " x="0" y="0" width="343" height="59" />
+      <text id="12:43676" name="We help entrepreneurs launch professional online stores using ready-made, customizable templates without technical complexity.  Our platform offers secure payments, flexible subscriptions, and tools designed to grow with your business.  With Ecommet, you can start selling online confidently and focus on what matters most — growing your brand." x="0" y="83" width="343" height="180" />
+    </frame>
+    <frame id="12:43677" name="Group 8" x="16" y="423" width="342.9997863769531" height="294.4025573730469">
+      <ellipse id="12:43678" name="Ellipse 1" x="37.12984848022461" y="442.01646423339844" width="267.638671875" height="267.638671875" />
+      <ellipse id="12:43679" name="Ellipse 2" x="261.8048858642578" y="493.4312057495117" width="97.1950912475586" height="97.1950912475586" />
+      <ellipse id="12:43680" name="Ellipse 3" x="258.98793029785156" y="422.99999999999994" width="38.032867431640625" height="38.032867431640625" />
+      <rounded-rectangle id="12:43681" name="70626 1" x="16.000059141777456" y="423.0000000000002" width="328.409423828125" height="294.4025573730469" />
+    </frame>
+    <instance id="12:43682" name="Component 18" x="0" y="48" width="375" height="48" />
+  </frame>
+  <frame id="12:43683" name="terms" x="21004" y="17806" width="375" height="1473">
+    <instance id="12:43684" name="status-bar" x="0" y="0" width="375" height="48" />
+    <instance id="12:43685" name="FOOTER" x="0" y="1047" width="375" height="426" />
+    <frame id="12:43686" name="Frame 105" x="16" y="120" width="343" height="885">
+      <text id="12:43687" name="Terms &amp; Conditions" x="0" y="0" width="343" height="25" />
+      <frame id="12:43688" name="Frame 156" x="0" y="57" width="343" height="828">
+        <text id="12:43689" name="Welcome to our website! By accessing and using our services, you agree to comply with the following terms and conditions. Please read them carefully before proceeding." x="0" y="0" width="343" height="80" />
+        <frame id="12:43690" name="Frame 155" x="0" y="104" width="343" height="724">
+          <text id="12:43691" name="Acceptance of Terms By using this website, you agree to be bound by these terms. If you do not agree, please refrain from using our services." x="0" y="0" width="343" height="72" />
+          <text id="12:43692" name="Account Responsibility You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account." x="0" y="88" width="343" height="72" />
+          <text id="12:43693" name="Service Availability We strive to provide uninterrupted service, but we do not guarantee that the website will always be available or free from errors." x="0" y="176" width="343" height="72" />
+          <text id="12:43694" name="Intellectual Property All content on this site, including text, images, logos, and designs, is protected by intellectual property laws. You may not use any content without permission." x="0" y="264" width="343" height="90" />
+          <text id="12:43695" name="Payment Terms Payments for services are processed securely. You agree to pay all fees associated with your purchases as indicated during checkout." x="0" y="370" width="343" height="72" />
+          <text id="12:43696" name="Limitation of Liability We are not responsible for any loss, damage, or injury caused by the use of our services or website." x="0" y="458" width="343" height="72" />
+          <text id="12:43697" name="Modifications We reserve the right to modify these terms at any time. Any changes will be posted on this page, and your continued use of the website signifies acceptance of those changes." x="0" y="546" width="343" height="90" />
+          <text id="12:43698" name="Governing Law These terms will be governed by the laws of [Your Country], and any disputes will be resolved in the courts of [Your Country]." x="0" y="652" width="343" height="72" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="12:43699" name="Component 18" x="0" y="48" width="375" height="48" />
+  </frame>
+  <frame id="12:43700" name="faqs" x="23149" y="17806" width="375" height="1038">
+    <instance id="12:43701" name="status-bar" x="0" y="0" width="375" height="48" />
+    <instance id="12:43702" name="Frame 137" x="0" y="48" width="375" height="48" />
+    <instance id="12:43703" name="FOOTER" x="0" y="612" width="375" height="426" />
+    <frame id="12:43704" name="FAQ List" x="0" y="96" width="375" height="484">
+      <instance id="12:43705" name="FAQ&#39;s Component" x="16" y="24" width="343" height="116" />
+      <frame id="12:43706" name="Frame 157" x="16" y="172" width="343" height="288">
+        <frame id="12:43707" name="FAQ&#39;s Component" x="0" y="0" width="343" height="20">
+          <frame id="12:43708" name="Container" x="0" y="0" width="343" height="20">
+            <text id="12:43709" name="Question" x="0" y="1" width="315" height="18" />
+            <instance id="12:43710" name="vuesax/linear/arrow-down" x="343" y="20" width="20" height="20" />
+          </frame>
+          <text id="12:43711" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:43712" name="FAQ&#39;s Component" x="0" y="36" width="343" height="36">
+          <frame id="12:43713" name="Container" x="0" y="0" width="343" height="36">
+            <text id="12:43714" name="Question" x="0" y="0" width="315" height="36" />
+            <instance id="12:43715" name="vuesax/linear/arrow-down" x="343" y="28" width="20" height="20" />
+          </frame>
+          <text id="12:43716" name="Answer" x="0" y="24" width="380" height="15" hidden="true" />
+        </frame>
+        <frame id="12:43717" name="FAQ&#39;s Component" x="0" y="88" width="343" height="20">
+          <frame id="12:43718" name="Container" x="0" y="0" width="343" height="20">
+            <text id="12:43719" name="Question" x="0" y="1" width="315" height="18" />
+            <instance id="12:43720" name="vuesax/linear/arrow-down" x="323" y="0" width="20" height="20" />
+          </frame>
+          <text id="12:43721" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:43722" name="FAQ&#39;s Component" x="0" y="124" width="343" height="20">
+          <frame id="12:43723" name="Container" x="0" y="0" width="343" height="20">
+            <text id="12:43724" name="Question" x="0" y="1" width="315" height="18" />
+            <instance id="12:43725" name="vuesax/linear/arrow-down" x="323" y="0" width="20" height="20" />
+          </frame>
+          <text id="12:43726" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:43727" name="FAQ&#39;s Component" x="0" y="160" width="343" height="20">
+          <frame id="12:43728" name="Container" x="0" y="0" width="343" height="20">
+            <text id="12:43729" name="Question" x="0" y="1" width="315" height="18" />
+            <instance id="12:43730" name="vuesax/linear/arrow-down" x="323" y="0" width="20" height="20" />
+          </frame>
+          <text id="12:43731" name="Answer" x="0" y="24" width="380" height="15" hidden="true" />
+        </frame>
+        <frame id="12:43732" name="FAQ&#39;s Component" x="0" y="196" width="343" height="20">
+          <frame id="12:43733" name="Container" x="0" y="0" width="343" height="20">
+            <text id="12:43734" name="Question" x="0" y="1" width="315" height="18" />
+            <instance id="12:43735" name="vuesax/linear/arrow-down" x="343" y="20" width="20" height="20" />
+          </frame>
+          <text id="12:43736" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:43737" name="FAQ&#39;s Component" x="0" y="232" width="343" height="20">
+          <frame id="12:43738" name="Container" x="0" y="0" width="343" height="20">
+            <text id="12:43739" name="Question" x="0" y="1" width="315" height="18" />
+            <instance id="12:43740" name="vuesax/linear/arrow-down" x="343" y="20" width="20" height="20" />
+          </frame>
+          <text id="12:43741" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+        <frame id="12:43742" name="FAQ&#39;s Component" x="0" y="268" width="343" height="20">
+          <frame id="12:43743" name="Container" x="0" y="0" width="343" height="20">
+            <text id="12:43744" name="Question" x="0" y="1" width="315" height="18" />
+            <instance id="12:43745" name="vuesax/linear/arrow-down" x="343" y="20" width="20" height="20" />
+          </frame>
+          <text id="12:43746" name="Answer" x="0" y="24" width="380" height="30" hidden="true" />
+        </frame>
+      </frame>
+    </frame>
+  </frame>
+  <frame id="12:43747" name="Component 18" x="3685" y="19604" width="407" height="370">
+    <symbol id="12:43748" name="Property 1=nav" x="16" y="16" width="375" height="48" />
+    <symbol id="12:43752" name="Property 1=hamburger" x="16" y="73" width="375" height="260" />
+  </frame>
+  <frame id="12:43764" name="Component 19" x="13570" y="19645" width="540" height="335">
+    <symbol id="12:43765" name="Property 1=Card]" x="16" y="18" width="208" height="251" />
+    <symbol id="12:43770" name="Property 1=Card]- after" x="273" y="18" width="216" height="260" />
+  </frame>
+  <frame id="12:43775" name="Frame 177" x="7068" y="0" width="8558" height="5257">
+    <rounded-rectangle id="12:43776" name="logoecommet 1" x="1369" y="1720" width="5539" height="1835" />
+  </frame>
+</canvas>IMPORTANT: After you call this tool, you MUST call get_design_context if trying to implement the design, since this tool only returns metadata. If you do not call get_design_context, the agent will not be able to implement the design.

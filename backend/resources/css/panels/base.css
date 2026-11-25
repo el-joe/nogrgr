@@ -1,0 +1,1195 @@
+/*
+ * Shared panel (admin / vendor / affiliate) styles for the x-ui::* Blade components
+ * (resources/views/components/ui). Most styling is Tailwind utilities in the
+ * components; this file holds what utilities cannot express cleanly: form-control
+ * states, third-party skins (Select2, intl-tel-input, DataTables), the shell
+ * (sidebar modes), overlays and motion. Logical properties only (RTL-safe).
+ * Motion values: docs/plan/design-specs.md §6.
+ */
+
+@layer base {
+    body.ui-panel {
+        background-color: var(--color-canvas);
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    [dir='rtl'] body {
+        line-height: 22px;
+    }
+
+    /* Shadow/Focus ring on every interactive element; never removed. */
+    :where(.ui-panel, .ui-auth) :where(a, button, summary, [tabindex]:not([tabindex='-1']), input[type='checkbox'], input[type='radio']):focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+    }
+
+    .ui-icon {
+        display: inline-block;
+        flex-shrink: 0;
+        vertical-align: middle;
+    }
+
+    [dir='rtl'] .ui-icon[data-flip] {
+        transform: scaleX(-1);
+    }
+}
+
+@layer components {
+    /* ---------- Form controls (Input / Textarea / Select / Phone / Date) ---------- */
+    .ui-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        min-height: 44px;
+        padding-inline: 12px;
+        border: 1px solid var(--color-line-strong);
+        border-radius: var(--radius-control);
+        background-color: var(--color-field);
+        color: var(--color-ink);
+        font-size: 14px;
+        line-height: 20px;
+        transition: border-color 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out;
+    }
+
+    .ui-control > input,
+    .ui-control > textarea,
+    input.ui-control,
+    textarea.ui-control {
+        min-width: 0;
+        flex: 1 1 auto;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        outline: none;
+    }
+
+    input.ui-control,
+    textarea.ui-control {
+        border: 1px solid var(--color-line-strong);
+        background-color: var(--color-field);
+    }
+
+    textarea.ui-control {
+        display: block;
+        min-height: 112px;
+        padding: 10px 12px;
+        resize: vertical;
+    }
+
+    .ui-control ::placeholder,
+    .ui-control::placeholder {
+        color: var(--color-ink-muted);
+        opacity: 1;
+    }
+
+    .ui-control:focus-within,
+    .ui-control:focus {
+        outline: none;
+        border-color: var(--color-focus);
+        box-shadow: inset 0 0 0 0.5px var(--color-focus), var(--shadow-focus);
+    }
+
+    .ui-control:has([aria-invalid='true']),
+    .ui-control[aria-invalid='true'] {
+        border-color: var(--color-danger);
+        box-shadow: inset 0 0 0 0.5px var(--color-danger);
+    }
+
+    .ui-control:has([aria-invalid='true']):focus-within,
+    .ui-control[aria-invalid='true']:focus {
+        box-shadow: inset 0 0 0 0.5px var(--color-danger), 0 0 0 3px rgb(220 38 38 / 0.18);
+    }
+
+    .ui-control:has(:disabled),
+    .ui-control:disabled {
+        background-color: var(--color-field-disabled);
+        color: var(--color-ink-muted);
+        cursor: not-allowed;
+    }
+
+    .ui-control :disabled {
+        cursor: not-allowed;
+    }
+
+    /* Error replaces the helper text (Figma Input / Error). */
+    [data-field]:has(.ui-error:not([hidden])) .ui-helper {
+        display: none;
+    }
+
+    /* ---------- Checkbox / Radio / Switch ---------- */
+    .ui-check {
+        appearance: none;
+        display: inline-grid;
+        place-content: center;
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid var(--color-line-strong);
+        background-color: var(--color-field);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 120ms ease-out, border-color 120ms ease-out;
+    }
+
+    .ui-check::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        background-color: var(--color-on-primary);
+        clip-path: polygon(14% 52%, 0 66%, 38% 100%, 100% 22%, 86% 8%, 38% 72%);
+        transform: scale(0);
+        transition: transform 120ms ease-out;
+    }
+
+    .ui-check:checked,
+    .ui-check:indeterminate {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary);
+    }
+
+    .ui-check:checked::before {
+        transform: scale(1);
+    }
+
+    .ui-check:indeterminate::before {
+        height: 2px;
+        clip-path: none;
+        border-radius: 2px;
+        transform: scale(1);
+    }
+
+    .ui-check[type='radio'] {
+        border-radius: 999px;
+    }
+
+    .ui-check[type='radio']::before {
+        display: none;
+    }
+
+    .ui-check[type='radio']:checked {
+        background-color: var(--color-field);
+        border: 5px solid var(--color-primary);
+    }
+
+    .ui-check:disabled {
+        background-color: var(--color-muted);
+        border-color: var(--color-line-strong);
+        cursor: not-allowed;
+    }
+
+    .ui-check[aria-invalid='true'] {
+        border-color: var(--color-danger);
+    }
+
+    .ui-switch {
+        appearance: none;
+        position: relative;
+        flex-shrink: 0;
+        width: 36px;
+        height: 20px;
+        border-radius: 999px;
+        background-color: var(--color-line-strong);
+        cursor: pointer;
+        transition: background-color 160ms ease-out;
+    }
+
+    .ui-switch::before {
+        content: '';
+        position: absolute;
+        inset-block-start: 2px;
+        inset-inline-start: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+        transition: transform 160ms var(--ease-out-soft);
+    }
+
+    .ui-switch:checked {
+        background-color: var(--color-primary);
+    }
+
+    .ui-switch:checked::before {
+        transform: translateX(16px);
+    }
+
+    [dir='rtl'] .ui-switch:checked::before {
+        transform: translateX(-16px);
+    }
+
+    .ui-switch:disabled {
+        background-color: var(--color-muted);
+        cursor: not-allowed;
+    }
+
+    .ui-switch:disabled::before {
+        box-shadow: none;
+        opacity: 0.7;
+    }
+
+    /* Read-only switch visual (menu items such as "Dark mode"). */
+    .ui-switch-visual {
+        position: relative;
+        width: 32px;
+        height: 18px;
+        flex-shrink: 0;
+        border-radius: 999px;
+        background-color: var(--color-line-strong);
+        transition: background-color 160ms ease-out;
+    }
+
+    .ui-switch-visual::before {
+        content: '';
+        position: absolute;
+        inset-block-start: 2px;
+        inset-inline-start: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        background-color: #fff;
+        transition: transform 160ms var(--ease-out-soft);
+    }
+
+    [aria-checked='true'] > .ui-switch-visual,
+    [aria-pressed='true'] > .ui-switch-visual {
+        background-color: var(--color-primary);
+    }
+
+    [aria-checked='true'] > .ui-switch-visual::before,
+    [aria-pressed='true'] > .ui-switch-visual::before {
+        transform: translateX(14px);
+    }
+
+    [dir='rtl'] [aria-checked='true'] > .ui-switch-visual::before,
+    [dir='rtl'] [aria-pressed='true'] > .ui-switch-visual::before {
+        transform: translateX(-14px);
+    }
+
+    /* ---------- Buttons ---------- */
+    .ui-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        white-space: nowrap;
+        font-weight: 500;
+        border: 1px solid transparent;
+        border-radius: var(--radius-control);
+        transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .ui-btn:disabled,
+    .ui-btn[aria-disabled='true'] {
+        cursor: not-allowed;
+    }
+
+    .ui-btn[data-loading] {
+        pointer-events: none;
+    }
+
+    .ui-btn-square {
+        padding: 0;
+    }
+
+    .ui-btn-primary {
+        background-color: var(--color-primary);
+        color: var(--color-on-primary);
+    }
+
+    .ui-btn-primary:hover {
+        background-color: var(--color-primary-hover);
+    }
+
+    .ui-btn-primary:active {
+        background-color: var(--color-primary-pressed);
+    }
+
+    .ui-btn-secondary {
+        background-color: var(--color-surface);
+        border-color: var(--color-line-strong);
+        color: var(--color-ink);
+    }
+
+    .ui-btn-secondary:hover {
+        background-color: var(--color-subtle);
+    }
+
+    .ui-btn-ghost {
+        background-color: transparent;
+        color: var(--color-ink-brand);
+    }
+
+    .ui-btn-ghost:hover {
+        background-color: var(--color-primary-subtle);
+    }
+
+    .ui-btn-ghost.ui-btn-square {
+        color: var(--color-ink-secondary);
+    }
+
+    .ui-btn-ghost.ui-btn-square:hover {
+        background-color: var(--color-subtle);
+        color: var(--color-ink);
+    }
+
+    .ui-btn-danger {
+        background-color: var(--color-danger);
+        color: #fff;
+    }
+
+    .ui-btn-danger:hover {
+        background-color: var(--color-danger-hover);
+        filter: brightness(0.94);
+    }
+
+    .ui-btn:disabled,
+    .ui-btn[aria-disabled='true'] {
+        background-color: var(--color-muted);
+        border-color: transparent;
+        color: var(--color-ink-muted);
+        filter: none;
+    }
+
+    .ui-btn-ghost:disabled {
+        background-color: transparent;
+    }
+
+    .ui-btn .ui-spinner {
+        display: none;
+    }
+
+    .ui-btn[data-loading] .ui-spinner {
+        display: inline-block;
+    }
+
+    .ui-btn[data-loading] .ui-btn-icon,
+    .ui-btn[data-loading] .ui-btn-label {
+        display: none;
+    }
+
+    .ui-btn[data-loading] .ui-btn-loading {
+        display: inline;
+    }
+
+    .ui-btn-loading {
+        display: none;
+    }
+
+    .ui-spinner {
+        animation: ui-spin 0.8s linear infinite;
+    }
+
+    @keyframes ui-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* ---------- Skeleton ---------- */
+    .ui-skeleton {
+        position: relative;
+        overflow: hidden;
+        border-radius: 999px;
+        background-color: var(--color-muted);
+    }
+
+    .ui-skeleton::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+        animation: ui-shimmer 1.2s linear infinite;
+    }
+
+    .dark .ui-skeleton::after {
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.06), transparent);
+    }
+
+    @keyframes ui-shimmer {
+        to {
+            transform: translateX(100%);
+        }
+    }
+
+    /* ---------- Popovers (dropdown, date picker, menus) ---------- */
+    .ui-popover {
+        position: absolute;
+        z-index: 50;
+        min-width: 200px;
+        padding: 8px;
+        border: 1px solid var(--color-line);
+        border-radius: var(--radius-control);
+        background-color: var(--color-surface);
+        box-shadow: var(--shadow-pop);
+        opacity: 0;
+        transform: translateY(-4px);
+        visibility: hidden;
+        transition: opacity 100ms ease-out, transform 100ms ease-out, visibility 0s linear 100ms;
+    }
+
+    .ui-popover[data-open] {
+        opacity: 1;
+        transform: none;
+        visibility: visible;
+        transition: opacity 160ms var(--ease-out-soft), transform 160ms var(--ease-out-soft), visibility 0s;
+    }
+
+    .ui-menu-item {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 10px;
+        min-height: 36px;
+        padding-inline: 10px;
+        border-radius: var(--radius-chip);
+        color: var(--color-ink);
+        font-size: 14px;
+        text-align: start;
+        transition: background-color 120ms ease-out;
+    }
+
+    .ui-menu-item:hover,
+    .ui-menu-item:focus-visible,
+    .ui-menu-item[aria-current='true'] {
+        background-color: var(--color-subtle);
+        box-shadow: none;
+        outline: none;
+    }
+
+    .ui-menu-item[data-tone='danger'] {
+        color: var(--color-danger);
+    }
+
+    /* ---------- Overlays: modal / bottom sheet / drawer / confirm ---------- */
+    .ui-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        visibility: hidden;
+        transition: visibility 0s linear 150ms;
+    }
+
+    .ui-overlay[data-open] {
+        visibility: visible;
+        transition: visibility 0s;
+    }
+
+    .ui-overlay-scrim {
+        position: absolute;
+        inset: 0;
+        background-color: rgb(17 13 12 / 0.48);
+        opacity: 0;
+        transition: opacity 150ms ease-out;
+    }
+
+    .ui-overlay[data-open] .ui-overlay-scrim {
+        opacity: 1;
+        transition-duration: 200ms;
+    }
+
+    .ui-overlay-panel {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-height: calc(100vh - 32px);
+        border-radius: var(--radius-card);
+        background-color: var(--color-surface);
+        box-shadow: var(--shadow-overlay);
+        opacity: 0;
+        transform: scale(0.98);
+        transition: opacity 150ms ease-out, transform 150ms ease-out;
+    }
+
+    .ui-overlay[data-open] .ui-overlay-panel {
+        opacity: 1;
+        transform: none;
+        transition-duration: 200ms;
+    }
+
+    .ui-sheet-grabber {
+        display: none;
+    }
+
+    /* < 640px the modal becomes a bottom sheet. */
+    @media (max-width: 639.98px) {
+        .ui-overlay[data-sheet] {
+            align-items: flex-end;
+            padding: 0;
+        }
+
+        .ui-overlay[data-sheet] .ui-overlay-panel {
+            max-width: none !important;
+            max-height: 90vh;
+            border-end-start-radius: 0;
+            border-end-end-radius: 0;
+            padding-block-end: 28px;
+            padding-block-end: max(28px, env(safe-area-inset-bottom));
+            opacity: 1;
+            transform: translateY(100%);
+            transition: transform 280ms var(--ease-sheet);
+        }
+
+        .ui-overlay[data-sheet][data-open] .ui-overlay-panel {
+            transform: translateY(var(--sheet-drag, 0px));
+        }
+
+        .ui-overlay[data-sheet] .ui-sheet-grabber {
+            display: block;
+        }
+
+        .ui-overlay[data-sheet] .ui-modal-footer {
+            flex-direction: column-reverse;
+            align-items: stretch;
+            background: transparent !important;
+            border-top: 0 !important;
+        }
+
+        .ui-overlay[data-sheet] .ui-modal-footer > * {
+            width: 100%;
+        }
+    }
+
+    .ui-overlay[data-drawer] {
+        justify-content: flex-end;
+        align-items: stretch;
+        padding: 0;
+    }
+
+    .ui-overlay[data-drawer] .ui-overlay-panel {
+        max-height: none;
+        height: 100%;
+        border-radius: 0;
+        opacity: 1;
+        transform: translateX(100%);
+        transition: transform 240ms var(--ease-out-soft);
+    }
+
+    [dir='rtl'] .ui-overlay[data-drawer] .ui-overlay-panel {
+        transform: translateX(-100%);
+    }
+
+    .ui-overlay[data-drawer][data-open] .ui-overlay-panel {
+        transform: none;
+    }
+
+    /* ---------- Bell badge pulse ---------- */
+    .ui-pulse {
+        animation: ui-pulse 400ms ease-out 1;
+    }
+
+    @keyframes ui-pulse {
+        50% {
+            transform: scale(1.15);
+        }
+    }
+
+    /* ---------- Locale panes ---------- */
+    [data-locale-pane][dir='rtl'] {
+        font-family: var(--nog-font-arabic);
+    }
+
+    [data-locale-pane][dir='ltr'] {
+        font-family: var(--nog-font-latin);
+    }
+
+    /* ---------- Reduced motion: ≤ 80ms fades only ---------- */
+    @media (prefers-reduced-motion: reduce) {
+        .ui-panel *,
+        .ui-panel *::before,
+        .ui-panel *::after,
+        .ui-auth *,
+        .ui-auth *::before,
+        .ui-auth *::after {
+            animation-duration: 1ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 80ms !important;
+            transition-delay: 0s !important;
+        }
+
+        .ui-skeleton::after {
+            display: none;
+        }
+
+        .ui-overlay-panel,
+        .ui-popover {
+            transform: none !important;
+        }
+    }
+}
+
+@layer components {
+    /* Filters bar: quick filters are 40h (Figma 33:10628). */
+    .ui-filters .ui-control {
+        min-height: 40px;
+    }
+
+    .ui-filters .select2-container .select2-selection--single,
+    .ui-filters .select2-container .select2-selection--multiple {
+        min-height: 40px;
+    }
+
+    .ui-filters [data-field] {
+        min-width: 160px;
+    }
+}
+
+/*
+ * Shell modes are unlayered on purpose: they must beat the utility classes the
+ * sidebar markup uses (display, width, padding) when the sidebar collapses.
+ */
+/* ---------- Shell: sidebar modes (resources/js/panels/ui/sidebar.js) ---------- */
+.ui-sidebar {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    width: 264px;
+    background-color: var(--color-sidebar);
+    color: var(--color-sidebar-ink);
+    border-inline-end: 1px solid var(--color-sidebar-line);
+    transition: width 200ms var(--ease-out-soft), transform 240ms var(--ease-out-soft);
+}
+
+.ui-shell-main {
+    margin-inline-start: 264px;
+    min-height: 100vh;
+    min-width: 0;
+    /* Closed popovers / wide tables must never widen the page (no horizontal scroll at 375). */
+    overflow-x: clip;
+    transition: margin 200ms var(--ease-out-soft);
+}
+
+.ui-sidebar-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 39;
+    background-color: rgb(17 13 12 / 0.48);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 200ms ease-out, visibility 0s linear 200ms;
+}
+
+html[data-sidebar-mode='overlay'] .ui-sidebar-scrim,
+html[data-sidebar-mode='drawer-open'] .ui-sidebar-scrim {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 200ms ease-out;
+}
+
+/* Collapsed: icon-only 76 (default 1024–1279, remembered on ≥ 1280). */
+html[data-sidebar-mode='collapsed'] .ui-sidebar {
+    width: 76px;
+}
+
+html[data-sidebar-mode='collapsed'] .ui-shell-main,
+html[data-sidebar-mode='overlay'] .ui-shell-main {
+    margin-inline-start: 76px;
+}
+
+html[data-sidebar-mode='collapsed'] .ui-sidebar :where(.ui-nav-label, .ui-nav-count, .ui-nav-chevron, .ui-nav-section-label, .ui-sidebar-wordmark, .ui-sidebar-user-text) {
+    display: none;
+}
+
+html[data-sidebar-mode='collapsed'] .ui-sidebar .ui-nav-section-divider {
+    display: block;
+}
+
+html[data-sidebar-mode='collapsed'] .ui-sidebar .ui-nav-link:not(.ui-nav-children *) {
+    justify-content: center;
+    width: 44px;
+    padding-inline: 0;
+    margin-inline: auto;
+}
+
+html[data-sidebar-mode='collapsed'] .ui-sidebar .ui-nav-dot {
+    display: block;
+}
+
+html[data-sidebar-mode='collapsed'] .ui-sidebar .ui-nav-children:not([data-flyout]) {
+    display: none;
+}
+
+html[data-sidebar-mode='collapsed'] .ui-sidebar .ui-sidebar-head,
+html[data-sidebar-mode='collapsed'] .ui-sidebar .ui-sidebar-foot {
+    justify-content: center;
+    padding-inline: 0;
+}
+
+html[data-sidebar-mode='collapsed'] .ui-sidebar .ui-sidebar-collapse {
+    transform: scaleX(-1);
+}
+
+/* The chevron icon itself is mirrored in RTL (data-flip); only the collapsed state turns it. */
+
+/* Flyout of a group while collapsed (positioned by JS). */
+.ui-nav-children[data-flyout] {
+    position: fixed;
+    z-index: 45;
+    display: block;
+    width: 220px;
+    padding: 8px;
+    border-radius: var(--radius-control);
+    background-color: var(--color-sidebar);
+    box-shadow: var(--shadow-pop);
+}
+
+.ui-nav-children[data-flyout] .ui-nav-link {
+    padding-inline-start: 16px;
+}
+
+/* Drawer < 1024: off-canvas 288 with scrim. */
+@media (max-width: 1023.98px) {
+    .ui-sidebar {
+        width: 288px;
+        transform: translateX(-100%);
+    }
+
+    [dir='rtl'] .ui-sidebar {
+        transform: translateX(100%);
+    }
+
+    html[data-sidebar-mode='drawer-open'] .ui-sidebar {
+        transform: none;
+    }
+
+    .ui-shell-main,
+    html[data-sidebar-mode] .ui-shell-main {
+        margin-inline-start: 0;
+    }
+}
+
+/* No-JS default for 1024–1279: collapsed. */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+    html:not([data-sidebar-mode]) .ui-sidebar {
+        width: 76px;
+    }
+
+    html:not([data-sidebar-mode]) .ui-shell-main {
+        margin-inline-start: 76px;
+    }
+}
+
+html[data-sidebar-mode-ready='false'] :where(.ui-sidebar, .ui-shell-main) {
+    transition: none;
+}
+
+.ui-nav-children {
+    display: grid;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.ui-nav-group:not([data-open]) > .ui-nav-children:not([data-flyout]) {
+    display: none;
+}
+
+.ui-nav-group[data-open] > .ui-nav-link .ui-nav-chevron {
+    transform: rotate(180deg);
+}
+
+.ui-nav-chevron {
+    transition: transform 180ms ease-out;
+}
+
+.ui-sidebar-nav {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-sidebar-hover) transparent;
+}
+
+
+/*
+ * Third-party skins (Select2, intl-tel-input, DataTables) are unlayered and
+ * prefixed with :root so they beat the vendors' own unlayered stylesheets.
+ */
+/* ---------- Select2 skin (Figma Select 27:10284) ---------- */
+:root .select2-container {
+    width: 100% !important;
+    font-size: 14px;
+}
+
+:root .select2-container .select2-selection--single,
+:root .select2-container .select2-selection--multiple {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    height: auto;
+    padding-inline: 12px 36px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-control);
+    background-color: var(--color-field);
+    transition: border-color 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+:root .select2-container .select2-selection--single .select2-selection__rendered {
+    padding: 0;
+    color: var(--color-ink);
+    line-height: 20px;
+}
+
+:root .select2-container .select2-selection__placeholder {
+    color: var(--color-ink-muted);
+}
+
+:root .select2-container .select2-selection--single .select2-selection__arrow {
+    inset-block: 0;
+    inset-inline-end: 12px;
+    inset-inline-start: auto;
+    height: auto;
+    width: 16px;
+    display: grid;
+    place-items: center;
+}
+
+:root .select2-container .select2-selection__arrow b {
+    border: 0;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    position: static;
+    background-color: var(--color-ink-secondary);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: transform 160ms ease-out;
+}
+
+:root .select2-container--open .select2-selection__arrow b {
+    transform: rotate(180deg);
+}
+
+:root .select2-container--focus .select2-selection,
+:root .select2-container--open .select2-selection {
+    border-color: var(--color-focus) !important;
+    box-shadow: inset 0 0 0 0.5px var(--color-focus), var(--shadow-focus);
+    outline: none;
+}
+
+:root select[aria-invalid='true'] + .select2-container .select2-selection {
+    border-color: var(--color-danger);
+    box-shadow: inset 0 0 0 0.5px var(--color-danger);
+}
+
+:root .select2-container--disabled .select2-selection {
+    background-color: var(--color-field-disabled) !important;
+    cursor: not-allowed !important;
+}
+
+:root .select2-container--disabled .select2-selection__rendered {
+    color: var(--color-ink-muted) !important;
+}
+
+:root .select2-container .select2-selection--multiple .select2-selection__rendered {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 6px 0;
+}
+
+:root .select2-container .select2-selection--multiple .select2-selection__choice {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 2px 8px;
+    border: 0;
+    border-radius: var(--radius-chip);
+    background-color: var(--color-primary-subtle);
+    color: var(--color-ink-brand);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+:root .select2-container .select2-selection--multiple .select2-selection__choice__remove {
+    position: static;
+    border: 0;
+    padding: 0;
+    color: var(--color-ink-brand);
+    background: transparent;
+}
+
+:root .select2-container .select2-search--inline .select2-search__field {
+    margin: 0;
+    height: 24px;
+    font-family: inherit;
+    color: var(--color-ink);
+}
+
+:root .select2-dropdown {
+    padding: 8px;
+    border: 1px solid var(--color-line) !important;
+    border-radius: var(--radius-control) !important;
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-pop);
+    color: var(--color-ink);
+    margin-block-start: 4px;
+}
+
+:root .select2-container--open .select2-dropdown--above {
+    margin-block: 0 4px;
+}
+
+:root .select2-search--dropdown {
+    padding: 0 0 6px;
+}
+
+:root .select2-search--dropdown .select2-search__field {
+    height: 32px;
+    padding-inline: 10px;
+    border: 0 !important;
+    border-radius: var(--radius-chip);
+    background-color: var(--color-subtle);
+    color: var(--color-ink);
+    font-family: inherit;
+    outline: none;
+}
+
+:root .select2-results__option {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding-block: 0;
+    padding-inline: 10px;
+    border-radius: var(--radius-chip);
+    font-size: 14px;
+}
+
+:root .select2-results__option--highlighted,
+:root .select2-container .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--color-subtle) !important;
+    color: var(--color-ink) !important;
+}
+
+:root .select2-results__option--selected,
+:root .select2-container .select2-results__option--selected {
+    background-color: var(--color-primary-subtle) !important;
+    color: var(--color-ink-brand) !important;
+}
+
+:root .select2-results__option--selected::after {
+    content: '';
+    margin-inline-start: auto;
+    width: 14px;
+    height: 14px;
+    background-color: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+:root .select2-results__message {
+    color: var(--color-ink-secondary);
+}
+
+/* ---------- intl-tel-input skin (Figma Phone Input 27:10346) ---------- */
+:root .ui-phone .iti {
+    display: block;
+    width: 100%;
+    --iti-border-color: var(--color-line);
+    --iti-hover-color: var(--color-subtle);
+    --iti-icon-color: var(--color-ink-secondary);
+    --iti-country-selector-bg: transparent;
+}
+
+:root .ui-phone .iti__tel-input {
+    width: 100%;
+    height: 42px;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    outline: none;
+}
+
+:root .ui-phone .iti__selected-country {
+    gap: 4px;
+    padding-inline: 12px 8px;
+    border-inline-end: 1px solid var(--color-line);
+    margin-block: 8px;
+    height: auto;
+    border-radius: 0;
+}
+
+:root .ui-phone .iti__selected-dial-code {
+    color: var(--color-ink);
+    font-size: 14px;
+}
+
+:root .ui-phone .iti__dropdown-content {
+    padding: 8px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-control);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-pop);
+    color: var(--color-ink);
+}
+
+:root .ui-phone .iti__search-input {
+    height: 32px;
+    border: 0;
+    border-radius: var(--radius-chip);
+    background-color: var(--color-subtle);
+    color: var(--color-ink);
+    font: inherit;
+    outline: none;
+}
+
+:root .ui-phone .iti__country {
+    min-height: 36px;
+    border-radius: var(--radius-chip);
+    font-size: 14px;
+}
+
+:root .ui-phone .iti__country.iti__highlight {
+    background-color: var(--color-primary-subtle);
+}
+
+:root .ui-phone .iti__dial-code {
+    color: var(--color-ink-secondary);
+    margin-inline-start: auto;
+}
+
+/* ---------- DataTables skin (Figma Data Table 34:11868) ---------- */
+:root .ui-datatable table.dataTable {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+:root .ui-datatable table.dataTable thead th {
+    height: 44px;
+    padding: 0 16px !important;
+    background-color: var(--color-subtle);
+    color: var(--color-ink-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: start;
+    border-bottom: 1px solid var(--color-line) !important;
+    white-space: nowrap;
+}
+
+:root .ui-datatable table.dataTable thead th.dt-orderable-asc,
+:root .ui-datatable table.dataTable thead th.dt-orderable-desc {
+    cursor: pointer;
+}
+
+:root .ui-datatable table.dataTable tbody td {
+    height: 56px;
+    padding: 8px 16px !important;
+    border-top: 0 !important;
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-ink);
+    vertical-align: middle;
+}
+
+:root .ui-datatable table.dataTable tbody tr {
+    background-color: transparent !important;
+    transition: background-color 120ms ease-out;
+}
+
+:root .ui-datatable table.dataTable tbody tr:hover > * {
+    background-color: var(--color-subtle);
+    box-shadow: none !important;
+}
+
+:root .ui-datatable table.dataTable tbody tr[data-selected] > * {
+    background-color: var(--color-primary-subtle) !important;
+    box-shadow: none !important;
+}
+
+:root .ui-datatable table.dataTable :is(th, td).dt-type-numeric,
+:root .ui-datatable table.dataTable :is(th, td)[data-align='end'] {
+    text-align: end;
+}
+
+:root .ui-datatable table.dataTable > tbody > tr:last-child > td {
+    border-bottom: 0;
+}
+
+:root .ui-datatable div.dt-processing {
+    display: none !important;
+}
+
+:root .ui-datatable table.dataTable thead > tr > th span.dt-column-order {
+    inset-inline-end: 4px;
+    inset-inline-start: auto;
+}
+
+:root .ui-datatable table.dataTable td.dt-empty {
+    height: auto;
+    padding: 0 !important;
+}
+
+:root .ui-datatable[data-state='loading'] table.dataTable tbody {
+    display: none;
+}
+
+:root .ui-datatable:not([data-state='loading']) [data-dt-skeleton] {
+    display: none;
+}
+
+/* Pinned first column + horizontal scroll (md). */
+@media (max-width: 1023.98px) {
+    .ui-datatable table.dataTable :is(th, td):first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 1;
+        background-color: var(--color-surface);
+    }
+
+    .ui-datatable table.dataTable thead th:first-child {
+        background-color: var(--color-subtle);
+    }
+}
+
+/* Stacked cards (sm). */
+@media (max-width: 639.98px) {
+    .ui-datatable[data-stack] table.dataTable thead {
+        display: none;
+    }
+
+    .ui-datatable[data-stack] table.dataTable,
+    .ui-datatable[data-stack] table.dataTable tbody,
+    .ui-datatable[data-stack] table.dataTable tr,
+    .ui-datatable[data-stack] table.dataTable td {
+        display: block;
+        width: 100%;
+    }
+
+    .ui-datatable[data-stack] table.dataTable tbody tr {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--color-line);
+    }
+
+    .ui-datatable[data-stack] table.dataTable tbody td {
+        position: static;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        height: auto;
+        padding: 4px 0 !important;
+        border: 0;
+        text-align: end;
+    }
+
+    .ui-datatable[data-stack] table.dataTable tbody td::before {
+        content: attr(data-label);
+        color: var(--color-ink-secondary);
+        font-size: 13px;
+        text-align: start;
+    }
+}
+

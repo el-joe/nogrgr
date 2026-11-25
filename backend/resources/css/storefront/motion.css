@@ -1,0 +1,677 @@
+/*
+ * Storefront motion layer (docs/plan/07-motion-guidelines.md) — shared by the three
+ * families; timings and easing come from the per-family tokens
+ * (tokens/storefront-<family>.css). Figma layouts are untouched: everything here is
+ * transform / opacity on top of the designed markup. JS: resources/js/storefront/core/motion.
+ */
+
+/* ---------- Page transitions (View Transitions API, cross-document) ---------- */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root) {
+    animation: mo-vt-out var(--motion-base) var(--ease-in-out) both;
+}
+
+::view-transition-new(root) {
+    animation: mo-vt-in var(--motion-base) var(--ease-out) both;
+}
+
+::view-transition-group(*) {
+    animation-duration: var(--motion-slow);
+    animation-timing-function: var(--ease-out);
+}
+
+@keyframes mo-vt-out {
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes mo-vt-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+@layer components {
+    /* ---------- Reveal (adds fade / zoom / slide-start to shared/reveal.css) ---------- */
+    [data-reveal] {
+        transition-duration: var(--motion-slow);
+        transition-timing-function: var(--ease-out);
+    }
+
+    [data-reveal='fade-up'] {
+        transform: translateY(var(--motion-reveal-distance));
+    }
+
+    [data-reveal='zoom'] {
+        transform: scale(0.94);
+    }
+
+    [data-reveal='slide-start'] {
+        transform: translateX(calc(var(--motion-reveal-distance) * -1.5));
+    }
+
+    [dir='rtl'] [data-reveal='slide-start'] {
+        transform: translateX(calc(var(--motion-reveal-distance) * 1.5));
+    }
+
+    [data-reveal].is-revealed {
+        transform: none;
+    }
+
+    /* ---------- Focus & press ---------- */
+    .mo-press {
+        transition: transform var(--motion-fast) var(--ease-out);
+    }
+
+    .mo-press:active {
+        transform: scale(var(--motion-press));
+    }
+
+    .mo-focus:focus-visible,
+    [data-motion-root] :where(a, button, [tabindex]):focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 3px;
+        transition: outline-offset var(--motion-fast) var(--ease-out);
+    }
+
+    /* ---------- Swiper chrome ---------- */
+    /* Swiper uses overflow: clip, which does not zero a grid/flex item's automatic
+       minimum size — without this a rail inside a grid track grows with its slides. */
+    .swiper {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* Links and images inside rails must not start a native drag (mouse drag = swipe). */
+    .swiper :is(a, img),
+    .mo-marquee :is(a, img) {
+        -webkit-user-drag: none;
+        user-select: none;
+    }
+
+    .mo-rail .swiper-slide {
+        width: auto;
+    }
+
+    .mo-progress {
+        position: relative;
+        height: 3px;
+        overflow: hidden;
+        border-radius: 999px;
+        background-color: color-mix(in srgb, var(--color-ink) 12%, transparent);
+    }
+
+    .mo-progress .swiper-pagination-progressbar-fill,
+    .mo-progress-fill {
+        position: absolute;
+        inset: 0;
+        background-color: var(--color-primary);
+        transform-origin: left center;
+    }
+
+    [dir='rtl'] .mo-progress .swiper-pagination-progressbar-fill,
+    [dir='rtl'] .mo-progress-fill {
+        transform-origin: right center;
+    }
+
+    .mo-arrow {
+        transition: transform var(--motion-fast) var(--ease-out), opacity var(--motion-fast) linear;
+    }
+
+    .mo-arrow.swiper-button-disabled {
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
+    [dir='rtl'] .mo-arrow svg {
+        transform: scaleX(-1);
+    }
+
+    /* ---------- Marquee ---------- */
+    .mo-marquee {
+        overflow: hidden;
+        touch-action: pan-y;
+        cursor: grab;
+        user-select: none;
+    }
+
+    .mo-marquee[data-dragging] {
+        cursor: grabbing;
+    }
+
+    .mo-marquee-lane {
+        display: flex;
+        width: max-content;
+        will-change: transform;
+    }
+
+    .mo-marquee-lane > * {
+        display: flex;
+        flex-shrink: 0;
+    }
+
+    /* ---------- Pause control (WCAG 2.2.2) ---------- */
+    [data-motion-pause] .mo-icon-play,
+    [data-motion-pause][data-state='paused'] .mo-icon-pause {
+        display: none;
+    }
+
+    [data-motion-pause][data-state='paused'] .mo-icon-play {
+        display: inline;
+    }
+
+    /* ---------- Product card ---------- */
+    .mo-card {
+        position: relative;
+        transition: transform var(--motion-base) var(--ease-out);
+    }
+
+    .mo-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: inherit;
+        box-shadow: var(--motion-card-shadow);
+        opacity: 0;
+        transition: opacity var(--motion-base) var(--ease-out);
+        pointer-events: none;
+    }
+
+    @media (hover: hover) {
+        .mo-card:hover,
+        .mo-card:focus-within {
+            transform: translateY(var(--motion-lift));
+        }
+
+        .mo-card:hover::after,
+        .mo-card:focus-within::after {
+            opacity: 1;
+        }
+
+        .mo-card[data-hover-loaded]:hover [data-hover-image] {
+            opacity: 1;
+        }
+
+        .mo-quick-add {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity var(--motion-base) var(--ease-out), transform var(--motion-base) var(--ease-out);
+        }
+
+        .mo-card:hover .mo-quick-add,
+        .mo-card:focus-within .mo-quick-add {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .mo-card-media {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .mo-card-media [data-hover-image] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity var(--motion-slow) var(--ease-out);
+    }
+
+    /* ---------- Add to cart / favourite ---------- */
+    [data-add-to-cart] .mo-state {
+        display: none;
+    }
+
+    [data-add-to-cart]:not([data-state]) .mo-state-idle,
+    [data-add-to-cart][data-state='idle'] .mo-state-idle,
+    [data-add-to-cart][data-state='loading'] .mo-state-loading,
+    [data-add-to-cart][data-state='done'] .mo-state-done {
+        display: inline-flex;
+        animation: mo-pop var(--motion-base) var(--ease-out);
+    }
+
+    [data-add-to-cart][data-state='loading'] {
+        pointer-events: none;
+    }
+
+    .mo-spin {
+        animation: mo-spin 0.8s linear infinite;
+    }
+
+    .mo-fly-ghost {
+        position: fixed;
+        z-index: 90;
+        margin: 0;
+        object-fit: cover;
+        border-radius: 12px;
+        pointer-events: none;
+        box-shadow: 0 12px 30px rgb(0 0 0 / 0.25);
+        will-change: transform, opacity;
+    }
+
+    .mo-bump {
+        animation: mo-bump 420ms var(--ease-spring);
+    }
+
+    [data-favorite] svg {
+        transition: transform var(--motion-fast) var(--ease-out);
+    }
+
+    [data-favorite][aria-pressed='true'] .mo-heart-fill {
+        fill: currentColor;
+    }
+
+    [data-favorite].mo-burst svg {
+        animation: mo-bump 420ms var(--ease-spring);
+    }
+
+    [data-favorite] {
+        position: relative;
+    }
+
+    [data-favorite].mo-burst::after {
+        content: '';
+        position: absolute;
+        inset: -6px;
+        border-radius: 999px;
+        border: 2px solid currentColor;
+        opacity: 0;
+        animation: mo-ring 520ms var(--ease-out);
+    }
+
+    @keyframes mo-pop {
+        from {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+    }
+
+    @keyframes mo-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes mo-bump {
+        40% {
+            transform: scale(1.25);
+        }
+    }
+
+    @keyframes mo-ring {
+        0% {
+            opacity: 0.6;
+            transform: scale(0.6);
+        }
+
+        100% {
+            opacity: 0;
+            transform: scale(1.3);
+        }
+    }
+
+    /* ---------- Bottom sheet ---------- */
+    .mo-sheet {
+        position: fixed;
+        inset: 0;
+        z-index: 70;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    .mo-sheet[hidden] {
+        display: none;
+    }
+
+    .mo-sheet-scrim {
+        position: absolute;
+        inset: 0;
+        background-color: rgb(0 0 0 / 0.45);
+        opacity: 0;
+        transition: opacity var(--motion-base) var(--ease-out);
+    }
+
+    .mo-sheet[data-open] .mo-sheet-scrim {
+        opacity: 1;
+    }
+
+    .mo-sheet-panel {
+        position: relative;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-start-start-radius: 20px;
+        border-start-end-radius: 20px;
+        background-color: var(--color-surface);
+        padding-block-end: max(24px, env(safe-area-inset-bottom));
+        transform: translateY(100%);
+        transition: transform var(--motion-slow) cubic-bezier(0.32, 0.72, 0, 1);
+        overscroll-behavior: contain;
+    }
+
+    .mo-sheet[data-open] .mo-sheet-panel {
+        transform: translateY(var(--sheet-drag, 0px));
+    }
+
+    .mo-sheet-grabber {
+        display: block;
+        width: 40px;
+        height: 4px;
+        margin: 10px auto 6px;
+        border-radius: 999px;
+        background-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
+        touch-action: none;
+        cursor: grab;
+    }
+
+    [data-sheet-handle] {
+        touch-action: none;
+    }
+
+    @media (min-width: 640px) {
+        .mo-sheet:not([data-sheet-mode='always']) {
+            align-items: center;
+            padding: 24px;
+        }
+
+        .mo-sheet:not([data-sheet-mode='always']) .mo-sheet-panel {
+            max-width: 520px;
+            border-radius: 20px;
+            opacity: 0;
+            transform: translateY(16px) scale(0.98);
+            transition: transform var(--motion-base) var(--ease-out), opacity var(--motion-base) var(--ease-out);
+        }
+
+        .mo-sheet:not([data-sheet-mode='always'])[data-open] .mo-sheet-panel {
+            opacity: 1;
+            transform: translateY(var(--sheet-drag, 0px));
+        }
+
+        .mo-sheet:not([data-sheet-mode='always']) .mo-sheet-grabber {
+            display: none;
+        }
+    }
+
+    /* ---------- Swipe to remove ---------- */
+    [data-swipe-remove] {
+        position: relative;
+        overflow: hidden;
+        touch-action: pan-y;
+        transition: height var(--motion-base) var(--ease-out), opacity var(--motion-base) linear;
+    }
+
+    [data-swipe-remove] [data-swipe-content] {
+        position: relative;
+        z-index: 1;
+        transform: translateX(var(--swipe-x, 0px));
+        transition: transform var(--motion-base) var(--ease-out);
+    }
+
+    [data-swipe-remove] .mo-swipe-bg {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-inline: 24px;
+        background-color: var(--color-danger);
+        color: #fff;
+        opacity: 0;
+        transition: opacity var(--motion-fast) linear;
+    }
+
+    [data-swipe-remove][data-swiping] .mo-swipe-bg,
+    [data-swipe-remove][data-removing] .mo-swipe-bg {
+        opacity: 1;
+    }
+
+    [data-swipe-remove][data-removing] {
+        opacity: 0;
+    }
+
+    /* ---------- Countdown flip ---------- */
+    [data-countdown] [data-unit] {
+        display: inline-block;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .mo-flip {
+        animation: mo-flip var(--motion-base) var(--ease-out);
+    }
+
+    @keyframes mo-flip {
+        from {
+            opacity: 0;
+            transform: translateY(-45%) scaleY(0.6);
+        }
+    }
+
+    /* ---------- Sticky header ---------- */
+    [data-sticky-header] {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        transition: transform var(--motion-base) var(--ease-out);
+    }
+
+    [data-sticky-header]::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        box-shadow: 0 6px 20px rgb(0 0 0 / 0.08);
+        opacity: 0;
+        transition: opacity var(--motion-base) var(--ease-out);
+        pointer-events: none;
+    }
+
+    [data-sticky-header][data-scrolled]::after {
+        opacity: 1;
+    }
+
+    [data-sticky-header] [data-header-shrink] {
+        transform-origin: left center;
+        transition: transform var(--motion-base) var(--ease-out);
+    }
+
+    [dir='rtl'] [data-sticky-header] [data-header-shrink] {
+        transform-origin: right center;
+    }
+
+    [data-sticky-header][data-scrolled] [data-header-shrink] {
+        transform: scale(0.88);
+    }
+
+    [data-sticky-header][data-hidden] {
+        transform: translateY(-100%);
+    }
+
+    /* ---------- Parallax ---------- */
+    [data-parallax] {
+        will-change: transform;
+    }
+
+    /* ---------- Images: blur-up + skeleton ---------- */
+    .mo-media {
+        position: relative;
+        overflow: hidden;
+        background-color: var(--color-surface-sunken);
+    }
+
+    .mo-media::before {
+        content: '';
+        position: absolute;
+        inset: -12px;
+        background-image: var(--placeholder);
+        background-size: cover;
+        background-position: center;
+        filter: blur(14px);
+        transition: opacity var(--motion-slow) var(--ease-out);
+    }
+
+    .mo-media[data-loaded]::before {
+        opacity: 0;
+    }
+
+    .mo-media img[data-blur-up] {
+        position: relative;
+        opacity: 0;
+        transition: opacity var(--motion-slow) var(--ease-out);
+    }
+
+    .mo-media img[data-blur-up][data-loaded] {
+        opacity: 1;
+    }
+
+    .mo-skeleton {
+        position: relative;
+        overflow: hidden;
+        background-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
+    }
+
+    .mo-skeleton::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.5), transparent);
+        animation: mo-shimmer 1.2s linear infinite;
+    }
+
+    [dir='rtl'] .mo-skeleton::after {
+        animation-direction: reverse;
+    }
+
+    @keyframes mo-shimmer {
+        to {
+            transform: translateX(100%);
+        }
+    }
+}
+
+/*
+ * Hero + spotlight are unlayered: they must beat Swiper's own (unlayered) slide
+ * styles such as .swiper-slide { width: 100% }.
+ */
+/* ---------- Hero ---------- */
+.mo-hero .mo-kenburns {
+    transform-origin: center;
+}
+
+.mo-hero-kenburns .swiper-slide-active .mo-kenburns {
+    animation: mo-kenburns 9s linear both;
+}
+
+@keyframes mo-kenburns {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(var(--motion-kenburns));
+    }
+}
+
+.mo-hero .swiper-slide [data-hero-copy] > * {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity var(--motion-slow) var(--ease-out), transform var(--motion-slow) var(--ease-out);
+}
+
+.mo-hero .swiper-slide-active [data-hero-copy] > * {
+    opacity: 1;
+    transform: none;
+}
+
+.mo-hero .swiper-slide-active [data-hero-copy] > :nth-child(2) {
+    transition-delay: calc(var(--motion-stagger) * 2);
+}
+
+.mo-hero .swiper-slide-active [data-hero-copy] > :nth-child(3) {
+    transition-delay: calc(var(--motion-stagger) * 4);
+}
+
+[data-hero-progress] .mo-progress-fill {
+    transform: scaleX(var(--progress, 0));
+}
+
+/* ---------- Spotlight (center / left) ---------- */
+.mo-spotlight {
+    perspective: var(--spotlight-perspective, 1200px);
+    padding-block: 24px;
+}
+
+.mo-spotlight .swiper-wrapper {
+    transform-style: preserve-3d;
+}
+
+.mo-spotlight .swiper-slide {
+    width: clamp(200px, 30vw, 340px);
+}
+
+.mo-spotlight-left .swiper-slide {
+    width: clamp(210px, 34vw, 400px);
+}
+
+.mo-spotlight .swiper-slide > * {
+    transform-origin: center bottom;
+    transition-property: transform, opacity;
+    transition-timing-function: var(--ease-out);
+    will-change: transform;
+}
+
+.mo-spotlight-left .swiper-slide > * {
+    transform-origin: left bottom;
+}
+
+[dir='rtl'] .mo-spotlight-left .swiper-slide > * {
+    transform-origin: right bottom;
+}
+
+.mo-spotlight .mo-spotlight-shadow {
+    opacity: 0;
+    transition: opacity var(--motion-base) var(--ease-out);
+}
+
+.mo-spotlight .swiper-slide[data-spotlight='active'] .mo-spotlight-shadow {
+    opacity: 1;
+}
+
+
+/* ---------- Reduced motion: ≤ 80ms fades, nothing auto-moves ---------- */
+@media (prefers-reduced-motion: reduce) {
+    @view-transition {
+        navigation: none;
+    }
+
+    [data-motion-root] *,
+    [data-motion-root] *::before,
+    [data-motion-root] *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 80ms !important;
+        transition-delay: 0s !important;
+    }
+
+    .mo-card:hover,
+    .mo-card:focus-within,
+    [data-sticky-header][data-hidden] {
+        transform: none !important;
+    }
+
+    .mo-skeleton::after,
+    .mo-hero-kenburns .swiper-slide-active .mo-kenburns {
+        animation: none !important;
+    }
+}

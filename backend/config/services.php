@@ -35,4 +35,25 @@ return [
         ],
     ],
 
+    /*
+    | Address lookup for the "Select address on map" button (Localization module):
+    | reverse geocoding (lat/lng → street, city, state, country) and the IP fallback.
+    | Providers: App\Modules\Localization\Enums\GeocodingProvider. The User-Agent names
+    | the application only (Nominatim usage policy); never put personal data in it.
+    */
+    'geocoding' => [
+        'reverse_provider' => env('GEOCODING_REVERSE_PROVIDER', 'nominatim'),
+        'ip_provider' => env('GEOCODING_IP_PROVIDER', 'ipwhois'),
+        'user_agent' => env('GEOCODING_USER_AGENT', 'NogrgrStorefront/1.0 (address lookup)'),
+        'timeout' => (int) env('GEOCODING_TIMEOUT', 5),
+        'cache_ttl' => (int) env('GEOCODING_CACHE_TTL', 60 * 60 * 24 * 7),
+        'nominatim' => [
+            'url' => env('NOMINATIM_URL', 'https://nominatim.openstreetmap.org'),
+            'email' => env('NOMINATIM_CONTACT_EMAIL'),
+        ],
+        'ipwhois' => [
+            'url' => env('IPWHOIS_URL', 'https://ipwho.is'),
+        ],
+    ],
+
 ];

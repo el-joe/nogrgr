@@ -1,0 +1,73 @@
+{{--
+    Account shell (Figma Storefront additions §5–8): breadcrumb, customer card + side
+    navigation on desktop, pill tabs under the app bar on phones. Only links whose
+    routes exist are rendered (orders, returns, wishlist appear when they ship).
+    <x-sf::account.layout :title="…" active="profile"> <x-slot:actions>…</x-slot:actions> … </x-sf::account.layout>
+--}}
+@props(['title', 'active' => null, 'page' => null])
+@php
+    $customer = auth('customer')->user();
+    $links = collect([
+        'orders' => ['route' => 'storefront.account.orders', 'icon' => 'cart', 'label' => 'storefront::account.nav.orders'],
+        'returns' => ['route' => 'storefront.account.returns', 'icon' => 'return', 'label' => 'storefront::account.nav.returns'],
+        'wishlist' => ['route' => 'storefront.account.wishlist', 'icon' => 'star', 'label' => 'storefront::account.nav.wishlist'],
+        'addresses' => ['route' => 'storefront.account.addresses', 'icon' => 'map', 'label' => 'identity::account.nav.addresses'],
+        'profile' => ['route' => 'storefront.account.profile', 'icon' => 'users', 'label' => 'identity::account.nav.profile'],
+        'notifications' => ['route' => 'storefront.account.notifications', 'icon' => 'bell', 'label' => 'identity::account.nav.notifications'],
+    ])->filter(fn ($link) => Route::has($link['route']));
+    $home = Route::has('storefront.home') ? route('storefront.home') : null;
+    $accountHome = Route::has('storefront.account.profile') ? route('storefront.account.profile') : null;
+@endphp
+<x-sf::layout :title="$title" :mobile-title="$title" :back="$home" nav="account" :page="$page">
+    <div class="mx-auto max-w-[1280px] px-4 pb-16 pt-4 sm:px-6 lg:pt-6">
+        <nav aria-label="{{ __('storefront::shell.breadcrumb') }}" class="mb-5 hidden text-xs text-sf-muted lg:block">
+            <ol class="flex items-center gap-2">
+                @if ($home)<li><a href="{{ $home }}" class="hover:text-sf-ink">{{ __('storefront::shell.home') }}</a></li><li aria-hidden="true"><x-ui::icon name="chevron-right" :size="12" class="rtl:-scale-x-100" /></li>@endif
+                <li>@if ($accountHome)<a href="{{ $accountHome }}" class="hover:text-sf-ink">{{ __('identity::account.nav.label') }}</a>@else{{ __('identity::account.nav.label') }}@endif</li>
+                <li aria-hidden="true"><x-ui::icon name="chevron-right" :size="12" class="rtl:-scale-x-100" /></li>
+                <li aria-current="page" class="text-sf-ink">{{ $title }}</li>
+            </ol>
+        </nav>
+
+        <nav aria-label="{{ __('identity::account.nav.label') }}" class="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:hidden">
+            @foreach ($links as $key => $link)
+                <a href="{{ route($link['route']) }}" class="sf-pill-tab" @if ($active === $key) aria-current="page" @endif>{{ __($link['label']) }}</a>
+            @endforeach
+        </nav>
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-[264px_minmax(0,1fr)]">
+            <aside class="hidden content-start gap-3 lg:grid" aria-label="{{ __('identity::account.nav.label') }}">
+                @if ($customer)
+                    <div class="sf-card grid gap-1 px-4 py-4">
+                        <p class="truncate text-sm font-medium text-sf-ink">{{ $customer->name }}</p>
+                        <p class="truncate text-xs text-sf-muted" dir="ltr">{{ $customer->email }}</p>
+                    </div>
+                @endif
+                <nav class="sf-card grid gap-1 p-2">
+                    @foreach ($links as $key => $link)
+                        <a href="{{ route($link['route']) }}" class="sf-account-link" @if ($active === $key) aria-current="page" @endif><x-ui::icon :name="$link['icon']" :size="18" />{{ __($link['label']) }}</a>
+                    @endforeach
+                    <form method="POST" action="{{ route('storefront.account.logout') }}">
+                        @csrf
+                        <button type="submit" class="sf-account-link w-full text-sf-danger"><x-ui::icon name="log-out" :size="18" />{{ __('identity::auth.logout') }}</button>
+                    </form>
+                </nav>
+            </aside>
+
+            <div class="grid min-w-0 content-start gap-5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h1 class="hidden text-2xl font-semibold text-sf-ink lg:block">{{ $title }}</h1>
+                    {{ $actions ?? '' }}
+                </div>
+                @if (session('status'))
+                    <x-sf::alert tone="success">{{ session('status') }}</x-sf::alert>
+                @endif
+                {{ $slot }}
+                <form method="POST" action="{{ route('storefront.account.logout') }}" class="lg:hidden">
+                    @csrf
+                    <button type="submit" class="sf-btn sf-btn-danger-outline w-full"><x-ui::icon name="log-out" :size="18" />{{ __('identity::auth.logout') }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</x-sf::layout>

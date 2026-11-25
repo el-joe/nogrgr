@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Nogrgr'),
 
     /*
     |--------------------------------------------------------------------------
@@ -81,6 +81,22 @@ return [
     'locale' => env('APP_LOCALE', 'en'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+
+    /*
+    | Interface languages the panels and storefronts can switch to (cookie
+    | "locale" / ?lang=). The Localization module replaces this list with the
+    | languages enabled in the database.
+    */
+    'supported_locales' => [
+        'en' => ['name' => 'English', 'native' => 'English', 'dir' => 'ltr'],
+        'ar' => ['name' => 'Arabic', 'native' => 'العربية', 'dir' => 'rtl'],
+    ],
+
+    /*
+    | ISO-3166 alpha-2 fallback for the visitor country (phone inputs) when no
+    | CDN country header is present.
+    */
+    'default_country' => env('APP_DEFAULT_COUNTRY', 'sa'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 

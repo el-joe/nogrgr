@@ -1,0 +1,77 @@
+{
+ "bag": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADQAQCdASoNABAAA4BaJQBOgCHf6ZRcgAD+3pkHP65LyPbCJsDAxz50/ewJ61o8lcEV1PKA1fLKASQAAAA="
+ },
+ "headphones-alt": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADQAQCdASoNABAAA4BaJZQC7ADxEW+2AAD+7WFzBl06+KRt/s+2TE9wU518beHf9BjivJtaImlLcQm6+V0lX20y0Fp15D0AAAA="
+ },
+ "headphones": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAAAwAgCdASoNABAAA4BaJZQCdAELZK8Iir+0AAD+7V6e65fW59T5A/B07QGm7H7RDs5vDHPWcCblPHIjiwjoNFRg7eAAAA=="
+ },
+ "hero-1": {
+  "width": 1536,
+  "height": 640,
+  "placeholder": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAACwAQCdASoQAAcAA4BaJQBOgBhI7HG4AP7yY0vFGgMZ9Ijg6xeeOIM1nsoVj12GqkP9rwePQJtjAXuaZQoaHCoyEAAAAA=="
+ },
+ "hero-2": {
+  "width": 1536,
+  "height": 640,
+  "placeholder": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAACwAQCdASoQAAcAA4BaJZgCdADZmJJAAP7ooA2/r1ISmfUF3FW1MQI4F6/L8ilM3dFs8kYTV43eCa7tmfdgAA=="
+ },
+ "hero-3": {
+  "width": 1536,
+  "height": 640,
+  "placeholder": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAAAQAgCdASoQAAcAA4BaJYwCdH8AGCHvmSfwAP7tR/v4gA2Gvf84ZuCuCFdJ/nFUt8y0PDIV8BVT1PAA"
+ },
+ "mug-alt": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAQAgCdASoNABAAA4BaJbACdAD0OvfvYEtAAP72E8qzjQMZj3RMjpOK1byzjePwleI5VDm289QjwsXgJk0gB0/DvNx4yj1qe5gtVuziZhnMCh3Ah/Es3ui8FFcI5zgAAAA="
+ },
+ "mug": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADwAQCdASoNABAAA4BaJYgCdAEPAFKQgrgA/vTbP3UdjAi+kWlRDfjqzblyZZQDb1/JbA0KGyI72dzs0XWwfKA/7oM6GYwAAAA="
+ },
+ "perfume-alt": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAAAQAgCdASoNABAAA4BaJagCdAEPABMXRtp4AP7zdEnecz+vdmH4yLUhD+sLgxJI8zcBd2kJCqZ9ri5uazdYRN9OegAAAA=="
+ },
+ "perfume": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAADwAQCdASoNABAAA4BaJaACdAELYFfcdQAA/vTfUiM8JfsVYOvyP0ENCLT9blyP6RTwdOGNOrX2yzfZR+J1AAAA"
+ },
+ "serum": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADwAQCdASoNABAAA4BaJYwAAuddTuBO0AAA/vN9e08UkzVcW66mawA43KWgAA=="
+ },
+ "sneakers-alt": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoNABAAA4BaJYwCdAEPAw8y8aAAAP700sy4S1ZR7IX9q8TXx3JuWv+z8tstDoFyWOn/vSn3vFY+hXKAAAA="
+ },
+ "sneakers": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAADQAQCdASoNABAAA4BaJQBOgCHe11wGgAD+8c6lI0YZi0gvkHlgEyygAAA="
+ },
+ "sunglasses": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAADQAQCdASoNABAAA4BaJQBOgCHfk+GqYAD+8cV3QZzQ2I32/pa5p2r3bO+Q6FuuA5oVDctuGjrjnppquMg7bgAA"
+ },
+ "watch": {
+  "width": 640,
+  "height": 800,
+  "placeholder": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAQAgCdASoNABAAA4BaJaQAAsSGvQgt6KgAAPb28pLw7tssyaE3rkbCuaZq24PwV1bMJdbdBKBG62ICKYCDZUwwAjufYIvmc+P3AfAI/gIBq/9flRQAAA=="
+ }
+}

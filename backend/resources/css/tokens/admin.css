@@ -1,0 +1,115 @@
+/*
+ * Admin panel tokens — Figma "Admin" variable collection (VariableCollectionId:23:10188),
+ * modes Light 23:1 / Dark 23:2. Raw --nog-* values only; utilities come from tokens/base.css.
+ * Primitives: brand 50 #FFF2EF … 500 #FF522C … 900 #41251E; warm neutrals 0 … 950.
+ */
+:root {
+    /* brand: 500 / 600 / 700 / 50 */
+    --nog-primary: #ff522c;
+    --nog-primary-hover: #e8401b;
+    --nog-primary-pressed: #c23113;
+    --nog-primary-subtle: #fff2ef;
+    --nog-on-primary: #ffffff;
+    --nog-secondary: #41251e;
+
+    /* color/bg/* */
+    --nog-canvas: #faf8f7;
+    --nog-surface: #ffffff;
+    --nog-surface-raised: #ffffff;
+    --nog-surface-sunken: #faf8f7;
+    --nog-subtle: #f4f1f0;
+    --nog-muted: #e9e4e2;
+    --nog-field: #ffffff;
+    --nog-field-disabled: #f4f1f0;
+    --nog-overlay: #110d0c;
+    --nog-inverse: #41251e;
+
+    /* color/text/* */
+    --nog-ink: #41251e;
+    --nog-ink-secondary: #717171;
+    --nog-ink-muted: #a9a09d;
+    --nog-ink-brand: #ff522c;
+    --nog-on-inverse: #ffffff;
+
+    /* color/border/* */
+    --nog-line: #e9e4e2;
+    --nog-line-strong: #d6cfcc;
+    --nog-focus: #ff522c;
+
+    /* status: green / amber / red / blue (500 fg, 50 bg) */
+    --nog-success: #16a34a;
+    --nog-success-bg: #e8f7ee;
+    --nog-warning: #d98a06;
+    --nog-warning-bg: #fef5e6;
+    --nog-danger: #dc2626;
+    --nog-danger-bg: #fdecec;
+    --nog-danger-hover: #dc2626;
+    --nog-info: #2563eb;
+    --nog-info-bg: #eaf1fe;
+
+    /* color/sidebar/* */
+    --nog-sidebar: #41251e;
+    --nog-sidebar-hover: #7a2a17;
+    --nog-sidebar-active: #ff522c;
+    --nog-sidebar-ink: #ffe3db;
+    --nog-sidebar-ink-active: #ffffff;
+    --nog-sidebar-muted: #ffa189;
+    --nog-sidebar-line: #7a2a17;
+
+    /* radius sm 6 / md 10 / lg 16 */
+    --nog-radius-chip: 6px;
+    --nog-radius-control: 10px;
+    --nog-radius-card: 16px;
+
+    /* Admin/Shadow/* (ink #41251E) */
+    --nog-shadow-color: 65 37 30;
+    --nog-shadow-focus: 0 0 0 3px rgb(255 82 44 / 0.24);
+
+    /* KPI highlight card: brand/500 → brand/900 */
+    --nog-highlight-from: #ff522c;
+    --nog-highlight-to: #41251e;
+}
+
+.dark {
+    --nog-primary: #ff522c;
+    --nog-primary-hover: #ff7a5b;
+    --nog-primary-pressed: #e8401b;
+    --nog-primary-subtle: #2a2421;
+
+    --nog-canvas: #110d0c;
+    --nog-surface: #1a1513;
+    --nog-surface-raised: #211c1a;
+    --nog-surface-sunken: #110d0c;
+    --nog-subtle: #211c1a;
+    --nog-muted: #2a2421;
+    --nog-field: #1a1513;
+    --nog-field-disabled: #211c1a;
+    --nog-inverse: #faf8f7;
+
+    --nog-ink: #faf8f7;
+    --nog-ink-secondary: #a9a09d;
+    --nog-ink-muted: #717171;
+    --nog-ink-brand: #ff7a5b;
+    --nog-on-inverse: #41251e;
+
+    --nog-line: #2a2421;
+    --nog-line-strong: #3f3835;
+    --nog-focus: #ff7a5b;
+
+    --nog-success: #34c26a;
+    --nog-success-bg: #0e2a1a;
+    --nog-warning: #f5a524;
+    --nog-warning-bg: #33240a;
+    --nog-danger: #f05252;
+    --nog-danger-bg: #3a1212;
+    --nog-danger-hover: #f05252;
+    --nog-info: #4f8bf5;
+    --nog-info-bg: #111f3d;
+
+    --nog-sidebar: #110d0c;
+    --nog-sidebar-hover: #211c1a;
+    --nog-sidebar-active: #ff522c;
+    --nog-sidebar-ink: #d6cfcc;
+    --nog-sidebar-muted: #717171;
+    --nog-sidebar-line: #2a2421;
+}

@@ -1,0 +1,712 @@
+/*
+ * Storefront UI layer for the account pages, auth pages, address form and checkout
+ * address step (Figma page "Storefront additions" 97:10147). Every value comes from the
+ * per-family "Storefront" tokens (--sf-*, tokens/storefront-<family>.css), so one set of
+ * Blade components renders Ecommet / Elora / Souqify. Utilities: bg-sf-cta, text-sf-ink,
+ * border-sf-border, rounded-sf-card …
+ */
+@theme inline {
+    --color-sf-cta: var(--sf-cta);
+    --color-sf-cta-hover: var(--sf-cta-hover);
+    --color-sf-on-cta: var(--sf-on-cta);
+    --color-sf-accent: var(--sf-accent);
+    --color-sf-accent-subtle: var(--sf-accent-subtle);
+    --color-sf-ink: var(--sf-ink);
+    --color-sf-muted: var(--sf-muted);
+    --color-sf-border: var(--sf-border);
+    --color-sf-bg: var(--sf-bg);
+    --color-sf-surface: var(--sf-surface);
+    --color-sf-success: var(--sf-success);
+    --color-sf-success-bg: var(--sf-success-bg);
+    --color-sf-danger: var(--sf-danger);
+    --color-sf-danger-bg: var(--sf-danger-bg);
+    --color-sf-warning: var(--sf-warning);
+    --color-sf-warning-bg: var(--sf-warning-bg);
+    --color-sf-info: var(--sf-info);
+    --color-sf-info-bg: var(--sf-info-bg);
+    --color-sf-header: var(--sf-header);
+    --color-sf-topbar: var(--sf-topbar);
+    --color-sf-footer: var(--sf-footer);
+    --color-sf-footer-bar: var(--sf-footer-bar);
+    --color-sf-footer-bottom: var(--sf-footer-bottom);
+    --radius-sf-input: var(--sf-radius-input);
+    --radius-sf-card: var(--sf-radius-card);
+}
+
+@layer components {
+    .sf-page {
+        background-color: var(--sf-bg);
+        color: var(--sf-ink);
+    }
+
+    /* ---------- Fields ---------- */
+    .sf-label {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        color: var(--sf-ink);
+    }
+
+    .sf-required {
+        color: var(--sf-danger);
+        margin-inline-start: 2px;
+    }
+
+    .sf-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        min-height: 44px;
+        padding-inline: 12px;
+        border: 1px solid var(--sf-border);
+        border-radius: var(--sf-radius-input);
+        background-color: #fff;
+        color: var(--sf-ink);
+        font-size: 14px;
+        transition: border-color var(--motion-fast) ease-out, box-shadow var(--motion-fast) ease-out;
+    }
+
+    .sf-control > input,
+    .sf-control > select,
+    input.sf-control,
+    select.sf-control,
+    textarea.sf-control {
+        min-width: 0;
+        flex: 1 1 auto;
+        height: 42px;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        outline: none;
+    }
+
+    input.sf-control,
+    select.sf-control {
+        border: 1px solid var(--sf-border);
+        background-color: #fff;
+    }
+
+    .sf-control ::placeholder,
+    .sf-control::placeholder {
+        color: var(--sf-muted);
+        opacity: 0.8;
+    }
+
+    .sf-control:focus-within,
+    .sf-control:focus {
+        border-color: var(--sf-cta);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--sf-cta) 18%, transparent);
+        outline: none;
+    }
+
+    .sf-control:has([aria-invalid='true']),
+    .sf-control[aria-invalid='true'],
+    [data-sf-field][data-invalid] .sf-control {
+        border-color: var(--sf-danger);
+        box-shadow: none;
+    }
+
+    .sf-control:has(:disabled) {
+        background-color: color-mix(in srgb, var(--sf-border) 35%, #fff);
+        cursor: not-allowed;
+    }
+
+    .sf-error {
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--sf-danger);
+    }
+
+    .sf-helper {
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--sf-muted);
+    }
+
+    [data-sf-field]:has(.sf-error:not([hidden])) .sf-helper {
+        display: none;
+    }
+
+    /* ---------- Buttons (pill in every family) ---------- */
+    .sf-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding-inline: 20px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: background-color var(--motion-fast) ease-out, border-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+        cursor: pointer;
+    }
+
+    .sf-btn:active {
+        transform: scale(var(--motion-press));
+    }
+
+    .sf-btn-lg {
+        min-height: 52px;
+        font-size: 15px;
+    }
+
+    .sf-btn-sm {
+        min-height: 36px;
+        padding-inline: 14px;
+        font-size: 13px;
+    }
+
+    .sf-btn-cta {
+        background-color: var(--sf-cta);
+        color: var(--sf-on-cta);
+    }
+
+    .sf-btn-cta:hover {
+        background-color: var(--sf-cta-hover);
+    }
+
+    .sf-btn-accent {
+        background-color: var(--sf-accent);
+        color: #fff;
+    }
+
+    .sf-btn-accent:hover {
+        filter: brightness(0.94);
+    }
+
+    .sf-btn-outline {
+        border-color: var(--sf-border);
+        background-color: #fff;
+        color: var(--sf-ink);
+    }
+
+    .sf-btn-outline:hover {
+        border-color: var(--sf-ink);
+    }
+
+    .sf-btn-danger {
+        background-color: var(--sf-danger);
+        color: #fff;
+    }
+
+    .sf-btn-danger-outline {
+        border-color: var(--sf-danger);
+        background-color: #fff;
+        color: var(--sf-danger);
+    }
+
+    .sf-btn-danger-outline:hover {
+        background-color: var(--sf-danger-bg);
+    }
+
+    .sf-btn:disabled,
+    .sf-btn[aria-disabled='true'] {
+        background-color: #737373;
+        border-color: transparent;
+        color: #fff;
+        cursor: not-allowed;
+        filter: none;
+        transform: none;
+    }
+
+    .sf-btn[data-loading] {
+        pointer-events: none;
+        opacity: 0.85;
+    }
+
+    .sf-btn .sf-btn-busy,
+    .sf-btn[data-loading] .sf-btn-idle {
+        display: none;
+    }
+
+    .sf-btn[data-loading] .sf-btn-busy {
+        display: inline-flex;
+    }
+
+    .sf-btn[data-loading].sf-btn-cta {
+        background-color: #737373;
+    }
+
+    .sf-link {
+        color: var(--sf-accent);
+        font-weight: 500;
+    }
+
+    .sf-link:hover {
+        text-decoration: underline;
+    }
+
+    /* ---------- Card ---------- */
+    .sf-card {
+        border: 1px solid var(--sf-border);
+        border-radius: var(--sf-radius-card);
+        background-color: var(--sf-surface);
+    }
+
+    /* ---------- Segmented tabs (login / register) ---------- */
+    .sf-segmented {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        gap: 4px;
+        padding: 4px;
+        border-radius: var(--sf-radius-input);
+        background-color: color-mix(in srgb, var(--sf-border) 45%, #f7f7f7);
+    }
+
+    .sf-segmented > * {
+        display: grid;
+        place-items: center;
+        min-height: 40px;
+        border-radius: calc(var(--sf-radius-input) - 2px);
+        color: var(--sf-muted);
+        font-size: 14px;
+        transition: background-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out;
+    }
+
+    .sf-segmented > [aria-current='page'],
+    .sf-segmented > [aria-selected='true'] {
+        background-color: #fff;
+        color: var(--sf-ink);
+        font-weight: 500;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+    }
+
+    /* ---------- Switch / checkbox / radio ---------- */
+    .sf-switch {
+        appearance: none;
+        position: relative;
+        flex-shrink: 0;
+        width: 36px;
+        height: 20px;
+        border-radius: 999px;
+        background-color: color-mix(in srgb, var(--sf-border) 80%, #d4d4d4);
+        cursor: pointer;
+        transition: background-color var(--motion-fast) ease-out;
+    }
+
+    .sf-switch::before {
+        content: '';
+        position: absolute;
+        inset-block-start: 2px;
+        inset-inline-start: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+        transition: transform var(--motion-base) var(--ease-out);
+    }
+
+    .sf-switch:checked {
+        background-color: var(--sf-accent);
+    }
+
+    .sf-switch:checked::before {
+        transform: translateX(16px);
+    }
+
+    [dir='rtl'] .sf-switch:checked::before {
+        transform: translateX(-16px);
+    }
+
+    .sf-check {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        accent-color: var(--sf-accent);
+        cursor: pointer;
+    }
+
+    .sf-radio {
+        appearance: none;
+        display: inline-grid;
+        place-content: center;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        border: 1.5px solid color-mix(in srgb, var(--sf-ink) 55%, #fff);
+        border-radius: 999px;
+        background-color: #fff;
+        cursor: pointer;
+    }
+
+    .sf-radio:checked {
+        border: 6px solid var(--sf-accent);
+    }
+
+    /* ---------- Pills ---------- */
+    .sf-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding-inline: 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .sf-chip-label {
+        background-color: var(--sf-info-bg);
+        color: var(--sf-info);
+    }
+
+    .sf-chip-default {
+        background-color: var(--sf-success-bg);
+        color: var(--sf-success);
+    }
+
+    /* ---------- Alerts ---------- */
+    .sf-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: var(--sf-radius-input);
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .sf-alert-danger {
+        background-color: var(--sf-danger-bg);
+        color: var(--sf-ink);
+    }
+
+    .sf-alert-danger svg {
+        color: var(--sf-danger);
+    }
+
+    .sf-alert-warning {
+        background-color: var(--sf-warning-bg);
+        color: var(--sf-ink);
+    }
+
+    .sf-alert-warning svg {
+        color: var(--sf-warning);
+    }
+
+    .sf-alert-success {
+        background-color: var(--sf-success-bg);
+        color: var(--sf-ink);
+    }
+
+    .sf-alert-success svg {
+        color: var(--sf-success);
+    }
+
+    /* ---------- Address cards / radio cards ---------- */
+    .sf-address-card {
+        position: relative;
+        border: 1px solid var(--sf-border);
+        border-radius: var(--sf-radius-card);
+        background-color: var(--sf-surface);
+        transition: border-color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out, transform var(--motion-base) var(--ease-out), opacity var(--motion-base) linear;
+    }
+
+    .sf-address-card:has(input[type='radio']:checked) {
+        border-color: var(--sf-accent);
+        background-color: var(--sf-accent-subtle);
+    }
+
+    .sf-address-card[data-entering] {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    .sf-add-dashed {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 40px;
+        border: 1.5px dashed var(--sf-accent);
+        border-radius: var(--sf-radius-card);
+        color: var(--sf-accent);
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color var(--motion-fast) ease-out;
+    }
+
+    .sf-add-dashed:hover {
+        background-color: var(--sf-accent-subtle);
+    }
+
+    /* ---------- Country select / suggestions popover ---------- */
+    .sf-popover {
+        position: absolute;
+        inset-inline: 0;
+        z-index: 30;
+        max-height: 260px;
+        overflow-y: auto;
+        padding: 6px;
+        border: 1px solid var(--sf-border);
+        border-radius: var(--sf-radius-input);
+        background-color: #fff;
+        box-shadow: 0 12px 28px rgb(0 0 0 / 0.12);
+        opacity: 0;
+        transform: translateY(-4px);
+        visibility: hidden;
+        transition: opacity var(--motion-fast) ease-out, transform var(--motion-fast) ease-out, visibility 0s linear var(--motion-fast);
+    }
+
+    .sf-popover[data-open] {
+        opacity: 1;
+        transform: none;
+        visibility: visible;
+        transition-delay: 0s;
+    }
+
+    .sf-popover[data-placement='top'] {
+        bottom: calc(100% + 4px);
+    }
+
+    .sf-popover:not([data-placement='top']) {
+        top: calc(100% + 4px);
+    }
+
+    .sf-option {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 10px;
+        min-height: 36px;
+        padding-inline: 10px;
+        border-radius: calc(var(--sf-radius-input) - 2px);
+        color: var(--sf-ink);
+        font-size: 14px;
+        text-align: start;
+    }
+
+    .sf-option:hover,
+    .sf-option[data-active] {
+        background-color: color-mix(in srgb, var(--sf-border) 40%, #fff);
+    }
+
+    .sf-option[aria-selected='true'] {
+        background-color: var(--sf-accent-subtle);
+        color: var(--sf-accent);
+    }
+
+    .sf-flag {
+        display: inline-block;
+        width: 22px;
+        height: 15px;
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 2px;
+        font-size: 15px;
+        line-height: 15px;
+        text-align: center;
+    }
+
+    /* ---------- intl-tel-input inside .sf-control ---------- */
+    .sf-phone .iti {
+        display: block;
+        width: 100%;
+        --iti-border-color: var(--sf-border);
+        --iti-hover-color: color-mix(in srgb, var(--sf-border) 40%, #fff);
+        --iti-icon-color: var(--sf-muted);
+    }
+
+    .sf-phone .iti__tel-input {
+        width: 100%;
+        height: 42px;
+        border: 0;
+        background: transparent;
+        color: var(--sf-ink);
+        font: inherit;
+        outline: none;
+    }
+
+    .sf-phone .iti__selected-country {
+        gap: 4px;
+        margin-block: 8px;
+        padding-inline: 12px 8px;
+        border-inline-end: 1px solid var(--sf-border);
+    }
+
+    .sf-phone .iti__dropdown-content {
+        padding: 6px;
+        border: 1px solid var(--sf-border);
+        border-radius: var(--sf-radius-input);
+        box-shadow: 0 12px 28px rgb(0 0 0 / 0.12);
+    }
+
+    .sf-phone .iti__search-input {
+        height: 34px;
+        border-radius: calc(var(--sf-radius-input) - 2px);
+        background-color: color-mix(in srgb, var(--sf-border) 30%, #fff);
+    }
+
+    .sf-phone .iti__country {
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .sf-phone-valid {
+        display: none;
+    }
+
+    .sf-phone[data-valid='true'] .sf-phone-valid {
+        display: inline-flex;
+        color: var(--sf-success);
+    }
+
+    .sf-phone[data-valid='false'] .sf-phone-invalid {
+        display: inline-flex;
+        color: var(--sf-danger);
+    }
+
+    .sf-phone-invalid {
+        display: none;
+    }
+
+    /* ---------- Account sidebar ---------- */
+    .sf-account-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 40px;
+        padding-inline: 12px;
+        border-radius: var(--sf-radius-input);
+        color: var(--sf-ink);
+        font-size: 14px;
+        transition: background-color var(--motion-fast) ease-out;
+    }
+
+    .sf-account-link:hover {
+        background-color: color-mix(in srgb, var(--sf-border) 35%, #fff);
+    }
+
+    .sf-account-link[aria-current='page'] {
+        background-color: var(--sf-accent-subtle);
+        color: var(--sf-accent);
+        font-weight: 500;
+    }
+
+    .sf-pill-tab {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        padding-inline: 14px;
+        border: 1px solid var(--sf-border);
+        border-radius: 999px;
+        background-color: #fff;
+        color: var(--sf-ink);
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .sf-pill-tab[aria-current='page'] {
+        border-color: var(--sf-cta);
+        background-color: var(--sf-cta);
+        color: var(--sf-on-cta);
+    }
+
+    /* Souqify uses the ink colour for the active mobile tab like the Figma frame. */
+    [data-theme-family='souqify'] .sf-pill-tab[aria-current='page'] {
+        border-color: var(--sf-ink);
+        background-color: var(--sf-ink);
+    }
+
+    /* ---------- Map button detecting state ---------- */
+    [data-address-map][data-loading] .sf-map-idle,
+    [data-address-map]:not([data-loading]) .sf-map-busy {
+        display: none;
+    }
+
+    /* ---------- Country combobox (enhanced select) ---------- */
+    .sf-combobox-trigger {
+        cursor: pointer;
+        text-align: start;
+    }
+
+    .sf-combobox-trigger[aria-invalid='true'] {
+        border-color: var(--sf-danger);
+        box-shadow: none;
+    }
+
+    .sf-combobox-flag:empty {
+        display: none;
+    }
+
+    .sf-flag-sprite {
+        flex-shrink: 0;
+    }
+
+    .sf-combobox-clear {
+        display: grid;
+        width: 20px;
+        height: 20px;
+        place-items: center;
+        border-radius: 999px;
+        color: var(--sf-muted);
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    .sf-combobox-clear:hover {
+        background-color: color-mix(in srgb, var(--sf-border) 50%, #fff);
+        color: var(--sf-ink);
+    }
+
+    .sf-combobox-chevron {
+        flex-shrink: 0;
+        color: var(--sf-muted);
+        transition: transform var(--motion-fast) ease-out;
+    }
+
+    .sf-combobox-trigger[aria-expanded='true'] .sf-combobox-chevron {
+        transform: rotate(180deg);
+    }
+
+    .sf-combobox-search {
+        position: sticky;
+        top: -6px;
+        z-index: 1;
+        margin: -6px -6px 6px;
+        padding: 6px;
+        background-color: #fff;
+    }
+
+    .sf-combobox-search input {
+        width: 100%;
+        height: 34px;
+        padding-inline: 10px;
+        border: 1px solid var(--sf-border);
+        border-radius: calc(var(--sf-radius-input) - 2px);
+        background-color: color-mix(in srgb, var(--sf-border) 25%, #fff);
+        color: var(--sf-ink);
+        font-size: 14px;
+        outline: none;
+    }
+
+    .sf-combobox-search input:focus {
+        border-color: var(--sf-cta);
+    }
+
+    .sf-combobox-empty {
+        padding: 10px;
+        color: var(--sf-muted);
+        font-size: 13px;
+        text-align: center;
+    }
+
+    /* ---------- Address card leaving (delete) ---------- */
+    .sf-address-card[data-leaving] {
+        opacity: 0;
+        transform: scale(0.98) translateY(-4px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sf-address-card,
+        .sf-combobox-chevron {
+            transition: none;
+        }
+    }
+}

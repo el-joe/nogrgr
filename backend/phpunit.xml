@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          colors="true"
+         cacheDirectory=".phpunit.cache"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -18,14 +19,24 @@
         </include>
     </source>
     <php>
-        <env name="APP_ENV" value="testing"/>
+        <env name="APP_ENV" value="testing" force="true"/>
+        <!-- Pinned so the suite never depends on the developer's .env hosts. -->
+        <env name="APP_URL" value="http://localhost" force="true"/>
+        <env name="CENTRAL_DOMAINS" value="localhost,127.0.0.1" force="true"/>
+        <env name="TENANT_BASE_DOMAIN" value="localhost" force="true"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-        <env name="DB_URL" value=""/>
+        <!--
+            Tests use a dedicated MySQL database (credentials/host from .env), never the dev DB.
+            Parallel workers get nogrgr_testing_test_{token}. tests/bootstrap.php creates it and
+            accepts an explicit override: TEST_DB_CONNECTION / TEST_DB_DATABASE (CI SQLite leg).
+            tests/TestCase.php refuses to run against any name not ending in _testing / containing _test_.
+        -->
+        <env name="DB_CONNECTION" value="mysql" force="true"/>
+        <env name="DB_DATABASE" value="nogrgr_testing" force="true"/>
+        <env name="DB_URL" value="" force="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
