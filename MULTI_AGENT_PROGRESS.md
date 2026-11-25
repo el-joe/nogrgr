@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| **P5 batch 4 (P5 complete)** | Ledger/settlements/payouts/transactions, vendor money flow, vendor coupons & flash sales, customer returns API, refund webhooks (#72) | `55ef85a` |
 | **QA gate P3–P6 + vendor** | **PASS** — 182 URLs × 2 modes, flows end to end, #65 verified live, money hand-checked; fixes QA-P5-001…006; suite 1861 green | `5dee252` |
 | Settings from DB (#69) | env → DB settings + admin pages (Geocoding, Platform Billing/Checkout/Domains), EnvUsageTest, central-key webhook routing, store robots, og image (#73) | `3d00bd4` |
 | P5 batch 3 | Admin orders/shipping queue/returns/refunds/return policy, vendor orders/returns/refunds/settle/gateways, AfterSales module, branch stock deduction (#71) | `32334b0` |
@@ -60,6 +61,6 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
 - **vendorrequests**: vendor requests hub VEN-050…050j (+ vendor channel auth, pay requests), notifications inbox VEN-090, setup wizard VEN-007, real ImportProducts step.
 - **themes** (P7 batch 1): storefront foundation (theme resolution, section library, banners #65, reviews, search, SEO, sitemap) + Ecommet all SF-ECO rows; ComfyUI demo store.
-- **finance** (P5 batch 4): ledger, settlements, payouts, transactions ADM-050…053, vendor coupons/flash VEN-040/041, customer returns API, refund webhooks.
+- **polish**: QA-P5-009 (VEN-017/018 store categories & badges), 012–016, VEN-041b button, admin promo modals, ledger back-fill, overdue threshold → settings, picker case, VEN-060 subscription page.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
-- Next: small fixes QA-P5-009/012–016 (VEN-017/018 vendor categories & badges, wizard country list, UAE cities, gateway toggle 422, product tabs overflow, provisioning mailto) · P7 themes · P8 vendor panel rest · P9 · P10 AI · P11 mobile · P12 · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
+- Next: P5 QA re-check (finance pages, browser) · P7 themes · P8 vendor panel rest · P9 · P10 AI · P11 mobile · P12 · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
