@@ -34,3 +34,9 @@ Route::middleware(['auth:admin', 'permission:system.ui-kit.view,admin'])->group(
         Route::post('pay', 'pay')->name('pay');
     });
 });
+
+// Vendors (P2): list / create / profile, pending registrations, compliance, domains.
+require __DIR__.'/admin/vendors.php';
+require __DIR__.'/admin/registrations.php';
+require __DIR__.'/admin/compliance.php';
+require __DIR__.'/admin/domains.php';

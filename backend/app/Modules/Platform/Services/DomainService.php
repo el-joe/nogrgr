@@ -1,0 +1,227 @@
+<?php
+
+namespace App\Modules\Platform\Services;
+
+use App\Modules\Platform\Contracts\CertificateInspector;
+use App\Modules\Platform\Contracts\DnsResolver;
+use App\Modules\Platform\Enums\DnsCheckStatus;
+use App\Modules\Platform\Enums\DnsRecordType;
+use App\Modules\Platform\Enums\DomainRequestStatus;
+use App\Modules\Platform\Enums\DomainType;
+use App\Modules\Platform\Enums\SslStatus;
+use App\Modules\Platform\Events\DomainConnected;
+use App\Modules\Platform\Exceptions\PlatformRuleException;
+use App\Modules\Platform\Jobs\CheckDomainDns;
+use App\Modules\Platform\Models\DnsRecordTemplate;
+use App\Modules\Platform\Models\Domain;
+use App\Modules\Platform\Models\DomainRequest;
+use App\Modules\Platform\Models\Tenant;
+use App\Modules\Platform\Repositories\Contracts\DnsRecordTemplateRepositoryContract;
+use App\Modules\Platform\Repositories\Contracts\DomainRequestRepositoryContract;
+use App\Modules\Platform\Support\TenantSlug;
+use App\Shared\Services\BaseService;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
+
+/**
+ * Custom domains: request lifecycle (pending → connected → removed → pending), the queued
+ * DNS / SSL check (CheckDomainDns → runCheck) and the per-store DNS instructions rendered
+ * from the platform templates. Connecting adds the host to the tenancy `domains` table;
+ * removing deletes it again so the host stops resolving to the store.
+ */
+class DomainService extends BaseService
+{
+    public function __construct(
+        private readonly DomainRequestRepositoryContract $requests,
+        private readonly DnsRecordTemplateRepositoryContract $templates,
+        private readonly DnsResolver $dns,
+        private readonly CertificateInspector $certificates,
+    ) {}
+
+    /**
+     * @return array<string, int> all + per status
+     */
+    public function counts(): array
+    {
+        $byStatus = $this->requests->countsByStatus();
+        $counts = ['all' => array_sum($byStatus)];
+
+        foreach (DomainRequestStatus::cases() as $status) {
+            $counts[$status->value] = $byStatus[$status->value] ?? 0;
+        }
+
+        return $counts;
+    }
+
+    /**
+     * @return Collection<int, DomainRequest>
+     */
+    public function requestsFor(Tenant $tenant): Collection
+    {
+        return $this->requests->forTenant((int) $tenant->id);
+    }
+
+    public function request(Tenant $tenant, string $host): DomainRequest
+    {
+        $host = Str::lower(trim($host));
+
+        if ($this->requests->hostInUse($host)) {
+            throw PlatformRuleException::domainTaken($host);
+        }
+
+        /** @var DomainRequest $request */
+        $request = $this->requests->create([
+            'tenant_id' => $tenant->id,
+            'host' => $host,
+            'verification_token' => Str::lower(Str::random(32)),
+        ]);
+
+        return $request;
+    }
+
+    public function markConnected(DomainRequest $request): DomainRequest
+    {
+        $this->guard($request, DomainRequestStatus::Connected);
+
+        $this->transaction(function () use ($request): void {
+            /** @var Tenant $tenant */
+            $tenant = $request->tenant()->withoutGlobalScopes()->firstOrFail();
+            /** @var Domain $domain */
+            $domain = $tenant->domains()->firstOrCreate(['domain' => $request->host], ['type' => DomainType::Custom, 'is_primary' => false]);
+
+            $this->requests->update($request, [
+                'status' => DomainRequestStatus::Connected,
+                'domain_id' => $domain->id,
+                'connected_at' => now(),
+                'removed_at' => null,
+            ]);
+
+            $this->dispatchAfterCommit(new DomainConnected($request));
+        }, $request->getConnectionName());
+
+        return $request;
+    }
+
+    public function remove(DomainRequest $request): DomainRequest
+    {
+        $this->guard($request, DomainRequestStatus::Removed);
+
+        $this->transaction(function () use ($request): void {
+            $request->domain()->first()?->delete();
+
+            $this->requests->update($request, [
+                'status' => DomainRequestStatus::Removed,
+                'domain_id' => null,
+                'removed_at' => now(),
+            ]);
+        }, $request->getConnectionName());
+
+        return $request;
+    }
+
+    public function reopen(DomainRequest $request): DomainRequest
+    {
+        $this->guard($request, DomainRequestStatus::Pending);
+
+        if ($this->requests->hostInUse($request->host, $request->id)) {
+            throw PlatformRuleException::domainTaken($request->host);
+        }
+
+        $this->requests->update($request, [
+            'status' => DomainRequestStatus::Pending,
+            'removed_at' => null,
+            'dns_status' => DnsCheckStatus::Unchecked,
+            'dns_result' => null,
+        ]);
+
+        return $request;
+    }
+
+    public function queueCheck(DomainRequest $request): void
+    {
+        CheckDomainDns::dispatch($request->id)->onQueue('default');
+    }
+
+    /**
+     * CheckDomainDns body: compares the live DNS against the rendered templates and
+     * reads the TLS certificate.
+     */
+    public function runCheck(DomainRequest $request): DomainRequest
+    {
+        $rows = [];
+
+        foreach ($this->instructions($request) as $record) {
+            $type = DnsRecordType::from($record['type']);
+            $host = $this->fqdn($record['host'], $request->host);
+            $expected = strtolower(rtrim($record['value'], '.'));
+            $found = $this->dns->lookup($host, $type);
+
+            $rows[] = [
+                'type' => $type->value,
+                'host' => $host,
+                'expected' => $expected,
+                'found' => $found,
+                'ok' => in_array($expected, $found, true),
+            ];
+        }
+
+        $status = match (true) {
+            $rows === [] => DnsCheckStatus::Unchecked,
+            collect($rows)->every(fn (array $row): bool => $row['ok']) => DnsCheckStatus::Ok,
+            default => DnsCheckStatus::Missing,
+        };
+        $validUntil = $this->certificates->validUntil($request->host);
+
+        $this->requests->update($request, [
+            'dns_status' => $status,
+            'dns_result' => $rows,
+            'ssl_status' => $validUntil !== null ? SslStatus::Valid : ($status === DnsCheckStatus::Ok ? SslStatus::Invalid : SslStatus::Unknown),
+            'ssl_expires_at' => $validUntil,
+            'last_checked_at' => now(),
+        ]);
+
+        return $request;
+    }
+
+    /**
+     * Records the vendor must add, with {domain} / {subdomain} / {token} filled in.
+     *
+     * @return list<array{type: string, host: string, value: string, ttl: int, priority: int|null}>
+     */
+    public function instructions(DomainRequest $request): array
+    {
+        /** @var Tenant|null $tenant */
+        $tenant = $request->tenant()->withoutGlobalScopes()->first();
+        $replacements = [
+            '{domain}' => $request->host,
+            '{subdomain}' => $tenant !== null ? TenantSlug::subdomainHost($tenant->slug) : '',
+            '{token}' => $request->verification_token,
+        ];
+
+        return $this->templates->ordered()
+            ->map(fn (DnsRecordTemplate $template): array => $template->render($replacements))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * "@" → the domain itself; "www" → www.domain; an absolute host stays as is.
+     */
+    private function fqdn(string $host, string $domain): string
+    {
+        $host = strtolower(trim($host));
+
+        return match (true) {
+            $host === '' || $host === '@' => $domain,
+            str_ends_with($host, '.'.$domain) || $host === $domain => $host,
+            default => $host.'.'.$domain,
+        };
+    }
+
+    private function guard(DomainRequest $request, DomainRequestStatus $next): void
+    {
+        if (! $request->status->canTransitionTo($next)) {
+            throw PlatformRuleException::invalidTransition($request->status->label(), $next->label());
+        }
+    }
+}

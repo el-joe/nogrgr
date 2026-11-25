@@ -1,0 +1,232 @@
+/*
+ * Central website › complete registration + provisioning (WEB-018 / 018a / 020,
+ * Figma "Central Website additions" 125:11277 … and Central Website 12:42305).
+ * Colour tokens from those frames; motion is disabled under prefers-reduced-motion.
+ */
+@layer components {
+    .reg-page {
+        --reg-muted: #7a6662;
+        --reg-border: #c4c4c4;
+        --reg-tint: #fff1ed;
+        --reg-readonly: #f6f3f2;
+        --reg-rail: #ede4e2;
+        --reg-ring: #ffdcd4;
+        --reg-gray: #717171;
+        --reg-footer: #f4e7e5;
+        --reg-footer-bar: #5b5453;
+        --reg-card-shadow: 0 8px 40px 0 rgba(65, 37, 30, 0.08);
+        --reg-nav-shadow: 0 2px 4px 2px rgba(69, 69, 69, 0.1);
+    }
+
+    /* Soft brand glow behind the card (Figma "Glow (radial, as client pages)"). */
+    .reg-glow {
+        position: absolute;
+        top: 20px;
+        inset-inline-start: 50%;
+        width: 900px;
+        height: 900px;
+        border-radius: 9999px;
+        background: radial-gradient(circle at center, rgba(255, 82, 44, 0.13) 0%, rgba(255, 82, 44, 0.05) 38%, rgba(255, 82, 44, 0) 68%);
+        pointer-events: none;
+    }
+
+    /* Card / state entrance. */
+    .reg-enter {
+        animation: reg-enter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        animation-delay: var(--reg-delay, 0ms);
+    }
+
+    .reg-field {
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .reg-field:focus-within {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(255, 82, 44, 0.14);
+    }
+
+    .reg-field[data-state='error'] {
+        border-color: var(--color-danger);
+    }
+
+    .reg-field[data-state='ok'] {
+        border-color: var(--color-success);
+    }
+
+    /* Availability message + icon swap. */
+    .reg-status {
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .reg-status[data-pending] {
+        opacity: 0.6;
+    }
+
+    .reg-pop {
+        animation: reg-pop 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    /* Collapsible custom-domain panel. */
+    .reg-collapse {
+        display: grid;
+        grid-template-rows: 1fr;
+        transition: grid-template-rows 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+    }
+
+    .reg-collapse > * {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .reg-collapse[data-collapsed] {
+        grid-template-rows: 0fr;
+        opacity: 0;
+    }
+
+    /* Segmented sub-domain / own-domain switch: the white pill slides. */
+    .reg-segment {
+        position: relative;
+        isolation: isolate;
+    }
+
+    .reg-segment::before {
+        content: '';
+        position: absolute;
+        inset-block: 4px;
+        inset-inline-start: 4px;
+        width: calc(50% - 4px);
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(65, 37, 30, 0.08);
+        transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+        z-index: -1;
+    }
+
+    .reg-segment[data-value='custom']::before {
+        transform: translateX(100%);
+    }
+
+    [dir='rtl'] .reg-segment[data-value='custom']::before {
+        transform: translateX(-100%);
+    }
+
+    /* Provisioning: icon bars, check circles, step ticks. */
+    .reg-bars span {
+        transform-origin: bottom;
+        animation: reg-bar 1.2s ease-in-out infinite;
+    }
+
+    .reg-bars span:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .reg-bars span:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    [data-phase='failed'] [data-provisioning-icon] {
+        background-color: var(--color-danger);
+        border-color: var(--color-danger-bg);
+    }
+
+    [data-provisioning-icon] {
+        transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+
+    .reg-halo {
+        animation: reg-halo 2s ease-out infinite;
+    }
+
+    .reg-tick {
+        transition: background-color 0.3s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .reg-tick > svg {
+        transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        opacity: 0;
+        transform: scale(0.4);
+    }
+
+    .reg-tick[data-done] {
+        background-color: var(--color-primary);
+    }
+
+    .reg-tick[data-done] > svg {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .reg-tick[data-active] {
+        animation: reg-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes reg-enter {
+        from {
+            opacity: 0;
+            transform: translateY(18px) scale(0.985);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes reg-pop {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes reg-bar {
+        0%,
+        100% {
+            transform: scaleY(1);
+        }
+        50% {
+            transform: scaleY(0.55);
+        }
+    }
+
+    @keyframes reg-halo {
+        from {
+            box-shadow: 0 0 0 0 rgba(255, 82, 44, 0.28);
+        }
+        to {
+            box-shadow: 0 0 0 26px rgba(255, 82, 44, 0);
+        }
+    }
+
+    @keyframes reg-pulse {
+        0%,
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 82, 44, 0.3);
+        }
+        50% {
+            box-shadow: 0 0 0 6px rgba(255, 82, 44, 0);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reg-enter,
+        .reg-pop,
+        .reg-bars span,
+        .reg-halo,
+        .reg-tick[data-active] {
+            animation: none;
+        }
+
+        .reg-collapse,
+        .reg-segment::before,
+        .reg-tick,
+        .reg-tick > svg,
+        .reg-field,
+        .reg-status {
+            transition: none;
+        }
+    }
+}
