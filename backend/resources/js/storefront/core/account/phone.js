@@ -22,7 +22,7 @@ function refresh(input) {
     const iti = input.__iti;
     const country = countryInput(input);
     const wrapper = input.closest('[data-phone-wrapper]');
-    const data = iti.getSelectedCountryData();
+    const data = iti.getSelectedCountry();
 
     if (country && data?.iso2) {
         country.value = data.iso2.toUpperCase();
@@ -55,7 +55,7 @@ export function initPhone(input) {
         countrySearch: true,
         strictMode: true,
         formatAsYouType: true,
-        useFullscreenPopup: false,
+        countryNameLocale: document.documentElement.lang || 'en',
         loadUtils: () => import('intl-tel-input/utils'),
     });
     input.__iti = iti;
@@ -95,7 +95,7 @@ export function setPhone(input, number, iso2) {
     const iti = initPhone(input);
 
     if (iso2) {
-        iti.setCountry(iso2.toLowerCase());
+        iti.setSelectedCountry(iso2.toLowerCase());
     }
 
     iti.setNumber(number || '');

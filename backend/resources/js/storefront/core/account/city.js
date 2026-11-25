@@ -4,6 +4,7 @@
  * stays allowed (the backend stores the city as typed). ↑ ↓ Enter Esc on the input.
  */
 import { http } from '../../../core/http';
+import { placement } from './placement';
 
 export function initCity(input) {
     if (input.__city) {
@@ -58,8 +59,7 @@ export function initCity(input) {
         }));
 
         if (cities.length && document.activeElement === input) {
-            const rect = input.getBoundingClientRect();
-            list.dataset.placement = window.innerHeight - rect.bottom < 260 && rect.top > 260 ? 'top' : 'bottom';
+            list.dataset.placement = placement(input, 260);
             list.dataset.open = '';
             input.setAttribute('aria-expanded', 'true');
         } else {

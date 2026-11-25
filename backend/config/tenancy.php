@@ -167,7 +167,7 @@ return [
          * disable asset() helper tenancy and explicitly use tenant_asset() calls in places
          * where you want to use tenant-specific assets (product images, avatars, etc).
          */
-        'asset_helper_tenancy' => true,
+        'asset_helper_tenancy' => (bool) env('TENANCY_ASSET_HELPER', false), // Vite assets are served from public/; tenant uploads use tenant_asset()
     ],
 
     /**

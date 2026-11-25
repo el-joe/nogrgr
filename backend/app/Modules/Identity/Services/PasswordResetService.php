@@ -56,7 +56,8 @@ class PasswordResetService extends BaseService
         );
 
         if ($status !== Password::PASSWORD_RESET) {
-            throw ValidationException::withMessages(['email' => __(is_string($status) ? $status : Password::INVALID_TOKEN)]);
+            /* Always the generic invalid-token message, so an unknown email is indistinguishable from a bad token. */
+            throw ValidationException::withMessages(['email' => __(Password::INVALID_TOKEN)]);
         }
     }
 }
