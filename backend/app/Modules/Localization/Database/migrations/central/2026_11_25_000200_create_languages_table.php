@@ -20,11 +20,8 @@ return new class extends Migration
             $table->string('direction', 3)->default('ltr');
             $table->string('flag', 16)->nullable();
             $table->boolean('is_active')->default(false)->index();
-            $table->boolean('is_free')->default(false);
             $table->boolean('is_default')->default(false);
             $table->unsignedInteger('price_minor')->default(0);
-            $table->unsignedInteger('ai_translation_price_minor')->default(0);
-            $table->boolean('offers_ai_translation')->default(false);
             $table->json('country_ids')->nullable();
             $table->unsignedInteger('sort_order')->default(0)->index();
             $table->timestamps();

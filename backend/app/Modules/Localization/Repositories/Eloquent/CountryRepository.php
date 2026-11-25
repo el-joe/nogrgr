@@ -27,6 +27,24 @@ class CountryRepository extends BaseRepository implements CountryRepositoryContr
         return $this->query()->active()->whereKey($id)->first();
     }
 
+    public function countUsingCurrency(string $code): int
+    {
+        return $this->query()->where('currency_code', strtoupper($code))->count();
+    }
+
+    public function options(): array
+    {
+        $options = [];
+
+        foreach ($this->query()->get(['id', 'name', 'flag']) as $country) {
+            $options[(int) $country->id] = trim($country->flag.' '.$country->name);
+        }
+
+        asort($options, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $options;
+    }
+
     public function active(?array $ids = null): Collection
     {
         return $this->query()

@@ -240,6 +240,16 @@
         "flag": null
     },
     {
+        "code": "ckb",
+        "name": {
+            "en": "Central Kurdish",
+            "ar": "الكردية السورانية"
+        },
+        "native_name": "کوردیی ناوەندی",
+        "direction": "rtl",
+        "flag": "IQ"
+    },
+    {
         "code": "co",
         "name": {
             "en": "Corsican",

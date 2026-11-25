@@ -16,6 +16,18 @@ interface CountryRepositoryContract extends RepositoryContract
     public function findActive(int $id): ?Country;
 
     /**
+     * Countries whose default currency is the given ISO 4217 code.
+     */
+    public function countUsingCurrency(string $code): int;
+
+    /**
+     * id => "flag name" pairs for selects (all countries, by localized name).
+     *
+     * @return array<int, string>
+     */
+    public function options(): array;
+
+    /**
      * Active countries, optionally limited to the given ids.
      *
      * @param  list<int>|null  $ids

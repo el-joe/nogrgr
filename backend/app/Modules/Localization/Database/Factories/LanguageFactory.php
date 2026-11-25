@@ -27,11 +27,8 @@ class LanguageFactory extends Factory
             'direction' => TextDirection::Ltr,
             'flag' => null,
             'is_active' => true,
-            'is_free' => true,
             'is_default' => false,
             'price_minor' => 0,
-            'ai_translation_price_minor' => 0,
-            'offers_ai_translation' => false,
             'country_ids' => null,
             'sort_order' => 0,
         ];
@@ -52,7 +49,7 @@ class LanguageFactory extends Factory
 
     public function paid(int $priceMinor = 1500): static
     {
-        return $this->state(fn (): array => ['is_free' => false, 'price_minor' => $priceMinor]);
+        return $this->state(fn (): array => ['price_minor' => $priceMinor]);
     }
 
     public function inactive(): static

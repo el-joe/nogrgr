@@ -18,4 +18,12 @@ return [
         'nominatim' => 'OpenStreetMap Nominatim',
         'ipwhois' => 'ipwho.is',
     ],
+    'active_state' => [
+        'active' => 'مفعّل',
+        'inactive' => 'غير مفعّل',
+    ],
+    'text_direction' => [
+        'ltr' => 'من اليسار لليمين',
+        'rtl' => 'من اليمين لليسار',
+    ],
 ];
