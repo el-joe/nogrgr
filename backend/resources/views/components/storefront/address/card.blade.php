@@ -11,12 +11,12 @@
         @endif
         <label @if ($mode === 'select') for="{{ $group }}-{{ $address['id'] }}" @endif class="grid min-w-0 flex-1 cursor-pointer gap-1">
             <span class="flex flex-wrap items-center gap-2">
-                <strong class="text-sm font-medium text-sf-ink" data-field-full-name>{{ $address['full_name'] }}</strong>
+                <strong class="text-sm font-medium text-sf-ink" dir="auto" data-field-full-name>{{ $address['full_name'] }}</strong>
                 <span class="sf-chip sf-chip-label" data-field-label @if (! $address['label']) hidden @endif>{{ $address['label'] }}</span>
                 <span class="sf-chip sf-chip-default" data-field-default @if (! $address['is_default']) hidden @endif>{{ __('identity::addresses.default') }}</span>
             </span>
             <span class="text-xs text-sf-muted" dir="ltr" data-field-phone>{{ $address['phone'] }}</span>
-            <span class="text-sm text-sf-ink" data-field-one-line>{{ $address['one_line'] }}</span>
+            <span class="text-sm text-sf-ink [[dir=ltr]_&]:text-left [[dir=rtl]_&]:text-right" dir="auto" data-field-one-line>{{ $address['one_line'] }}</span>
         </label>
         <div class="flex shrink-0 items-center gap-3">
             <button type="button" class="grid size-8 place-items-center text-sf-muted hover:text-sf-ink" data-address-edit="{{ $address['id'] }}" aria-label="{{ __('identity::addresses.edit_title') }}" title="{{ __('identity::addresses.edit_title') }}"><x-ui::icon name="edit" :size="18" /></button>

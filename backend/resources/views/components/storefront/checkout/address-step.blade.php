@@ -27,6 +27,8 @@
 @php
     $default = collect($addresses)->firstWhere('is_default', true) ?? ($addresses[0] ?? null);
     $selected = $default['id'] ?? null;
+    // Same order as the script: no address → shipping problem → no gateway (no flash before JS runs).
+    $payBlocked = $selected === null || ($shipping['state'] ?? 'ok') !== 'ok' || ! $gatewayAvailable;
     $template = ['id' => '__ID__', 'label' => '', 'full_name' => '', 'phone' => '', 'one_line' => '', 'is_default' => false];
     $config = [
         'addresses' => $addresses,
@@ -97,7 +99,7 @@
     {{ $payment ?? '' }}
 
     <div class="grid gap-2">
-        <button type="submit" class="sf-btn sf-btn-cta sf-btn-lg w-full" data-pay-button aria-describedby="{{ $id }}-pay-reason">{{ $payLabel ?? __('storefront::checkout.pay') }}</button>
+        <button type="submit" class="sf-btn sf-btn-cta sf-btn-lg w-full" data-pay-button aria-describedby="{{ $id }}-pay-reason" @disabled($payBlocked)>{{ $payLabel ?? __('storefront::checkout.pay') }}</button>
         <p id="{{ $id }}-pay-reason" class="flex items-center gap-1.5 text-xs text-sf-danger" data-pay-reason hidden><x-ui::icon name="info" :size="14" /><span></span></p>
     </div>
 

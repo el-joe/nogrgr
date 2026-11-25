@@ -183,6 +183,10 @@ it('does not reveal unknown emails and rejects bad reset tokens', function (stri
         ->assertSessionHasErrors(['email' => __('passwords.token')]);
 
     $this->from($this->centralUrl($surface.'/reset-password/bad'))
+        ->post($this->centralUrl($surface.'/reset-password'), ['token' => 'bad', 'email' => 'nobody@nogrgr.test', 'password' => 'new-password-1', 'password_confirmation' => 'new-password-1'])
+        ->assertSessionHasErrors(['email' => __('passwords.token')]);
+
+    $this->from($this->centralUrl($surface.'/reset-password/bad'))
         ->post($this->centralUrl($surface.'/reset-password'), ['token' => 'bad', 'email' => $surface.'@nogrgr.test', 'password' => 'short', 'password_confirmation' => 'other'])
         ->assertSessionHasErrors('password');
 })->with('panels');

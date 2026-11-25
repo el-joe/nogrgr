@@ -72,6 +72,9 @@
     input.sf-control,
     select.sf-control,
     textarea.sf-control {
+        /* A percentage width keeps the control's intrinsic size out of grid min-content
+           tracks, so fields never push a card wider than a 375px screen. */
+        width: 100%;
         min-width: 0;
         flex: 1 1 auto;
         height: 42px;
@@ -635,7 +638,12 @@
         display: none;
     }
 
+    .sf-combobox-flag {
+        display: inline-flex;
+    }
+
     .sf-flag-sprite {
+        display: inline-block;
         flex-shrink: 0;
     }
 

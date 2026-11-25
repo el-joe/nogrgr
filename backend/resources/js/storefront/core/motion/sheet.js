@@ -32,7 +32,9 @@ export function openSheet(target) {
     open.push(sheet);
     requestAnimationFrame(() => {
         sheet.dataset.open = '';
-        (sheet.querySelector('[data-autofocus]') ?? focusables(sheet.querySelector('.mo-sheet-panel'))[0])?.focus({ preventScroll: true });
+        // Prefer the first field over the header close button so typing goes straight in.
+        const items = focusables(sheet.querySelector('.mo-sheet-panel'));
+        (sheet.querySelector('[data-autofocus]') ?? items.find((node) => !node.matches('[data-sheet-close]')) ?? items[0])?.focus({ preventScroll: true });
     });
 }
 

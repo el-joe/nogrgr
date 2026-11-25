@@ -8,6 +8,8 @@
  * 422 renderer marks aria-invalid, and receives a `change` event on every pick, so
  * the city suggestions and anything else listening to it keep working.
  */
+import { placement } from './placement';
+
 let sequence = 0;
 
 const flag = (iso2) => {
@@ -83,7 +85,7 @@ export function initCombobox(root) {
     });
 
     let active = -1;
-    const visible = () => items.filter(({ item }) => !item.hidden);
+    const visible = () => [...list.children].filter((item) => !item.hidden).map((item) => items.find((entry) => entry.item === item));
 
     const render = () => {
         const selected = select.selectedOptions[0];
@@ -116,6 +118,9 @@ export function initCombobox(root) {
         items.forEach((entry) => {
             entry.item.hidden = query !== '' && !entry.text.includes(query);
         });
+        // Names that start with the query first ("sau" → Saudi Arabia before Guinea-Bissau).
+        const starts = ({ option }) => (query !== '' && option.textContent.trim().toLowerCase().startsWith(query) ? 0 : 1);
+        list.append(...[...items].sort((a, b) => starts(a) - starts(b) || items.indexOf(a) - items.indexOf(b)).map(({ item }) => item));
         empty.hidden = visible().length > 0;
         highlight(0);
     };
@@ -127,9 +132,7 @@ export function initCombobox(root) {
             return;
         }
 
-        const rect = trigger.getBoundingClientRect();
-        const below = window.innerHeight - rect.bottom;
-        popover.dataset.placement = below < 300 && rect.top > below ? 'top' : 'bottom';
+        popover.dataset.placement = placement(trigger, 300);
         popover.dataset.open = '';
         trigger.setAttribute('aria-expanded', 'true');
         search.value = '';
