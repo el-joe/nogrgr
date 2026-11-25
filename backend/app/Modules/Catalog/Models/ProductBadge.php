@@ -2,7 +2,10 @@
 
 namespace App\Modules\Catalog\Models;
 
+use App\Modules\Catalog\Database\Factories\ProductBadgeFactory;
+use App\Modules\Catalog\Enums\BadgeAutoFill;
 use App\Modules\Catalog\Enums\BadgeType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
@@ -15,11 +18,17 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property BadgeType $type
  * @property string $name
  * @property bool $is_active
+ * @property BadgeAutoFill $auto_fill
+ * @property int $auto_fill_limit
  * @property int $sort_order
  */
 class ProductBadge extends Model
 {
     use CentralConnection;
+
+    /** @use HasFactory<ProductBadgeFactory> */
+    use HasFactory;
+
     use HasTranslations;
 
     /**
@@ -30,14 +39,14 @@ class ProductBadge extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['type', 'name', 'is_active', 'sort_order'];
+    protected $fillable = ['type', 'name', 'is_active', 'auto_fill', 'auto_fill_limit', 'sort_order'];
 
     /**
      * @return array<string, string>
      */
     protected function casts(): array
     {
-        return ['type' => BadgeType::class, 'is_active' => 'boolean', 'sort_order' => 'integer'];
+        return ['type' => BadgeType::class, 'is_active' => 'boolean', 'auto_fill' => BadgeAutoFill::class, 'auto_fill_limit' => 'integer', 'sort_order' => 'integer'];
     }
 
     /**

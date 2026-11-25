@@ -48,6 +48,11 @@ final class PermissionCatalog
                 'settings.view', 'settings.manage',
                 'notifications.view',
                 'email-templates.view', 'email-templates.manage',
+                // Catalog taxonomy
+                'catalog.categories.view', 'catalog.categories.manage',
+                'catalog.attributes.view', 'catalog.attributes.manage',
+                'catalog.labels.view', 'catalog.labels.manage',
+                'catalog.badges.view', 'catalog.badges.manage',
             ],
             Guard::Affiliate->value => ['dashboard.view', 'notifications.view'],
         ];

@@ -95,5 +95,9 @@ return [
         'notifications' => 'الإشعارات',
         'email-templates' => 'قوالب البريد',
         'settings' => 'الإعدادات العامة',
+        'catalog.categories' => 'الأقسام',
+        'catalog.attributes' => 'السمات',
+        'catalog.labels' => 'ملصقات المنتجات',
+        'catalog.badges' => 'شارات المنتجات',
     ],
 ];

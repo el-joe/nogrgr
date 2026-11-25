@@ -213,4 +213,12 @@ class Product extends Model
                 });
         });
     }
+
+    /**
+     * Main gallery image URL (eager-load `media` on lists), null when the product has none.
+     */
+    public function primaryImageUrl(): ?string
+    {
+        return $this->media->first()?->url();
+    }
 }

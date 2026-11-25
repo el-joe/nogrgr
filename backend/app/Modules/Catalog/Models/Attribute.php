@@ -7,6 +7,7 @@ use App\Modules\Catalog\Enums\AttributeDisplayType;
 use App\Modules\Catalog\Enums\RecordStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
@@ -64,5 +65,13 @@ class Attribute extends Model
     public function options(): HasMany
     {
         return $this->hasMany(AttributeOption::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    /**
+     * @return BelongsToMany<Product, $this>
+     */
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_attribute');
     }
 }

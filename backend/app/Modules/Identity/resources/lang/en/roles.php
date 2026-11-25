@@ -95,5 +95,9 @@ return [
         'notifications' => 'Notifications',
         'email-templates' => 'Email templates',
         'settings' => 'General settings',
+        'catalog.categories' => 'Categories',
+        'catalog.attributes' => 'Attributes',
+        'catalog.labels' => 'Product labels',
+        'catalog.badges' => 'Product badges',
     ],
 ];

@@ -35,7 +35,7 @@ class ProductBadgeAssignment extends Model
      */
     protected function casts(): array
     {
-        return ['country_id' => 'integer', 'sort_order' => 'integer'];
+        return ['product_badge_id' => 'integer', 'product_id' => 'integer', 'country_id' => 'integer', 'sort_order' => 'integer'];
     }
 
     /**

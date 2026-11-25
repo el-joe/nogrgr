@@ -17,6 +17,7 @@ const pages = {
     'admin-integrations': () => import('./integrations.js'),
     'admin-general-settings': () => import('./general-settings.js'),
     'admin-email-templates': () => import('./email-templates.js'),
+    'admin-catalog': () => import('./catalog.js'),
 };
 
 export function initAdmin() {
