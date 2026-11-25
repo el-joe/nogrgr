@@ -16,6 +16,8 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| P5 batch 3 | Admin orders/shipping queue/returns/refunds/return policy, vendor orders/returns/refunds/settle/gateways, AfterSales module, branch stock deduction (#71) | `32334b0` |
+| **P6 Central website** | Home, templates, pricing, about, contact, FAQs, legal, blog, newsletter, SEO, errors; Content admin; store login reset (#70); suite 1787 green | `5ae4bfa` |
 | P5 batch 2 + vendor requests | Cart/checkout/orders/payments + /store-api/v1 (decision #68); vendor requests hub, inbox, setup wizard (#67); suite 1674 green | `d7d9f18` |
 | P5 batch 1 | OrderPricing/OrderComposer (golden + 700-cart invariant), central+store coupons & flash sales merged by source, admin ADM-025/026; decision #66 | `44996c1` |
 | P3 Vendor catalog | VEN-010…016: store products from central + per-field tenant overrides via approved requests (#65), markup price list, import new, edit requests, sort, opportunities, own products; suite 1606 green | `03e6361` |
@@ -55,7 +57,7 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
 - **vendorrequests**: vendor requests hub VEN-050…050j (+ vendor channel auth, pay requests), notifications inbox VEN-090, setup wizard VEN-007, real ImportProducts step.
-- **central** (P6): central website WEB-001…030 + Content admin (blog, FAQs, pages, newsletter), SEO, ComfyUI imagery.
-- **fulfilment** (P5 batch 3): admin orders/shipping queue/returns/refunds ADM-020…024 + ADM-090, vendor orders/returns/refunds VEN-020…023, vendor gateways VEN-078 (fixes dead nav link), branch stock decrement, EditRequest disk fix.
+- **settings**: decision #69 audit (env → DB settings + admin UI, arch test), central-keys webhook routing, store robots.txt, og-default image.
+- **finance** (P5 batch 4): ledger, settlements, payouts, transactions ADM-050…053, vendor coupons/flash VEN-040/041, customer returns API, refund webhooks.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
-- Next (queued): central-keys webhook routing to stores (orders limit) · **integrations-from-DB audit (#69)** — remove env() for AI/FreeLLMAPI/OpenAI, geocoding, billing tax/seller/due/grace, commerce limits, TENANT_EDGE_IPV4, AWS/Slack/Postmark/Resend; add missing admin settings sections; tests use DB settings · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
+- Next: P5 QA gate (+ P3/P4/P6 browser pass) · P7 themes · P8 vendor panel rest · P9 · P10 AI · P11 mobile · P12 · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
