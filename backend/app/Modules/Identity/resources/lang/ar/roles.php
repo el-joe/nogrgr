@@ -94,5 +94,6 @@ return [
         'integrations' => 'التكاملات',
         'notifications' => 'الإشعارات',
         'email-templates' => 'قوالب البريد',
+        'settings' => 'الإعدادات العامة',
     ],
 ];

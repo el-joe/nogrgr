@@ -152,9 +152,9 @@ return [
                 ['key' => 'localization.purchases', 'label' => 'navigation.vendor.language_purchases', 'route' => 'admin.localization.purchases.index', 'permission' => 'localization.purchases.view'],
             ]],
             ['key' => 'settings', 'label' => 'navigation.admin.settings', 'icon' => 'settings', 'children' => [
-                ['key' => 'settings.general', 'label' => 'navigation.admin.general', 'route' => 'admin.settings.general.edit', 'permission' => 'settings.manage'],
-                ['key' => 'settings.integrations', 'label' => 'navigation.admin.integrations', 'route' => 'admin.settings.integrations.index', 'permission' => 'integrations.view'],
-                ['key' => 'settings.email-templates', 'label' => 'navigation.admin.email_templates', 'route' => 'admin.settings.email-templates.index', 'permission' => 'email-templates.view'],
+                ['key' => 'settings.general', 'label' => 'navigation.admin.general', 'route' => 'admin.settings.general', 'permission' => 'settings.view', 'active' => 'admin.settings.general*'],
+                ['key' => 'settings.integrations', 'label' => 'navigation.admin.integrations', 'route' => 'admin.integrations.index', 'permission' => 'integrations.view', 'active' => 'admin.integrations.*'],
+                ['key' => 'settings.email-templates', 'label' => 'navigation.admin.email_templates', 'route' => 'admin.settings.email-templates.index', 'permission' => 'email-templates.view', 'active' => 'admin.settings.email-templates.*'],
             ]],
             ['key' => 'tickets', 'label' => 'navigation.admin.support_tickets', 'icon' => 'lifebuoy', 'route' => 'admin.tickets.index', 'permission' => 'tickets.view', 'badge' => 'tickets'],
             ['key' => 'notifications', 'label' => 'navigation.admin.notifications', 'icon' => 'bell', 'route' => 'admin.notifications.index', 'permission' => 'notifications.view'],

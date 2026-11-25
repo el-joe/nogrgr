@@ -1,0 +1,52 @@
+<?php
+
+return [
+    'title' => 'الإعدادات العامة',
+    'subtitle' => 'هوية المنصّة وبيانات الدعم والعلامة التجارية وروابط التواصل.',
+    'platform' => 'المنصّة',
+    'social_links' => 'روابط التواصل الاجتماعي',
+    'branding' => 'العلامة التجارية',
+    'branding_help' => 'الشعار (فاتح)، الشعار (داكن) وأيقونة الموقع 512×512.',
+    'fields' => [
+        'platform_name_en' => 'اسم المنصّة (بالإنجليزية)',
+        'platform_name_ar' => 'اسم المنصّة (بالعربية)',
+        'support_email' => 'بريد الدعم',
+        'support_phone' => 'هاتف الدعم',
+        'timezone' => 'المنطقة الزمنية الافتراضية',
+        'timezone_help' => 'الافتراضية للمشرفين الجدد وتقارير المنصّة.',
+        'archive_days' => 'أرشفة الطلبات بعد (أيام)',
+        'archive_days_help' => 'تُنقل الطلبات المسلّمة والملغاة الأقدم من هذه المدة إلى الأرشيف.',
+        'default_language' => 'اللغة الافتراضية',
+        'default_language_help' => 'تظهر أولًا في الموقع المركزي والمتاجر الجديدة.',
+    ],
+    'socials' => [
+        'instagram' => 'إنستغرام',
+        'x' => 'إكس',
+        'tiktok' => 'تيك توك',
+        'linkedin' => 'لينكدإن',
+        'facebook' => 'فيسبوك',
+        'youtube' => 'يوتيوب',
+    ],
+    'socials_placeholder' => [
+        'instagram' => 'https://instagram.com/yourbrand',
+        'x' => 'https://x.com/yourbrand',
+        'tiktok' => 'https://tiktok.com/@yourbrand',
+        'linkedin' => 'https://linkedin.com/company/yourbrand',
+        'facebook' => 'https://facebook.com/yourbrand',
+        'youtube' => 'https://youtube.com/@yourbrand',
+    ],
+    'images' => [
+        'logo_light' => 'الشعار (فاتح)',
+        'logo_dark' => 'الشعار (داكن)',
+        'favicon' => 'أيقونة الموقع',
+    ],
+    'images_help' => [
+        'logo_light' => 'PNG أو JPG أو WebP حتى 2 ميغابايت. يُستخدم على الخلفيات الفاتحة.',
+        'logo_dark' => 'PNG أو JPG أو WebP حتى 2 ميغابايت. يُستخدم على الخلفيات الداكنة.',
+        'favicon' => 'PNG مربّع، يُفضّل 512×512، حتى 1 ميغابايت.',
+    ],
+    'unsaved' => 'تغييرات غير محفوظة',
+    'discard' => 'تجاهل',
+    'save' => 'حفظ التغييرات',
+    'saved' => 'تم حفظ الإعدادات العامة.',
+];

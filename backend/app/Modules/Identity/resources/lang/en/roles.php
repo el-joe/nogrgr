@@ -94,5 +94,6 @@ return [
         'integrations' => 'Integrations',
         'notifications' => 'Notifications',
         'email-templates' => 'Email templates',
+        'settings' => 'General settings',
     ],
 ];

@@ -1,0 +1,52 @@
+<?php
+
+return [
+    'title' => 'General settings',
+    'subtitle' => 'Platform identity, support contacts, branding and social links.',
+    'platform' => 'Platform',
+    'social_links' => 'Social links',
+    'branding' => 'Branding',
+    'branding_help' => 'Logo (light), logo (dark) and favicon 512×512.',
+    'fields' => [
+        'platform_name_en' => 'Platform name (English)',
+        'platform_name_ar' => 'Platform name (Arabic)',
+        'support_email' => 'Support email',
+        'support_phone' => 'Support phone',
+        'timezone' => 'Default timezone',
+        'timezone_help' => 'Default for new admins and platform reports.',
+        'archive_days' => 'Archive orders after (days)',
+        'archive_days_help' => 'Delivered and cancelled orders older than this move to the archive.',
+        'default_language' => 'Default language',
+        'default_language_help' => 'Shown first on the central website and new stores.',
+    ],
+    'socials' => [
+        'instagram' => 'Instagram',
+        'x' => 'X',
+        'tiktok' => 'TikTok',
+        'linkedin' => 'LinkedIn',
+        'facebook' => 'Facebook',
+        'youtube' => 'YouTube',
+    ],
+    'socials_placeholder' => [
+        'instagram' => 'https://instagram.com/yourbrand',
+        'x' => 'https://x.com/yourbrand',
+        'tiktok' => 'https://tiktok.com/@yourbrand',
+        'linkedin' => 'https://linkedin.com/company/yourbrand',
+        'facebook' => 'https://facebook.com/yourbrand',
+        'youtube' => 'https://youtube.com/@yourbrand',
+    ],
+    'images' => [
+        'logo_light' => 'Logo (light)',
+        'logo_dark' => 'Logo (dark)',
+        'favicon' => 'Favicon',
+    ],
+    'images_help' => [
+        'logo_light' => 'PNG, JPG or WebP, up to 2 MB. Used on light backgrounds.',
+        'logo_dark' => 'PNG, JPG or WebP, up to 2 MB. Used on dark backgrounds.',
+        'favicon' => 'Square PNG, 512×512 recommended, up to 1 MB.',
+    ],
+    'unsaved' => 'Unsaved changes',
+    'discard' => 'Discard',
+    'save' => 'Save changes',
+    'saved' => 'General settings saved.',
+];

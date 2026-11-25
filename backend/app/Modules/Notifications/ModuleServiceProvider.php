@@ -3,8 +3,10 @@
 namespace App\Modules\Notifications;
 
 use App\Modules\Notifications\Contracts\HasPanelInbox;
+use App\Modules\Notifications\Repositories\Contracts\EmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\NotificationPreferenceRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\PanelNotificationRepositoryContract;
+use App\Modules\Notifications\Repositories\Eloquent\EmailTemplateRepository;
 use App\Modules\Notifications\Repositories\Eloquent\NotificationPreferenceRepository;
 use App\Modules\Notifications\Repositories\Eloquent\PanelNotificationRepository;
 use App\Modules\Notifications\Support\AdminPanelNotificationFeed;
@@ -24,6 +26,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         PanelNotificationRepositoryContract::class => PanelNotificationRepository::class,
         NotificationPreferenceRepositoryContract::class => NotificationPreferenceRepository::class,
         PanelNotificationFeed::class => AdminPanelNotificationFeed::class,
+        EmailTemplateRepositoryContract::class => EmailTemplateRepository::class,
     ];
 
     public function boot(): void

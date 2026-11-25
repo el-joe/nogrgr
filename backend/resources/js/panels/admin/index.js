@@ -14,6 +14,9 @@ const pages = {
     'admin-audit': () => import('./audit.js'),
     'admin-vendors': () => import('./vendors.js'),
     'admin-vendor-reviews': () => import('./vendor-reviews.js'),
+    'admin-integrations': () => import('./integrations.js'),
+    'admin-general-settings': () => import('./general-settings.js'),
+    'admin-email-templates': () => import('./email-templates.js'),
 };
 
 export function initAdmin() {

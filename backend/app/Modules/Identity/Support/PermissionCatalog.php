@@ -45,6 +45,7 @@ final class PermissionCatalog
                 'finance.payment-logs.view', 'finance.payment-logs.manage',
                 // Integrations, Notifications, Content (email templates)
                 'integrations.view', 'integrations.manage',
+                'settings.view', 'settings.manage',
                 'notifications.view',
                 'email-templates.view', 'email-templates.manage',
             ],

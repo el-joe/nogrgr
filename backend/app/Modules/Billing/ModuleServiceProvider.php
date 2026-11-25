@@ -3,6 +3,7 @@
 namespace App\Modules\Billing;
 
 use App\Modules\Billing\Events\InvoicePaid;
+use App\Modules\Billing\Listeners\SendBillingNotifications;
 use App\Modules\Billing\Listeners\SettleInvoiceBillable;
 use App\Modules\Billing\Models\AddonPurchase;
 use App\Modules\Billing\Models\Subscription;
@@ -46,5 +47,6 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         ]);
 
         Event::listen(InvoicePaid::class, SettleInvoiceBillable::class);
+        Event::subscribe(SendBillingNotifications::class);
     }
 }
