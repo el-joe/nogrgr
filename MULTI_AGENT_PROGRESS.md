@@ -32,3 +32,10 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - P4 needs P2 countries; P5 needs P3 + P4 + `Commerce\Pricing`.
 - P6/P8/P9 need P2 + P3; P7 needs P5; P10 needs P3; P11 needs the Mobile API (after P5); P12 last.
 - QA-P0-008/009 deferred parts (Google sign-in, country filter, Export report) wait for P2/P9.
+
+## In progress (batch P2-1, started 2026-11-25, agent team of 2)
+
+- **localization**: Languages (ISO seeder, CRUD, ar/en locked), Currencies (CRUD, `SyncExchangeRates` job + Sync now), Countries (seed, CRUD), tenant ar/en auto-enable method.
+- **billing**: Plans CRUD, Subscriptions (state machine, expiry job, assign plan), Invoices (list/detail/print), Payment logs (list/detail/refund event), add-on purchase service.
+- Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
+- Next batches: P2-2 Vendors/provisioning/domains/compliance · P2-3 Admins/roles, profile, notifications, integrations · P2 QA gate.
