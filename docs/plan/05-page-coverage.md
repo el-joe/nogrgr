@@ -68,10 +68,10 @@
 | ADM-023 | Return requests list | `admin.sales.returns.index` | Std; filter status/tenant | admin.orders.returns.index | designed: Admin Panel 70:36668 | P5 | todo |
 | ADM-023a | ↳ Return detail (approve, reject, more info, inspect + restock, refund, ship exchange, notes) | `admin.sales.returns.show` | one modal per transition | admin.orders.returns.show | designed: Admin Panel 70:37613 · 70:41386 | P5 | todo |
 | ADM-024 | Refunds list | `admin.sales.refunds.index` | Std; filter tenant/status/source/date; retry, complete, reject modals | admin.orders.refunds.index | designed: Admin Panel 70:38484 · 70:41386 | P5 | todo |
-| ADM-025 | Coupons (central) | `admin.marketing.coupons.index` | Std; list per country, delete | admin.store.coupons.index, admin.store.coupons.list | designed: Admin Panel 70:39532 | P5 | todo |
-| ADM-025a | ↳ Coupon create / edit modal | modal | type, value, min spend, dates, countries | CouponsPage | designed: Admin Panel 70:41386 | P5 | todo |
-| ADM-026 | Flash sales (central) | `admin.marketing.flash-sales.index` | Std; list per country, delete | admin.store.flash-sales.index, admin.store.flash-sales.list | designed: Admin Panel 70:40462 | P5 | todo |
-| ADM-026a | ↳ Flash sale create / edit (product picker) | modal | search products, %, dates, countries | FlashSalesPage | designed: Admin Panel 70:41386 | P5 | todo |
+| ADM-025 | Coupons (central) | `admin.promotions.coupons.index` | Std; list per country, delete | admin.store.coupons.index, admin.store.coupons.list | designed: Admin Panel 70:39532 | P5 | done (unverified in browser) |
+| ADM-025a | ↳ Coupon create / edit modal | `admin.promotions.coupons.create / .edit` | type, value, min spend, dates, countries | CouponsPage | designed: Admin Panel 70:41386 | P5 | done (unverified in browser) |
+| ADM-026 | Flash sales (central) | `admin.promotions.flash-sales.index` | Std; list per country, delete | admin.store.flash-sales.index, admin.store.flash-sales.list | designed: Admin Panel 70:40462 | P5 | done (unverified in browser) |
+| ADM-026a | ↳ Flash sale create / edit (product picker) | `admin.promotions.flash-sales.create / .edit` | search products, %, dates, countries | FlashSalesPage | designed: Admin Panel 70:41386 | P5 | done (unverified in browser) |
 | ADM-027 | Tenant sync | — | — | admin.store.tenant-sync.index | — | — | dropped — PM confirmed (A1: tenants read central live with override → fallback; no copy sync) |
 | ADM-030 | Branches list | `admin.shipping.branches.index` | Std; list, delete | admin.branches.index | designed: Admin Panel 71:40880 | P3 | done |
 | ADM-030a | ↳ Branch create / edit (stock, zones, default) | `admin.shipping.branches.create` / `.edit` | validation | admin.branches.create, admin.branches.edit | designed: Admin Panel 71:41812 | P3 | done |

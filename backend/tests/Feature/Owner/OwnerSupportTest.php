@@ -43,7 +43,10 @@ it('lists only the configured channels from the general settings', function (): 
         ->assertSee('href="tel:+966551234567"', false)
         ->assertSee('https://instagram.com/nogrgr', false)
         ->assertSee(__('integrations::general.socials.instagram'))
-        ->assertDontSee(__('integrations::general.socials.x'))
+        ->assertSee('data-support-social="instagram"', false)
+        // The X label is the single letter "X", which a random CSRF token can contain: assert the marker.
+        ->assertDontSee('data-support-social="x"', false)
+        ->assertDontSee('data-support-social="tiktok"', false)
         ->assertDontSee('javascript:alert', false);
 });
 
