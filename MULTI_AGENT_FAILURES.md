@@ -12,5 +12,6 @@ Last updated: 2026-11-25 (after verify batch) · Branch: **main**
 | F6 | Leftover `.claude/worktrees/` directory (untracked). | **Open (cosmetic)** | Clean up once confirmed all worktree branches are merged. |
 | F7 | Agents hit the 5-hour usage limit mid-task (owner, texts). | **Recovered** — resumed via SendMessage after reset; no work lost (uncommitted files stay in the checkout). | Keep committing after every batch. |
 | F8 | P2 gate open issues QA-P2-004…008 (PHPStan 52 errors, provisioning retry not idempotent, small UI/Figma gaps). | **Resolved** (`25ef1cf`) except PHPStan/layering in requests' in-progress files. | requests to fix before its commit. |
+| F9 | Docs-only commit `ed1d834` picked up a file deletion an agent had staged (git index shared), leaving that commit broken until `03e6361`. | **Resolved** | Orchestrator commits with `git commit -- <paths>` only; agents never stage (`git add/rm`). |
 
 Lesson: max 2 agents at a time, small briefs, commit after every finished batch so an interruption never loses work.

@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| P3 Vendor catalog | VEN-010…016: store products from central + per-field tenant overrides via approved requests (#65), markup price list, import new, edit requests, sort, opportunities, own products; suite 1606 green | `03e6361` |
 | **P4 Shipping** | Fixed costs/gram, rules/zones/bands, companies + day rules + stop periods, estimator, settings, popup days; pure quote/estimator with golden tests; branches on real zones (ADM-031…035) | `4dd7689` |
 | P2 Vendor panel foundation | VEN-001…008: vendor auth, one-time impersonation + timed banner, shell + bell, onboarding tour/checklist, setup widget, dashboard (VEN-007 wizard + VEN-009 KPIs partial) | `4031059` |
 | P3 Requests & import | Requests center ADM-018…018i (shared thread, payments → invoices, overrides, tenant changes), Neozena import ADM-013, products bulk actions | `dab5afa` |
@@ -51,7 +52,7 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 ## In progress (batch P2-1, started 2026-11-25, agent team of 2)
 
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
-- **vendorcatalog** (P3): vendor catalog VEN-010…016 (central products + markup price list, import new, overrides edit, edit requests, sort, opportunities, own products).
+- **vendorrequests**: vendor requests hub VEN-050…050j (+ vendor channel auth, pay requests), notifications inbox VEN-090, setup wizard VEN-007, real ImportProducts step.
 - **commerce** (P5 batch 1): OrderComposer/OrderPricing engine with ORDER_FORMULAS golden + invariant tests; coupons & flash sales central+tenant merge (#65) + admin ADM-025/026; OwnerSupportTest fix.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
 - Next: Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
