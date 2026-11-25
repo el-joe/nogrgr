@@ -31,7 +31,7 @@
     $inSetup = in_array($tenant->status, [TenantStatus::Pending, TenantStatus::Provisioning, TenantStatus::Failed], true);
 @endphp
 <x-layouts.panel surface="admin" :title="$tenant->name" data-page="admin-vendors">
-    <div class="grid gap-6" data-vendor-profile data-open-param="open">
+    <div class="grid gap-6 *:min-w-0" data-vendor-profile data-open-param="open">
         <x-ui::page-header
             :title="$tenant->name"
             :subtitle="$subtitle"

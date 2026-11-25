@@ -68,6 +68,9 @@ class SignUpRequest extends FormRequest
      */
     public function messages(): array
     {
-        return ['compliance.accepted' => __('platform::signup.form.compliance_required')];
+        return [
+            'compliance.accepted' => __('platform::signup.form.compliance_required'),
+            'email.required_without' => __('validation.required', ['attribute' => __('platform::signup.form.email')]),
+        ];
     }
 }

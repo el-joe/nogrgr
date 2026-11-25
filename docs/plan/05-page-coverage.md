@@ -13,40 +13,40 @@
 | ADM-002 | Forgot password | `admin.auth.password.request` | Std; send link, sent state | — (new) | designed: Admin Panel 81:97508 | P2 | todo |
 | ADM-003 | Reset password | `admin.auth.password.reset` | Std; invalid/expired token | — (new) | designed: Admin Panel 81:97545 | P2 | todo |
 | ADM-004 | Panel shell (sidebar, top bar, breadcrumb, bell dropdown, dark/light, locale) | layout `x-admin::layout` | permission-filtered nav, live bell (Reverb), unread count | AdminNavigation, admin-notification-bell | designed: Admin Panel 41:12632 · Sidebar 37:12436 · Topbar 35:11474 | P2 | todo |
-| ADM-005 | My profile & password | `admin.account.edit` | Std; edit, change password | — (new) | designed: Admin Panel 80:97736 | P2 | todo |
+| ADM-005 | My profile & password | `admin.account.edit` | Std; edit, change password | — (new) | designed: Admin Panel 80:97736 | P2 | done |
 | ADM-006 | Dashboard | `admin.dashboard` | Std; KPI cards, revenue chart, latest payments, period filter | admin.dashboard | 41:12632, m 43:13511, RTL 56:17016, dark 57:17198 | P9 | partial — shell + layout built in P0 (live store counts, real config health, 0-valued commerce metrics). Hidden until data + route exist (no dead buttons): "All countries" filter, "Export report", needs-attention chevrons/links, "View all" / "Leaderboard" / "System tools" card links |
-| ADM-007 | Notifications inbox | `admin.notifications.index` | Std; filter type, open, mark read / all read, delete | admin.notifications.index, admin.notifications.latest, admin.notifications.open | designed: Admin Panel 80:96878 | P2 | todo |
-| ADM-007a | ↳ Notification preferences tab | `admin.notifications.preferences` | Std; per-channel toggles | — (new, A6) | designed: Admin Panel 80:96878 | P2 | todo |
-| ADM-010 | Products list | `admin.catalog.products.index` | Std; list, filter (status/category/scope/stock/trashed), delete, restore, export | admin.products.index | designed: Admin Panel 44:13636 · m 45:14601 · filters sheet 45:14748 | P3 | todo |
+| ADM-007 | Notifications inbox | `admin.notifications.index` | Std; filter type, open, mark read / all read, delete | admin.notifications.index, admin.notifications.latest, admin.notifications.open | designed: Admin Panel 80:96878 | P2 | done |
+| ADM-007a | ↳ Notification preferences tab | `admin.notifications.preferences` | Std; per-channel toggles | — (new, A6) | designed: Admin Panel 80:96878 | P2 | done |
+| ADM-010 | Products list | `admin.catalog.products.index` | Std; list, filter (status/category/scope/stock/trashed), delete, restore, export | admin.products.index | designed: Admin Panel 44:13636 · m 45:14601 · filters sheet 45:14748 | P3 | done |
 | ADM-010a | ↳ Image search modal | `admin.catalog.products.image-search` | upload, results, no-match, quota error | ProductsList image search | designed: Admin Panel 65:29682 | P10 | todo |
-| ADM-010b | ↳ Price list modal (per-country price) | modal | per-country/variant prices | ProductsList price list | designed: Admin Panel 65:29682 | P3 | todo |
-| ADM-011 | Product create / edit | `admin.catalog.products.create` / `.edit` | Std; create, edit, validate-on-blur, unsaved-changes guard | admin.products.create, .edit | designed: Admin Panel 46:14760 · 47:15543 | P3 | todo |
-| ADM-011a | ↳ Tab: General & translations (locale tabs) | tab | per-locale fields | AddEditProduct | designed: Admin Panel 47:15543 | P3 | todo |
-| ADM-011b | ↳ Tab: Pricing & weight (cost/sale, grams) | tab | money validation | AddEditProduct | designed: Admin Panel 65:28688 | P3 | todo |
-| ADM-011c | ↳ Tab: Variants (attribute options, per-variant image/price) | tab | build/remove variants | AddEditProduct | designed: Admin Panel 46:14760 | P3 | todo |
-| ADM-011d | ↳ Tab: Media gallery | tab | upload, reorder, remove, AVIF/embedding job state | AddEditProduct | designed: Admin Panel 65:28688 | P3 | todo |
-| ADM-011e | ↳ Tab: Countries & shipping (`allowed_country_ids` NULL/[]/list) | tab | all/none/selected | AddEditProduct | designed: Admin Panel 65:28688 | P3 | todo |
-| ADM-011f | ↳ Tab: Categories, labels, badges | tab | multi-select | AddEditProduct | designed: Admin Panel 65:28688 | P3 | todo |
-| ADM-011g | ↳ Tab: Tenant assignment (all / selected) | tab | tenant picker | AddEditProduct | designed: Admin Panel 65:28688 | P3 | todo |
-| ADM-011h | ↳ Tab: Stock per branch | tab | per-branch/variant qty | AddEditProduct, branch_products | designed: Admin Panel 65:28688 | P3 | todo |
-| ADM-012 | Product sort | `admin.catalog.products.sort` | drag & drop, save | admin.products.sort | designed: Admin Panel 65:21308 | P3 | todo |
+| ADM-010b | ↳ Price list modal (per-country price) | modal | per-country/variant prices | ProductsList price list | designed: Admin Panel 65:29682 | P3 | done |
+| ADM-011 | Product create / edit | `admin.catalog.products.create` / `.edit` | Std; create, edit, validate-on-blur, unsaved-changes guard | admin.products.create, .edit | designed: Admin Panel 46:14760 · 47:15543 | P3 | done |
+| ADM-011a | ↳ Tab: General & translations (locale tabs) | tab | per-locale fields | AddEditProduct | designed: Admin Panel 47:15543 | P3 | done |
+| ADM-011b | ↳ Tab: Pricing & weight (cost/sale, grams) | tab | money validation | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011c | ↳ Tab: Variants (attribute options, per-variant image/price) | tab | build/remove variants | AddEditProduct | designed: Admin Panel 46:14760 | P3 | done |
+| ADM-011d | ↳ Tab: Media gallery | tab | upload, reorder, remove, AVIF/embedding job state | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011e | ↳ Tab: Countries & shipping (`allowed_country_ids` NULL/[]/list) | tab | all/none/selected | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011f | ↳ Tab: Categories, labels, badges | tab | multi-select | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011g | ↳ Tab: Tenant assignment (all / selected) | tab | tenant picker | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011h | ↳ Tab: Stock per branch | tab | per-branch/variant qty | AddEditProduct, branch_products | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-012 | Product sort | `admin.catalog.products.sort` | drag & drop, save | admin.products.sort | designed: Admin Panel 65:21308 | P3 | done |
 | ADM-013 | Product import (external catalog, Neozena driver) | `admin.catalog.import.index` | run import, progress, log, errors | /prod (DevTools@importNeozenaProducts) | designed: Admin Panel 65:22120 | P3 | todo |
-| ADM-014 | Categories list (tree) | `admin.catalog.categories.index` | Std; list, delete, toggle featured | admin.categories.index | designed: Admin Panel 65:22996 | P3 | todo |
-| ADM-014a | ↳ Category create / edit | `admin.catalog.categories.create` / `.edit` | translations, thumbnail, parent | admin.categories.create, admin.categories.edit | designed: Admin Panel 65:23866 | P3 | todo |
-| ADM-014b | ↳ Category sort | `admin.catalog.categories.sort` | drag & drop | admin.categories.sort | designed: Admin Panel 65:24654 | P3 | todo |
-| ADM-014c | ↳ Products order inside category | `admin.catalog.categories.products` | drag & drop | admin.categories.products | designed: Admin Panel 65:24654 | P3 | todo |
-| ADM-015 | Attributes (variations) list | `admin.catalog.attributes.index` | Std; list, delete | admin.variations.index | designed: Admin Panel 65:25447 | P3 | todo |
-| ADM-015a | ↳ Attribute create / edit (options) | `admin.catalog.attributes.create` / `.edit` | translations, options repeater | admin.variations.create, admin.variations.edit | designed: Admin Panel 65:26338 | P3 | todo |
-| ADM-016 | Product labels list | `admin.catalog.labels.index` | Std; list, toggle active, delete, sort | admin.labels.index | designed: Admin Panel 65:27123 | P3 | todo |
-| ADM-016a | ↳ Label create / edit (icon, placeholder text e.g. `{delivery_date}`) | `admin.catalog.labels.create` / `.edit` | placeholder preview | admin.labels.create, admin.labels.edit | designed: Admin Panel 65:29682 | P3 | todo |
-| ADM-017 | Badges hub (tabs per badge) | `admin.catalog.badges.index` | Std; list per badge | admin.badges.show | designed: Admin Panel 65:27887 | P3 | todo |
-| ADM-017a | ↳ Tab: New in | `admin.catalog.badges.show` | assign, remove | admin.badges.new-in | designed: Admin Panel 65:27887 | P3 | todo |
-| ADM-017b | ↳ Tab: Best selling | `admin.catalog.badges.show` | assign, remove | admin.badges.best-selling | designed: Admin Panel 65:27887 | P3 | todo |
-| ADM-017c | ↳ Tab: Featured | `admin.catalog.badges.show` | assign, remove | admin.badges.featured | designed: Admin Panel 65:27887 | P3 | todo |
-| ADM-017d | ↳ Tab: Recommended | `admin.catalog.badges.show` | assign, remove | admin.badges.recommended | designed: Admin Panel 65:27887 | P3 | todo |
-| ADM-017e | ↳ Tab: Trending now | `admin.catalog.badges.show` | assign, remove | admin.badges.trending-now | designed: Admin Panel 65:27887 | P3 | todo |
-| ADM-017f | ↳ Assign products modal (search / whole category) | modal | search, bulk add | admin.badges.search | designed: Admin Panel 65:29682 | P3 | todo |
-| ADM-017g | ↳ Badge sort | `admin.catalog.badges.sort` | drag & drop | admin.badges.sort | designed: Admin Panel 65:27887 | P3 | todo |
+| ADM-014 | Categories list (tree) | `admin.catalog.categories.index` | Std; list, delete, toggle featured | admin.categories.index | designed: Admin Panel 65:22996 | P3 | done |
+| ADM-014a | ↳ Category create / edit | `admin.catalog.categories.create` / `.edit` | translations, thumbnail, parent | admin.categories.create, admin.categories.edit | designed: Admin Panel 65:23866 | P3 | done |
+| ADM-014b | ↳ Category sort | `admin.catalog.categories.sort` | drag & drop | admin.categories.sort | designed: Admin Panel 65:24654 | P3 | done |
+| ADM-014c | ↳ Products order inside category | `admin.catalog.categories.products` | drag & drop | admin.categories.products | designed: Admin Panel 65:24654 | P3 | done |
+| ADM-015 | Attributes (variations) list | `admin.catalog.attributes.index` | Std; list, delete | admin.variations.index | designed: Admin Panel 65:25447 | P3 | done |
+| ADM-015a | ↳ Attribute create / edit (options) | `admin.catalog.attributes.create` / `.edit` | translations, options repeater | admin.variations.create, admin.variations.edit | designed: Admin Panel 65:26338 | P3 | done |
+| ADM-016 | Product labels list | `admin.catalog.labels.index` | Std; list, toggle active, delete, sort | admin.labels.index | designed: Admin Panel 65:27123 | P3 | done |
+| ADM-016a | ↳ Label create / edit (icon, placeholder text e.g. `{delivery_date}`) | `admin.catalog.labels.create` / `.edit` | placeholder preview | admin.labels.create, admin.labels.edit | designed: Admin Panel 65:29682 | P3 | done |
+| ADM-017 | Badges hub (tabs per badge) | `admin.catalog.badges.index` | Std; list per badge | admin.badges.show | designed: Admin Panel 65:27887 | P3 | done |
+| ADM-017a | ↳ Tab: New in | `admin.catalog.badges.show` | assign, remove | admin.badges.new-in | designed: Admin Panel 65:27887 | P3 | done |
+| ADM-017b | ↳ Tab: Best selling | `admin.catalog.badges.show` | assign, remove | admin.badges.best-selling | designed: Admin Panel 65:27887 | P3 | done |
+| ADM-017c | ↳ Tab: Featured | `admin.catalog.badges.show` | assign, remove | admin.badges.featured | designed: Admin Panel 65:27887 | P3 | done |
+| ADM-017d | ↳ Tab: Recommended | `admin.catalog.badges.show` | assign, remove | admin.badges.recommended | designed: Admin Panel 65:27887 | P3 | done |
+| ADM-017e | ↳ Tab: Trending now | `admin.catalog.badges.show` | assign, remove | admin.badges.trending-now | designed: Admin Panel 65:27887 | P3 | done |
+| ADM-017f | ↳ Assign products modal (search / whole category) | modal | search, bulk add | admin.badges.search | designed: Admin Panel 65:29682 | P3 | done |
+| ADM-017g | ↳ Badge sort | `admin.catalog.badges.sort` | drag & drop | admin.badges.sort | designed: Admin Panel 65:27887 | P3 | done |
 | ADM-018 | Requests center (hub) | `admin.requests.index` | Std; unread counts per tab | — (new, §D) | designed: Admin Panel 68:28760 | P3 | todo |
 | ADM-018a | ↳ Product edit requests list | `admin.requests.edit-requests.index` | Std; filter status | admin.products.edit-requests | designed: Admin Panel 68:29747 | P3 | todo |
 | ADM-018b | ↳ Edit request detail (diff, approve → tenant override, reject) | `admin.requests.edit-requests.show` | approve, reject (reason) | admin.products.edit-requests.show | designed: Admin Panel 68:30673 | P3 | todo |
@@ -73,8 +73,8 @@
 | ADM-026 | Flash sales (central) | `admin.marketing.flash-sales.index` | Std; list per country, delete | admin.store.flash-sales.index, admin.store.flash-sales.list | designed: Admin Panel 70:40462 | P5 | todo |
 | ADM-026a | ↳ Flash sale create / edit (product picker) | modal | search products, %, dates, countries | FlashSalesPage | designed: Admin Panel 70:41386 | P5 | todo |
 | ADM-027 | Tenant sync | — | — | admin.store.tenant-sync.index | — | — | dropped — PM confirmed (A1: tenants read central live with override → fallback; no copy sync) |
-| ADM-030 | Branches list | `admin.shipping.branches.index` | Std; list, delete | admin.branches.index | designed: Admin Panel 71:40880 | P3 | todo |
-| ADM-030a | ↳ Branch create / edit (stock, zones, default) | `admin.shipping.branches.create` / `.edit` | validation | admin.branches.create, admin.branches.edit | designed: Admin Panel 71:41812 | P3 | todo |
+| ADM-030 | Branches list | `admin.shipping.branches.index` | Std; list, delete | admin.branches.index | designed: Admin Panel 71:40880 | P3 | done |
+| ADM-030a | ↳ Branch create / edit (stock, zones, default) | `admin.shipping.branches.create` / `.edit` | validation | admin.branches.create, admin.branches.edit | designed: Admin Panel 71:41812 | P3 | done |
 | ADM-031 | Fixed shipping costs (per country, price/gram) | `admin.shipping.fixed-costs.index` | Std; list, delete | admin.shipping.fixed-costs | designed: Admin Panel 71:42662 | P4 | todo |
 | ADM-031a | ↳ Fixed cost create / edit | `admin.shipping.fixed-costs.create` / `.edit` | country unique | admin.shipping.fixed-costs.create, admin.shipping.fixed-costs.edit | designed: Admin Panel 71:48842 | P4 | todo |
 | ADM-032 | Shipping rules / zones | `admin.shipping.rules.index` | Std; list, delete | admin.shipping.delivery-charges | designed: Admin Panel 71:43578 | P4 | todo |
@@ -87,28 +87,28 @@
 | ADM-034 | Shipping settings (defaults) | `admin.shipping.settings` | default days, defaults per country | admin.shipping.settings | designed: Admin Panel 71:48071 | P4 | todo |
 | ADM-035 | Delivery popup days (days 1–10, sum = 100 %) | `admin.shipping.delivery-popup` | per country, sum validation | admin.shipping.delivery-popup.index | designed: Admin Panel 54:19015 · invalid 54:19898 | P4 | todo |
 | ADM-036 | Shipping fixed-cost resync dev tool | — | — | admin.products-run (DevTools) | — | — | dropped — PM confirmed (dev-only tool; A3: display price computed live = sale + weight × rate; no sync job) |
-| ADM-040 | Vendors list | `admin.vendors.index` | Std; filter status/plan, export, delete, impersonate | admin.plans.users | designed: Admin Panel 72:47934 | P2 | todo |
-| ADM-040a | ↳ Create vendor | `admin.vendors.create` | provision, domain | admin.plans.users.create | designed: Admin Panel 72:48932 | P2 | todo |
-| ADM-041 | Vendor profile | `admin.vendors.show` | Std; activate, suspend, delete | admin.plans.users.edit | designed: Admin Panel 72:49758 | P2 | todo |
-| ADM-041a | ↳ Tab: Overview & store info / edit | tab | edit form | AddEditTenant | designed: Admin Panel 72:49758 | P2 | todo |
-| ADM-041b | ↳ Tab: Plan & subscription (assign plan modal) | tab | manual billing | AssignPackageModal | designed: Admin Panel 72:50656 | P2 | todo |
-| ADM-041c | ↳ Tab: Domains | tab | list, mark connected | DomainRequestsList | designed: Admin Panel 72:51480 | P2 | todo |
-| ADM-041d | ↳ Tab: Profit % & affiliate commission | tab | edit | AddEditTenant | designed: Admin Panel 72:51480 | P2 | todo |
+| ADM-040 | Vendors list | `admin.vendors.index` | Std; filter status/plan, export, delete, impersonate | admin.plans.users | designed: Admin Panel 72:47934 | P2 | done |
+| ADM-040a | ↳ Create vendor | `admin.vendors.create` | provision, domain | admin.plans.users.create | designed: Admin Panel 72:48932 | P2 | done |
+| ADM-041 | Vendor profile | `admin.vendors.show` | Std; activate, suspend, delete | admin.plans.users.edit | designed: Admin Panel 72:49758 | P2 | done |
+| ADM-041a | ↳ Tab: Overview & store info / edit | tab | edit form | AddEditTenant | designed: Admin Panel 72:49758 | P2 | done |
+| ADM-041b | ↳ Tab: Plan & subscription (assign plan modal) | tab | manual billing | AssignPackageModal | designed: Admin Panel 72:50656 | P2 | done |
+| ADM-041c | ↳ Tab: Domains | tab | list, mark connected | DomainRequestsList | designed: Admin Panel 72:51480 | P2 | done |
+| ADM-041d | ↳ Tab: Profit % & affiliate commission | tab | edit | AddEditTenant | designed: Admin Panel 72:51480 | P2 | done |
 | ADM-041e | ↳ Tab: Stats & orders | tab | KPIs, orders table | — (new, A4) | designed: Admin Panel 72:51480 | P9 | todo |
-| ADM-041f | ↳ Tab: Compliance | tab | verify / needs action | ComplianceDetailPage | designed: Admin Panel 72:51480 | P2 | todo |
+| ADM-041f | ↳ Tab: Compliance | tab | verify / needs action | ComplianceDetailPage | designed: Admin Panel 72:51480 | P2 | done |
 | ADM-041g | ↳ Tab: Mobile app settings | tab | build config, flavor, store links | TenantMobileAppController | designed: Admin Panel 72:51480 | P11 | todo |
 | ADM-041h | ↳ Tab: Limit overrides (AI logo, image search, AI calls) | tab | per-tenant override | admin.settings.ai-logo-limit | designed: Admin Panel 72:51480 | P10 | todo |
-| ADM-041i | ↳ Impersonate confirm modal (audited) | modal | reason, opens vendor panel | admin.plans.users.impersonate | designed: Admin Panel 72:52459 | P2 | todo |
-| ADM-042 | Pending registrations | `admin.vendors.pending` | Std; filter status/plan, delete, resend link | admin.plans.pending-registrations | designed: Admin Panel 73:51922 | P2 | todo |
+| ADM-041i | ↳ Impersonate confirm modal (audited) | modal | reason, opens vendor panel | admin.plans.users.impersonate | designed: Admin Panel 72:52459 | P2 | done |
+| ADM-042 | Pending registrations | `admin.vendors.pending` | Std; filter status/plan, delete, resend link | admin.plans.pending-registrations | designed: Admin Panel 73:51922 | P2 | done |
 | ADM-043 | Shoppers (read-only, all tenants) | `admin.vendors.shoppers` | Std; filter status, new only, export | admin.customers.index | designed: Admin Panel 73:52854 | P9 | todo |
-| ADM-044 | Compliance overview | `admin.vendors.compliance.index` | Std; filter status | admin.compliance.index | designed: Admin Panel 73:53809 | P2 | todo |
-| ADM-044a | ↳ Compliance detail (verify / needs action + note) | `admin.vendors.compliance.show` | documents preview | admin.compliance.show | designed: Admin Panel 73:54733 | P2 | todo |
-| ADM-045 | Domains | `admin.vendors.domains.index` | Std | — | designed: Admin Panel 73:55481 | P2 | todo |
-| ADM-045a | ↳ Tab: Domain requests (connected / pending / removed) | tab | status actions | admin.domains.requests | designed: Admin Panel 73:55481 | P2 | todo |
-| ADM-045b | ↳ Tab: DNS record templates (CRUD modal) | tab | type, TTL, priority | admin.domains.dns-records | designed: Admin Panel 73:56421 | P2 | todo |
-| ADM-046 | Plans list | `admin.plans.index` | Std; list, delete | admin.plans.index | designed: Admin Panel 73:57264 | P2 | todo |
-| ADM-046a | ↳ Plan create / edit (term, price, trial, features, limits, AI flags) | `admin.plans.create` / `.edit` | translations | admin.plans.create, admin.plans.edit | designed: Admin Panel 73:58030 | P2 | todo |
-| ADM-047 | Subscriptions (registrations & renewals) | `admin.billing.subscriptions.index` | Std; filter status, invoice link, export | — (new, A4) | designed: Admin Panel 73:58869 | P2 | todo |
+| ADM-044 | Compliance overview | `admin.vendors.compliance.index` | Std; filter status | admin.compliance.index | designed: Admin Panel 73:53809 | P2 | done |
+| ADM-044a | ↳ Compliance detail (verify / needs action + note) | `admin.vendors.compliance.show` | documents preview | admin.compliance.show | designed: Admin Panel 73:54733 | P2 | done |
+| ADM-045 | Domains | `admin.vendors.domains.index` | Std | — | designed: Admin Panel 73:55481 | P2 | done |
+| ADM-045a | ↳ Tab: Domain requests (connected / pending / removed) | tab | status actions | admin.domains.requests | designed: Admin Panel 73:55481 | P2 | done |
+| ADM-045b | ↳ Tab: DNS record templates (CRUD modal) | tab | type, TTL, priority | admin.domains.dns-records | designed: Admin Panel 73:56421 | P2 | done |
+| ADM-046 | Plans list | `admin.plans.index` | Std; list, delete | admin.plans.index | designed: Admin Panel 73:57264 | P2 | done |
+| ADM-046a | ↳ Plan create / edit (term, price, trial, features, limits, AI flags) | `admin.plans.create` / `.edit` | translations | admin.plans.create, admin.plans.edit | designed: Admin Panel 73:58030 | P2 | done |
+| ADM-047 | Subscriptions (registrations & renewals) | `admin.billing.subscriptions.index` | Std; filter status, invoice link, export | — (new, A4) | designed: Admin Panel 73:58869 | P2 | done |
 | ADM-050 | Ledger (per tenant balances) | `admin.finance.ledger.index` | Std; filter, export | admin.wallets.index | designed: Admin Panel 74:59026 | P5 | todo |
 | ADM-050a | ↳ Tenant ledger detail (mark settlement paid modal) | `admin.finance.ledger.show` | amount, method, reference | admin.wallets.show | designed: Admin Panel 74:60018 · 74:68877 | P5 | todo |
 | ADM-051 | Settlements (vendor → platform) | `admin.finance.settlements.index` | Std; filter gateway/tenant/status | admin.vendor-settlements.index | designed: Admin Panel 74:60809 | P5 | todo |
@@ -116,10 +116,10 @@
 | ADM-052a | ↳ Create payout for tenant | `admin.finance.payouts.create` | email option | admin.finance.payouts.create | designed: Admin Panel 74:62688 | P5 | todo |
 | ADM-052b | ↳ Edit payout | `admin.finance.payouts.edit` | status, reference | admin.finance.payouts.edit | designed: Admin Panel 74:68877 | P5 | todo |
 | ADM-053 | Transactions | `admin.finance.transactions.index` | Std; filter direction/source, detail modal | admin.wallet-transactions.index | designed: Admin Panel 74:63449 · 74:68877 | P5 | todo |
-| ADM-054 | Invoices | `admin.finance.invoices.index` | Std; filter status | admin.invoices.index | designed: Admin Panel 74:64375 | P2 | todo |
-| ADM-054a | ↳ Invoice detail (print / PDF) | `admin.finance.invoices.show` | print | admin.invoices.show | designed: Admin Panel 74:65309 | P2 | todo |
-| ADM-055 | Payment logs | `admin.finance.payment-logs.index` | Std; filter status/gateway | admin.payment-logs.index | designed: Admin Panel 74:66052 | P2 | todo |
-| ADM-055a | ↳ Payment log detail (refund → affiliate reversal) | `admin.finance.payment-logs.show` | status change | admin.payment-logs.show | designed: Admin Panel 74:66052 | P2 | todo |
+| ADM-054 | Invoices | `admin.finance.invoices.index` | Std; filter status | admin.invoices.index | designed: Admin Panel 74:64375 | P2 | done |
+| ADM-054a | ↳ Invoice detail (print / PDF) | `admin.finance.invoices.show` | print | admin.invoices.show | designed: Admin Panel 74:65309 | P2 | done |
+| ADM-055 | Payment logs | `admin.finance.payment-logs.index` | Std; filter status/gateway | admin.payment-logs.index | designed: Admin Panel 74:66052 | P2 | done |
+| ADM-055a | ↳ Payment log detail (refund → affiliate reversal) | `admin.finance.payment-logs.show` | status change | admin.payment-logs.show | designed: Admin Panel 74:66052 | P2 | done |
 | ADM-060 | Affiliate accounts | `admin.affiliates.index` | Std; filter type/status | admin.affiliates.index | designed: Admin Panel 74:66931 | P9 | todo |
 | ADM-060a | ↳ Edit affiliate modal (commission, status) | modal | activate, suspend | AffiliatesListPage | designed: Admin Panel 74:68877 | P9 | todo |
 | ADM-060b | ↳ Pay out modal (amount, reference, attachment) | modal | min/balance validation | AffiliatesListPage | designed: Admin Panel 74:68877 | P9 | todo |
@@ -159,37 +159,37 @@
 | ADM-089 | Custom theme review queue (Twig) | `admin.storefront.theme-reviews.index` | Std; filter status | admin.settings.blade-themes | designed: Admin Panel 78:80277 | P7 | todo |
 | ADM-089a | ↳ Review detail (validation report, versions, preview, approve / reject reason) | `admin.storefront.theme-reviews.show` | approve, reject | BladeThemeQueuePage | designed: Admin Panel 78:81175 | P7 | todo |
 | ADM-090 | Return policy (platform default) | `admin.storefront.return-policy` | window, fee, categories, video reasons | admin.settings.return-policy | designed: Admin Panel 78:81991 | P5 | todo |
-| ADM-091 | Languages (ISO seed) | `admin.localization.languages.index` | Std; activate, free/price, AI price, countries, sort | admin.settings.languages | designed: Admin Panel 79:81928 | P2 | todo |
-| ADM-091a | ↳ Language create / edit | `admin.localization.languages.create` / `.edit` | flag, direction | admin.settings.languages.create, admin.settings.languages.edit | designed: Admin Panel 79:90884 | P2 | todo |
+| ADM-091 | Languages (ISO seed) | `admin.localization.languages.index` | Std; activate, free/price, AI price, countries, sort | admin.settings.languages | designed: Admin Panel 79:81928 | P2 | done |
+| ADM-091a | ↳ Language create / edit | `admin.localization.languages.create` / `.edit` | flag, direction | admin.settings.languages.create, admin.settings.languages.edit | designed: Admin Panel 79:90884 | P2 | done |
 | ADM-091b | ↳ AI catalog translation progress modal (retry) | modal | progress 0–100 %, failed state | LanguagesPage retry | designed: Admin Panel 79:90884 | P10 | todo |
-| ADM-092 | Translation files editor | `admin.localization.translations.index` | missing keys, create file, save | admin.settings.translations | designed: Admin Panel 79:82911 | P2 | todo |
+| ADM-092 | Translation files editor | `admin.localization.translations.index` | missing keys, create file, save | admin.settings.translations | designed: Admin Panel 79:82911 | P2 | done |
 | ADM-092a | ↳ AI translate keys modal (one / all missing) | modal | progress | — (A6c #4) | designed: Admin Panel 79:90884 | P10 | todo |
-| ADM-093 | Translation key locks | `admin.localization.key-locks` | lock / unlock | admin.settings.translation-key-access | designed: Admin Panel 79:82911 | P2 | todo |
-| ADM-094 | Language & AI-translation purchases | `admin.localization.purchases` | Std; filter gateway, details | admin.settings.language-purchases | designed: Admin Panel 79:83875 | P2 | todo |
-| ADM-095 | Currencies | `admin.localization.currencies.index` | Std; default, sync rates button, last sync | admin.settings.currencies | designed: Admin Panel 79:84722 | P2 | todo |
-| ADM-095a | ↳ Currency create / edit | `admin.localization.currencies.create` / `.edit` | | admin.settings.currencies.create, admin.settings.currencies.edit | designed: Admin Panel 79:90884 | P2 | todo |
-| ADM-096 | Countries | `admin.localization.countries.index` | Std; toggle active/free, default currency | admin.settings.countries | designed: Admin Panel 79:85682 | P2 | todo |
-| ADM-100 | Integrations (tabs) | `admin.integrations.index` | Std; secrets masked | — | designed: Admin Panel 51:17971 | P2 | todo |
-| ADM-100a | ↳ Payment gateways list | `admin.integrations.gateways.index` | toggle, mode test/live | admin.settings.payment-gateways | designed: Admin Panel 51:17971 | P2 | todo |
-| ADM-100b | ↳ Gateway edit (vendor-payments config + tenant-registration config, fees) | `admin.integrations.gateways.edit` | test connection | admin.settings.payment-gateways.edit | designed: Admin Panel 51:17971 | P2 | todo |
+| ADM-093 | Translation key locks | `admin.localization.key-locks.index` | lock / unlock | admin.settings.translation-key-access | designed: Admin Panel 79:82911 | P2 | done |
+| ADM-094 | Language & AI-translation purchases | `admin.localization.purchases.index` | Std; filter gateway, details | admin.settings.language-purchases | designed: Admin Panel 79:83875 | P2 | done |
+| ADM-095 | Currencies | `admin.localization.currencies.index` | Std; default, sync rates button, last sync | admin.settings.currencies | designed: Admin Panel 79:84722 | P2 | done |
+| ADM-095a | ↳ Currency create / edit | `admin.localization.currencies.create` / `.edit` | | admin.settings.currencies.create, admin.settings.currencies.edit | designed: Admin Panel 79:90884 | P2 | done |
+| ADM-096 | Countries | `admin.localization.countries.index` | Std; toggle active/free, default currency | admin.settings.countries | designed: Admin Panel 79:85682 | P2 | done |
+| ADM-100 | Integrations (tabs) | `admin.integrations.index` | Std; secrets masked | — | designed: Admin Panel 51:17971 | P2 | done |
+| ADM-100a | ↳ Payment gateways list | `admin.integrations.gateways.index` | toggle, mode test/live | admin.settings.payment-gateways | designed: Admin Panel 51:17971 | P2 | done |
+| ADM-100b | ↳ Gateway edit (vendor-payments config + tenant-registration config, fees) | `admin.integrations.gateways.edit` | test connection | admin.settings.payment-gateways.edit | designed: Admin Panel 51:17971 | P2 | done |
 | ADM-100c | ↳ Gateway limits tab (notify / block thresholds) | tab | | admin.settings.payment-gateway-limits | designed: Admin Panel 79:86634 | P5 | todo |
-| ADM-100d | ↳ Mail tab (send test email) | tab | test result | admin.settings.email-configuration | designed: Admin Panel 53:18783 | P2 | todo |
-| ADM-100e | ↳ Google login tab | tab | | admin.settings.social-login | designed: Admin Panel 53:18783 | P2 | todo |
-| ADM-100f | ↳ Apple login tab | tab | | admin.settings.social-login | designed: Admin Panel 53:18783 | P2 | todo |
+| ADM-100d | ↳ Mail tab (send test email) | tab | test result | admin.settings.email-configuration | designed: Admin Panel 53:18783 | P2 | done |
+| ADM-100e | ↳ Google login tab | tab | | admin.settings.social-login | designed: Admin Panel 53:18783 | P2 | done |
+| ADM-100f | ↳ Apple login tab | tab | | admin.settings.social-login | designed: Admin Panel 53:18783 | P2 | done |
 | ADM-100g | ↳ OpenAI tab (models, test connection) | tab | test result, typed errors | admin.settings.ai | designed: Admin Panel 53:18783 | P10 | todo |
-| ADM-100h | ↳ Reverb / Pusher tab | tab | | — (new) | designed: Admin Panel 79:87472 | P2 | todo |
+| ADM-100h | ↳ Reverb / Pusher tab | tab | | — (new) | designed: Admin Panel 79:87472 | P2 | done |
 | ADM-100i | ↳ FCM push tab | tab | | — (new) | designed: Admin Panel 79:87472 | P11 | todo |
-| ADM-100j | ↳ Cloudflare / DNS tab | tab | | — (new) | designed: Admin Panel 79:87472 | P2 | todo |
+| ADM-100j | ↳ Cloudflare / DNS tab | tab | | — (new) | designed: Admin Panel 79:87472 | P2 | done |
 | ADM-100k | ↳ Tracking defaults tab | tab | | — (new) | designed: Admin Panel 79:87472 | P8 | todo |
-| ADM-101 | General settings (name, logos, favicon, support email, archive days, socials) | `admin.settings.general` | save | admin.settings.general | designed: Admin Panel 79:88365 | P2 | todo |
-| ADM-102 | Email templates (central) | `admin.settings.email-templates.index` | Std; sync to tenants | admin.settings.email-templates | designed: Admin Panel 79:89188 | P2 | todo |
-| ADM-102a | ↳ Email template create / edit (per locale, preview) | `admin.settings.email-templates.create` / `.edit` | send test | admin.settings.email-templates.create, admin.settings.email-templates.edit | designed: Admin Panel 79:90124 | P2 | todo |
-| ADM-110 | Admins | `admin.system.admins.index` | Std; activate, deactivate, delete | admin.admins.index | designed: Admin Panel 80:90095 | P2 | todo |
-| ADM-110a | ↳ Admin create / edit modal | modal | role, password | AdminsList | designed: Admin Panel 80:98485 | P2 | todo |
-| ADM-111 | Roles & permissions | `admin.system.roles.index` | Std; delete | admin.admins.roles-permissions | designed: Admin Panel 80:91028 | P2 | todo |
-| ADM-111a | ↳ Role create / edit (permission matrix) | modal | | RolesPermissionsList | designed: Admin Panel 80:91028 | P2 | todo |
-| ADM-112 | Audit log | `admin.system.audit.index` | Std; filter actor/tenant/event, export | — (new, decision #20) | designed: Admin Panel 80:91969 | P2 | todo |
-| ADM-112a | ↳ Audit event detail (diff) | modal | | — (new) | designed: Admin Panel 80:98485 | P2 | todo |
+| ADM-101 | General settings (name, logos, favicon, support email, archive days, socials) | `admin.settings.general` | save | admin.settings.general | designed: Admin Panel 79:88365 | P2 | done |
+| ADM-102 | Email templates (central) | `admin.settings.email-templates.index` | Std; sync to tenants | admin.settings.email-templates | designed: Admin Panel 79:89188 | P2 | done |
+| ADM-102a | ↳ Email template create / edit (per locale, preview) | `admin.settings.email-templates.create` / `.edit` | send test | admin.settings.email-templates.create, admin.settings.email-templates.edit | designed: Admin Panel 79:90124 | P2 | done |
+| ADM-110 | Admins | `admin.system.admins.index` | Std; activate, deactivate, delete | admin.admins.index | designed: Admin Panel 80:90095 | P2 | done |
+| ADM-110a | ↳ Admin create / edit modal | modal | role, password | AdminsList | designed: Admin Panel 80:98485 | P2 | done |
+| ADM-111 | Roles & permissions | `admin.system.roles.index` | Std; delete | admin.admins.roles-permissions | designed: Admin Panel 80:91028 | P2 | done |
+| ADM-111a | ↳ Role create / edit (permission matrix) | modal | | RolesPermissionsList | designed: Admin Panel 80:91028 | P2 | done |
+| ADM-112 | Audit log | `admin.system.audit.index` | Std; filter actor/tenant/event, export | — (new, decision #20) | designed: Admin Panel 80:91969 | P2 | done |
+| ADM-112a | ↳ Audit event detail (diff) | modal | | — (new) | designed: Admin Panel 80:98485 | P2 | done |
 | ADM-113 | Maintenance windows | `admin.system.maintenance` | Std; create, end now | admin.settings.maintenance | designed: Admin Panel 80:92875 | P2 | todo |
 | ADM-114 | Cache tools | `admin.system.cache` | confirm modal | — | designed: Admin Panel 80:93684 | P2 | todo |
 | ADM-114a | ↳ Tab: Main cache | tab | clear | admin.cache.main | designed: Admin Panel 80:93684 | P2 | todo |
@@ -395,16 +395,16 @@
 
 | ID | Page / screen | Route (new, proposed name) | Key actions & states | Old source | Figma node | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| OWN-001 | My stores (dashboard) | `owner.dashboard` | Std; open store panel (SSO), store status | owner.dashboard (redirect) | designed: Affiliate & Owner 122:102288 · m 122:105386 · sidebar comp 118:99795 | P2 | todo |
-| OWN-002 | Select store (after login, many stores) | `owner.select-store` | select | owner.select-tenant | designed: Affiliate & Owner 122:105321 | P2 | todo |
-| OWN-003 | Subscriptions (all stores) | `owner.subscriptions` | Std; renew link | owner.subscriptions | designed: Affiliate & Owner 122:102615 | P2 | todo |
-| OWN-004 | Domains | `owner.domains` | Std; remove | owner.domains | designed: Affiliate & Owner 122:103025 | P2 | todo |
-| OWN-004a | ↳ Add domain modal | modal | regex validation | DomainsList addDomain | designed: Affiliate & Owner 122:103429 · validation 122:103792 · sheet m 122:105483 | P2 | todo |
-| OWN-004b | ↳ Edit domain modal | modal | | DomainsList updateDomain | designed: Affiliate & Owner 122:103838 | P2 | todo |
-| OWN-004c | ↳ DNS check result | panel | pass / fail per record | DomainsList checkDns | designed: Affiliate & Owner 122:103882 | P2 | todo |
-| OWN-005 | Invoices (all stores) | `owner.invoices` | Std; download | — (new) | designed: Affiliate & Owner 122:104137 | P2 | todo |
-| OWN-006 | Profile & password / linked Google-Apple | `owner.profile` | save | — (new) | designed: Affiliate & Owner 122:104562 | P2 | todo |
-| OWN-007 | Add another store | `owner.stores.create` | → register flow WEB-016 | — (new, §D one owner many stores) | designed: Affiliate & Owner 122:104860 | P2 | todo |
+| OWN-001 | My stores (dashboard) | `owner.dashboard` | Std; open store panel (SSO), store status | owner.dashboard (redirect) | designed: Affiliate & Owner 122:102288 · m 122:105386 · sidebar comp 118:99795 | P2 | done |
+| OWN-002 | Select store (after login, many stores) | `owner.select-store` | select | owner.select-tenant | designed: Affiliate & Owner 122:105321 | P2 | done |
+| OWN-003 | Subscriptions (all stores) | `owner.subscriptions` | Std; renew link | owner.subscriptions | designed: Affiliate & Owner 122:102615 | P2 | done |
+| OWN-004 | Domains | `owner.domains` | Std; remove | owner.domains | designed: Affiliate & Owner 122:103025 | P2 | done |
+| OWN-004a | ↳ Add domain modal | modal | regex validation | DomainsList addDomain | designed: Affiliate & Owner 122:103429 · validation 122:103792 · sheet m 122:105483 | P2 | done |
+| OWN-004b | ↳ Edit domain modal | modal | | DomainsList updateDomain | designed: Affiliate & Owner 122:103838 | P2 | done |
+| OWN-004c | ↳ DNS check result | panel | pass / fail per record | DomainsList checkDns | designed: Affiliate & Owner 122:103882 | P2 | done |
+| OWN-005 | Invoices (all stores) | `owner.invoices` | Std; download | — (new) | designed: Affiliate & Owner 122:104137 | P2 | done |
+| OWN-006 | Profile & password / linked Google-Apple | `owner.profile` | save | — (new) | designed: Affiliate & Owner 122:104562 | P2 | done |
+| OWN-007 | Add another store | `owner.stores.create` | → register flow WEB-016 | — (new, §D one owner many stores) | designed: Affiliate & Owner 122:104860 | P2 | done |
 | OWN-008 | Notifications | `owner.notifications` | Std | — (new) | designed: Affiliate & Owner 122:105109 | P9 | todo |
 
 ## 5. Central website (`{central}/`)
@@ -426,17 +426,17 @@
 | WEB-013 | Blog list | `central.blog.index` | category filter, paginate, empty | website.blog | designed: Central Website additions 127:11911 · m 127:12095 | P6 | todo |
 | WEB-014 | Blog post | `central.blog.show` | related, share, JSON-LD | website.blog.show | designed: Central Website additions 127:12209 · m 127:12370 | P6 | todo |
 | WEB-015 | Newsletter signup (footer) | `central.newsletter.store` | success, duplicate, error | — (A5) | 12:42512 | P6 | todo |
-| WEB-016 | Sign up (email, phone, plan, coupon, compliance accept) | `central.register` | validation, social auth | website.register | 12:42223, m 12:43467 | P2 | todo |
-| WEB-016a | ↳ Social auth popup result (Google / Apple) | `central.social.callback` | success, error | website.social.google, website.social.google.callback, website.social.apple, website.social.apple.callback | designed: Central Website additions success 125:10900 · cancelled 125:10912 | P2 | todo |
-| WEB-016b | ↳ Plan choice step | step | trial / paid | RegisterPage step | designed: Central Website additions 125:10149 · m 125:10421 | P2 | todo |
-| WEB-016c | ↳ Payment step (gateway, card fields, promo code) | step | coupon error | RegisterPage step | designed: Central Website additions 125:10606 · m 125:10779 (payment methods = old project, labelled box) | P2 | todo |
-| WEB-017 | Email verification sent / resend | `central.register.verify` | resend, cooldown | RegisterPage createPendingAndSendEmail | designed: Central Website additions 125:10925 · resent 125:11066 · m 125:11200 | P2 | todo |
-| WEB-018 | Complete registration: account (name, password) | `central.register.complete` | invalid/expired token | website.register.complete | designed: Central Website additions 125:11277 · m 125:11433 | P2 | todo |
-| WEB-018a | ↳ Step: store (shop name, sub-domain / custom domain + DNS check, profit %, categories) | step | availability check | CompleteRegistrationPage | designed: Central Website additions 125:11537 · validation 125:11701 · custom domain/DNS/profit %/categories 133:12577 · m 125:11865 | P2 | todo |
-| WEB-019 | Registration payment redirect | `central.register.payment.charge` | redirecting state | website.register.payment.charge | designed: Central Website additions 125:11977 | P2 | todo |
-| WEB-019a | ↳ Payment success | `central.register.payment.success` | | website.register.payment.success | designed: Central Website additions 125:12081 · m 125:12227 | P2 | todo |
-| WEB-019b | ↳ Payment failed / cancelled | `central.register.payment.cancel` | retry | website.register.payment.cancel | designed: Central Website additions 125:12321 | P2 | todo |
-| WEB-020 | Provisioning / loading | `central.register.provisioning` | progress, failure | — (Figma) | 12:42305, m 12:43549 | P2 | todo |
+| WEB-016 | Sign up (email, phone, plan, coupon, compliance accept) | `central.register` | validation, social auth | website.register | 12:42223, m 12:43467 | P2 | done |
+| WEB-016a | ↳ Social auth popup result (Google / Apple) | `central.social.callback` | success, error | website.social.google, website.social.google.callback, website.social.apple, website.social.apple.callback | designed: Central Website additions success 125:10900 · cancelled 125:10912 | P2 | done |
+| WEB-016b | ↳ Plan choice step | step | trial / paid | RegisterPage step | designed: Central Website additions 125:10149 · m 125:10421 | P2 | done |
+| WEB-016c | ↳ Payment step (gateway, card fields, promo code) | step | coupon error | RegisterPage step | designed: Central Website additions 125:10606 · m 125:10779 (payment methods = old project, labelled box) | P2 | done |
+| WEB-017 | Email verification sent / resend | `central.register.verify` | resend, cooldown | RegisterPage createPendingAndSendEmail | designed: Central Website additions 125:10925 · resent 125:11066 · m 125:11200 | P2 | done |
+| WEB-018 | Complete registration: account (name, password) | `central.register.complete` | invalid/expired token | website.register.complete | designed: Central Website additions 125:11277 · m 125:11433 | P2 | done |
+| WEB-018a | ↳ Step: store (shop name, sub-domain / custom domain + DNS check, profit %, categories) | step | availability check | CompleteRegistrationPage | designed: Central Website additions 125:11537 · validation 125:11701 · custom domain/DNS/profit %/categories 133:12577 · m 125:11865 | P2 | partial — store categories picker (Figma 133:12577) not built yet; arrives with tenants.selling_category_ids (P3 batch 3) |
+| WEB-019 | Registration payment redirect | `central.register.payment.charge` | redirecting state | website.register.payment.charge | designed: Central Website additions 125:11977 | P2 | done |
+| WEB-019a | ↳ Payment success | `central.register.payment.success` | | website.register.payment.success | designed: Central Website additions 125:12081 · m 125:12227 | P2 | done |
+| WEB-019b | ↳ Payment failed / cancelled | `central.register.payment.cancel` | retry | website.register.payment.cancel | designed: Central Website additions 125:12321 | P2 | done |
+| WEB-020 | Provisioning / loading | `central.register.provisioning` | progress, failure | — (Figma) | 12:42305, m 12:43549 | P2 | done |
 | WEB-021 | Onboarding wizard | `central.onboarding` | invalid tenant state | website.store.onboarding | mapped: Vendor Panel (new screens) 82:99932 / 82:99996 / 82:100084 / 82:100161 (runs inside store panel) | P2 | todo |
 | WEB-021a | ↳ Step: Countries | step | select all | StoreOnboardingWizard | mapped: 82:99932 (Countries) | P2 | todo |
 | WEB-021b | ↳ Step: Languages | step | | StoreOnboardingWizard | mapped: 82:99996 (Languages) | P2 | todo |

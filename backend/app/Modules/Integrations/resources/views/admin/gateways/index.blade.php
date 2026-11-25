@@ -10,7 +10,7 @@
 <x-layouts.panel surface="admin" :title="__('integrations::admin.tabs.gateways').' · '.__('integrations::admin.title')" data-page="admin-integrations">
     @include('integrations::admin.integrations._header', ['active' => 'gateways'])
 
-    <div class="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+    <div class="grid items-start gap-6 *:min-w-0 lg:grid-cols-[280px_minmax(0,1fr)]">
         @include('integrations::admin.gateways._list', ['gateways' => $gateways, 'current' => null])
 
         <div class="grid gap-6">
@@ -22,7 +22,7 @@
                 @if ($gateways->isEmpty())
                     <x-ui::empty-state :title="__('integrations::admin.gateways.empty_title')" :description="__('integrations::admin.gateways.empty_description')" />
                 @else
-                    <div class="overflow-x-auto">
+                    <div class="relative overflow-x-auto">
                         <table class="w-full min-w-[640px] text-sm">
                             <thead class="bg-subtle text-start text-xs font-medium text-ink-secondary">
                                 <tr>

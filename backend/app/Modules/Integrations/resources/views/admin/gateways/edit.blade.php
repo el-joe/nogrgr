@@ -13,7 +13,7 @@
 <x-layouts.panel surface="admin" :title="$name.' · '.__('integrations::admin.title')" data-page="admin-integrations">
     @include('integrations::admin.integrations._header', ['active' => 'gateways'])
 
-    <div class="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+    <div class="grid items-start gap-6 *:min-w-0 lg:grid-cols-[280px_minmax(0,1fr)]">
         @include('integrations::admin.gateways._list', ['gateways' => $gateways, 'current' => $current])
 
         <form id="gateway-form" method="POST" action="{{ route('admin.integrations.gateways.update', $current->code) }}" data-ajax data-unsaved-form novalidate class="grid min-w-0 gap-6">

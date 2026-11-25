@@ -107,12 +107,21 @@ function bindValidateOnBlur(form) {
 
 function bindLeaveGuard(form) {
     window.addEventListener('beforeunload', (event) => {
-        if (form.dataset.dirty) {
+        // A save in flight redirects (http.js follows payload.redirect) before
+        // ajax:success runs, so the guard must stand down while submitting.
+        if (form.dataset.dirty && !form.dataset.submitting) {
             event.preventDefault();
             event.returnValue = '';
         }
     });
-    form.addEventListener('ajax:success', () => delete form.dataset.dirty);
+    form.addEventListener('submit', () => {
+        form.dataset.submitting = '1';
+    });
+    form.addEventListener('ajax:success', () => {
+        delete form.dataset.dirty;
+        delete form.dataset.submitting;
+    });
+    form.addEventListener('ajax:error', () => delete form.dataset.submitting);
 }
 
 /* ----------------------------------------------------------- form helpers */

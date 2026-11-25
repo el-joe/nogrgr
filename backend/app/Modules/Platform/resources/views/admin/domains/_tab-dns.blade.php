@@ -33,7 +33,7 @@
         @if ($preview === [])
             <p class="text-sm text-ink-secondary">{{ __('platform::domains.dns.preview_empty') }}</p>
         @else
-            <div class="overflow-x-auto rounded-control bg-sidebar px-4 py-3 text-sidebar-ink" dir="ltr">
+            <div class="relative overflow-x-auto rounded-control bg-sidebar px-4 py-3 text-sidebar-ink" dir="ltr">
                 <table class="w-full font-mono text-[13px] leading-6">
                     <caption class="sr-only">{{ __('platform::domains.dns.preview_caption') }}</caption>
                     <tbody>

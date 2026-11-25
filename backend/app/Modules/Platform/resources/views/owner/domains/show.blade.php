@@ -52,7 +52,7 @@
                     <x-ui::empty-state compact icon="server" :title="__('platform::owner.domains.no_records_title')" :description="__('platform::owner.domains.no_records')" />
                 </div>
             @else
-                <div class="overflow-x-auto">
+                <div class="relative overflow-x-auto">
                     <table class="ui-table w-full text-sm">
                         <thead>
                             <tr class="border-y border-line bg-subtle text-xs font-medium text-ink-secondary">

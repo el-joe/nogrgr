@@ -40,7 +40,7 @@
                             </x-ui::empty-state>
                         </div>
                     @else
-                        <div class="overflow-x-auto">
+                        <div class="relative overflow-x-auto">
                             <table class="ui-table w-full text-sm">
                                 <thead>
                                     <tr class="border-y border-line bg-subtle text-start text-xs font-medium text-ink-secondary">
@@ -73,7 +73,7 @@
                             <x-ui::empty-state compact icon="refresh" :title="__('platform::domains.check.empty_title')" :description="__('platform::domains.check.empty_description')" />
                         </div>
                     @else
-                        <div class="overflow-x-auto">
+                        <div class="relative overflow-x-auto">
                             <table class="ui-table w-full text-sm">
                                 <thead>
                                     <tr class="border-y border-line bg-subtle text-xs font-medium text-ink-secondary">

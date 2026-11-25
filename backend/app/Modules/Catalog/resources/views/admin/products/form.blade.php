@@ -108,7 +108,7 @@
                     </x-ui::card>
                     <x-ui::card :title="__('catalog::products.sections.variants')" :subtitle="__('catalog::products.sections.variants_hint')">
                         <p data-variants-empty class="py-6 text-center text-sm text-ink-secondary">{{ __('catalog::products.variants.empty') }}</p>
-                        <div data-variants-table hidden class="overflow-x-auto rounded-control border border-line">
+                        <div data-variants-table hidden class="relative overflow-x-auto rounded-control border border-line">
                             <table class="w-full min-w-[720px] text-sm">
                                 <thead class="bg-subtle text-xs text-ink-secondary">
                                     <tr>
@@ -251,7 +251,7 @@
                                     @endcan
                                 </x-ui::empty-state>
                             @else
-                                <div class="overflow-x-auto rounded-control border border-line">
+                                <div class="relative overflow-x-auto rounded-control border border-line">
                                     <table class="w-full text-sm">
                                         <thead class="bg-subtle text-xs text-ink-secondary">
                                             <tr data-stock-head>

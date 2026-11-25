@@ -70,7 +70,7 @@
         </section>
 
         <x-ui::card :title="__('billing::plans.comparison')" :padding="false">
-            <div class="overflow-x-auto">
+            <div class="relative overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-subtle text-start text-xs text-ink-secondary">
                         <tr>

@@ -5,7 +5,7 @@
 <form method="POST" action="{{ route('admin.notifications.preferences.update') }}" data-ajax novalidate class="grid gap-4">
     @csrf
     @method('PUT')
-    <div class="overflow-x-auto rounded-control border border-line">
+    <div class="relative overflow-x-auto rounded-control border border-line">
         <table class="w-full text-[13px]">
             <thead class="bg-subtle text-start text-xs text-ink-secondary">
                 <tr>

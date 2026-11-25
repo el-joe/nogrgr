@@ -49,7 +49,7 @@
         <div class="border-b border-line p-4">{{ $filters }}</div>
     @endisset
 
-    <div class="overflow-x-auto overflow-y-hidden">
+    <div class="relative overflow-x-auto overflow-y-hidden">
         <table
             id="{{ $id }}"
             data-datatable

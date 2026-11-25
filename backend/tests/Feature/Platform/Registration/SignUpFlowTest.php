@@ -47,6 +47,13 @@ describe('sign up', function (): void {
         expect(VendorRegistration::query()->count())->toBe(0);
     });
 
+    it('asks for the e-mail without exposing the internal provider rule', function (): void {
+        $this->post(route('central.register.store'), ['phone' => '501234567', 'phone_country' => 'sa', 'compliance' => '1'])
+            ->assertSessionHasErrors(['email' => __('validation.required', ['attribute' => __('platform::signup.form.email')])]);
+
+        expect(session('errors')->first('email'))->not->toContain('provider');
+    });
+
     it('keeps the sign-up in the session until a plan is chosen', function (): void {
         $this->post(route('central.register.store'), signUpPayload())->assertRedirect(route('central.register.plan'));
 

@@ -56,7 +56,7 @@
                 <x-ui::empty-state compact :title="__('platform::vendors.plan.history_empty_title')" :description="__('platform::vendors.plan.history_empty_description')" />
             </div>
         @else
-            <div class="overflow-x-auto">
+            <div class="relative overflow-x-auto">
                 <table class="w-full min-w-[640px] text-sm">
                     <thead class="bg-subtle text-start text-xs font-medium text-ink-secondary">
                         <tr>

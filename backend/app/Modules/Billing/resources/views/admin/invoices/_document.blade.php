@@ -31,7 +31,7 @@
         </dl>
     </div>
 
-    <div class="overflow-x-auto rounded-card border border-line">
+    <div class="relative overflow-x-auto rounded-card border border-line">
         <table class="w-full text-sm">
             <thead class="bg-subtle text-xs text-ink-secondary">
                 <tr>

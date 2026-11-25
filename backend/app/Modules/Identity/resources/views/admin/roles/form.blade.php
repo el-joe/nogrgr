@@ -31,7 +31,7 @@
         </x-slot:tabs>
     </x-ui::page-header>
 
-    <form id="role-form" method="POST" action="{{ $editing ? route('admin.system.roles.update', $role) : route('admin.system.roles.store') }}" data-ajax novalidate class="grid gap-6" data-role-matrix>
+    <form id="role-form" method="POST" action="{{ $editing ? route('admin.system.roles.update', $role) : route('admin.system.roles.store') }}" data-ajax novalidate class="grid gap-6 *:min-w-0" data-role-matrix>
         @csrf
         @if ($editing)
             @method('PUT')
@@ -50,7 +50,7 @@
         </x-ui::card>
 
         <input type="hidden" name="permissions" value="">
-        <div class="overflow-x-auto rounded-card border border-line bg-surface shadow-card" data-error-key="permissions">
+        <div class="relative overflow-x-auto rounded-card border border-line bg-surface shadow-card" data-error-key="permissions">
             <table class="w-full min-w-[640px] text-[13px]">
                 <thead class="bg-subtle text-xs text-ink-secondary">
                     <tr>

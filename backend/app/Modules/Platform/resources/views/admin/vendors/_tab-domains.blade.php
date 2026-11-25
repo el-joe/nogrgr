@@ -16,7 +16,7 @@
             <x-ui::button size="sm" icon="plus" data-overlay-open="add-domain">{{ __('platform::vendors.domains.add') }}</x-ui::button>
         </x-slot:actions>
     @endif
-    <div class="overflow-x-auto">
+    <div class="relative overflow-x-auto">
         <table class="w-full min-w-[720px] text-sm">
             <thead class="bg-subtle text-xs font-medium text-ink-secondary">
                 <tr>
