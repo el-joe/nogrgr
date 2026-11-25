@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'title' => 'Shipping settings',
+    'breadcrumb' => 'Settings',
+    'subtitle' => 'Defaults used when a company has no day rule for a country.',
+    'defaults_title' => 'Defaults',
+    'save' => 'Save changes',
+    'saved' => 'Shipping settings saved.',
+    'fields' => [
+        'default_min_days' => 'Default min days',
+        'default_max_days' => 'Default max days',
+        'cutoff_time' => 'Order cut-off time',
+        'cutoff_help' => 'Orders at or after this time count from the next day (:timezone).',
+        'weekly_off_days' => 'Weekly off days',
+        'weekly_off_help' => 'Skipped by every delivery estimate.',
+        'no_off_days' => 'No weekly off day',
+        'show_estimate' => 'Show delivery estimate on product pages',
+        'show_popup' => 'Show delivery popup (days 1–10)',
+    ],
+    'defaults' => [
+        'title' => 'Default company per country',
+        'add' => 'Set default company',
+        'country' => 'Country',
+        'company' => 'Company',
+        'days' => 'Days',
+        'saved' => 'Default company saved.',
+        'removed' => 'Default company of :country removed.',
+        'remove' => 'Remove default of :country',
+        'remove_message' => 'Estimates for this country use the default days until another company is set.',
+        'empty_title' => 'No default companies',
+        'empty_description' => 'Set a default carrier per country, or mark a day rule as default on the company page.',
+        'fallback_note' => '* No day rule for this country: the default days apply.',
+        'no_companies' => 'There are no active shipping companies yet.',
+    ],
+];

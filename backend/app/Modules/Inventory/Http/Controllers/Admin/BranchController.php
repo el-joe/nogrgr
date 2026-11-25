@@ -16,6 +16,8 @@ use App\Modules\Inventory\Services\StockService;
 use App\Modules\Localization\Models\City;
 use App\Modules\Localization\Services\CountryService;
 use App\Modules\Localization\Services\StoreCountries;
+use App\Modules\Shipping\Models\ShippingZone;
+use App\Modules\Shipping\Services\ShippingRuleService;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
 use Illuminate\Contracts\View\View;
@@ -24,7 +26,7 @@ use Illuminate\Http\Request;
 
 /**
  * Admin › Logistics › Branches (ADM-030 / 030a, Figma 71:40880 / 71:41812): server-side
- * list, create / edit (details, fulfilment: default countries + zones), stock table with
+ * list, create / edit (details, fulfilment: default countries + shipping zones), stock table with
  * CSV import, delete.
  */
 class BranchController extends Controller
@@ -37,6 +39,7 @@ class BranchController extends Controller
         private readonly CountryService $countries,
         private readonly StoreCountries $cities,
         private readonly CatalogLocales $locales,
+        private readonly ShippingRuleService $shippingRules,
     ) {}
 
     public function index(): View
@@ -66,7 +69,7 @@ class BranchController extends Controller
 
     public function edit(Branch $branch): View
     {
-        return $this->form($branch->load(['city', 'zones', 'defaultCountries']));
+        return $this->form($branch->load(['city', 'zones.rule', 'defaultCountries']));
     }
 
     public function update(BranchRequest $request, Branch $branch): JsonResponse
@@ -104,6 +107,19 @@ class BranchController extends Controller
 
         return response()->json([
             'results' => $cities->map(static fn (City $city): array => ['id' => $city->id, 'text' => (string) $city->name])->values()->all(),
+            'pagination' => ['more' => false],
+        ]);
+    }
+
+    /**
+     * Select2 source of the "Serves zones" picker: shipping zones of the rules covering the country.
+     */
+    public function zones(CitySearchRequest $request): JsonResponse
+    {
+        $zones = $this->shippingRules->zonesForCountry((int) $request->validated('country'), $request->validated('q'));
+
+        return response()->json([
+            'results' => $zones->map(static fn (ShippingZone $zone): array => ['id' => $zone->id, 'text' => $zone->rule->name.' › '.$zone->name])->values()->all(),
             'pagination' => ['more' => false],
         ]);
     }

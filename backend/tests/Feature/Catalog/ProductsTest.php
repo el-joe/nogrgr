@@ -366,7 +366,7 @@ it('shows per-country and per-variant prices computed by Commerce pricing', func
         ->assertSee('$5.00');
 
     $csv = $this->get($this->centralUrl("/admin/catalog/products/{$product->id}/prices/export"))->assertOk()->streamedContent();
-    expect($csv)->toContain('SA,')->toContain(',12.00,5.00,17.00')->toContain(',12.00,0.00,12.00');
+    expect($csv)->toContain('SA,')->toContain(',12.00,,5.00,17.00')->toContain(',12.00,,0.00,12.00');
 
     $variant->delete();
     $this->get($this->centralUrl("/admin/catalog/products/{$product->id}/prices"))->assertSee('$15.00')->assertSee('$10.00');

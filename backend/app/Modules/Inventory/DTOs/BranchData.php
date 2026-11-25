@@ -6,14 +6,14 @@ use App\Shared\DTOs\BaseDTO;
 
 /**
  * Admin create / edit of a branch. `defaultCountryIds`: countries this branch becomes the
- * default fulfilment branch of; `zoneCityIds`: cities it serves.
+ * default fulfilment branch of; `zoneIds`: shipping zones it serves.
  */
 final class BranchData extends BaseDTO
 {
     /**
      * @param  array<string, string>  $name
      * @param  list<int>  $defaultCountryIds
-     * @param  list<int>  $zoneCityIds
+     * @param  list<int>  $zoneIds
      */
     public function __construct(
         public readonly array $name,
@@ -26,6 +26,6 @@ final class BranchData extends BaseDTO
         public readonly bool $allowsPickup,
         public readonly bool $isActive,
         public readonly array $defaultCountryIds = [],
-        public readonly array $zoneCityIds = [],
+        public readonly array $zoneIds = [],
     ) {}
 }

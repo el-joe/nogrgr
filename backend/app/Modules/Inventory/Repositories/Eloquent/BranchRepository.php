@@ -41,8 +41,8 @@ class BranchRepository extends BaseRepository implements BranchRepositoryContrac
         }
     }
 
-    public function syncZones(Branch $branch, array $cityIds): void
+    public function syncZones(Branch $branch, array $zoneIds): void
     {
-        $branch->zones()->sync($cityIds);
+        $branch->zones()->sync($zoneIds);
     }
 }

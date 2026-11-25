@@ -2,13 +2,14 @@
     Admin › Logistics › Branches › Create / Edit (ADM-030a, Figma Admin Panel 71:41812):
     Details tab (translated name, code, country, city, address, contact phone, pickup
     hours) with the Fulfilment card (active, default branch for countries, customer
-    pickup, served zones), and the Stock tab (server-side table + CSV import).
+    pickup, served shipping zones), and the Stock tab (server-side table + CSV import).
 --}}
 @php
     $isNew = ! $branch->exists;
     $title = $isNew ? __('inventory::branches.create_title') : __('inventory::branches.edit_title');
     $canManage = (bool) auth('admin')->user()?->can('shipping.branches.manage');
     $citiesUrl = route('admin.shipping.branches.cities');
+    $zonesUrl = route('admin.shipping.branches.zones');
     $countryId = $branch->country_id;
     $phoneCountry = $branch->country?->iso2;
     $tab = request()->query('tab') === 'stock' && ! $isNew ? 'stock' : 'details';
@@ -64,7 +65,7 @@
                             <x-ui::switch name="is_active" :label="__('inventory::branches.fields.active')" :checked="(bool) $branch->is_active" />
                             <x-ui::select name="default_country_ids" multiple :label="__('inventory::branches.fields.default_for')" :options="$countries" :selected="$branch->exists ? $branch->defaultCountries->pluck('id')->all() : []" :placeholder="__('inventory::branches.fields.default_none')" :helper="__('inventory::branches.fields.default_help')" />
                             <x-ui::switch name="allows_pickup" :label="__('inventory::branches.fields.allows_pickup')" :checked="(bool) $branch->allows_pickup" />
-                            <x-ui::select name="zone_city_ids" multiple :label="__('inventory::branches.fields.zones')" :options="$branch->exists ? $branch->zones->mapWithKeys(fn ($city) => [$city->id => $city->name])->all() : []" :selected="$branch->exists ? $branch->zones->pluck('id')->all() : []" :placeholder="__('inventory::branches.fields.zones_placeholder')" :ajax-url="$countryId ? $citiesUrl.'?country='.$countryId : null" :data-cities-url="$citiesUrl" :helper="__('inventory::branches.fields.zones_help')" data-branch-zones />
+                            <x-ui::select name="zone_ids" multiple :label="__('inventory::branches.fields.zones')" :options="$branch->exists ? $branch->zones->mapWithKeys(fn ($zone) => [$zone->id => $zone->rule->name.' › '.$zone->name])->all() : []" :selected="$branch->exists ? $branch->zones->pluck('id')->all() : []" :placeholder="__('inventory::branches.fields.zones_placeholder')" :ajax-url="$countryId ? $zonesUrl.'?country='.$countryId : null" :data-cities-url="$zonesUrl" :helper="__('inventory::branches.fields.zones_help')" data-branch-zones />
                         </div>
                     </x-ui::card>
 

@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'title' => 'Fixed shipping costs',
+    'breadcrumb' => 'Fixed costs',
+    'subtitle' => 'Product display price = sale price + weight (g) × rate. Added per line, not multiplied by quantity.',
+    'add' => 'Add country',
+    'search' => 'Search country',
+    'create_title' => 'Add fixed cost',
+    'edit_title' => 'Fixed cost — :country',
+    'edit_named' => 'Edit fixed cost of :country',
+    'display_in' => ':currency display',
+    'columns' => [
+        'country' => 'Country',
+        'rate' => 'Rate per gram',
+        'example' => 'Example :weight',
+        'updated' => 'Updated',
+    ],
+    'fields' => [
+        'country' => 'Country',
+        'country_help' => 'One rate per country',
+        'rate' => 'Rate per gram (USD)',
+    ],
+    'example' => 'Example: :weight g product adds :amount to the display price.',
+    'example_hint' => 'Example: the rate × :weight g is added to the display price of a :weight g product.',
+    'country_taken' => 'This country already has a fixed shipping rate.',
+    'empty_title' => 'No fixed shipping costs yet',
+    'empty_description' => 'Add a rate per gram for a country to include weight-based shipping in product prices.',
+    'created' => 'Fixed shipping cost added. Product prices are being recalculated.',
+    'updated' => 'Fixed shipping cost updated. Product prices are being recalculated.',
+    'deleted' => 'Fixed shipping cost deleted. Product prices are being recalculated.',
+    'delete_title' => 'Delete the fixed cost of :country?',
+    'delete_message' => 'Products shown in this country will no longer include weight-based shipping.',
+    'calculator' => [
+        'title' => 'Calculator',
+        'weight' => 'Product weight (g)',
+        'sale_price' => 'Sale price (USD)',
+        'hint' => 'Choose a country to see the display price.',
+        'result' => 'Display price: :price + :weight × :rate = :display',
+        'no_rate' => 'No fixed shipping rate for this country: display price stays :price.',
+        'error' => 'The price could not be calculated. Check the values and try again.',
+    ],
+];

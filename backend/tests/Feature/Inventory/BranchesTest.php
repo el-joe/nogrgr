@@ -9,6 +9,8 @@ use App\Modules\Inventory\Models\Branch;
 use App\Modules\Inventory\Models\BranchStock;
 use App\Modules\Localization\Models\City;
 use App\Modules\Localization\Models\Country;
+use App\Modules\Shipping\Models\ShippingRule;
+use App\Modules\Shipping\Models\ShippingZone;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 
@@ -43,7 +45,7 @@ function branchPayload(Country $country, array $overrides = []): array
         'allows_pickup' => '0',
         'is_active' => '1',
         'default_country_ids' => [$country->id],
-        'zone_city_ids' => [],
+        'zone_ids' => [],
     ], $overrides);
 }
 
@@ -90,17 +92,20 @@ it('creates a branch with an E.164 phone, default countries and zones', function
     $this->actingAs(inventoryAdmin(['shipping.branches.manage']), 'admin');
     $sa = Country::factory()->iso('SA')->create();
     $city = City::factory()->create(['country_id' => $sa->id]);
+    $rule = ShippingRule::factory()->create();
+    $rule->countries()->attach($sa->id);
+    $zone = ShippingZone::query()->create(['shipping_rule_id' => $rule->id, 'name' => 'Riyadh & Central']);
 
     $this->get($this->centralUrl('/admin/shipping/branches/create'))->assertOk()->assertSee('name[ar]', false);
 
-    $this->postJson($this->centralUrl('/admin/shipping/branches'), branchPayload($sa, ['city_id' => $city->id, 'zone_city_ids' => [$city->id]]))->assertCreated();
+    $this->postJson($this->centralUrl('/admin/shipping/branches'), branchPayload($sa, ['city_id' => $city->id, 'zone_ids' => [$zone->id]]))->assertCreated();
 
     $branch = Branch::query()->sole();
     expect($branch->code)->toBe('RUH-01')
         ->and($branch->phone)->toBe('+966501234567')
         ->and($branch->getTranslation('name', 'ar'))->toBe('مستودع الرياض')
         ->and($branch->defaultCountries->pluck('id')->all())->toBe([$sa->id])
-        ->and($branch->zones->pluck('id')->all())->toBe([$city->id]);
+        ->and($branch->zones->pluck('id')->all())->toBe([$zone->id]);
 
     $this->get($this->centralUrl("/admin/shipping/branches/{$branch->id}/edit"))->assertOk()->assertSee('RUH-01');
 });
@@ -123,13 +128,16 @@ it('validates branches', function (): void {
     $eg = Country::factory()->iso('EG')->create();
     Branch::factory()->create(['code' => 'RUH-01', 'country_id' => $sa->id]);
     $cairo = City::factory()->create(['country_id' => $eg->id]);
+    $egRule = ShippingRule::factory()->create();
+    $egRule->countries()->attach($eg->id);
+    $egZone = ShippingZone::query()->create(['shipping_rule_id' => $egRule->id, 'name' => 'Cairo']);
 
     $this->postJson($this->centralUrl('/admin/shipping/branches'), branchPayload($sa, [
         'name' => ['en' => ''],
         'phone' => '12',
         'city_id' => $cairo->id,
-        'zone_city_ids' => [$cairo->id],
-    ]))->assertJsonValidationErrors(['name.en', 'name.ar', 'code', 'phone', 'city_id', 'zone_city_ids.0']);
+        'zone_ids' => [$egZone->id],
+    ]))->assertJsonValidationErrors(['name.en', 'name.ar', 'code', 'phone', 'city_id', 'zone_ids.0']);
 });
 
 it('lists the branch stock and imports a CSV by SKU', function (): void {
@@ -176,4 +184,19 @@ it('suggests the cities of a country for the city and zone pickers', function ()
     $this->getJson($this->centralUrl("/admin/shipping/branches/cities?country={$sa->id}&q=riy"))
         ->assertOk()->assertJsonPath('results.0.text', 'Riyadh');
     $this->getJson($this->centralUrl('/admin/shipping/branches/cities'))->assertJsonValidationErrors('country');
+});
+
+it('suggests the shipping zones of the rules covering a country for the zone picker', function (): void {
+    $this->actingAs(inventoryAdmin(), 'admin');
+    $sa = Country::factory()->iso('SA')->create();
+    $eg = Country::factory()->iso('EG')->create();
+    $rule = ShippingRule::factory()->create(['name' => 'KSA standard']);
+    $rule->countries()->attach($sa->id);
+    ShippingZone::query()->create(['shipping_rule_id' => $rule->id, 'name' => 'Eastern']);
+    $other = ShippingRule::factory()->create();
+    $other->countries()->attach($eg->id);
+    ShippingZone::query()->create(['shipping_rule_id' => $other->id, 'name' => 'Cairo']);
+
+    $this->getJson($this->centralUrl("/admin/shipping/branches/zones?country={$sa->id}"))
+        ->assertOk()->assertJsonCount(1, 'results')->assertJsonPath('results.0.text', 'KSA standard › Eastern');
 });

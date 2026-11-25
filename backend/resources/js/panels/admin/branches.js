@@ -1,8 +1,8 @@
 /**
  * Admin › Logistics › Branches form (ADM-030a):
  *  - unsaved-changes bar (unsaved-form.js);
- *  - [data-branch-country] change → the city and zone selects ([data-branch-city],
- *    [data-branch-zones]) are cleared and re-pointed at the cities of that country
+ *  - [data-branch-country] change → the city and shipping-zone selects ([data-branch-city],
+ *    [data-branch-zones]) are cleared and re-pointed at the cities / zones of that country
  *    (Select2 remote options from data-cities-url?country=<id>).
  */
 import { $ } from '../vendor-libs';

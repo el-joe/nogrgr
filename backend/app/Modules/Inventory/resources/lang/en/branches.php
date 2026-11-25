@@ -47,8 +47,8 @@ return [
         'default_help' => 'Orders from these countries are fulfilled from this branch. A country has one default branch.',
         'allows_pickup' => 'Allow customer pickup',
         'zones' => 'Serves zones',
-        'zones_placeholder' => 'Choose cities',
-        'zones_help' => 'Cities of the branch country this branch delivers to.',
+        'zones_placeholder' => 'Choose shipping zones',
+        'zones_help' => 'Shipping zones (Rules & zones) of the branch country this branch delivers to.',
     ],
     'stock' => [
         'summary' => ':skus SKUs in stock · :units units',

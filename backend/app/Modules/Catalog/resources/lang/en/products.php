@@ -142,6 +142,7 @@ return [
         'variant' => 'Variant',
         'base' => 'Base',
         'shipping' => 'Fixed shipping',
+        'rate' => 'Ship/g',
         'shopper' => 'Shopper',
         'empty' => 'This product is not available in any country.',
         'export' => 'Export CSV',

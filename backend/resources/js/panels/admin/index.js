@@ -20,6 +20,7 @@ const pages = {
     'admin-catalog': () => import('./catalog.js'),
     'admin-products': () => import('./products.js'),
     'admin-branches': () => import('./branches.js'),
+    'admin-shipping': () => import('./shipping.js'),
     'admin-translations': () => import('./translations.js'),
     'admin-requests': () => import('./requests.js'),
     'admin-catalog-import': () => import('./catalog-import.js'),

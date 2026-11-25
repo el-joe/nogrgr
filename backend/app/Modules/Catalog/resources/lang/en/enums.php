@@ -36,5 +36,10 @@ return [
     'message_sender' => ['admin' => 'Platform', 'vendor' => 'Vendor'],
     'tenant_change_type' => ['countries' => 'Countries', 'categories' => 'Categories'],
     'tenant_change_status' => ['pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected'],
-    'editable_product_field' => ['name' => 'Title', 'summary' => 'Short description', 'description' => 'Description', 'meta_title' => 'SEO title', 'meta_description' => 'SEO description', 'images' => 'Images'],
+    'editable_product_field' => ['name' => 'Title', 'summary' => 'Short description', 'description' => 'Description', 'meta_title' => 'SEO title', 'meta_description' => 'SEO description', 'images' => 'Images', 'weight_grams' => 'Weight (g)'],
+    'store_product_source' => ['central' => 'Central product', 'own' => 'Own product'],
+    'market_placement' => ['trending' => 'Trending', 'flash_sale' => 'Flash sale', 'new_in' => 'New in', 'category' => 'Category'],
+    'price_list_run_status' => ['queued' => 'Queued', 'running' => 'Applying', 'completed' => 'Applied', 'failed' => 'Failed'],
+    'own_product_section' => ['new-in' => 'New in products', 'featured' => 'Featured products', 'best-sellers' => 'Best seller products'],
+    'store_product_filter' => ['active' => 'Active', 'inactive' => 'Hidden', 'featured' => 'Featured', 'out_of_stock' => 'Out of stock'],
 ];

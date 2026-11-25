@@ -18,6 +18,7 @@ Route::middleware('auth:admin')->prefix('shipping/branches')->name('shipping.bra
         Route::get('create', 'create')->name('create');
         Route::post('/', 'store')->name('store');
         Route::get('cities', 'cities')->name('cities');
+        Route::get('zones', 'zones')->name('zones');
         Route::get('{branch}/edit', 'edit')->whereNumber('branch')->name('edit');
         Route::put('{branch}', 'update')->whereNumber('branch')->name('update');
         Route::delete('{branch}', 'destroy')->whereNumber('branch')->name('destroy');

@@ -6,6 +6,7 @@ use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Inventory\Database\Factories\BranchFactory;
 use App\Modules\Localization\Models\City;
 use App\Modules\Localization\Models\Country;
+use App\Modules\Shipping\Models\ShippingZone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,7 +19,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 /**
  * Central warehouse / pickup point. Default fulfilment branch of the countries in
- * `defaultCountries` (one branch per country) and serves the cities in `zones`.
+ * `defaultCountries` (one branch per country) and serves the shipping zones in `zones`.
  *
  * @property int $id
  * @property string $name
@@ -103,13 +104,13 @@ class Branch extends Model implements AiTranslatable
     }
 
     /**
-     * Cities (zones) the branch serves.
+     * Shipping zones the branch serves (decision #63).
      *
-     * @return BelongsToMany<City, $this>
+     * @return BelongsToMany<ShippingZone, $this>
      */
     public function zones(): BelongsToMany
     {
-        return $this->belongsToMany(City::class, 'branch_zones');
+        return $this->belongsToMany(ShippingZone::class, 'branch_shipping_zones');
     }
 
     /**

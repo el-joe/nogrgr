@@ -6,6 +6,7 @@ use App\Modules\Catalog\Support\CatalogLocales;
 use App\Modules\Inventory\Models\Branch;
 use App\Modules\Localization\Models\City;
 use App\Modules\Localization\Models\Country;
+use App\Modules\Shipping\Models\ShippingZone;
 use App\Shared\Support\Phone;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -14,7 +15,7 @@ use Propaganistas\LaravelPhone\Rules\Phone as PhoneRule;
 /**
  * Branch create / edit (ADM-030a): translated name, unique code, country and city,
  * address, contact phone (intl-tel-input, stored E.164), pickup hours, default-for
- * countries and served zones (cities of the branch country).
+ * countries and served shipping zones (zones of the rules covering the branch country).
  */
 class BranchRequest extends FormRequest
 {
@@ -62,8 +63,8 @@ class BranchRequest extends FormRequest
             'is_active' => ['required', 'boolean'],
             'default_country_ids' => ['nullable', 'array'],
             'default_country_ids.*' => ['integer', 'distinct', Rule::exists(Country::class, 'id')],
-            'zone_city_ids' => ['nullable', 'array', 'max:500'],
-            'zone_city_ids.*' => ['integer', 'distinct', Rule::exists(City::class, 'id')->where('country_id', $countryId)],
+            'zone_ids' => ['nullable', 'array', 'max:200'],
+            'zone_ids.*' => ['integer', 'distinct', Rule::exists(ShippingZone::class, 'id')->where(static fn ($query) => $query->whereIn('shipping_rule_id', static fn ($rules) => $rules->select('shipping_rule_id')->from('shipping_rule_countries')->where('country_id', $countryId)))],
         ];
     }
 
@@ -81,7 +82,7 @@ class BranchRequest extends FormRequest
             'phone' => __('inventory::branches.fields.phone'),
             'pickup_hours' => __('inventory::branches.fields.pickup_hours'),
             'default_country_ids' => __('inventory::branches.fields.default_for'),
-            'zone_city_ids' => __('inventory::branches.fields.zones'),
+            'zone_ids' => __('inventory::branches.fields.zones'),
         ];
     }
 
@@ -103,7 +104,7 @@ class BranchRequest extends FormRequest
             'allows_pickup' => $this->boolean('allows_pickup'),
             'is_active' => $this->boolean('is_active'),
             'default_country_ids' => array_map('intval', (array) ($this->validated('default_country_ids') ?? [])),
-            'zone_city_ids' => array_map('intval', (array) ($this->validated('zone_city_ids') ?? [])),
+            'zone_ids' => array_map('intval', (array) ($this->validated('zone_ids') ?? [])),
         ];
     }
 }

@@ -63,6 +63,13 @@ final class PermissionCatalog
                 'catalog.imports.view', 'catalog.imports.manage',
                 // Inventory: branches
                 'shipping.branches.view', 'shipping.branches.manage',
+                // Shipping (P4)
+                'shipping.companies.view', 'shipping.companies.manage',
+                'shipping.rules.view', 'shipping.rules.manage',
+                'shipping.fixed-costs.view', 'shipping.fixed-costs.manage',
+                'shipping.stop-periods.view', 'shipping.stop-periods.manage',
+                'shipping.delivery-popup.view', 'shipping.delivery-popup.manage',
+                'shipping.settings.view', 'shipping.settings.manage',
             ],
             Guard::Affiliate->value => ['dashboard.view', 'notifications.view'],
         ];
@@ -86,6 +93,8 @@ final class PermissionCatalog
                 'settings.email-templates.view', 'settings.email-templates.manage',
                 'requests.tenant-changes.view', 'requests.tenant-changes.manage',
                 'finance.subscription.view',
+                'catalog.products.view', 'catalog.products.manage', 'catalog.products.export',
+                'catalog.own-products.view', 'catalog.own-products.manage',
             ],
         ];
     }

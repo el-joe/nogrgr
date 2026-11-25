@@ -36,5 +36,10 @@ return [
     'message_sender' => ['admin' => 'المنصة', 'vendor' => 'التاجر'],
     'tenant_change_type' => ['countries' => 'الدول', 'categories' => 'التصنيفات'],
     'tenant_change_status' => ['pending' => 'معلّق', 'approved' => 'معتمد', 'rejected' => 'مرفوض'],
-    'editable_product_field' => ['name' => 'العنوان', 'summary' => 'الوصف المختصر', 'description' => 'الوصف', 'meta_title' => 'عنوان SEO', 'meta_description' => 'وصف SEO', 'images' => 'الصور'],
+    'editable_product_field' => ['name' => 'العنوان', 'summary' => 'الوصف المختصر', 'description' => 'الوصف', 'meta_title' => 'عنوان SEO', 'meta_description' => 'وصف SEO', 'images' => 'الصور', 'weight_grams' => 'الوزن (جم)'],
+    'store_product_source' => ['central' => 'منتج مركزي', 'own' => 'منتج خاص'],
+    'market_placement' => ['trending' => 'الأكثر رواجًا', 'flash_sale' => 'عرض سريع', 'new_in' => 'وصل حديثًا', 'category' => 'التصنيف'],
+    'price_list_run_status' => ['queued' => 'في الانتظار', 'running' => 'جارٍ التطبيق', 'completed' => 'تم التطبيق', 'failed' => 'فشل'],
+    'own_product_section' => ['new-in' => 'منتجات وصلت حديثًا', 'featured' => 'منتجات مميزة', 'best-sellers' => 'الأكثر مبيعًا'],
+    'store_product_filter' => ['active' => 'نشط', 'inactive' => 'مخفي', 'featured' => 'مميز', 'out_of_stock' => 'نفد المخزون'],
 ];

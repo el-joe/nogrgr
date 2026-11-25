@@ -31,7 +31,7 @@ interface BranchRepositoryContract extends RepositoryContract
     public function syncDefaultCountries(Branch $branch, array $countryIds): void;
 
     /**
-     * @param  list<int>  $cityIds
+     * @param  list<int>  $zoneIds  shipping zone ids
      */
-    public function syncZones(Branch $branch, array $cityIds): void;
+    public function syncZones(Branch $branch, array $zoneIds): void;
 }

@@ -1,6 +1,7 @@
 {{--
     Price list modal body (ADM-010b, Figma Admin Panel 65:29682): one row per allowed
-    country × active variant. Shopper = base + fixed shipping (Commerce\Pricing).
+    country × active variant. Shopper = base + weight × Ship/g rate (precomputed
+    fixed shipping, Commerce\Pricing).
 --}}
 <div class="grid gap-4" data-modal-title="{{ __('catalog::products.prices.title', ['name' => $product->name]) }}" data-modal-subtitle="{{ __('catalog::products.prices.subtitle') }}">
     @if ($rows === [])
@@ -13,7 +14,7 @@
                         <th scope="col" class="px-4 py-2.5 text-start font-medium">{{ __('catalog::products.prices.country') }}</th>
                         <th scope="col" class="px-4 py-2.5 text-start font-medium">{{ __('catalog::products.prices.variant') }}</th>
                         <th scope="col" class="px-4 py-2.5 text-end font-medium">{{ __('catalog::products.prices.base') }}</th>
-                        <th scope="col" class="px-4 py-2.5 text-end font-medium">{{ __('catalog::products.prices.shipping') }}</th>
+                        <th scope="col" class="px-4 py-2.5 text-end font-medium">{{ __('catalog::products.prices.rate') }}</th>
                         <th scope="col" class="px-4 py-2.5 text-end font-medium">{{ __('catalog::products.prices.shopper') }}</th>
                     </tr>
                 </thead>
@@ -23,7 +24,7 @@
                             <td class="px-4 py-3 text-ink">{{ trim($row['country']->flag.' '.$row['country']->name) }}</td>
                             <td class="px-4 py-3 text-ink-secondary">{{ $row['variant'] ?? '—' }}</td>
                             <td class="px-4 py-3 text-end font-medium text-ink" dir="ltr">{{ $row['base']->format() }}</td>
-                            <td class="px-4 py-3 text-end text-ink-secondary" dir="ltr">{{ $row['shipping']->format() }}</td>
+                            <td class="px-4 py-3 text-end text-ink-secondary" dir="ltr" title="{{ __('catalog::products.prices.shipping') }}: {{ $row['shipping']->format() }}">{{ $row['rate'] !== null ? '$'.\App\Modules\Shipping\DataTables\FixedShippingCostsDataTable::rate($row['rate']) : '—' }}</td>
                             <td class="px-4 py-3 text-end font-semibold text-ink" dir="ltr">{{ $row['shopper']->format() }}</td>
                         </tr>
                     @endforeach

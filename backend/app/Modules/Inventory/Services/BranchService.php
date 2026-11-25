@@ -83,7 +83,7 @@ class BranchService extends BaseService
     private function syncRelations(Branch $branch, BranchData $data): void
     {
         $this->branches->syncDefaultCountries($branch, $data->isActive ? array_values(array_unique($data->defaultCountryIds)) : []);
-        $this->branches->syncZones($branch, array_values(array_unique($data->zoneCityIds)));
+        $this->branches->syncZones($branch, array_values(array_unique($data->zoneIds)));
     }
 
     /**
