@@ -149,6 +149,7 @@ return [
                 ['key' => 'localization.translations', 'label' => 'navigation.admin.translations', 'route' => 'admin.localization.translations.index', 'permission' => 'localization.translations.view'],
                 ['key' => 'localization.currencies', 'label' => 'navigation.admin.currencies', 'route' => 'admin.localization.currencies.index', 'permission' => 'localization.currencies.view'],
                 ['key' => 'localization.countries', 'label' => 'navigation.admin.countries', 'route' => 'admin.localization.countries.index', 'permission' => 'localization.countries.view'],
+                ['key' => 'localization.purchases', 'label' => 'navigation.vendor.language_purchases', 'route' => 'admin.localization.purchases.index', 'permission' => 'localization.purchases.view'],
             ]],
             ['key' => 'settings', 'label' => 'navigation.admin.settings', 'icon' => 'settings', 'children' => [
                 ['key' => 'settings.general', 'label' => 'navigation.admin.general', 'route' => 'admin.settings.general.edit', 'permission' => 'settings.manage'],
@@ -157,7 +158,10 @@ return [
             ]],
             ['key' => 'tickets', 'label' => 'navigation.admin.support_tickets', 'icon' => 'lifebuoy', 'route' => 'admin.tickets.index', 'permission' => 'tickets.view', 'badge' => 'tickets'],
             ['key' => 'notifications', 'label' => 'navigation.admin.notifications', 'icon' => 'bell', 'route' => 'admin.notifications.index', 'permission' => 'notifications.view'],
-            ['key' => 'admins', 'label' => 'navigation.admin.admins_roles', 'icon' => 'shield', 'route' => 'admin.admins.index', 'permission' => 'admins.view'],
+            ['key' => 'admins', 'label' => 'navigation.admin.admins_roles', 'icon' => 'shield', 'children' => [
+                ['key' => 'admins.index', 'label' => 'navigation.admin.admins_list', 'route' => 'admin.admins.index', 'permission' => 'admins.view'],
+                ['key' => 'roles.index', 'label' => 'navigation.vendor.roles', 'route' => 'admin.roles.index', 'permission' => 'roles.view'],
+            ]],
             ['key' => 'audit', 'label' => 'navigation.admin.audit_log', 'icon' => 'file', 'route' => 'admin.audit.index', 'permission' => 'audit.view'],
             ['key' => 'system-tools', 'label' => 'navigation.admin.system_tools', 'icon' => 'server', 'children' => [
                 ['key' => 'system.maintenance', 'label' => 'navigation.admin.maintenance_windows', 'route' => 'admin.system.maintenance.index', 'permission' => 'system.maintenance.view'],
