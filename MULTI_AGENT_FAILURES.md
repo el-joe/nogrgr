@@ -13,5 +13,6 @@ Last updated: 2026-11-25 (after verify batch) · Branch: **main**
 | F7 | Agents hit the 5-hour usage limit mid-task (owner, texts). | **Recovered** — resumed via SendMessage after reset; no work lost (uncommitted files stay in the checkout). | Keep committing after every batch. |
 | F8 | P2 gate open issues QA-P2-004…008 (PHPStan 52 errors, provisioning retry not idempotent, small UI/Figma gaps). | **Resolved** (`25ef1cf`) except PHPStan/layering in requests' in-progress files. | requests to fix before its commit. |
 | F9 | Docs-only commit `ed1d834` picked up a file deletion an agent had staged (git index shared), leaving that commit broken until `03e6361`. | **Resolved** | Orchestrator commits with `git commit -- <paths>` only; agents never stage (`git add/rm`). |
+| F10 | vendorrequests ran `php artisan migrate` on the dev DB (briefs say test DB only), applying other agents' pending central migrations. | **Noted** (non-destructive) | Briefs keep test-DB-only rule; dev DB may need `migrate:fresh --seed` before manual QA. |
 
 Lesson: max 2 agents at a time, small briefs, commit after every finished batch so an interruption never loses work.

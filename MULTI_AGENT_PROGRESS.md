@@ -54,6 +54,8 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
 - **vendorrequests**: vendor requests hub VEN-050…050j (+ vendor channel auth, pay requests), notifications inbox VEN-090, setup wizard VEN-007, real ImportProducts step.
+- **central** (P6): central website WEB-001…030 + Content admin (blog, FAQs, pages, newsletter), SEO, ComfyUI imagery.
+- Uncommitted, finished: vendorrequests (VEN-050…050j, VEN-090, VEN-007 wizard; suite 1674 green) — interleaved with orders' Billing/Integrations edits, commit together when orders reports.
 - **orders** (P5 batch 2): cart (tenant DB), checkout, orders state machine + order_facts, tenant gateway payments (spec 08), JSON store-api v1.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
 - Next: Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
