@@ -10,5 +10,7 @@ Last updated: 2026-11-25 (after verify batch) · Branch: **main**
 | F4 | QA-P0-015 (Low, storefront). | **Open** | Fix during P7 themes work (see QA log). |
 | F5 | Flaky test in `tests/Feature/Identity/CustomerAuthTest.php` (1 of 611). | **Resolved (not reproducible)** — 9 parallel runs green; DBs/cache/Redis/throttle already isolated per worker. Earlier failure came from storefront files being written mid-run. | Re-open if it recurs. |
 | F6 | Leftover `.claude/worktrees/` directory (untracked). | **Open (cosmetic)** | Clean up once confirmed all worktree branches are merged. |
+| F7 | Agents hit the 5-hour usage limit mid-task (owner, texts). | **Recovered** — resumed via SendMessage after reset; no work lost (uncommitted files stay in the checkout). | Keep committing after every batch. |
+| F8 | P2 gate open issues QA-P2-004…008 (PHPStan 52 errors, provisioning retry not idempotent, small UI/Figma gaps). | **In progress** (fixes agent) | See qa-log.md. |
 
 Lesson: max 2 agents at a time, small briefs, commit after every finished batch so an interruption never loses work.

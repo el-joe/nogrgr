@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| **P2 QA gate** | **PASS** — 100+ rows verified in browser (en/ar, dark/light, 375px), mobile overflow fixes; open QA-P2-004…008 | `9e9415e` |
 | P2 Static texts & translations | Per-tenant `tenant_static_texts` + `__st()`, sync command, ADM-092 editor (DB overrides), ADM-093 key locks, ADM-094 purchases; suite 1372 green | `7c239c2` |
 | P2 Owner portal | /my-account: stores + SSO, select store, subscriptions renew, domains + DNS, invoices, profile + social; suite 1318 green | `ec3eb5a` |
 | P3 Products & branches | Branches + stock (Inventory), products list/price list/tabbed form/variants/media/sort, AiTranslatable contract; suite 1239 green | `c5646a9` |
@@ -46,7 +47,7 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 ## In progress (batch P2-1, started 2026-11-25, agent team of 2)
 
 - **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
-- **qa**: P2 gate on separate DB `nogrgr_qa` (suite, build, pint, browser pass en/ar/dark/mobile, Figma spot-checks, coverage statuses, qa-log).
+- **fixes**: QA-P2-004 PHPStan to 0, P2-005 categories picker, P2-006 idempotent provisioning retry, P2-007 Figma deviations + bulk actions, P2-008 small UI issues.
 - **requests** (P3 batch 3): requests center ADM-018…018i (edit/product/manufacturing/brand/tenant-change requests, shared chat thread, payment requests → invoices), product import ADM-013 (Neozena driver).
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
 - Next: Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
