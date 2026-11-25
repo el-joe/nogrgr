@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 const PANEL_ROUTE_PREFIXES = [
     'admin.' => 'admin',
     'affiliate.' => 'affiliate',
+    'owner.' => 'owner',
     VendorPanel::TENANT_NAME_PREFIX => 'vendor',
     VendorPanel::CENTRAL_NAME_PREFIX => 'vendor',
 ];

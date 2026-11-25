@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'registration_receipt' => [
+        'subject' => 'Your :app payment receipt',
+        'greeting' => 'Payment received',
+        'intro' => 'Thank you! We received the payment for the :plan plan (:term).',
+        'amount' => 'Amount paid: :amount',
+        'reference' => 'Payment reference: :reference',
+        'next' => 'Your plan starts when you finish setting up your store. The invoice is in your store panel.',
+    ],
     'registration_link' => [
         'subject' => 'Complete your :app store registration',
         'greeting' => 'Welcome!',

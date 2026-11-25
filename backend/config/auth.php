@@ -3,6 +3,7 @@
 use App\Modules\Identity\Models\Admin;
 use App\Modules\Identity\Models\Affiliate;
 use App\Modules\Identity\Models\Customer;
+use App\Modules\Identity\Models\Owner;
 use App\Modules\Identity\Models\VendorStaff;
 
 /*
@@ -43,6 +44,11 @@ return [
             'driver' => 'session',
             'provider' => 'customers',
         ],
+
+        'owner' => [
+            'driver' => 'session',
+            'provider' => 'owners',
+        ],
     ],
 
     'providers' => [
@@ -64,6 +70,11 @@ return [
         'customers' => [
             'driver' => 'eloquent',
             'model' => Customer::class,
+        ],
+
+        'owners' => [
+            'driver' => 'eloquent',
+            'model' => Owner::class,
         ],
     ],
 

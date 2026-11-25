@@ -229,4 +229,44 @@
             transition: none;
         }
     }
+
+    /* Sign-up wizard (WEB-016 … 019b): spinner, plan card lift, phone field. */
+    .reg-spinner {
+        display: inline-block;
+        animation: reg-spin 0.9s linear infinite;
+    }
+
+    .reg-plan {
+        transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+    }
+
+    .reg-plan:hover {
+        transform: translateY(-3px);
+    }
+
+    .reg-phone .iti {
+        width: 100%;
+    }
+
+    .reg-phone .iti__selected-country {
+        border-radius: 6px;
+    }
+
+    @keyframes reg-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reg-spinner {
+            animation-duration: 2.4s;
+        }
+
+        .reg-plan,
+        .reg-plan:hover {
+            transition: none;
+            transform: none;
+        }
+    }
 }

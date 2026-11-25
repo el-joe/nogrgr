@@ -10,6 +10,7 @@
  * Motion is CSS-driven (resources/css/central/register.css) and reduced-motion aware.
  */
 import { http } from '../core/http.js';
+import initSignup from './signup.js';
 
 const DEBOUNCE_MS = 400;
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -414,4 +415,5 @@ export default function initRegister(root = document) {
     bindPasswordToggles(root);
     initStoreForm(root);
     initProvisioning(root);
+    initSignup(root);
 }

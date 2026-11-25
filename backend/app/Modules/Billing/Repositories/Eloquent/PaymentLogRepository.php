@@ -30,6 +30,20 @@ class PaymentLogRepository extends BaseRepository implements PaymentLogRepositor
         return PaymentLog::query()->with(['tenant', 'invoice'])->findOrFail($id);
     }
 
+    public function findByGatewayReference(PaymentGateway $gateway, string $reference): ?PaymentLog
+    {
+        return PaymentLog::query()->withoutGlobalScopes()
+            ->where('gateway', $gateway->value)
+            ->where('gateway_reference', $reference)
+            ->latest('id')
+            ->first();
+    }
+
+    public function lockForUpdate(PaymentLog $log): PaymentLog
+    {
+        return PaymentLog::query()->withoutGlobalScopes()->lockForUpdate()->findOrFail($log->id);
+    }
+
     protected function applyFilters(Builder $query, array $filters): Builder
     {
         $status = $filters['status'] ?? null;

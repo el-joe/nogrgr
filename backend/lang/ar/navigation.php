@@ -5,6 +5,7 @@
  */
 return [
     'sections' => [
+        'account' => 'الحساب',
         'catalog' => 'الكتالوج',
         'requests' => 'الطلبات الخاصة',
         'sales' => 'المبيعات',
@@ -109,5 +110,8 @@ return [
         'compliance' => 'مركز الامتثال',
         'language_purchases' => 'مشتريات اللغات',
         'roles' => 'الأدوار والصلاحيات',
+    ],
+    'owner' => [
+        'add_store' => 'إضافة متجر آخر',
     ],
 ];

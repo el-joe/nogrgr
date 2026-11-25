@@ -37,6 +37,7 @@ return [
         'admin' => 'مشرف',
         'vendor' => 'المتجر',
         'affiliate' => 'الشريك',
+        'owner' => 'مالك المتجر',
     ],
     'date' => [
         'placeholder' => 'يوم شهر سنة',

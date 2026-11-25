@@ -20,6 +20,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property int $id
  * @property string $name
  * @property string $slug
+ * @property int|null $owner_id
  * @property TenantStatus $status
  * @property string|null $owner_name
  * @property string|null $owner_email
@@ -55,7 +56,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public static function getCustomColumns(): array
     {
         return [
-            'id', 'name', 'slug', 'status', 'owner_name', 'owner_email', 'owner_phone', 'default_country_id',
+            'id', 'name', 'slug', 'owner_id', 'status', 'owner_name', 'owner_email', 'owner_phone', 'default_country_id',
             'selling_country_ids', 'profit_percent_bps', 'affiliate_commission_bps', 'provisioning_attempts',
             'provisioning_error', 'provisioned_at', 'suspended_at', 'created_at', 'updated_at',
         ];

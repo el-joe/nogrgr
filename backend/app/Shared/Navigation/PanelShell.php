@@ -23,7 +23,7 @@ final class PanelShell
     /**
      * @var array<string, string>
      */
-    private const GUARDS = ['admin' => 'admin', 'vendor' => 'vendor', 'affiliate' => 'affiliate'];
+    private const GUARDS = ['admin' => 'admin', 'vendor' => 'vendor', 'affiliate' => 'affiliate', 'owner' => 'owner'];
 
     public function __construct(private readonly NavigationBuilder $builder) {}
 

@@ -72,4 +72,34 @@ class PlatformRuleException extends DomainException
     {
         return new self(__('platform::messages.document_missing'));
     }
+
+    public static function planUnavailable(): self
+    {
+        return new self(__('platform::signup.errors.plan_unavailable'));
+    }
+
+    public static function trialUnavailable(): self
+    {
+        return new self(__('platform::signup.errors.trial_unavailable'));
+    }
+
+    public static function signUpMissing(): self
+    {
+        return new self(__('platform::signup.errors.sign_up_missing'));
+    }
+
+    public static function resendLimit(): self
+    {
+        return new self(__('platform::signup.verify.limit_reached'));
+    }
+
+    public static function resendCooldown(int $seconds): self
+    {
+        return new self(__('platform::signup.verify.cooldown', ['seconds' => $seconds]));
+    }
+
+    public static function paymentUnavailable(): self
+    {
+        return new self(__('platform::signup.errors.payment_unavailable'));
+    }
 }

@@ -21,6 +21,9 @@ enum Surface: string
     case Affiliate = 'affiliate';
     case Api = 'api';
 
+    /** Store-owner portal: `{central}/my-account/...` (one owner, many stores). */
+    case Owner = 'owner';
+
     /** Vendor panel pages (`/admin/...` on the store host, `/tenant/{store}/...` on central). */
     case Vendor = 'vendor';
 
@@ -34,7 +37,7 @@ enum Surface: string
      */
     public function isCentral(): bool
     {
-        return in_array($this, [self::Central, self::Admin, self::Affiliate], true);
+        return in_array($this, [self::Central, self::Admin, self::Affiliate, self::Owner], true);
     }
 
     /**
@@ -59,6 +62,7 @@ enum Surface: string
         return match ($this) {
             self::Admin => 'admin',
             self::Affiliate => 'affiliate',
+            self::Owner => 'owner',
             self::Vendor, self::VendorAuth => 'vendor',
             self::Storefront => 'customer',
             self::Api => 'sanctum',
@@ -71,7 +75,7 @@ enum Surface: string
      */
     public function isPanel(): bool
     {
-        return in_array($this, [self::Admin, self::Affiliate, self::Vendor, self::VendorAuth], true);
+        return in_array($this, [self::Admin, self::Affiliate, self::Owner, self::Vendor, self::VendorAuth], true);
     }
 
     /**
@@ -83,6 +87,7 @@ enum Surface: string
             self::Central => [new RouteMount($this, '', 'central.', ['web'], $centralDomain)],
             self::Admin => [new RouteMount($this, 'admin', 'admin.', ['web', 'audit.requests'], $centralDomain)],
             self::Affiliate => [new RouteMount($this, 'affiliate', 'affiliate.', ['web', 'audit.requests'], $centralDomain)],
+            self::Owner => [new RouteMount($this, 'my-account', 'owner.', ['web', 'audit.requests'], $centralDomain)],
             self::Api => [new RouteMount($this, 'api/mobile/v1', 'api.mobile.v1.', ['tenant.api', 'api'])],
             self::Vendor => [
                 new RouteMount(
@@ -109,6 +114,6 @@ enum Surface: string
      */
     public static function mountOrder(): array
     {
-        return [self::Central, self::Admin, self::Affiliate, self::Vendor, self::Api, self::VendorAuth, self::Storefront];
+        return [self::Central, self::Admin, self::Affiliate, self::Owner, self::Vendor, self::Api, self::VendorAuth, self::Storefront];
     }
 }

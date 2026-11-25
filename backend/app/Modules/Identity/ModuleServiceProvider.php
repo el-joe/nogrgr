@@ -15,12 +15,14 @@ use App\Modules\Identity\Policies\AdminPolicy;
 use App\Modules\Identity\Repositories\Contracts\AdminRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\CustomerAddressRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\CustomerRepositoryContract;
+use App\Modules\Identity\Repositories\Contracts\OwnerRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\RoleRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffDirectoryRepositoryContract;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffRepositoryContract;
 use App\Modules\Identity\Repositories\Eloquent\AdminRepository;
 use App\Modules\Identity\Repositories\Eloquent\CustomerAddressRepository;
 use App\Modules\Identity\Repositories\Eloquent\CustomerRepository;
+use App\Modules\Identity\Repositories\Eloquent\OwnerRepository;
 use App\Modules\Identity\Repositories\Eloquent\RoleRepository;
 use App\Modules\Identity\Repositories\Eloquent\VendorStaffDirectoryRepository;
 use App\Modules\Identity\Repositories\Eloquent\VendorStaffRepository;
@@ -43,6 +45,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         CustomerRepositoryContract::class => CustomerRepository::class,
         VendorStaffDirectoryRepositoryContract::class => VendorStaffDirectoryRepository::class,
         VendorStaffRepositoryContract::class => VendorStaffRepository::class,
+        OwnerRepositoryContract::class => OwnerRepository::class,
     ];
 
     public function boot(): void

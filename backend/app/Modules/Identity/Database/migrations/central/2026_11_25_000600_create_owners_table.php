@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+/**
+ * Store owners (central DB, guard "owner"): one person, many stores (tenants.owner_id).
+ * Password is null for owners who only ever signed in with Google / Apple.
+ */
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('owners', function (Blueprint $table): void {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('phone', 32)->nullable();
+            $table->string('password')->nullable();
+            $table->string('google_id')->nullable()->unique();
+            $table->string('apple_id')->nullable()->unique();
+            $table->string('status', 32)->default('active')->index();
+            $table->string('locale', 8)->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('last_login_at')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('owners');
+    }
+};

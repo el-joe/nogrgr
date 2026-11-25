@@ -9,7 +9,7 @@ import motionBudget from './resources/js/storefront/core/motion/budget.vite.js';
  * One CSS + one JS entry per surface. Every custom CSS/JS file must be reachable
  * from an entry (no CDN, no inline scripts/styles).
  */
-const surfaces = ['admin', 'vendor', 'affiliate', 'central', 'storefront-ecommet', 'storefront-elora', 'storefront-souqify'];
+const surfaces = ['admin', 'vendor', 'affiliate', 'owner', 'central', 'storefront-ecommet', 'storefront-elora', 'storefront-souqify'];
 
 /** Demo imagery (generated locally, docs/plan/comfyui.md) for the storefront motion gallery. */
 const demoImages = readdirSync('resources/images/demo')

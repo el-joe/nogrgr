@@ -37,6 +37,7 @@ return [
         'admin' => 'Admin',
         'vendor' => 'Store',
         'affiliate' => 'Partner',
+        'owner' => 'Store owner',
     ],
     'date' => [
         'placeholder' => 'DD MMM YYYY',

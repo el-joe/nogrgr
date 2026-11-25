@@ -4,9 +4,14 @@ namespace App\Modules\Platform\Services;
 
 use App\Modules\Billing\DTOs\AssignPlanData;
 use App\Modules\Billing\Enums\BillingTerm;
+use App\Modules\Billing\Models\Invoice;
+use App\Modules\Billing\Models\PaymentLog;
 use App\Modules\Billing\Models\Plan;
+use App\Modules\Billing\Models\Subscription;
+use App\Modules\Billing\Repositories\Contracts\PaymentLogRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\PlanRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\SubscriptionRepositoryContract;
+use App\Modules\Billing\Services\PaymentLogService;
 use App\Modules\Billing\Services\SubscriptionService;
 use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Models\VendorStaff;
@@ -63,6 +68,8 @@ class TenantProvisioningService extends BaseService
         private readonly PlanRepositoryContract $plans,
         private readonly SubscriptionRepositoryContract $subscriptions,
         private readonly SubscriptionService $subscriptionService,
+        private readonly PaymentLogRepositoryContract $paymentLogs,
+        private readonly PaymentLogService $paymentLogService,
     ) {}
 
     public function provision(ProvisionTenantData $data): Tenant
@@ -82,6 +89,7 @@ class TenantProvisioningService extends BaseService
             $tenant = new Tenant([
                 'name' => $data->storeName,
                 'slug' => $slug,
+                'owner_id' => $data->ownerId,
                 'status' => TenantStatus::Pending,
                 'owner_name' => $data->ownerName,
                 'owner_email' => Str::lower($data->ownerEmail),
@@ -98,6 +106,7 @@ class TenantProvisioningService extends BaseService
                 'plan_assignment' => $data->planAssignment->value,
                 'registration_id' => $data->registrationId,
                 'admin_id' => $data->adminId,
+                'payment_log_id' => $data->paymentLogId,
             ]);
             $tenant->setInternal('create_database', false);
             $tenant->save();
@@ -263,7 +272,30 @@ class TenantProvisioningService extends BaseService
             PlanAssignment::Trial => $this->subscriptionService->subscribe((int) $tenant->id, $plan, $term, null, true, $adminId),
             PlanAssignment::Invoiced => $this->subscriptionService->subscribe((int) $tenant->id, $plan, $term, null, false, $adminId),
             PlanAssignment::ManualPaid => $this->subscriptionService->assign(new AssignPlanData((int) $tenant->id, $plan->id, $term, true, $adminId)),
+            PlanAssignment::Prepaid => $this->subscribePrepaid($tenant, $plan, $term, $payload),
         };
+    }
+
+    /**
+     * Paid at sign-up: active subscription (no trial) whose invoice is settled by the
+     * captured registration payment. Without a captured payment the invoice stays open.
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    private function subscribePrepaid(Tenant $tenant, Plan $plan, BillingTerm $term, array $payload): Subscription
+    {
+        $logId = filter_var($payload['payment_log_id'] ?? null, FILTER_VALIDATE_INT);
+        $log = $logId === false || $logId === null ? null : $this->paymentLogs->find($logId);
+        $gateway = $log instanceof PaymentLog ? $log->gateway : null;
+
+        $subscription = $this->subscriptionService->subscribe((int) $tenant->id, $plan, $term, $gateway, false);
+        $invoice = $subscription->latestInvoice()->withoutGlobalScopes()->first();
+
+        if ($log instanceof PaymentLog && $invoice instanceof Invoice) {
+            $this->paymentLogService->settleWithInvoice($log, (int) $tenant->id, $invoice);
+        }
+
+        return $subscription;
     }
 
     private function connection(): ?string

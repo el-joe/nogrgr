@@ -59,6 +59,24 @@ class PaymentLogService extends BaseService
         return $log;
     }
 
+    /**
+     * A payment captured before its store existed (central registration): attach it to
+     * the store and the subscription invoice issued at provisioning, and settle that
+     * invoice with the gateway reference. Safe to call again.
+     */
+    public function settleWithInvoice(PaymentLog $log, int $tenantId, Invoice $invoice): PaymentLog
+    {
+        return $this->transaction(function () use ($log, $tenantId, $invoice): PaymentLog {
+            $this->logs->update($log, ['tenant_id' => $tenantId, 'invoice_id' => $invoice->id]);
+
+            if ($log->status === PaymentLogStatus::Captured && $invoice->status === InvoiceStatus::Unpaid) {
+                $this->invoices->markPaid($invoice, $log->gateway->value, $log->gateway_reference ?? $log->reference());
+            }
+
+            return $log;
+        }, (new PaymentLog)->getConnectionName());
+    }
+
     public function changeStatus(PaymentLog $log, PaymentStatusChangeData $data): PaymentLog
     {
         if (! $log->status->canTransitionTo($data->status)) {

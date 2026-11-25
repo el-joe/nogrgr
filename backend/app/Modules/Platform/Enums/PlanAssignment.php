@@ -19,4 +19,7 @@ enum PlanAssignment: string
 
     /** Active now, invoice left open for the vendor to pay. */
     case Invoiced = 'invoiced';
+
+    /** Paid at sign-up through a gateway: active now, the invoice settled by that payment log. */
+    case Prepaid = 'prepaid';
 }

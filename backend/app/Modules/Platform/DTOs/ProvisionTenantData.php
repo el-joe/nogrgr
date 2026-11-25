@@ -35,5 +35,7 @@ final class ProvisionTenantData extends BaseDTO
         public readonly ?string $locale = null,
         public readonly ?int $registrationId = null,
         public readonly ?int $adminId = null,
+        public readonly ?int $ownerId = null,
+        public readonly ?int $paymentLogId = null,
     ) {}
 }

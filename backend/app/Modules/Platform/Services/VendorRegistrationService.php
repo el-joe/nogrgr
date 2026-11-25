@@ -2,6 +2,7 @@
 
 namespace App\Modules\Platform\Services;
 
+use App\Modules\Identity\Services\OwnerService;
 use App\Modules\Platform\Contracts\DnsResolver;
 use App\Modules\Platform\DTOs\PendingRegistrationData;
 use App\Modules\Platform\DTOs\ProvisionTenantData;
@@ -48,6 +49,7 @@ class VendorRegistrationService extends BaseService
         private readonly TenantProvisioningService $provisioning,
         private readonly DnsRecordTemplateRepositoryContract $dnsTemplates,
         private readonly DnsResolver $dns,
+        private readonly OwnerService $owners,
     ) {}
 
     public function linkLifetimeHours(): int
@@ -73,12 +75,19 @@ class VendorRegistrationService extends BaseService
     {
         /** @var VendorRegistration $registration */
         $registration = $this->registrations->create([
+            'owner_id' => $data->ownerId,
             'email' => Str::lower($data->email),
             'phone' => $data->phone,
             'plan_id' => $data->planId,
             'term' => $data->term,
             'locale' => $data->locale,
             'status' => $data->status,
+            'owner_name' => $data->ownerName,
+            'password' => $data->ownerPasswordHash,
+            'store_name' => $data->storeName,
+            'slug' => $data->slug !== null ? Str::lower($data->slug) : null,
+            'email_verified_at' => $data->emailVerified ? now() : null,
+            'expires_at' => now()->addHours($this->linkLifetimeHours()),
             'meta' => $data->meta === [] ? null : $data->meta,
         ]);
 
@@ -90,6 +99,16 @@ class VendorRegistrationService extends BaseService
      */
     public function sendLink(VendorRegistration $registration): string
     {
+        return $this->issueLink($registration, true);
+    }
+
+    /**
+     * New token + expiry and the completion link for it. E-mailed (and counted towards
+     * the resend limit) unless the e-mail is already proven and the visitor is sent
+     * straight on (Google / Apple sign-up, signed-in owner).
+     */
+    public function issueLink(VendorRegistration $registration, bool $notify = true): string
+    {
         if (! $registration->status->canSendLink()) {
             throw PlatformRuleException::linkNotAllowed();
         }
@@ -97,19 +116,66 @@ class VendorRegistrationService extends BaseService
         $token = Str::random(48);
         $expiresAt = now()->addHours($this->linkLifetimeHours());
 
-        $this->registrations->update($registration, [
+        $this->registrations->update($registration, array_filter([
             'token_hash' => hash('sha256', $token),
             'expires_at' => $expiresAt,
-            'link_sent_at' => now(),
-            'link_sent_count' => $registration->link_sent_count + 1,
-        ]);
+            'link_sent_at' => $notify ? now() : null,
+            'link_sent_count' => $notify ? $registration->link_sent_count + 1 : null,
+        ], static fn (mixed $value): bool => $value !== null));
 
         $url = $this->completionUrl($token, $expiresAt);
 
-        Notification::route('mail', $registration->email)
-            ->notify((new RegistrationLinkNotification($url, $this->linkLifetimeHours()))->locale($registration->locale ?? app()->getLocale()));
+        if ($notify) {
+            Notification::route('mail', $registration->email)
+                ->notify((new RegistrationLinkNotification($url, $this->linkLifetimeHours()))->locale($registration->locale ?? app()->getLocale()));
+        }
 
         return $url;
+    }
+
+    /**
+     * Status after the plan / payment step: proven e-mails skip the verification e-mail.
+     */
+    public function readyStatus(VendorRegistration $registration): RegistrationStatus
+    {
+        return $registration->isEmailVerified() ? RegistrationStatus::Incomplete : RegistrationStatus::EmailUnverified;
+    }
+
+    /**
+     * The registration payment was captured (Billing PaymentCaptured): payment step done.
+     * Idempotent; returns true when this call moved the registration on.
+     */
+    public function markPaid(VendorRegistration $registration, int $paymentLogId): bool
+    {
+        if (! in_array($registration->status, [RegistrationStatus::PaymentPending, RegistrationStatus::PaymentFailed], true)) {
+            return false;
+        }
+
+        $this->registrations->update($registration, [
+            'status' => $this->readyStatus($registration),
+            'meta' => [...($registration->meta ?? []), 'payment_log_id' => $paymentLogId],
+        ]);
+
+        return true;
+    }
+
+    public function markPaymentFailed(VendorRegistration $registration): void
+    {
+        if ($registration->status === RegistrationStatus::PaymentPending) {
+            $this->registrations->update($registration, ['status' => RegistrationStatus::PaymentFailed]);
+        }
+    }
+
+    /**
+     * "Wrong e-mail? Change it" on the verification page: new address, new link.
+     */
+    public function changeEmail(VendorRegistration $registration, string $email): string
+    {
+        $this->assertOpen($registration);
+
+        $this->registrations->update($registration, ['email' => Str::lower(trim($email)), 'email_verified_at' => null]);
+
+        return $this->sendLink($registration);
     }
 
     public function completionUrl(string $token, Carbon $expiresAt): string
@@ -177,11 +243,20 @@ class VendorRegistrationService extends BaseService
     {
         $this->assertOpen($registration);
 
-        if ($registration->owner_name === null || $registration->password === null) {
+        if ($registration->owner_name === null || ($registration->password === null && $registration->owner_id === null)) {
             throw PlatformRuleException::accountStepMissing();
         }
 
         return $this->transaction(function () use ($registration, $data): Tenant {
+            $owner = $this->owners->forRegistration(
+                $registration->email,
+                $registration->owner_name,
+                $registration->phone,
+                $registration->getRawOriginal('password'),
+                $registration->locale,
+            );
+            $paymentLogId = $registration->paymentLogId();
+
             $tenant = $this->provisioning->provision(new ProvisionTenantData(
                 storeName: $data->storeName,
                 slug: $data->slug,
@@ -190,12 +265,15 @@ class VendorRegistrationService extends BaseService
                 ownerPhone: $registration->phone,
                 ownerPasswordHash: $registration->getRawOriginal('password'),
                 customDomain: $data->customDomain,
+                defaultCountryId: is_numeric(($registration->meta ?? [])['default_country_id'] ?? null) ? (int) $registration->meta['default_country_id'] : null,
                 profitPercentBps: $data->profitPercentBps,
                 planId: $registration->plan_id,
                 term: $registration->term,
-                planAssignment: PlanAssignment::Trial,
+                planAssignment: $paymentLogId !== null ? PlanAssignment::Prepaid : PlanAssignment::Trial,
                 locale: $registration->locale,
                 registrationId: $registration->id,
+                ownerId: $owner->id,
+                paymentLogId: $paymentLogId,
             ));
 
             $this->registrations->update($registration, [
@@ -206,6 +284,7 @@ class VendorRegistrationService extends BaseService
                 'status' => RegistrationStatus::Completed,
                 'completed_at' => now(),
                 'tenant_id' => $tenant->id,
+                'owner_id' => $owner->id,
                 'password' => null,
             ]);
 

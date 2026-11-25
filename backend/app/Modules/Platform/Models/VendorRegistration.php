@@ -4,6 +4,7 @@ namespace App\Modules\Platform\Models;
 
 use App\Modules\Billing\Enums\BillingTerm;
 use App\Modules\Billing\Models\Plan;
+use App\Modules\Identity\Models\Owner;
 use App\Modules\Platform\Concerns\Auditable;
 use App\Modules\Platform\Database\Factories\VendorRegistrationFactory;
 use App\Modules\Platform\Enums\RegistrationStatus;
@@ -18,6 +19,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * A central-website sign-up (central DB). tenant_id is set once the store is provisioned.
  *
  * @property int $id
+ * @property int|null $owner_id
  * @property string $email
  * @property string|null $phone
  * @property string|null $locale
@@ -57,7 +59,7 @@ class VendorRegistration extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'email', 'phone', 'locale', 'plan_id', 'term', 'status', 'owner_name', 'password', 'store_name', 'slug',
+        'owner_id', 'email', 'phone', 'locale', 'plan_id', 'term', 'status', 'owner_name', 'password', 'store_name', 'slug',
         'custom_domain', 'profit_percent_bps', 'token_hash', 'expires_at', 'link_sent_at', 'link_sent_count',
         'email_verified_at', 'completed_at', 'tenant_id', 'meta',
     ];
@@ -97,6 +99,29 @@ class VendorRegistration extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    /**
+     * @return BelongsTo<Owner, $this>
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(Owner::class);
+    }
+
+    public function isEmailVerified(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
+    /**
+     * Captured registration payment (payment log id), set once the payment step succeeded.
+     */
+    public function paymentLogId(): ?int
+    {
+        $id = ($this->meta ?? [])['payment_log_id'] ?? null;
+
+        return is_numeric($id) ? (int) $id : null;
     }
 
     public function isExpired(): bool

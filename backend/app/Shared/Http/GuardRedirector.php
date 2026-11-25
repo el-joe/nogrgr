@@ -27,7 +27,7 @@ final class GuardRedirector
             return Surface::Vendor;
         }
 
-        foreach ([Surface::Admin, Surface::Affiliate, Surface::Storefront, Surface::Api, Surface::Central] as $surface) {
+        foreach ([Surface::Admin, Surface::Affiliate, Surface::Owner, Surface::Storefront, Surface::Api, Surface::Central] as $surface) {
             if (Str::startsWith($name, $surface->routeNamePrefix())) {
                 return $surface;
             }
@@ -42,6 +42,7 @@ final class GuardRedirector
             Surface::Vendor, Surface::VendorAuth => VendorPanel::route('login', mode: VendorPanel::mode($request)),
             Surface::Admin => self::named('admin.login'),
             Surface::Affiliate => self::named('affiliate.login'),
+            Surface::Owner => self::named('central.tenant.login'),
             Surface::Storefront => self::named('storefront.account.login'),
             default => url('/'),
         };
@@ -53,6 +54,7 @@ final class GuardRedirector
             Surface::Vendor, Surface::VendorAuth => VendorPanel::route('dashboard', mode: VendorPanel::mode($request)),
             Surface::Admin => self::named('admin.dashboard'),
             Surface::Affiliate => self::named('affiliate.dashboard'),
+            Surface::Owner => self::named('owner.stores.create'),
             Surface::Storefront => self::named('storefront.home'),
             default => url('/'),
         };

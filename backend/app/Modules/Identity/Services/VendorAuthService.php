@@ -6,6 +6,7 @@ use App\Modules\Identity\DTOs\VendorCredentialsData;
 use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Platform\Enums\AuditAction;
+use App\Modules\Platform\Enums\TenantStatus;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Repositories\Contracts\TenantRepositoryContract;
 use App\Modules\Platform\Services\Auditor;
@@ -47,6 +48,7 @@ class VendorAuthService extends BaseService
         private readonly VendorStaffDirectory $directory,
         private readonly TenantRepositoryContract $tenants,
         private readonly Auditor $auditor,
+        private readonly OwnerService $owners,
     ) {}
 
     /**
@@ -117,6 +119,7 @@ class VendorAuthService extends BaseService
 
         /** @var Collection<int, Tenant> $matched */
         $matched = $tenants->only(array_keys($matches))->values();
+        $this->signInOwner($credentials->email, $matched, $request);
 
         $preferred = $credentials->store !== null
             ? $matched->first(fn (Tenant $tenant): bool => $tenant->slug === $credentials->store)
@@ -147,7 +150,15 @@ class VendorAuthService extends BaseService
     {
         $pending = $this->pending($request);
 
-        return $pending === null ? collect() : $this->tenants->findMany(array_keys($pending['candidates']))->values();
+        if ($pending !== null) {
+            return $this->tenants->findMany(array_keys($pending['candidates']))->values();
+        }
+
+        $owner = $this->owners->current();
+
+        return $owner === null
+            ? collect()
+            : $this->owners->stores($owner)->filter(static fn (Tenant $tenant): bool => $tenant->status === TenantStatus::Active)->values()->toBase();
     }
 
     /**
@@ -161,7 +172,11 @@ class VendorAuthService extends BaseService
             ? $this->tenants->find($tenantId)
             : null;
 
-        if (! $tenant instanceof Tenant || $pending === null) {
+        if ($pending === null) {
+            return $this->selectOwnedStore($tenantId, $request);
+        }
+
+        if (! $tenant instanceof Tenant) {
             throw ValidationException::withMessages(['tenant_id' => __('identity::auth.store_unavailable')]);
         }
 
@@ -201,6 +216,7 @@ class VendorAuthService extends BaseService
             $logout();
         }
 
+        $this->owners->logout();
         $request->session()->regenerateToken();
     }
 
@@ -222,6 +238,49 @@ class VendorAuthService extends BaseService
         };
 
         return tenancy()->initialized ? $login() : $tenant->run($login);
+    }
+
+    /**
+     * Signed-in owner (Google / Apple or an earlier central login) opening one of their
+     * stores from the picker: signs in as the store's owner staff account.
+     */
+    private function selectOwnedStore(int $tenantId, Request $request): Tenant
+    {
+        $owner = $this->owners->current();
+        $tenant = $owner === null ? null : $this->tenants->find($tenantId);
+
+        if (! $tenant instanceof Tenant || $owner === null || ! $this->owners->owns($owner, $tenant) || $tenant->status !== TenantStatus::Active) {
+            throw ValidationException::withMessages(['tenant_id' => __('identity::auth.store_unavailable')]);
+        }
+
+        $staffId = $tenant->run(function () use ($owner): ?int {
+            $staff = $this->provider()->retrieveByCredentials(['email' => $owner->email]);
+
+            return $staff instanceof VendorStaff && $staff->status === AccountStatus::Active ? $staff->id : null;
+        });
+
+        if ($staffId === null) {
+            throw ValidationException::withMessages(['tenant_id' => __('identity::auth.store_unavailable')]);
+        }
+
+        $this->loginById($tenant, $staffId, false, $request);
+
+        return $tenant;
+    }
+
+    /**
+     * A central login whose e-mail belongs to the owner of a matched store also opens the
+     * owner session (owner portal, "Add another store", store picker).
+     *
+     * @param  Collection<int, Tenant>  $matched
+     */
+    private function signInOwner(string $email, Collection $matched, Request $request): void
+    {
+        $owner = $this->owners->findByEmail($email);
+
+        if ($owner !== null && $owner->isActive() && $matched->contains(fn (Tenant $tenant): bool => $this->owners->owns($owner, $tenant))) {
+            $this->owners->login($owner, $request, false);
+        }
     }
 
     private function completeLogin(Tenant $tenant, VendorStaff $staff, bool $remember, Request $request, ?int $impersonatorId = null): void

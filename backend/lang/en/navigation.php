@@ -5,6 +5,7 @@
  */
 return [
     'sections' => [
+        'account' => 'Account',
         'catalog' => 'Catalog',
         'requests' => 'Requests',
         'sales' => 'Sales',
@@ -109,5 +110,8 @@ return [
         'compliance' => 'Compliance center',
         'language_purchases' => 'Language purchases',
         'roles' => 'Roles & permissions',
+    ],
+    'owner' => [
+        'add_store' => 'Add another store',
     ],
 ];

@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'registration_receipt' => [
+        'subject' => 'إيصال الدفع من :app',
+        'greeting' => 'تم استلام الدفع',
+        'intro' => 'شكرًا لك! استلمنا مبلغ باقة :plan (:term).',
+        'amount' => 'المبلغ المدفوع: :amount',
+        'reference' => 'مرجع الدفع: :reference',
+        'next' => 'تبدأ باقتك عند إكمال إعداد متجرك. ستجد الفاتورة في لوحة تحكم متجرك.',
+    ],
     'registration_link' => [
         'subject' => 'أكمل تسجيل متجرك في :app',
         'greeting' => 'أهلاً بك!',
