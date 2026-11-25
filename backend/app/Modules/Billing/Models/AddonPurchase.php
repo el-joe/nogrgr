@@ -10,6 +10,7 @@ use App\Shared\Money\Money;
 use App\Shared\Tenancy\Concerns\BelongsToCurrentTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
@@ -58,6 +59,14 @@ class AddonPurchase extends Model
             'paid_at' => 'datetime',
             'meta' => 'array',
         ];
+    }
+
+    /**
+     * @return MorphMany<Invoice, $this>
+     */
+    public function invoices(): MorphMany
+    {
+        return $this->morphMany(Invoice::class, 'billable');
     }
 
     public function amount(): Money

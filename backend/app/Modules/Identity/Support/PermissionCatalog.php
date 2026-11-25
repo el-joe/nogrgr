@@ -39,7 +39,9 @@ final class PermissionCatalog
                 'requests.tenant-changes.view', 'requests.tenant-changes.manage',
                 // Billing (plans, subscriptions)
                 'plans.view', 'plans.manage',
-                'subscriptions.view', 'subscriptions.manage',
+                'subscriptions.view', 'subscriptions.manage', 'subscriptions.export',
+                'finance.invoices.view',
+                'finance.payment-logs.view', 'finance.payment-logs.manage',
                 // Integrations, Notifications, Content (email templates)
                 'integrations.view', 'integrations.manage',
                 'notifications.view',

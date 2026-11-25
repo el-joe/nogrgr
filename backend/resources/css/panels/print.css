@@ -1,0 +1,31 @@
+/*
+ * Print: panel pages print as plain documents (invoices, ADM-054a). The panel chrome
+ * (sidebar, topbar, toasts) and anything marked [data-print-hide] are dropped.
+ */
+@media print {
+    .ui-sidebar,
+    .ui-sidebar-scrim,
+    .ui-shell-main > header,
+    [data-print-hide],
+    #ui-toasts,
+    #ui-confirm {
+        display: none !important;
+    }
+
+    .ui-shell-main {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .ui-shell-main > main {
+        padding: 0 !important;
+    }
+
+    body {
+        background: #fff !important;
+    }
+
+    @page {
+        margin: 16mm;
+    }
+}

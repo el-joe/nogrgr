@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'title' => 'Payment logs',
+    'search' => 'Search reference',
+    'view' => 'View payment',
+    'detail_title' => ':reference detail',
+    'details' => 'Payment details',
+    'change_status' => 'Change status',
+    'save_status' => 'Update status',
+    'status_changed' => 'Payment status updated.',
+    'final_status' => 'This payment is final; its status cannot change any more.',
+    'no_permission' => 'You can view this payment but not change its status.',
+    'no_payload' => 'No gateway payload was recorded.',
+    'refund_hint' => 'Refunding marks the invoice as refunded and reverses the affiliate commission earned on this payment.',
+    'refund_reversal_note' => 'This payment was refunded: the affiliate conversion earned on it is reversed.',
+    'empty_title' => 'No payment logs yet',
+    'empty_description' => 'Gateway attempts for registrations, renewals and add-ons appear here.',
+    'columns' => [
+        'log' => 'Log',
+        'gateway' => 'Gateway',
+        'purpose' => 'Purpose',
+        'amount' => 'Amount',
+        'status' => 'Status',
+    ],
+    'fields' => [
+        'gateway_ref' => 'Gateway ref',
+        'store' => 'Store',
+        'created' => 'Created',
+        'captured' => 'Captured',
+        'refunded' => 'Refunded',
+        'invoice' => 'Invoice',
+        'note' => 'Note',
+        'payload' => 'Gateway payload',
+        'status' => 'New status',
+        'status_placeholder' => 'Choose a status',
+    ],
+];

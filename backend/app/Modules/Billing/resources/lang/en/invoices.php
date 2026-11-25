@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Invoices',
+    'search' => 'Search invoice or store',
+    'view' => 'View invoice',
+    'print' => 'Print',
+    'download_pdf' => 'Save as PDF',
+    'back_to_invoice' => 'Back to invoice',
+    'due' => 'due :date',
+    'due_date' => 'Due',
+    'paid' => 'Paid',
+    'bill_to' => 'Bill to',
+    'tax_number' => 'VAT :number',
+    'tax_line' => 'VAT :rate%',
+    'total_paid' => 'Total paid (:currency)',
+    'total_due' => 'Total due (:currency)',
+    'no_lines' => 'This invoice has no lines.',
+    'empty_title' => 'No invoices yet',
+    'empty_description' => 'Invoices for subscriptions and add-ons appear here.',
+    'tabs' => [
+        'all' => 'All',
+    ],
+    'line' => [
+        'plan' => ':plan plan (:term)',
+        'language' => 'Paid language: :language',
+    ],
+    'columns' => [
+        'invoice' => 'Invoice',
+        'store' => 'Store',
+        'type' => 'Type',
+        'amount' => 'Amount',
+        'issued' => 'Issued',
+        'status' => 'Status',
+        'description' => 'Description',
+        'qty' => 'Qty',
+        'unit' => 'Unit',
+        'total' => 'Total',
+    ],
+];

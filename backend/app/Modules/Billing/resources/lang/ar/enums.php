@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'plan_status' => ['active' => 'نشطة', 'inactive' => 'غير نشطة'],
+    'billing_term' => ['monthly' => 'شهري', 'yearly' => 'سنوي'],
+    'plan_limit' => [
+        'products' => 'المنتجات',
+        'categories' => 'التصنيفات',
+        'staff' => 'حسابات الموظفين',
+        'languages' => 'اللغات',
+        'countries' => 'الدول',
+        'banners' => 'البانرات',
+        'orders_per_month' => 'الطلبات / شهريًا',
+        'ai_calls' => 'طلبات الذكاء الاصطناعي / شهريًا',
+        'image_searches' => 'عمليات البحث بالصور / شهريًا',
+        'ai_logos' => 'شعارات بالذكاء الاصطناعي',
+    ],
+    'plan_feature' => [
+        'ai_translation' => 'إضافة الترجمة بالذكاء الاصطناعي مضمّنة',
+        'ai_social_posts' => 'منشورات تواصل اجتماعي بالذكاء الاصطناعي',
+        'custom_themes' => 'ثيمات مخصصة',
+        'mobile_app' => 'تطبيق الجوال',
+    ],
+    'subscription_status' => [
+        'trial' => 'تجريبي',
+        'active' => 'نشط',
+        'past_due' => 'بانتظار الدفع',
+        'cancelled' => 'ملغي',
+        'expired' => 'منتهي',
+    ],
+    'subscription_kind' => ['registration' => 'تسجيل', 'renewal' => 'تجديد', 'trial' => 'تجريبي'],
+    'invoice_status' => ['unpaid' => 'غير مدفوعة', 'paid' => 'مدفوعة', 'void' => 'ملغاة', 'refunded' => 'مستردة'],
+    'invoice_type' => [
+        'subscription' => 'اشتراك',
+        'renewal' => 'تجديد',
+        'language_addon' => 'إضافة لغة',
+        'ai_translation_addon' => 'إضافة الترجمة بالذكاء الاصطناعي',
+        'manual' => 'يدوية',
+    ],
+    'payment_log_status' => ['pending' => 'قيد الانتظار', 'captured' => 'محصّلة', 'failed' => 'فاشلة', 'refunded' => 'مستردة'],
+    'payment_gateway' => ['stripe' => 'Stripe', 'moyasar' => 'ميسّر', 'paymob' => 'Paymob', 'tap' => 'Tap', 'paypal' => 'PayPal', 'manual' => 'يدوي'],
+    'payment_purpose' => ['registration' => 'تسجيل', 'renewal' => 'تجديد', 'addon' => 'إضافة', 'settlement' => 'تسوية'],
+    'addon_purchase_status' => ['pending_payment' => 'بانتظار الدفع', 'paid' => 'مدفوعة', 'failed' => 'فاشلة', 'cancelled' => 'ملغاة'],
+    'addon_type' => ['language' => 'لغة', 'ai_translation' => 'ترجمة بالذكاء الاصطناعي'],
+];

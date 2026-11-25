@@ -4,6 +4,7 @@
  */
 const pages = {
     'ui-kit': () => import('./ui-kit.js'),
+    billing: () => import('./billing.js'),
 };
 
 export function initAdmin() {

@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'plan_status' => ['active' => 'Active', 'inactive' => 'Inactive'],
+    'billing_term' => ['monthly' => 'Monthly', 'yearly' => 'Yearly'],
+    'plan_limit' => [
+        'products' => 'Products',
+        'categories' => 'Categories',
+        'staff' => 'Staff accounts',
+        'languages' => 'Languages',
+        'countries' => 'Countries',
+        'banners' => 'Banners',
+        'orders_per_month' => 'Orders / month',
+        'ai_calls' => 'AI calls / month',
+        'image_searches' => 'Image searches / month',
+        'ai_logos' => 'AI logos',
+    ],
+    'plan_feature' => [
+        'ai_translation' => 'AI translation add-on included',
+        'ai_social_posts' => 'AI social posts',
+        'custom_themes' => 'Custom themes',
+        'mobile_app' => 'Mobile app',
+    ],
+    'subscription_status' => [
+        'trial' => 'Trial',
+        'active' => 'Active',
+        'past_due' => 'Payment pending',
+        'cancelled' => 'Cancelled',
+        'expired' => 'Expired',
+    ],
+    'subscription_kind' => ['registration' => 'Registration', 'renewal' => 'Renewal', 'trial' => 'Trial'],
+    'invoice_status' => ['unpaid' => 'Unpaid', 'paid' => 'Paid', 'void' => 'Void', 'refunded' => 'Refunded'],
+    'invoice_type' => [
+        'subscription' => 'Subscription',
+        'renewal' => 'Renewal',
+        'language_addon' => 'Language add-on',
+        'ai_translation_addon' => 'AI translation add-on',
+        'manual' => 'Manual',
+    ],
+    'payment_log_status' => ['pending' => 'Pending', 'captured' => 'Captured', 'failed' => 'Failed', 'refunded' => 'Refunded'],
+    'payment_gateway' => ['stripe' => 'Stripe', 'moyasar' => 'Moyasar', 'paymob' => 'Paymob', 'tap' => 'Tap', 'paypal' => 'PayPal', 'manual' => 'Manual'],
+    'payment_purpose' => ['registration' => 'Registration', 'renewal' => 'Renewal', 'addon' => 'Add-on', 'settlement' => 'Settlement'],
+    'addon_purchase_status' => ['pending_payment' => 'Pending payment', 'paid' => 'Paid', 'failed' => 'Failed', 'cancelled' => 'Cancelled'],
+    'addon_type' => ['language' => 'Language', 'ai_translation' => 'AI translation'],
+];

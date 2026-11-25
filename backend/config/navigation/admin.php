@@ -96,7 +96,7 @@ return [
                 ['key' => 'vendors.shoppers', 'label' => 'navigation.admin.shoppers', 'route' => 'admin.vendors.shoppers.index', 'permission' => 'vendors.shoppers.view'],
             ]],
             ['key' => 'plans', 'label' => 'navigation.admin.plans', 'icon' => 'star', 'route' => 'admin.plans.index', 'permission' => 'plans.view'],
-            ['key' => 'subscriptions', 'label' => 'navigation.admin.subscriptions', 'icon' => 'credit-card', 'route' => 'admin.subscriptions.index', 'permission' => 'subscriptions.view'],
+            ['key' => 'subscriptions', 'label' => 'navigation.admin.subscriptions', 'icon' => 'credit-card', 'route' => 'admin.billing.subscriptions.index', 'permission' => 'subscriptions.view'],
         ],
     ],
     [
