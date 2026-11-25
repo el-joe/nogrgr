@@ -41,10 +41,28 @@
             <x-ui::file-upload :name="$field->key" :label="$label" :accept="$field->accept" :required="$required && ! $state['stored']" :disabled="! $editable" :hint="$state['stored'] ? __('integrations::admin.file_stored') : $help" />
         </div>
         @break
+    @case(SettingFieldType::Textarea)
+        <x-ui::textarea :name="$field->key" :label="$label" :value="$state['value']" :required="$required" :helper="$help" :maxlength="$field->maxLength" :disabled="! $editable" rows="3" class="md:col-span-2" />
+        @break
+    @case(SettingFieldType::Number)
+        <x-ui::input
+            :name="$field->key"
+            type="number"
+            :label="$label"
+            :value="$state['value']"
+            :required="$required"
+            :helper="$help"
+            dir="ltr"
+            min="{{ $field->min }}"
+            max="{{ $field->max }}"
+            step="1"
+            :disabled="! $editable"
+        />
+        @break
     @default
         <x-ui::input
             :name="$field->key"
-            :type="match ($field->type) { SettingFieldType::Email => 'email', SettingFieldType::Url => 'url', SettingFieldType::Number => 'number', default => 'text' }"
+            :type="match ($field->type) { SettingFieldType::Email => 'email', SettingFieldType::Url => 'url', default => 'text' }"
             :label="$label"
             :value="$state['value']"
             :required="$required"

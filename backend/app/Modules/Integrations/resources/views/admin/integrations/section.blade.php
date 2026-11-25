@@ -1,22 +1,25 @@
 {{--
     Admin › Integrations › one settings tab (ADM-100d Mail, 100e Google login, 100f Apple
-    login, 100h Reverb/Pusher, 100j Cloudflare/DNS, AI translation — Figma Admin Panel
-    53:18783 / 79:87472). One form per tab; secrets masked; test result inline + toast.
+    login, 100h Reverb/Pusher, 100j Cloudflare/DNS, AI translation, Neozena, Geocoding —
+    Figma Admin Panel 53:18783 / 79:87472), and Admin › Settings › Platform tabs (billing,
+    commerce, domains — decision #69, same card layout without status / test).
+    One form per tab; secrets masked; test result inline + toast.
 --}}
 @php
     use App\Modules\Ai\Enums\TranslationProvider;
     use App\Modules\Integrations\Enums\IntegrationSection;
 
     /** @var IntegrationSection $section */
-    $canManage = (bool) auth('admin')->user()?->can('integrations.manage');
+    $business = $section->isBusiness();
+    $canManage = (bool) auth('admin')->user()?->can($business ? 'settings.manage' : 'integrations.manage');
     $base = 'integrations::admin.sections.'.$section->value;
     $fields = collect($section->fields())->keyBy('key');
-    $testUrl = route('admin.integrations.test', $section);
+    $testUrl = $business ? null : route('admin.integrations.test', $section);
 @endphp
-<x-layouts.panel surface="admin" :title="$section->label().' · '.__('integrations::admin.title')" data-page="admin-integrations">
-    @include('integrations::admin.integrations._header', ['active' => $section->value])
+<x-layouts.panel surface="admin" :title="$section->label().' · '.__($business ? 'integrations::admin.platform.title' : 'integrations::admin.title')" data-page="admin-integrations">
+    @include($business ? 'integrations::admin.integrations._platform-header' : 'integrations::admin.integrations._header', ['active' => $section->value])
 
-    <form id="integration-form" method="POST" action="{{ route('admin.integrations.update', $section) }}" enctype="multipart/form-data" data-ajax data-unsaved-form novalidate class="grid gap-6">
+    <form id="integration-form" method="POST" action="{{ route($section->route('update'), $section) }}" enctype="multipart/form-data" data-ajax data-unsaved-form novalidate class="grid gap-6">
         @csrf
         @method('PUT')
 
@@ -74,7 +77,9 @@
                             <p class="text-[13px] text-ink-secondary">{{ __($base.'.description') }}</p>
                         </div>
                     </div>
-                    @include('integrations::admin.integrations._status', ['key' => $section->value, 'status' => $statuses['']['status']])
+                    @unless ($business)
+                        @include('integrations::admin.integrations._status', ['key' => $section->value, 'status' => $statuses['']['status']])
+                    @endunless
                 </div>
 
                 <div class="grid gap-5 md:grid-cols-2">
@@ -95,14 +100,17 @@
                 </div>
 
                 <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-                    @if ($section === IntegrationSection::Mail)
+                    @if ($business)
+                        <span></span>
+                    @elseif ($section === IntegrationSection::Mail)
                         <span class="text-xs text-ink-secondary">{{ __($base.'.test_help') }}</span>
                     @else
                         @include('integrations::admin.integrations._last-test', ['key' => $section->value, 'last' => $statuses['']['last']])
                     @endif
                     <div class="flex flex-wrap items-center gap-3">
                         @if ($canManage)
-                            @if ($section === IntegrationSection::Mail)
+                            @if ($business)
+                            @elseif ($section === IntegrationSection::Mail)
                                 <x-ui::button variant="ghost" icon="mail" data-overlay-open="mail-test-modal">{{ __('integrations::admin.mail.send_test') }}</x-ui::button>
                             @else
                                 <x-ui::button variant="ghost" icon="zap" data-integration-test="{{ $testUrl }}">{{ __($base.'.test') }}</x-ui::button>

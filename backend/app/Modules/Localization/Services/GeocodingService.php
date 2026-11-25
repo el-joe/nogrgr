@@ -28,6 +28,14 @@ class GeocodingService extends BaseService
         private readonly StoreCountries $countries,
     ) {}
 
+    /**
+     * Admin › Integrations › Geocoding is enabled (decision #69).
+     */
+    public function isConfigured(): bool
+    {
+        return config('services.geocoding.enabled') === true;
+    }
+
     public function reverse(float $latitude, float $longitude, string $locale): ?GeocodedLocationData
     {
         $key = sprintf('geocoding:reverse:%s:%.5f:%.5f', $locale, $latitude, $longitude);

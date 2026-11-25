@@ -20,6 +20,8 @@ enum SettingFieldType: string
     case Url = 'url';
     case Number = 'number';
     case File = 'file';
+    case Textarea = 'textarea';
+    case Ipv4 = 'ipv4';
 
     public function isSecret(): bool
     {

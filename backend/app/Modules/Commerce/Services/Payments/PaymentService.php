@@ -6,6 +6,7 @@ use App\Modules\Commerce\DTOs\Payments\StartedPayment;
 use App\Modules\Commerce\Enums\CheckoutBlock;
 use App\Modules\Commerce\Enums\OrderStatus;
 use App\Modules\Commerce\Enums\PaymentAttemptStatus;
+use App\Modules\Commerce\Enums\PaymentSource;
 use App\Modules\Commerce\Enums\PaymentStatus;
 use App\Modules\Commerce\Exceptions\CommerceException;
 use App\Modules\Commerce\Models\Order;
@@ -15,9 +16,12 @@ use App\Modules\Commerce\Repositories\Contracts\OrderRepositoryContract;
 use App\Modules\Commerce\Services\Orders\OrderLifecycleService;
 use App\Modules\Integrations\DTOs\CheckoutRequestData;
 use App\Modules\Integrations\DTOs\PaymentResult;
+use App\Modules\Integrations\DTOs\WebhookNotification;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
 use App\Modules\Integrations\Enums\PaymentOutcome;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
+use App\Modules\Integrations\Models\PaymentGatewayConfig;
+use App\Modules\Integrations\Repositories\Contracts\GatewayCheckoutRouteRepositoryContract;
 use App\Shared\Money\Money;
 use App\Shared\Services\BaseService;
 use Illuminate\Http\Request;
@@ -31,6 +35,8 @@ use Illuminate\Support\Str;
  *    (PaymentIntents) the client secret for the inline card panel;
  *  - confirm(): return-URL / polling check with the gateway (captures PayPal);
  *  - webhook(): signature-checked by the driver, replay-safe (gateway + event id stored once);
+ *    checkouts on the platform's keys are also routed from the central endpoint
+ *    (gateway_checkout_routes → CentralWebhookRouter → handleNotification());
  *  - settle(): idempotent under a row lock — a capture marks the group paid exactly once
  *    (amount checked), a failure is logged and the orders stay payable until the
  *    reservation times out.
@@ -42,6 +48,7 @@ class PaymentService extends BaseService
         private readonly OrderRepositoryContract $orders,
         private readonly OrderPaymentRepositoryContract $payments,
         private readonly OrderLifecycleService $lifecycle,
+        private readonly GatewayCheckoutRouteRepositoryContract $routes,
     ) {}
 
     public function start(Order $order, PaymentGatewayCode $code, string $baseUrl): StartedPayment
@@ -91,6 +98,11 @@ class PaymentService extends BaseService
             'redirect_url' => $checkout->redirectUrl !== '' ? $checkout->redirectUrl : null,
         ]);
 
+        // Central keys: the gateway notifies the platform's webhook URL, which routes back here.
+        if ($gateway->source === PaymentSource::Central && tenancy()->initialized) {
+            $this->routes->record($code->value, $checkout->id, (int) tenant()?->getTenantKey(), $payment->reference);
+        }
+
         foreach ($group as $member) {
             $member->forceFill(['payment_gateway' => $code->value, 'payment_source' => $gateway->source, 'payment_status' => PaymentStatus::Pending])->save();
         }
@@ -137,10 +149,29 @@ class PaymentService extends BaseService
             throw PaymentGatewayException::misconfigured();
         }
 
-        $driver = $this->gateways->driver($code);
-        $notification = $driver->parseWebhook($config, $request);
+        $notification = $this->gateways->driver($code)->parseWebhook($config, $request);
 
+        return $this->handleNotification($code, $notification, $config);
+    }
+
+    /**
+     * Applies a signature-checked notification (store endpoint, or routed from the central
+     * endpoint with the platform's config). Replay-safe; `$centralOnly` refuses attempts
+     * that were not paid with the platform's keys.
+     *
+     * @return string processed | duplicate | ignored
+     *
+     * @throws PaymentGatewayException
+     */
+    public function handleNotification(PaymentGatewayCode $code, WebhookNotification $notification, PaymentGatewayConfig $config, bool $centralOnly = false): string
+    {
         if (! $notification->isRelevant()) {
+            return 'ignored';
+        }
+
+        $payment = $this->payments->findByCheckoutId($code->value, (string) $notification->checkoutId);
+
+        if ($payment === null || ($centralOnly && $payment->source !== PaymentSource::Central)) {
             return 'ignored';
         }
 
@@ -148,14 +179,8 @@ class PaymentService extends BaseService
             return 'duplicate';
         }
 
-        $payment = $this->payments->findByCheckoutId($code->value, (string) $notification->checkoutId);
-
-        if ($payment === null) {
-            return 'ignored';
-        }
-
         $result = $notification->needsConfirmation
-            ? $driver->verify($config, (string) $notification->checkoutId)
+            ? $this->gateways->driver($code)->verify($config, (string) $notification->checkoutId)
             : new PaymentResult($notification->outcome, (string) $notification->checkoutId, reason: $notification->reason);
 
         $this->settle($payment, $result);

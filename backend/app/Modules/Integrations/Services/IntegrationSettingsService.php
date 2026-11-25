@@ -14,7 +14,8 @@ use App\Modules\Platform\Services\Auditor;
 use App\Shared\Services\BaseService;
 
 /**
- * Admin › Integrations cards (mail, Google, Apple, Reverb/Pusher, Cloudflare, AI):
+ * Admin › Integrations cards (mail, Google, Apple, Reverb/Pusher, Cloudflare, AI, Neozena,
+ * Geocoding) and Admin › Settings › Platform tabs (billing, commerce, domains):
  * read for the form (secrets masked), save (blank secret = keep), connection tests
  * (result stored as `_last_test[_target]`) and the runtime config overlay refresh.
  */
@@ -120,7 +121,7 @@ class IntegrationSettingsService extends BaseService
         }, $this->connection());
 
         if ($changed !== []) {
-            $this->auditor->record('integrations.updated', null, ['section' => $section->value, 'keys' => $changed]);
+            $this->auditor->record($section->isBusiness() ? 'settings.platform_updated' : 'integrations.updated', null, ['section' => $section->value, 'keys' => $changed]);
         }
 
         $this->overlay->apply();

@@ -26,6 +26,7 @@ use App\Modules\Localization\Services\Geocoding\IpLocator;
 use App\Modules\Localization\Services\Geocoding\IpWhoIsLocator;
 use App\Modules\Localization\Services\Geocoding\NominatimGeocoder;
 use App\Modules\Localization\Services\Geocoding\ReverseGeocoder;
+use App\Modules\Localization\Services\Geocoding\UnconfiguredGeocoder;
 use App\Modules\Localization\Services\StaticTexts\StaticTextCatalog;
 use App\Modules\Localization\Services\StaticTexts\StaticTextResolver;
 use App\Modules\Localization\Services\StoreCountries;
@@ -87,12 +88,15 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
             ? $loader
             : new OverridingTranslationLoader($loader, static fn (): TranslationOverrideRepositoryContract => $app->make(TranslationOverrideRepositoryContract::class)));
 
-        $this->app->bind(ReverseGeocoder::class, static fn (): ReverseGeocoder => match (GeocodingProvider::tryFrom((string) config('services.geocoding.reverse_provider'))) {
+        /* Address lookup providers: Admin › Integrations › Geocoding; off = not configured. */
+        $this->app->bind(ReverseGeocoder::class, static fn (): ReverseGeocoder => match (config('services.geocoding.enabled') === true ? GeocodingProvider::tryFrom((string) config('services.geocoding.reverse_provider')) : false) {
+            false => new UnconfiguredGeocoder,
             GeocodingProvider::Nominatim => new NominatimGeocoder,
             default => throw new InvalidArgumentException('Unsupported reverse geocoding provider.'),
         });
 
-        $this->app->bind(IpLocator::class, static fn (): IpLocator => match (GeocodingProvider::tryFrom((string) config('services.geocoding.ip_provider'))) {
+        $this->app->bind(IpLocator::class, static fn (): IpLocator => match (config('services.geocoding.enabled') === true ? GeocodingProvider::tryFrom((string) config('services.geocoding.ip_provider')) : false) {
+            false => new UnconfiguredGeocoder,
             GeocodingProvider::IpWhoIs => new IpWhoIsLocator,
             default => throw new InvalidArgumentException('Unsupported IP location provider.'),
         });

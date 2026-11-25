@@ -85,12 +85,13 @@ return [
         ],
 
         'dynamodb' => [
+            // Unused driver; AWS credentials never come from .env (decision #69).
             'driver' => 'dynamodb',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-            'table' => env('DYNAMODB_CACHE_TABLE', 'cache'),
-            'endpoint' => env('DYNAMODB_ENDPOINT'),
+            'key' => null,
+            'secret' => null,
+            'region' => 'us-east-1',
+            'table' => 'cache',
+            'endpoint' => null,
         ],
 
         'octane' => [

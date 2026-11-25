@@ -12,10 +12,11 @@ use Illuminate\Database\QueryException;
 use PDOException;
 
 /**
- * Overlays saved Integrations settings on config() so the framework (mail, broadcasting,
- * openai-php, services.*) uses them without code changes. Runs after boot and before
- * every queued job. Disabled / never-saved sections keep the env values. A missing
- * table (fresh install, before migrations) is ignored.
+ * Overlays saved settings on config() so the framework (mail, broadcasting, openai-php,
+ * services.*) and the business modules (billing.*, commerce.*, tenancy DNS defaults) use
+ * them without code changes. Runs after boot and before every queued job. Config files
+ * hold only safe defaults (decision #69, no env), so a disabled / never-saved section
+ * stays "not configured". A missing table (fresh install, before migrations) is ignored.
  */
 class IntegrationConfigOverlay
 {
@@ -45,6 +46,18 @@ class IntegrationConfigOverlay
 
         if (is_string($name) && $name !== '') {
             config(['app.name' => $name]);
+        }
+
+        // Until Mail is set up, the platform address shown on pages is the support e-mail.
+        $support = $all['general']['support_email'] ?? null;
+
+        if (is_string($support) && $support !== '' && ($all['mail']['enabled'] ?? false) !== true) {
+            config(['mail.from.address' => $support]);
+        }
+
+        // Invoices always name a seller: the platform name until Billing settings set one.
+        if (blank(config('billing.seller.name'))) {
+            config(['billing.seller.name' => config('app.name')]);
         }
     }
 
@@ -80,6 +93,8 @@ class IntegrationConfigOverlay
             IntegrationSection::Google => config(['services.google.redirect' => SocialRedirectUri::for('google')]),
             IntegrationSection::Apple => config(['services.apple.redirect' => SocialRedirectUri::for('apple')]),
             IntegrationSection::Broadcasting => $this->broadcasting($values),
+            IntegrationSection::Geocoding => config(['services.geocoding.cache_ttl' => max(1, (int) ($values['cache_days'] ?? 7)) * 86400]),
+            IntegrationSection::Domains => $this->domains($values),
             default => null,
         };
     }
@@ -117,5 +132,23 @@ class IntegrationConfigOverlay
         }
 
         config($overrides);
+    }
+
+    /**
+     * The apex A record of the default custom-domain DNS set points at the edge IPv4.
+     *
+     * @param  array<string, mixed>  $values
+     */
+    private function domains(array $values): void
+    {
+        $records = (array) config('tenancy.custom_domain_records', []);
+
+        foreach ($records as $index => $record) {
+            if (is_array($record) && strtoupper((string) ($record['type'] ?? '')) === 'A' && ($record['host'] ?? '@') === '@') {
+                $records[$index]['value'] = (string) ($values['edge_ipv4'] ?? '');
+            }
+        }
+
+        config(['tenancy.custom_domain_records' => $records]);
     }
 }

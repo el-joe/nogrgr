@@ -9,6 +9,10 @@ return [
         'cloudflare' => 'Cloudflare / DNS',
         'ai' => 'AI translation',
         'neozena' => 'Neozena catalog',
+        'geocoding' => 'Geocoding',
+        'billing' => 'Billing',
+        'commerce' => 'Checkout & API',
+        'domains' => 'Domains & DNS',
     ],
     'setting_field_type' => [
         'text' => 'Text',
@@ -19,6 +23,8 @@ return [
         'url' => 'URL',
         'number' => 'Number',
         'file' => 'File',
+        'textarea' => 'Long text',
+        'ipv4' => 'IPv4 address',
     ],
     'mail_driver' => [
         'smtp' => 'SMTP',

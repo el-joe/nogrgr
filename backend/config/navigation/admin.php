@@ -155,6 +155,7 @@ return [
             ]],
             ['key' => 'settings', 'label' => 'navigation.admin.settings', 'icon' => 'settings', 'children' => [
                 ['key' => 'settings.general', 'label' => 'navigation.admin.general', 'route' => 'admin.settings.general', 'permission' => 'settings.view', 'active' => 'admin.settings.general*'],
+                ['key' => 'settings.platform', 'label' => 'navigation.admin.platform_settings', 'route' => 'admin.settings.platform.index', 'permission' => 'settings.view', 'active' => 'admin.settings.platform.*'],
                 ['key' => 'settings.integrations', 'label' => 'navigation.admin.integrations', 'route' => 'admin.integrations.index', 'permission' => 'integrations.view', 'active' => 'admin.integrations.*'],
                 ['key' => 'settings.email-templates', 'label' => 'navigation.admin.email_templates', 'route' => 'admin.settings.email-templates.index', 'permission' => 'email-templates.view', 'active' => 'admin.settings.email-templates.*'],
             ]],

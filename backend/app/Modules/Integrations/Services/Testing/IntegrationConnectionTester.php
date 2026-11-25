@@ -56,6 +56,8 @@ class IntegrationConnectionTester
                 IntegrationSection::Cloudflare => $this->cloudflare($settings),
                 IntegrationSection::Ai => $this->ai($settings, TranslationProvider::from((string) $target)),
                 IntegrationSection::Neozena => $this->neozena($settings),
+                IntegrationSection::Geocoding => $this->geocoding($settings),
+                IntegrationSection::Billing, IntegrationSection::Commerce, IntegrationSection::Domains => throw new ConnectionTestFailed(ConnectionErrorType::Misconfigured),
             };
         } catch (ConnectionTestFailed $exception) {
             return ConnectionTestResult::failure($exception->type, $exception->detail);
@@ -279,6 +281,45 @@ class IntegrationConnectionTester
         $total = $response->json('meta.total');
 
         return is_numeric($total) ? trans_choice('integrations::admin.test.products_found', (int) $total, ['count' => number_format((int) $total)]) : null;
+    }
+
+    /**
+     * Reverse-geocodes a fixed point (Riyadh) and locates a public resolver IP with the
+     * saved providers; both must answer with a usable result.
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    private function geocoding(array $settings): null
+    {
+        $this->require($settings, ['nominatim_url', 'ipwhois_url', 'user_agent']);
+
+        $request = Http::timeout(max(1, min(self::TIMEOUT_SECONDS, (int) ($settings['timeout'] ?? 5))))
+            ->acceptJson()
+            ->withUserAgent((string) $settings['user_agent']);
+
+        $reverse = (clone $request)->get(rtrim((string) $settings['nominatim_url'], '/').'/reverse', array_filter([
+            'lat' => 24.7136, 'lon' => 46.6753, 'format' => 'jsonv2', 'email' => $settings['contact_email'] ?? null,
+        ]));
+
+        if (! $reverse->successful()) {
+            throw new ConnectionTestFailed(ConnectionErrorType::fromStatus($reverse->status()), 'Nominatim HTTP '.$reverse->status());
+        }
+
+        if (! is_array($reverse->json('address'))) {
+            throw new ConnectionTestFailed(ConnectionErrorType::UnexpectedResponse, 'Nominatim');
+        }
+
+        $ip = (clone $request)->get(rtrim((string) $settings['ipwhois_url'], '/').'/8.8.8.8');
+
+        if (! $ip->successful()) {
+            throw new ConnectionTestFailed(ConnectionErrorType::fromStatus($ip->status()), 'ipwho.is HTTP '.$ip->status());
+        }
+
+        if ($ip->json('success') !== true) {
+            throw new ConnectionTestFailed(ConnectionErrorType::UnexpectedResponse, 'ipwho.is');
+        }
+
+        return null;
     }
 
     /**

@@ -26,6 +26,10 @@ return [
                 ['key' => 'sales.returns', 'label' => 'navigation.vendor.returns', 'route' => 'vendor.sales.returns.index', 'permission' => 'returns.view'],
                 ['key' => 'sales.refunds', 'label' => 'navigation.vendor.refunds', 'route' => 'vendor.sales.refunds.index', 'permission' => 'refunds.view'],
             ]],
+            ['key' => 'marketing', 'label' => 'navigation.vendor.marketing', 'icon' => 'megaphone', 'children' => [
+                ['key' => 'marketing.coupons', 'label' => 'navigation.vendor.coupons', 'route' => 'vendor.marketing.coupons.index', 'permission' => 'coupons.view', 'active' => 'vendor.marketing.coupons.*'],
+                ['key' => 'marketing.flash-sales', 'label' => 'navigation.vendor.flash_sales', 'route' => 'vendor.marketing.flash-sales.index', 'permission' => 'flash-sales.view', 'active' => 'vendor.marketing.flash-sales.*'],
+            ]],
         ],
     ],
     [
@@ -45,6 +49,9 @@ return [
         'label' => 'navigation.sections.finance_growth',
         'items' => [
             ['key' => 'finance.subscription', 'label' => 'navigation.vendor.subscription', 'icon' => 'credit-card', 'route' => 'vendor.finance.subscription', 'permission' => 'finance.subscription.view', 'active' => 'vendor.finance.subscription*'],
+            ['key' => 'finance.purchases', 'label' => 'navigation.vendor.purchases', 'icon' => 'file', 'route' => 'vendor.finance.purchases.index', 'permission' => 'finance.purchases.view'],
+            ['key' => 'finance.settlements', 'label' => 'navigation.vendor.settlements', 'icon' => 'wallet', 'route' => 'vendor.finance.settlements.index', 'permission' => 'finance.settlements.view'],
+            ['key' => 'finance.payouts', 'label' => 'navigation.vendor.payouts', 'icon' => 'download', 'route' => 'vendor.finance.payouts.index', 'permission' => 'finance.payouts.view'],
         ],
     ],
     [

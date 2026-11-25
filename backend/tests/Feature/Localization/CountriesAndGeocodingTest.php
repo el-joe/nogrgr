@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Integrations\Enums\IntegrationSection;
 use App\Modules\Localization\Database\Seeders\CitySeeder;
 use App\Modules\Localization\Database\Seeders\CountrySeeder;
 use App\Modules\Localization\Enums\CityType;
@@ -89,6 +90,7 @@ it('suggests cities of a country in both languages, capitals first', function ()
 });
 
 it('reverse geocodes server-side with a generic user agent and caches the result', function (): void {
+    $this->useSettings(IntegrationSection::Geocoding, ['enabled' => true]);
     $saudi = Country::factory()->iso('SA')->create();
     $tenant = $this->createTenant('acme');
     Http::fake(['nominatim.openstreetmap.org/*' => Http::response(['address' => [
@@ -117,6 +119,7 @@ it('reverse geocodes server-side with a generic user agent and caches the result
 });
 
 it('validates coordinates and reports a failed lookup', function (): void {
+    $this->useSettings(IntegrationSection::Geocoding, ['enabled' => true]);
     $tenant = $this->createTenant('acme');
     Http::fake(['*' => Http::response([], 500)]);
 
@@ -130,6 +133,7 @@ it('validates coordinates and reports a failed lookup', function (): void {
 });
 
 it('locates the visitor IP and falls back to the visitor country for private addresses', function (): void {
+    $this->useSettings(IntegrationSection::Geocoding, ['enabled' => true]);
     $emirates = Country::factory()->iso('AE')->create();
     $saudi = Country::factory()->iso('SA')->create();
     $tenant = $this->createTenant('acme');
@@ -146,6 +150,22 @@ it('locates the visitor IP and falls back to the visitor country for private add
         ->assertJson(['data' => ['city' => null, 'country_iso2' => 'SA', 'country_id' => $saudi->id, 'approximate' => true]]);
 
     Http::assertSentCount(1);
+});
+
+it('reports a not-configured address lookup without calling a provider', function (): void {
+    $tenant = $this->createTenant('acme');
+    Http::fake();
+
+    $this->getJson($this->tenantUrl($tenant, '/geo/reverse?lat=24.711&lng=46.674'))
+        ->assertStatus(503)
+        ->assertJson(['success' => false, 'message' => __('localization::geo.not_configured')]);
+
+    $this->withServerVariables(['REMOTE_ADDR' => '94.200.1.1'])
+        ->getJson($this->tenantUrl($tenant, '/geo/ip'))
+        ->assertOk()
+        ->assertJsonPath('data.approximate', true);
+
+    Http::assertNothingSent();
 });
 
 it('rate limits the geocoding endpoints per visitor', function (): void {

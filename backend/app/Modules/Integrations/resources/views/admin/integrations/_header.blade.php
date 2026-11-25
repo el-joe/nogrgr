@@ -6,7 +6,7 @@
 @php
     $tabs = ['gateways' => ['label' => __('integrations::admin.tabs.gateways'), 'href' => route('admin.integrations.gateways.index')]];
 
-    foreach (\App\Modules\Integrations\Enums\IntegrationSection::cases() as $tabSection) {
+    foreach (\App\Modules\Integrations\Enums\IntegrationSection::integrations() as $tabSection) {
         $tabs[$tabSection->value] = ['label' => $tabSection->label(), 'href' => route('admin.integrations.show', $tabSection)];
     }
 @endphp

@@ -4,13 +4,16 @@ namespace App\Modules\Integrations\Enums;
 
 use App\Modules\Ai\Enums\TranslationProvider;
 use App\Modules\Integrations\DTOs\SettingField;
+use App\Modules\Localization\Enums\GeocodingProvider;
 use App\Shared\Enums\Concerns\HasEnumHelpers;
 
 /**
- * Settings tabs of Admin › Integrations (besides Payment gateways), Figma Admin Panel
- * 53:18783 / 79:87472. Each section is one settings group in `integration_settings`;
- * `configMap()` overlays the saved values on config() at runtime (env stays the
- * fallback while a section is disabled or never saved).
+ * DB-backed settings groups in `integration_settings` (decision #69: integrations and
+ * business settings never come from .env). Integration sections are the tabs of
+ * Admin › Integrations (besides Payment gateways, Figma Admin Panel 53:18783 / 79:87472);
+ * business sections (billing, commerce, domains) are the tabs of Admin › Settings ›
+ * Platform. `configMap()` overlays saved values on config() at runtime; config files
+ * only hold safe defaults, so a disabled / never-saved section is "not configured".
  */
 enum IntegrationSection: string
 {
@@ -23,6 +26,42 @@ enum IntegrationSection: string
     case Cloudflare = 'cloudflare';
     case Ai = 'ai';
     case Neozena = 'neozena';
+    case Geocoding = 'geocoding';
+    case Billing = 'billing';
+    case Commerce = 'commerce';
+    case Domains = 'domains';
+
+    /**
+     * Business settings (Admin › Settings › Platform) rather than an integration.
+     */
+    public function isBusiness(): bool
+    {
+        return in_array($this, [self::Billing, self::Commerce, self::Domains], true);
+    }
+
+    /**
+     * @return list<self>
+     */
+    public static function integrations(): array
+    {
+        return array_values(array_filter(self::cases(), static fn (self $section): bool => ! $section->isBusiness()));
+    }
+
+    /**
+     * @return list<self>
+     */
+    public static function business(): array
+    {
+        return array_values(array_filter(self::cases(), static fn (self $section): bool => $section->isBusiness()));
+    }
+
+    /**
+     * Route names of the section's page / save / test.
+     */
+    public function route(string $action): string
+    {
+        return ($this->isBusiness() ? 'admin.settings.platform.' : 'admin.integrations.').$action;
+    }
 
     public function icon(): string
     {
@@ -34,15 +73,19 @@ enum IntegrationSection: string
             self::Cloudflare => 'globe',
             self::Ai => 'sparkles',
             self::Neozena => 'download',
+            self::Geocoding => 'map',
+            self::Billing => 'percent',
+            self::Commerce => 'cart',
+            self::Domains => 'link',
         };
     }
 
     /**
-     * Sections with an "Enabled" switch: while off, config keeps the env values.
+     * Sections with an "Enabled" switch: while off, config keeps its empty defaults.
      */
     public function hasEnabledSwitch(): bool
     {
-        return $this !== self::Ai;
+        return $this !== self::Ai && ! $this->isBusiness();
     }
 
     /**
@@ -111,6 +154,33 @@ enum IntegrationSection: string
                 new SettingField('base_url', SettingFieldType::Url, true, default: 'https://neozena.com/api/catalog'),
                 new SettingField('api_token', SettingFieldType::Secret),
             ],
+            self::Geocoding => [
+                $enabled,
+                new SettingField('reverse_provider', SettingFieldType::Select, true, [GeocodingProvider::Nominatim->value => GeocodingProvider::Nominatim->label()], GeocodingProvider::Nominatim->value),
+                new SettingField('ip_provider', SettingFieldType::Select, true, [GeocodingProvider::IpWhoIs->value => GeocodingProvider::IpWhoIs->label()], GeocodingProvider::IpWhoIs->value),
+                new SettingField('nominatim_url', SettingFieldType::Url, true, default: 'https://nominatim.openstreetmap.org'),
+                new SettingField('contact_email', SettingFieldType::Email, maxLength: 191),
+                new SettingField('ipwhois_url', SettingFieldType::Url, true, default: 'https://ipwho.is'),
+                new SettingField('user_agent', required: true, maxLength: 191, default: 'NogrgrStorefront/1.0 (address lookup)'),
+                new SettingField('timeout', SettingFieldType::Number, true, default: 5, min: 1, max: 30),
+                new SettingField('cache_days', SettingFieldType::Number, true, default: 7, min: 1, max: 90),
+            ],
+            self::Billing => [
+                new SettingField('tax_rate_bp', SettingFieldType::Number, true, default: 0, min: 0, max: 10000),
+                new SettingField('invoice_due_days', SettingFieldType::Number, true, default: 7, min: 0, max: 365),
+                new SettingField('grace_days', SettingFieldType::Number, true, default: 7, min: 0, max: 365),
+                new SettingField('seller_name', maxLength: 120),
+                new SettingField('seller_tax_number', maxLength: 64),
+                new SettingField('seller_address', SettingFieldType::Textarea, maxLength: 500),
+            ],
+            self::Commerce => [
+                new SettingField('reservation_minutes', SettingFieldType::Number, true, default: 30, min: 5, max: 1440),
+                new SettingField('store_api_rate_limit', SettingFieldType::Number, true, default: 120, min: 10, max: 10000),
+                new SettingField('checkout_rate_limit', SettingFieldType::Number, true, default: 10, min: 1, max: 1000),
+            ],
+            self::Domains => [
+                new SettingField('edge_ipv4', SettingFieldType::Ipv4, maxLength: 15),
+            ],
         };
     }
 
@@ -176,6 +246,30 @@ enum IntegrationSection: string
                 'freellmapi_model' => ['ai.providers.freellmapi.model'],
             ],
             self::Neozena => [],
+            self::Geocoding => [
+                'enabled' => ['services.geocoding.enabled'],
+                'reverse_provider' => ['services.geocoding.reverse_provider'],
+                'ip_provider' => ['services.geocoding.ip_provider'],
+                'nominatim_url' => ['services.geocoding.nominatim.url'],
+                'contact_email' => ['services.geocoding.nominatim.email'],
+                'ipwhois_url' => ['services.geocoding.ipwhois.url'],
+                'user_agent' => ['services.geocoding.user_agent'],
+                'timeout' => ['services.geocoding.timeout'],
+            ],
+            self::Billing => [
+                'tax_rate_bp' => ['billing.tax_rate_bp'],
+                'invoice_due_days' => ['billing.invoice_due_days'],
+                'grace_days' => ['billing.grace_days'],
+                'seller_name' => ['billing.seller.name'],
+                'seller_address' => ['billing.seller.address'],
+                'seller_tax_number' => ['billing.seller.tax_number'],
+            ],
+            self::Commerce => [
+                'reservation_minutes' => ['commerce.reservation_minutes'],
+                'store_api_rate_limit' => ['commerce.store_api_rate_limit'],
+                'checkout_rate_limit' => ['commerce.checkout_rate_limit'],
+            ],
+            self::Domains => [],
         };
     }
 
@@ -186,6 +280,10 @@ enum IntegrationSection: string
      */
     public function testTargets(): array
     {
+        if ($this->isBusiness()) {
+            return [];
+        }
+
         return $this === self::Ai ? TranslationProvider::values() : [];
     }
 }

@@ -48,7 +48,7 @@ it('renders every settings tab with the tab bar', function (IntegrationSection $
         ->assertSee(__('integrations::admin.sections.'.$section->value.'.title'))
         ->assertSee(route('admin.integrations.gateways.index'), false)
         ->assertSee(route('admin.integrations.update', $section), false);
-})->with(IntegrationSection::cases());
+})->with(IntegrationSection::integrations());
 
 it('validates required fields only while a card is enabled', function (): void {
     $admin = integrationsAdmin('integrations.manage');

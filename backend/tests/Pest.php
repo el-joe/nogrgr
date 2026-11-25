@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\InteractsWithSettings;
 use Tests\Concerns\InteractsWithTenancy;
 use Tests\TestCase;
 
@@ -16,7 +17,7 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
-    ->use(RefreshDatabase::class, InteractsWithTenancy::class)
+    ->use(RefreshDatabase::class, InteractsWithTenancy::class, InteractsWithSettings::class)
     ->in('Feature');
 
 pest()->extend(TestCase::class)->in('Unit/Shared');

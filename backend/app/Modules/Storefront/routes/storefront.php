@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Storefront\Http\Controllers\Storefront\HomeController;
+use App\Modules\Storefront\Http\Controllers\Storefront\RobotsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -8,3 +9,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('robots.txt', RobotsController::class)->name('robots');

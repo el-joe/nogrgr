@@ -37,10 +37,11 @@ return [
      * Default DNS records for a vendor's custom domain, used while the admin has not
      * defined any DNS record templates (Admin › Settings › Domains). Same placeholders
      * as the templates: {domain}, {subdomain} (store default host), {token}.
-     * The apex A record is only listed when TENANT_EDGE_IPV4 is set.
+     * The apex A record is only listed once Admin › Settings › Platform › Domains sets
+     * the store edge IPv4 (decision #69, IntegrationConfigOverlay).
      */
     'custom_domain_records' => [
-        ['type' => 'A', 'host' => '@', 'value' => (string) env('TENANT_EDGE_IPV4', ''), 'ttl' => 3600, 'priority' => null],
+        ['type' => 'A', 'host' => '@', 'value' => '', 'ttl' => 3600, 'priority' => null],
         ['type' => 'CNAME', 'host' => 'www', 'value' => '{subdomain}', 'ttl' => 3600, 'priority' => null],
         ['type' => 'TXT', 'host' => '_nogrgr-verify', 'value' => '{token}', 'ttl' => 3600, 'priority' => null],
     ],

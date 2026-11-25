@@ -33,6 +33,11 @@ return [
         'test_heading' => 'Your mail settings work',
         'test_body' => 'This test message was sent by :name at :time using the settings saved in Admin › Integrations › Mail.',
     ],
+    'platform' => [
+        'title' => 'Platform settings',
+        'subtitle' => 'Billing, checkout limits and domain defaults used across every store.',
+        'saved' => ':name settings saved.',
+    ],
     'sections' => [
         'mail' => [
             'title' => 'Mail delivery',
@@ -157,6 +162,67 @@ return [
             'help' => [
                 'base_url' => 'Catalog API root, e.g. https://neozena.com/api/catalog.',
                 'api_token' => 'Optional. Sent as a bearer token when the API requires one.',
+            ],
+        ],
+        'geocoding' => [
+            'title' => 'Address lookup (geocoding)',
+            'description' => 'Fills the shopper address form from the map pin or the visitor IP. While off, shoppers type the address themselves.',
+            'test' => 'Test lookup',
+            'fields' => [
+                'enabled' => 'Enabled',
+                'reverse_provider' => 'Map pin provider',
+                'ip_provider' => 'IP location provider',
+                'nominatim_url' => 'Nominatim URL',
+                'contact_email' => 'Contact e-mail',
+                'ipwhois_url' => 'ipwho.is URL',
+                'user_agent' => 'User-Agent',
+                'timeout' => 'Timeout (seconds)',
+                'cache_days' => 'Cache results for (days)',
+            ],
+            'help' => [
+                'contact_email' => 'Sent to Nominatim as required by its usage policy. Use a role address, not a person.',
+                'user_agent' => 'Names the application only; never put personal data in it.',
+            ],
+        ],
+        'billing' => [
+            'title' => 'Billing',
+            'description' => 'Tax, invoice due dates, the renewal grace period and the seller block printed on platform invoices.',
+            'fields' => [
+                'tax_rate_bp' => 'Tax rate (basis points)',
+                'invoice_due_days' => 'Invoice due after (days)',
+                'grace_days' => 'Grace period after due date (days)',
+                'seller_name' => 'Seller name',
+                'seller_tax_number' => 'Seller tax number',
+                'seller_address' => 'Seller address',
+            ],
+            'help' => [
+                'tax_rate_bp' => '100 = 1 %. 1500 = 15 %. 0 = no tax line.',
+                'grace_days' => 'A past-due subscription keeps working this many days before it expires.',
+                'seller_name' => 'Printed on invoices. Defaults to the platform name.',
+            ],
+        ],
+        'commerce' => [
+            'title' => 'Checkout & store API',
+            'description' => 'Stock reservation of unpaid orders and request limits of the storefront / mobile API.',
+            'fields' => [
+                'reservation_minutes' => 'Unpaid order reservation (minutes)',
+                'store_api_rate_limit' => 'Store API requests per minute',
+                'checkout_rate_limit' => 'Checkout attempts per minute',
+            ],
+            'help' => [
+                'reservation_minutes' => 'An unpaid order releases its stock and is cancelled after this time.',
+                'store_api_rate_limit' => 'Per client, across cart, checkout, orders and payments.',
+                'checkout_rate_limit' => 'Per client, for placing orders and starting payments.',
+            ],
+        ],
+        'domains' => [
+            'title' => 'Domains & DNS defaults',
+            'description' => 'Default DNS records shown to vendors connecting a custom domain, until DNS record templates are defined.',
+            'fields' => [
+                'edge_ipv4' => 'Store edge IPv4',
+            ],
+            'help' => [
+                'edge_ipv4' => 'Public IPv4 of the store edge, listed as the apex A record. Leave empty to list only the CNAME and TXT records.',
             ],
         ],
     ],

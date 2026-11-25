@@ -9,6 +9,10 @@ return [
         'cloudflare' => 'Cloudflare / DNS',
         'ai' => 'ترجمة الذكاء الاصطناعي',
         'neozena' => 'كتالوج Neozena',
+        'geocoding' => 'تحديد العناوين',
+        'billing' => 'الفوترة',
+        'commerce' => 'الدفع وواجهة API',
+        'domains' => 'النطاقات وDNS',
     ],
     'setting_field_type' => [
         'text' => 'نص',
@@ -19,6 +23,8 @@ return [
         'url' => 'رابط',
         'number' => 'رقم',
         'file' => 'ملف',
+        'textarea' => 'نص طويل',
+        'ipv4' => 'عنوان IPv4',
     ],
     'mail_driver' => [
         'smtp' => 'SMTP',

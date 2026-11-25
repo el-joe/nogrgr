@@ -2,20 +2,22 @@
 
 /*
 | Platform billing (Billing module). Amounts are USD; rates in basis points (1500 = 15 %).
+| Defaults only: Admin › Settings › Platform › Billing overrides them at runtime
+| (decision #69, IntegrationConfigOverlay). The seller name falls back to the platform name.
 */
 
 return [
-    'tax_rate_bp' => (int) env('BILLING_TAX_RATE_BP', 0),
+    'tax_rate_bp' => 0,
 
-    'invoice_due_days' => (int) env('BILLING_INVOICE_DUE_DAYS', 7),
+    'invoice_due_days' => 7,
 
     // Days a past-due subscription keeps working before it expires.
-    'grace_days' => (int) env('BILLING_GRACE_DAYS', 7),
+    'grace_days' => 7,
 
     // Seller block printed on invoices.
     'seller' => [
-        'name' => env('BILLING_SELLER_NAME', env('APP_NAME', 'Nogrgr')),
-        'address' => env('BILLING_SELLER_ADDRESS'),
-        'tax_number' => env('BILLING_SELLER_TAX_NUMBER'),
+        'name' => null,
+        'address' => null,
+        'tax_number' => null,
     ],
 ];

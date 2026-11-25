@@ -23,6 +23,8 @@ final class SettingField extends BaseDTO
         public readonly string|int|bool|null $default = null,
         public readonly int $maxLength = 255,
         public readonly ?string $accept = null,
+        public readonly int $min = 1,
+        public readonly int $max = 65535,
     ) {}
 
     public function isSecret(): bool
@@ -42,7 +44,8 @@ final class SettingField extends BaseDTO
             SettingFieldType::Select => ['string', 'in:'.implode(',', array_keys($this->options))],
             SettingFieldType::Email => ['string', 'email:rfc', 'max:'.$this->maxLength],
             SettingFieldType::Url => ['string', 'url:http,https', 'max:'.$this->maxLength],
-            SettingFieldType::Number => ['integer', 'min:1', 'max:65535'],
+            SettingFieldType::Number => ['integer', 'min:'.$this->min, 'max:'.$this->max],
+            SettingFieldType::Ipv4 => ['string', 'ipv4'],
             SettingFieldType::File => ['file', 'max:16'],
             default => ['string', 'max:'.$this->maxLength],
         };

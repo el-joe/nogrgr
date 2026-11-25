@@ -2,8 +2,10 @@
 
 namespace App\Modules\Integrations;
 
+use App\Modules\Integrations\Repositories\Contracts\GatewayCheckoutRouteRepositoryContract;
 use App\Modules\Integrations\Repositories\Contracts\PaymentGatewayRepositoryContract;
 use App\Modules\Integrations\Repositories\Contracts\SettingsRepositoryContract;
+use App\Modules\Integrations\Repositories\Eloquent\GatewayCheckoutRouteRepository;
 use App\Modules\Integrations\Repositories\Eloquent\PaymentGatewayRepository;
 use App\Modules\Integrations\Repositories\Eloquent\SettingsRepository;
 use App\Modules\Integrations\Services\IntegrationConfigOverlay;
@@ -20,6 +22,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
      */
     public $bindings = [
         PaymentGatewayRepositoryContract::class => PaymentGatewayRepository::class,
+        GatewayCheckoutRouteRepositoryContract::class => GatewayCheckoutRouteRepository::class,
     ];
 
     /**

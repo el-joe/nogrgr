@@ -20,6 +20,10 @@ class GeocodingController extends Controller
 
     public function reverse(ReverseGeocodeRequest $request): JsonResponse
     {
+        if (! $this->geocoding->isConfigured()) {
+            return JsonResponder::error(__('localization::geo.not_configured'), 503);
+        }
+
         $location = $this->geocoding->reverse((float) $request->validated('lat'), (float) $request->validated('lng'), app()->getLocale());
 
         if ($location === null) {
