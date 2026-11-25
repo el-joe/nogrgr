@@ -16,6 +16,7 @@ Rules for agents: at most **2 agents at a time**, small briefs, resume only pend
 | P3 (part) | Catalog schema (3 migrations: categories, products, labels/badges/media), 16 enums, 10 models | `1d522fd` |
 | P3/P5 (part) | `Commerce/Pricing` (`CountryPriceTable`, `FixedShipping`, `ProfitRule`, `UnitPrice`, `UnitPricing`), `ProfitType` enum, `tests/Unit/Commerce/UnitPricingTest.php` | `1d522fd` |
 | Merge | All worktree branches merged into `main` | `623b074` |
+| P2 Identity | Admin profile, Notifications module (central tables, preferences, live bell), admins, roles matrix, audit log; suite 911/912 (UiKitTest fixed after) | `d53b821` |
 | P2 Billing | Plans, subscriptions (lifecycle + hourly expiry), invoices (print), payment logs (capture/refund), add-on + language purchase (`LanguagePurchasePaid`); 65 tests; suite 805 green | `ee0fb8e` |
 | P2 Localization | Languages (184 ISO, one price/lang #45), Currencies (+ daily rate sync), Countries admin; tenant language services; 88 tests | `d27aab1` |
 | Verify | Recovered WIP verified: migrate:fresh clean, suite **660/660**; repository bindings added; QA-P0-016 and CustomerAuthTest confirmed OK | `e794206` |
@@ -37,7 +38,7 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 
 ## In progress (batch P2-1, started 2026-11-25, agent team of 2)
 
-- **identity** (started after localization finished): admin profile, notifications inbox + preferences, admins, roles/permission matrix, audit log (ADM-005, 007/007a, 110/110a, 111/111a, 112/112a).
+- **integrations** (started after identity finished): Integrations tabs (gateways, mail, Google/Apple, Reverb, Cloudflare, AI translation provider #43 + TranslationClient), general settings, email templates, Billing events → notifications.
 - **vendors** (started after billing finished): provisioning service, vendors list/create/profile tabs, pending registrations, compliance, domains + DNS templates (ADM-040…045b).
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
-- Follow-ups: wire Billing events → notifications once identity lands the notifications tables · Next: Integrations (AI translation provider switch #43) · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
+- Next: central registration WEB-016/016b/016c/017/019 on vendors' `vendor_registrations` · Owner OWN-007 · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
