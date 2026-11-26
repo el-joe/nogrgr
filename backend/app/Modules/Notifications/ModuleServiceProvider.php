@@ -6,13 +6,16 @@ use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Notifications\Contracts\HasPanelInbox;
 use App\Modules\Notifications\Events\EmailTemplatesSynced;
 use App\Modules\Notifications\Listeners\EnforceVendorNotificationPreferences;
+use App\Modules\Notifications\Listeners\QueueCustomerPush;
 use App\Modules\Notifications\Listeners\SyncStoreEmailTemplates;
+use App\Modules\Notifications\Repositories\Contracts\CustomerDeviceRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\EmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\NotificationPreferenceRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\PanelNotificationRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\StoreEmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\TenantNotificationRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\VendorNotificationPreferenceRepositoryContract;
+use App\Modules\Notifications\Repositories\Eloquent\CustomerDeviceRepository;
 use App\Modules\Notifications\Repositories\Eloquent\EmailTemplateRepository;
 use App\Modules\Notifications\Repositories\Eloquent\NotificationPreferenceRepository;
 use App\Modules\Notifications\Repositories\Eloquent\PanelNotificationRepository;
@@ -28,6 +31,7 @@ use App\Shared\Routing\ModuleRouteRegistry;
 use App\Shared\Routing\Surface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Events\NotificationSending;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
 
@@ -46,6 +50,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         EmailTemplateRepositoryContract::class => EmailTemplateRepository::class,
         StoreEmailTemplateRepositoryContract::class => StoreEmailTemplateRepository::class,
         VendorNotificationPreferenceRepositoryContract::class => VendorNotificationPreferenceRepository::class,
+        CustomerDeviceRepositoryContract::class => CustomerDeviceRepository::class,
     ];
 
     public function register(): void
@@ -69,6 +74,9 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         // Store members' topic × channel switches (VEN-087) on every panel notification.
         Event::listen(NotificationSending::class, EnforceVendorNotificationPreferences::class);
+
+        // Customer inbox rows → FCM push to the customer's mobile apps (P11).
+        Event::listen(NotificationSent::class, QueueCustomerPush::class);
 
         $this->bootChannels();
     }

@@ -187,6 +187,19 @@ return [
                 'user_agent' => 'Names the application only; never put personal data in it.',
             ],
         ],
+        'firebase' => [
+            'title' => 'Push notifications (Firebase)',
+            'description' => 'Firebase Cloud Messaging sends order, shipping and return updates to the mobile apps. While off, the apps only show the in-app inbox.',
+            'test' => 'Test connection',
+            'fields' => [
+                'enabled' => 'Enabled',
+                'project_id' => 'Firebase project ID',
+                'service_account' => 'Service account key (.json)',
+            ],
+            'help' => [
+                'service_account' => 'Upload the JSON key of a service account with the Firebase Cloud Messaging role (Firebase console › Project settings › Service accounts).',
+            ],
+        ],
         'billing' => [
             'title' => 'Billing',
             'description' => 'Tax, invoice due dates, the renewal grace period and the seller block printed on platform invoices.',

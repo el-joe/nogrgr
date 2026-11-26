@@ -58,4 +58,7 @@ enum StoreSettingKey: string
 
     /** Settings › Return policy (AfterSales\Services\ReturnPolicyService): stricter store override of the platform default. */
     case ReturnPolicy = 'return_policy';
+
+    /** Mobile app (Api\Services\MobileAppSettingsService): releases per platform (min / latest version, store URL), maintenance + message, splash, feature switches. */
+    case MobileApp = 'mobile_app';
 }

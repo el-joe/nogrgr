@@ -26,6 +26,16 @@ return [
     | Geocoding. Providers: App\Modules\Localization\Enums\GeocodingProvider. The User-Agent
     | names the application only (Nominatim usage policy); never put personal data in it.
     */
+    /*
+    | Firebase Cloud Messaging (mobile push, P11). Filled from Admin › Integrations ›
+    | Firebase (decision #69): project id + service account JSON key.
+    */
+    'fcm' => [
+        'enabled' => false,
+        'project_id' => null,
+        'service_account' => null,
+    ],
+
     'geocoding' => [
         'enabled' => false,
         'reverse_provider' => 'nominatim',

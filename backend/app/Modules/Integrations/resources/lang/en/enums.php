@@ -10,6 +10,7 @@ return [
         'ai' => 'AI translation',
         'neozena' => 'Neozena catalog',
         'geocoding' => 'Geocoding',
+        'firebase' => 'Push notifications (Firebase)',
         'billing' => 'Billing',
         'commerce' => 'Checkout & API',
         'domains' => 'Domains & DNS',

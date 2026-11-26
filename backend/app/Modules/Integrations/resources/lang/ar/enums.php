@@ -10,6 +10,7 @@ return [
         'ai' => 'ترجمة الذكاء الاصطناعي',
         'neozena' => 'كتالوج Neozena',
         'geocoding' => 'تحديد العناوين',
+        'firebase' => 'الإشعارات الفورية (Firebase)',
         'billing' => 'الفوترة',
         'commerce' => 'الدفع وواجهة API',
         'domains' => 'النطاقات وDNS',

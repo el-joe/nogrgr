@@ -27,6 +27,9 @@ enum IntegrationSection: string
     case Ai = 'ai';
     case Neozena = 'neozena';
     case Geocoding = 'geocoding';
+
+    /** Firebase Cloud Messaging: push notifications of the mobile apps (P11). */
+    case Firebase = 'firebase';
     case Billing = 'billing';
     case Commerce = 'commerce';
     case Domains = 'domains';
@@ -75,6 +78,7 @@ enum IntegrationSection: string
             self::Ai => 'sparkles',
             self::Neozena => 'download',
             self::Geocoding => 'map',
+            self::Firebase => 'notification',
             self::Billing => 'percent',
             self::Commerce => 'cart',
             self::Domains => 'link',
@@ -168,6 +172,11 @@ enum IntegrationSection: string
                 new SettingField('user_agent', required: true, maxLength: 191, default: 'NogrgrStorefront/1.0 (address lookup)'),
                 new SettingField('timeout', SettingFieldType::Number, true, default: 5, min: 1, max: 30),
                 new SettingField('cache_days', SettingFieldType::Number, true, default: 7, min: 1, max: 90),
+            ],
+            self::Firebase => [
+                $enabled,
+                new SettingField('project_id', required: true, maxLength: 120),
+                new SettingField('service_account', SettingFieldType::File, true, accept: '.json,application/json'),
             ],
             self::Billing => [
                 new SettingField('tax_rate_bp', SettingFieldType::Number, true, default: 0, min: 0, max: 10000),
@@ -267,6 +276,11 @@ enum IntegrationSection: string
                 'ipwhois_url' => ['services.geocoding.ipwhois.url'],
                 'user_agent' => ['services.geocoding.user_agent'],
                 'timeout' => ['services.geocoding.timeout'],
+            ],
+            self::Firebase => [
+                'enabled' => ['services.fcm.enabled'],
+                'project_id' => ['services.fcm.project_id'],
+                'service_account' => ['services.fcm.service_account'],
             ],
             self::Billing => [
                 'tax_rate_bp' => ['billing.tax_rate_bp'],

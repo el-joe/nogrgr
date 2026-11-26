@@ -19,12 +19,15 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -81,6 +84,28 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*', 'store-api/*') || $request->expectsJson(),
         );
+
+        /* Mobile API v1 error envelope: {success: false, message} for every non-validation error (docs/plan/mobile-api.md). */
+        $exceptions->render(function (Throwable $exception, Request $request) {
+            if (! $request->is('api/mobile/*') || $exception instanceof ValidationException) {
+                return null;
+            }
+
+            if ($exception instanceof AuthenticationException) {
+                return JsonResponder::error((string) __('api::mobile.unauthenticated'), 401);
+            }
+
+            if ($exception instanceof HttpExceptionInterface) {
+                $status = $exception->getStatusCode();
+                $message = $status === 404 && ! tenancy()->initialized
+                    ? (string) __('api::store.tenant_not_found')
+                    : ($exception->getMessage() !== '' ? $exception->getMessage() : (SymfonyResponse::$statusTexts[$status] ?? 'Error'));
+
+                return JsonResponder::error($message, $status)->withHeaders($exception->getHeaders());
+            }
+
+            return null;
+        });
 
         /* 401 JSON carries the login URL of the current surface / host mode for resources/js/core/http.js. */
         $exceptions->render(function (AuthenticationException $exception, Request $request) {

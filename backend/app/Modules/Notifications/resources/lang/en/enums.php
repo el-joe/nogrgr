@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'device_platform' => [
+        'ios' => 'iOS',
+        'android' => 'Android',
+    ],
     'notification_category' => [
         'orders' => 'Orders',
         'vendors' => 'Vendors',

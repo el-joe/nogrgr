@@ -68,10 +68,18 @@ class CustomerProfileService extends BaseService
      */
     public function changePassword(Customer $customer, string $password, Request $request): void
     {
-        $customer->forceFill(['password' => $password, 'remember_token' => Str::random(60)])->save();
+        $this->updatePassword($customer, $password);
 
         $request->session()->regenerate();
         Auth::guard('customer')->login($customer);
+    }
+
+    /**
+     * New password without a session (mobile API: the caller revokes the other tokens).
+     */
+    public function updatePassword(Customer $customer, string $password): void
+    {
+        $customer->forceFill(['password' => $password, 'remember_token' => Str::random(60)])->save();
         $this->auditor->record(AuditAction::PasswordChanged, $customer);
     }
 
@@ -81,6 +89,20 @@ class CustomerProfileService extends BaseService
      * own address snapshots). Signs the customer out.
      */
     public function delete(Customer $customer, Request $request): void
+    {
+        $this->anonymise($customer);
+
+        Auth::guard('customer')->logout();
+        $request->session()->forget(EnsureCustomerSessionTenant::SESSION_KEY);
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
+    }
+
+    /**
+     * The account deletion itself (no session work): used by the storefront and the
+     * mobile API.
+     */
+    public function anonymise(Customer $customer): void
     {
         $this->auditor->record(AuditAction::AccountDeleted, $customer);
 
@@ -105,11 +127,6 @@ class CustomerProfileService extends BaseService
 
             $customer->delete();
         });
-
-        Auth::guard('customer')->logout();
-        $request->session()->forget(EnsureCustomerSessionTenant::SESSION_KEY);
-        $request->session()->regenerate();
-        $request->session()->regenerateToken();
     }
 
     private function applyLocale(string $locale): void

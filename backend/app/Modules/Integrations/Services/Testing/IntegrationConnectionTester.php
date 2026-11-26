@@ -16,6 +16,7 @@ use App\Modules\Integrations\Enums\MailEncryption;
 use App\Modules\Integrations\Exceptions\ConnectionTestFailed;
 use App\Modules\Integrations\Mail\IntegrationTestMail;
 use App\Modules\Integrations\Support\AppleClientSecret;
+use App\Modules\Integrations\Support\GoogleServiceAccountToken;
 use App\Modules\Integrations\Support\PusherSignature;
 use App\Modules\Integrations\Support\SocialRedirectUri;
 use Illuminate\Http\Client\ConnectionException;
@@ -57,6 +58,7 @@ class IntegrationConnectionTester
                 IntegrationSection::Ai => $this->ai($settings, TranslationProvider::from((string) $target)),
                 IntegrationSection::Neozena => $this->neozena($settings),
                 IntegrationSection::Geocoding => $this->geocoding($settings),
+                IntegrationSection::Firebase => $this->firebase($settings),
                 IntegrationSection::Billing, IntegrationSection::Commerce, IntegrationSection::Domains, IntegrationSection::Affiliates => throw new ConnectionTestFailed(ConnectionErrorType::Misconfigured),
             };
         } catch (ConnectionTestFailed $exception) {
@@ -318,6 +320,19 @@ class IntegrationConnectionTester
         if ($ip->json('success') !== true) {
             throw new ConnectionTestFailed(ConnectionErrorType::UnexpectedResponse, 'ipwho.is');
         }
+
+        return null;
+    }
+
+    /**
+     * Firebase: the service account can get an FCM access token.
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    private function firebase(array $settings): null
+    {
+        $this->require($settings, ['project_id', 'service_account']);
+        GoogleServiceAccountToken::accessToken((string) $settings['service_account'], fresh: true);
 
         return null;
     }
