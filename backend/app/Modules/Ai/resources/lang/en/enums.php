@@ -35,4 +35,12 @@ return [
         'done' => 'Translated',
         'failed' => 'Failed',
     ],
+    'ai_feature' => [
+        'store_translation' => 'Paid store translation',
+        'delta_translation' => 'Weekly delta translation',
+        'product_translation' => 'Product “Translate with AI”',
+        'catalog_translation' => 'Catalogue translation (admin)',
+        'static_key_translation' => 'Static texts translation (admin)',
+        'store_text_suggestion' => 'Store text suggestions',
+    ],
 ];

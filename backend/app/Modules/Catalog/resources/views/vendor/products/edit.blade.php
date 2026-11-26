@@ -4,13 +4,16 @@
     live server preview), store category / badge placement (012d) and active / featured.
     Central data — content, images, stock, weight, variants — is read-only (012c stock &
     weight, 012e central snapshot); changes go through "Request edit" (VEN-013a) and an
-    approved request writes the store override. Content & AI translation (012b) is P10.
+    approved request writes the store override. Content & translations (012b): the texts per
+    store language + "Translate with AI" (Ai module partials, preview then save into the
+    store override in the chosen languages only).
     Data: $product, $view (StoreProductView), $rows, $summary, $categoryOptions, $badgeOptions, $storeCategoryOptions, $canManage, $tab.
 --}}
 @php
     $central = $view->central;
     $tabs = [
         'pricing' => __('catalog::vendor.edit.tabs.pricing'),
+        'content' => __('ai::product_translation.tab'),
         'stock' => __('catalog::vendor.edit.tabs.stock'),
         'categories' => __('catalog::vendor.edit.tabs.categories'),
         'snapshot' => __('catalog::vendor.edit.tabs.snapshot'),
@@ -178,6 +181,11 @@
                 </section>
             </x-ui::tab-panel>
 
+            {{-- 012b Content & translations (+ Translate with AI) --}}
+            <x-ui::tab-panel tabs="product-edit-tabs" key="content" :active="$tab === 'content'" class="pt-5">
+                @include('ai::vendor.product-translation.tab', ['product' => $product])
+            </x-ui::tab-panel>
+
             {{-- 012e Central snapshot (read-only) --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="snapshot" :active="$tab === 'snapshot'" class="pt-5">
                 <div class="grid items-start gap-4 lg:grid-cols-2">
@@ -217,5 +225,6 @@
     </form>
 
     @include('catalog::vendor.products._modals', ['canManage' => $canManage])
+    @include('ai::vendor.product-translation.modal', ['product' => $product])
     @include('commerce::vendor.flash-sales._attach-modal')
 </x-vendor::layout>

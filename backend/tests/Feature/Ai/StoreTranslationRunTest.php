@@ -2,8 +2,10 @@
 
 use App\Modules\Ai\Enums\StoreTranslationSection;
 use App\Modules\Ai\Enums\TranslationItemStatus;
+use App\Modules\Ai\Models\AiUsageLog;
 use App\Modules\Ai\Models\StoreTranslationItem;
 use App\Modules\Ai\Notifications\StoreTranslationRunNotification;
+use App\Modules\Ai\Services\StoreTranslation\DeltaTranslationService;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductOverride;
 use App\Modules\Catalog\Models\ProductVariant;
@@ -17,6 +19,7 @@ use App\Modules\Integrations\Enums\IntegrationSection;
 use App\Modules\Integrations\Repositories\Contracts\SettingsRepositoryContract;
 use App\Modules\Localization\Enums\StaticTextSource;
 use App\Modules\Localization\Enums\TranslationRunStatus;
+use App\Modules\Localization\Enums\TranslationRunTrigger;
 use App\Modules\Localization\Models\ContentTranslationLock;
 use App\Modules\Localization\Models\Language;
 use App\Modules\Localization\Models\StoreTranslationRun;
@@ -275,4 +278,49 @@ it('serves the live run status to staff who can see the languages page only', fu
         ->assertSee('data-run-slot="fr"', false);
 
     expect($run->fresh()->status)->toBe(TranslationRunStatus::Translating);
+});
+
+it('weekly delta re-translates only new / changed items and never switches a language back on', function (): void {
+    fakePaidProvider($this);
+    $ids = seedStoreContent($this);
+    queueFrenchRun($this);
+    $this->sent = [];
+
+    // Nothing changed: the delta run sends nothing.
+    $this->artisan('ai:translate-deltas')->assertSuccessful();
+    $delta = StoreTranslationRun::withoutTenantScope()->where('tenant_id', $this->tenant->id)->latest('id')->first();
+    expect($delta->trigger)->toBe(TranslationRunTrigger::Delta)
+        ->and($delta->status)->toBe(TranslationRunStatus::Completed)
+        ->and($this->sent)->toBe([]);
+
+    // A changed English source + a new category are the only texts sent.
+    $this->tenant->run(function () use ($ids): void {
+        StoreCategory::query()->find($ids['category'])->setTranslation('name', 'en', 'Sneakers')->save();
+        StoreCategory::factory()->create(['name' => ['en' => 'Hats'], 'description' => null, 'meta_keywords' => null, 'meta_description' => null]);
+    });
+    app(DeltaTranslationService::class)->queueDue();
+
+    expect($this->sent)->toContain('Sneakers')->toContain('Hats')->not->toContain('Summer sale')->not->toContain('Welcome');
+    $this->tenant->run(fn () => expect(StoreCategory::query()->find($ids['category'])->getTranslation('name', 'fr', false))->toBe('[fr] Sneakers'));
+    expect(AiUsageLog::withoutTenantScope()->where('feature', 'delta_translation')->where('tenant_id', $this->tenant->id)->exists())->toBeTrue();
+    Notification::assertSentToTimes($this->owner, StoreTranslationRunNotification::class, 1);
+
+    // A language the vendor switched off gets no delta run.
+    $this->tenant->run(fn () => TenantLanguage::query()->where('language_code', 'fr')->update(['is_enabled' => false]));
+    $before = StoreTranslationRun::withoutTenantScope()->count();
+    expect(app(DeltaTranslationService::class)->queueDue())->toBe([])
+        ->and(StoreTranslationRun::withoutTenantScope()->count())->toBe($before);
+    $this->tenant->run(fn () => expect(TenantLanguage::query()->where('language_code', 'fr')->value('is_enabled'))->toBeFalse());
+});
+
+it('logs the paid run tokens in the AI usage log', function (): void {
+    fakePaidProvider($this);
+    seedStoreContent($this);
+    $run = queueFrenchRun($this)->fresh();
+
+    $logs = AiUsageLog::withoutTenantScope()->where('subject', 'run:'.$run->id)->get();
+    expect($logs)->not->toBeEmpty()
+        ->and($logs->first()->provider)->toBe('openai')
+        ->and($logs->first()->model)->toBe('gpt-db-model')
+        ->and($logs->sum('prompt_tokens'))->toBe($run->prompt_tokens);
 });

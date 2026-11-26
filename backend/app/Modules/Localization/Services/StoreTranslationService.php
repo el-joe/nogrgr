@@ -4,7 +4,10 @@ namespace App\Modules\Localization\Services;
 
 use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Ai\Contracts\TranslationClient;
+use App\Modules\Ai\DTOs\AiUsageContext;
+use App\Modules\Ai\Enums\AiFeature;
 use App\Modules\Ai\Exceptions\AiRequestException;
+use App\Modules\Ai\Services\Usage\AiUsageRecorder;
 use App\Modules\Localization\Enums\StaticTextSource;
 use App\Modules\Localization\Enums\StoreContentType;
 use App\Modules\Localization\Exceptions\TranslationRuleException;
@@ -284,7 +287,8 @@ class StoreTranslationService
         }
 
         try {
-            $result = $this->client()->translate(['text' => $source], $from, $to);
+            $client = $this->client();
+            $result = app(AiUsageRecorder::class)->measure($client, new AiUsageContext(AiFeature::StoreTextSuggestion), static fn (): array => $client->translate(['text' => $source], $from, $to));
         } catch (AiRequestException) {
             throw TranslationRuleException::translationUnavailable();
         }

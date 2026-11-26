@@ -9,8 +9,11 @@ use Spatie\Translatable\HasTranslations;
 
 /**
  * The current store's overrides of one CENTRAL product (tenant DB, decision #65): per
- * field, null = use the central value. Written ONLY by approved edit requests (ADM-018b);
- * the vendor never writes it directly. `approvals`: "field[:locale]" =>
+ * field, null = use the central value; translatable fields are read per locale (a locale
+ * missing from the override falls back to the central value, StoreCatalogReader). Written
+ * only by approved edit requests (ADM-018b) and by AI translation runs (paid full-store run,
+ * VEN-012b "Translate with AI", weekly delta — target locales only); the vendor never edits
+ * it directly. `approvals`: "field[:locale]" =>
  * {edit_request_id, approved_by, approved_at, central_value}.
  *
  * @property int $id

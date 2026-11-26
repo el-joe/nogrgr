@@ -52,6 +52,18 @@ final readonly class StoreProductView
         return $this->imageUrls[0] ?? null;
     }
 
+    /**
+     * A translatable field of the store's override in the current locale only ('' / null =
+     * not overridden in this language → the caller shows the central value). Approved edit
+     * requests and AI translation runs each write only the languages they handled.
+     */
+    public function overrideText(string $field): ?string
+    {
+        $value = $this->override !== null ? (string) $this->override->getTranslation($field, app()->getLocale(), false) : '';
+
+        return $value !== '' ? $value : null;
+    }
+
     public function costBasis(): ?Money
     {
         return $this->central?->costBasis();

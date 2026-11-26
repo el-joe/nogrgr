@@ -9,7 +9,8 @@ use Spatie\Translatable\HasTranslations;
 
 /**
  * The current store's overrides of one CENTRAL variant (tenant DB, decision #65): null
- * fields fall back to the central variant. Written only by approved edit requests.
+ * fields (and locales missing from `title`) fall back to the central variant. Written only
+ * by approved edit requests and by AI translation runs (target locales only).
  *
  * @property int $id
  * @property int $product_id central products.id

@@ -10,6 +10,7 @@ use App\Modules\Integrations\Enums\PaymentGatewayCode;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
 use App\Modules\Localization\DTOs\StoreLanguageSettingsData;
 use App\Modules\Localization\Enums\TranslationRunStatus;
+use App\Modules\Localization\Enums\TranslationRunTrigger;
 use App\Modules\Localization\Events\StoreTranslationRunQueued;
 use App\Modules\Localization\Exceptions\TranslationRuleException;
 use App\Modules\Localization\Models\Language;
@@ -185,7 +186,7 @@ class StoreLanguageService extends BaseService
     /**
      * Paid purchase → its translation run (once per purchase), announced to the P10 run.
      */
-    public function queueRun(int $tenantId, ?int $languageId, string $code, ?int $purchaseId): StoreTranslationRun
+    public function queueRun(int $tenantId, ?int $languageId, string $code, ?int $purchaseId, TranslationRunTrigger $trigger = TranslationRunTrigger::Purchase): StoreTranslationRun
     {
         $existing = $purchaseId !== null ? $this->runs->forPurchase($purchaseId) : null;
 
@@ -199,6 +200,7 @@ class StoreLanguageService extends BaseService
             'language_id' => $languageId,
             'language_code' => strtolower($code),
             'addon_purchase_id' => $purchaseId,
+            'trigger' => $trigger,
             'status' => TranslationRunStatus::Queued,
             'queued_at' => now(),
         ]);

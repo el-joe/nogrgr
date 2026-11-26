@@ -105,8 +105,8 @@ class ProductPageService
             reviews: $this->reviews($view->id()),
             related: $this->related($view->id(), $category),
             favorited: false,
-            metaTitle: $view->product->meta_title ?: ($view->central->meta_title ?? null),
-            metaDescription: $view->product->meta_description ?: ($view->central->meta_description ?? $view->summary),
+            metaTitle: $view->product->meta_title ?: ($view->overrideText('meta_title') ?? $view->central->meta_title ?? null),
+            metaDescription: $view->product->meta_description ?: ($view->overrideText('meta_description') ?? $view->central->meta_description ?? $view->summary),
         );
     }
 

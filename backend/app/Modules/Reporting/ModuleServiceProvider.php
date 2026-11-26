@@ -10,6 +10,7 @@ use App\Modules\Reporting\Listeners\RecordOrderFacts;
 use App\Modules\Reporting\Listeners\RecordProductActivity;
 use App\Modules\Reporting\Repositories\Contracts\AffiliateReportRepositoryContract;
 use App\Modules\Reporting\Repositories\Contracts\AfterSalesReportRepositoryContract;
+use App\Modules\Reporting\Repositories\Contracts\AiUsageReportRepositoryContract;
 use App\Modules\Reporting\Repositories\Contracts\OrderFactRepositoryContract;
 use App\Modules\Reporting\Repositories\Contracts\ProductActivityRepositoryContract;
 use App\Modules\Reporting\Repositories\Contracts\ReportFactRepositoryContract;
@@ -17,6 +18,7 @@ use App\Modules\Reporting\Repositories\Contracts\SubscriptionReportRepositoryCon
 use App\Modules\Reporting\Repositories\Contracts\VendorAnalyticsRepositoryContract;
 use App\Modules\Reporting\Repositories\Eloquent\AffiliateReportRepository;
 use App\Modules\Reporting\Repositories\Eloquent\AfterSalesReportRepository;
+use App\Modules\Reporting\Repositories\Eloquent\AiUsageReportRepository;
 use App\Modules\Reporting\Repositories\Eloquent\OrderFactRepository;
 use App\Modules\Reporting\Repositories\Eloquent\ProductActivityRepository;
 use App\Modules\Reporting\Repositories\Eloquent\ReportFactRepository;
@@ -39,6 +41,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         AfterSalesReportRepositoryContract::class => AfterSalesReportRepository::class,
         SubscriptionReportRepositoryContract::class => SubscriptionReportRepository::class,
         AffiliateReportRepositoryContract::class => AffiliateReportRepository::class,
+        AiUsageReportRepositoryContract::class => AiUsageReportRepository::class,
         ProductActivityRepositoryContract::class => ProductActivityRepository::class,
         VendorAnalyticsRepositoryContract::class => VendorAnalyticsRepository::class,
     ];

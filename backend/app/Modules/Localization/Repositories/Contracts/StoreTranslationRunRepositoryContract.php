@@ -21,4 +21,12 @@ interface StoreTranslationRunRepositoryContract extends RepositoryContract
      * @return Collection<string, StoreTranslationRun>
      */
     public function latestByLanguage(int $tenantId): Collection;
+
+    /**
+     * Every store × language whose latest run completed, for active stores only (weekly
+     * delta auto-translation).
+     *
+     * @return Collection<int, StoreTranslationRun>
+     */
+    public function latestCompletedOfActiveStores(): Collection;
 }

@@ -106,7 +106,8 @@ class StoreCatalogReader
             /** @var ProductVariant $variant */
             $variant->setRelation('product', $central);
             $variantOverride = $variantOverrides->get($variant->id);
-            $title = $variantOverride !== null ? (string) $variantOverride->title : '';
+            // Per locale, no fallback: a translation run writes only its target language.
+            $title = $variantOverride !== null ? (string) $variantOverride->getTranslation('title', app()->getLocale(), false) : '';
             $images = $variantOverride?->images;
 
             $variants[] = new StoreVariantView(

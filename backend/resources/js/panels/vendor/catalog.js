@@ -5,7 +5,8 @@
  *    new product preview (011a), select markets (015a / 015b), request detail (013)
  *  - price list: live preview (server-priced, Commerce\Pricing) + queued apply with
  *    progress polling; bulk markup for selected product cards
- *  - product edit pricing tab: live row preview + summary
+ *  - product edit pricing tab: live row preview + summary; Content tab "Translate with AI"
+ *    (VEN-012b, product-ai-translate.js)
  *  - new products: add one / selected / all
  *  - product sort: drag & drop (SortableJS) + keyboard moves, save order
  *  - own product form: variants repeater, countries picker; markets / country search
@@ -17,6 +18,7 @@ import { t } from '../../core/i18n';
 import { notify } from '../../core/notify';
 import { loadSortable, closeOverlay, confirmDialog } from '../core.js';
 import { bindRemoteModals } from '../remote-modal.js';
+import initProductAiTranslate from './product-ai-translate.js';
 
 const debounce = (callback, wait = 300) => {
     let timer;
@@ -373,6 +375,7 @@ function initOwnForm(form) {
 }
 
 export default function initCatalog(page) {
+    initProductAiTranslate();
     if (document.querySelector('[data-remote-body]')) {
         bindRemoteModals(page);
     }

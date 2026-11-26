@@ -93,7 +93,7 @@ class StoreProductController extends Controller
             'badgeOptions' => $this->catalog->badgeOptions(),
             'storeCategoryOptions' => $taxonomy->ownCategoryOptions(),
             'canManage' => (bool) $request->user('vendor')?->can('catalog.products.manage'),
-            'tab' => in_array($request->query('tab'), ['pricing', 'stock', 'categories', 'snapshot'], true) ? (string) $request->query('tab') : 'pricing',
+            'tab' => in_array($request->query('tab'), ['pricing', 'content', 'stock', 'categories', 'snapshot'], true) ? (string) $request->query('tab') : 'pricing',
         ]);
     }
 

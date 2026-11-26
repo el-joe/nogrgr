@@ -5,7 +5,7 @@ namespace App\Modules\Reporting\Enums;
 use App\Shared\Enums\Concerns\HasEnumHelpers;
 
 /**
- * Tabs of Admin › Reports (ADM-070a…070k, Figma 75:68061 / 75:69019 / 75:69998), in the
+ * Tabs of Admin › Reports (ADM-070a…070l, Figma 75:68061 / 75:69019 / 75:69998), in the
  * Figma order. The slug is the `{tab}` of `admin.reports.show`.
  */
 enum ReportTab: string
@@ -23,6 +23,7 @@ enum ReportTab: string
     case Vendors = 'vendors';
     case Products = 'products';
     case Customers = 'customers';
+    case AiUsage = 'ai_usage';
 
     public function label(): string
     {
@@ -34,6 +35,6 @@ enum ReportTab: string
      */
     public function filtersByCountry(): bool
     {
-        return ! in_array($this, [self::Subscriptions, self::Affiliates, self::Products], true);
+        return ! in_array($this, [self::Subscriptions, self::Affiliates, self::Products, self::AiUsage], true);
     }
 }

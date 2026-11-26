@@ -31,7 +31,9 @@ return [
     'validation' => [
         'window' => 'The period can cover at most :days days.',
     ],
+    'platform' => 'Platform',
     'tabs' => [
+        'ai_usage' => 'AI usage',
         'sales' => 'Sales',
         'orders' => 'Orders',
         'profit' => 'Profit',
@@ -45,6 +47,10 @@ return [
         'customers' => 'Customers',
     ],
     'kpi' => [
+        'ai_calls' => 'AI calls',
+        'ai_tokens' => 'Tokens used',
+        'ai_prompt_tokens' => 'Prompt tokens',
+        'ai_completion_tokens' => 'Completion tokens',
         'gross_sales' => 'Gross sales',
         'orders' => 'Orders',
         'aov' => 'AOV',
@@ -94,6 +100,7 @@ return [
         'arr' => 'Run-rate (ARR)',
     ],
     'charts' => [
+        'ai_features' => ['title' => 'Tokens by feature', 'subtitle' => 'Prompt + completion tokens in the period'],
         'sales_by_period' => ['title' => 'Sales over time', 'subtitle' => 'Gross sales vs platform share (USD)'],
         'sales_by_country' => ['title' => 'Sales by country', 'subtitle' => 'Share of gross sales'],
         'orders_per_period' => ['title' => 'Orders over time', 'subtitle' => 'Placed orders, cancellations excluded'],
@@ -133,6 +140,7 @@ return [
         'vendor' => 'Store coupon',
     ],
     'tables' => [
+        'ai_usage' => 'AI usage by store, feature and model',
         'sales' => 'Sales by store',
         'orders' => 'Monthly orders by store',
         'profit' => 'Profit by store',
@@ -146,6 +154,12 @@ return [
         'customers' => 'Customers by store',
     ],
     'columns' => [
+        'ai_feature' => 'Feature',
+        'ai_provider' => 'Provider · model',
+        'ai_calls' => 'Calls',
+        'ai_prompt_tokens' => 'Prompt tokens',
+        'ai_completion_tokens' => 'Completion tokens',
+        'ai_total_tokens' => 'Total tokens',
         'store' => 'Store',
         'orders' => 'Orders',
         'gross' => 'Gross',

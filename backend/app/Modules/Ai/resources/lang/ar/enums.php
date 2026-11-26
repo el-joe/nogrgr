@@ -35,4 +35,12 @@ return [
         'done' => 'مترجم',
         'failed' => 'فشل',
     ],
+    'ai_feature' => [
+        'store_translation' => 'ترجمة المتجر المدفوعة',
+        'delta_translation' => 'الترجمة الأسبوعية للتغييرات',
+        'product_translation' => 'ترجمة المنتج بالذكاء الاصطناعي',
+        'catalog_translation' => 'ترجمة الكتالوج (الإدارة)',
+        'static_key_translation' => 'ترجمة النصوص الثابتة (الإدارة)',
+        'store_text_suggestion' => 'اقتراحات نصوص المتجر',
+    ],
 ];

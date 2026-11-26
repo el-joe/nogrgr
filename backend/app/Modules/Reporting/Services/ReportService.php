@@ -6,6 +6,7 @@ use App\Modules\Reporting\DTOs\ReportFilterData;
 use App\Modules\Reporting\DTOs\ReportSummary;
 use App\Modules\Reporting\Enums\ReportTab;
 use App\Modules\Reporting\Services\Reports\AffiliatesReport;
+use App\Modules\Reporting\Services\Reports\AiUsageReport;
 use App\Modules\Reporting\Services\Reports\CustomersReport;
 use App\Modules\Reporting\Services\Reports\OrdersReport;
 use App\Modules\Reporting\Services\Reports\ProductsReport;
@@ -40,6 +41,7 @@ class ReportService extends BaseService
         'vendors' => VendorsReport::class,
         'products' => ProductsReport::class,
         'customers' => CustomersReport::class,
+        'ai_usage' => AiUsageReport::class,
     ];
 
     public function report(ReportTab $tab): Report

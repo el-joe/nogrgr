@@ -1,9 +1,12 @@
 <?php
 
 use App\Modules\Catalog\Models\Category;
+use App\Modules\Catalog\Models\ProductOverride;
 use App\Modules\Catalog\Models\StoreProduct;
+use App\Modules\Catalog\Models\VariantOverride;
 use App\Modules\Storefront\Services\StorefrontContext;
 use App\Shared\Money\Money;
+use Illuminate\Support\Facades\Cache;
 
 require_once __DIR__.'/../Commerce/StoreApiHelpers.php';
 
@@ -117,6 +120,34 @@ it('renders the product page with Product / Offer JSON-LD in the shopping countr
         ->assertSee('https://schema.org/InStock', false);
 
     expect($response->getContent())->toContain('id="sf-product"');
+});
+
+it('reads store overrides per language and falls back to central for languages the override lacks', function (): void {
+    $shop = catalogShop();
+    $shop->central->update(['name' => ['en' => 'Central Speaker', 'ar' => 'سماعة'], 'meta_title' => ['en' => 'Central meta']]);
+    $variant = $shop->central->variants()->first();
+    $variant?->update(['title' => ['en' => 'Central Large']]);
+    // A paid run wrote only French; the storefront in English must still show the central texts.
+    $shop->tenant->run(function () use ($shop, $variant): void {
+        ProductOverride::query()->create(['product_id' => $shop->central->id, 'name' => ['fr' => 'Enceinte'], 'meta_title' => ['fr' => 'Méta FR']]);
+
+        if ($variant !== null) {
+            VariantOverride::query()->create(['product_id' => $shop->central->id, 'variant_id' => $variant->id, 'title' => ['fr' => 'Grand FR']]);
+        }
+    });
+    $slug = $shop->tenant->run(fn () => $shop->catalog->fresh()->slug) ?: $shop->central->fresh()->slug;
+    $url = $this->tenantUrl($shop->tenant, '/products/'.$shop->catalog->id.'/'.$slug.'?lang=en');
+
+    $html = $this->withSession(inSa($shop))->followingRedirects()->get($url)->assertOk()->getContent();
+
+    expect($html)->toContain('Central Speaker')->toContain('Central meta')->not->toContain('Enceinte')->not->toContain('Méta FR')->not->toContain('Grand FR');
+
+    // An approved English override wins in English only.
+    $shop->tenant->run(fn () => ProductOverride::query()->where('product_id', $shop->central->id)->first()->setTranslation('name', 'en', 'Store Speaker')->setTranslation('meta_title', 'en', 'Store meta')->save());
+    Cache::flush();
+
+    $html = $this->withSession(inSa($shop))->followingRedirects()->get($url)->assertOk()->getContent();
+    expect($html)->toContain('Store Speaker')->toContain('Store meta');
 });
 
 it('redirects a product URL without the canonical slug', function (): void {

@@ -429,6 +429,13 @@ Every remaining admin and vendor page has a design. Frames are named with their 
 | Settings (2) `91:120035` | 91:114835 VEN-080/080a Email templates · 91:115511 VEN-081 SMTP · 91:116087 VEN-082/082a Domains + DNS check · 91:116736 VEN-083 Tracking pixels · 91:117308 VEN-084 Compliance center · 91:117954 VEN-085 API keys · 91:118575 VEN-086 Audit log · 91:119215 VEN-087 Notification prefs · 91:119876 Modals VEN-071a, 071b, add domain |
 | UI kit `92:131175` | 92:130313 VEN-093 UI kit (vendor mode of the shared library) |
 
+## Vendor — Tenant Panel first (decision #101, audit `vendor-figma-audit.md`)
+- Screens that exist on client page `12:10147` are built from 12:10147 only. Frames on `60:10147` are for missing screens and must use the 12:10147 look: flat 236 px sidebar (`12:10990` / `12:10996` items), 74 px top bar, bg #F3F3F3, borderless r12 cards, Bold 32 titles, square `Component 1` buttons (`12:40267`), `State` pills (`12:40366`), `KPI Card` (`12:40706`), filled r8 inputs, and the black mobile header with `Nav bar mobile` (`12:11131`).
+- The batch-2 shell (`62:21332` sidebar, Ctrl-K top bar, r10 buttons, bordered cards) is superseded.
+- New aligned frames:
+  - VEN-074 AI translation: `180:28706` (en), `180:29374` (ar RTL), `182:29054` (mobile)
+  - section `184:29202`: VEN-021 `184:29203`, VEN-012 `184:29780`, VEN-022 `184:30357`, VEN-076 `184:30994`
+
 ## Known gaps (batch 2)
 - Product thumbnails, banners and theme previews are gradient placeholders. ComfyUI image generation was not used in this batch.
 - Arabic sample text inside Outfit-styled components renders with Figma's fallback font. Code uses IBM Plex Sans Arabic in the vendor panel (decision #89).

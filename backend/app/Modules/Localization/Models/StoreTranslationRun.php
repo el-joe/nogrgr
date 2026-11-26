@@ -3,6 +3,7 @@
 namespace App\Modules\Localization\Models;
 
 use App\Modules\Localization\Enums\TranslationRunStatus;
+use App\Modules\Localization\Enums\TranslationRunTrigger;
 use App\Shared\Tenancy\Concerns\BelongsToCurrentTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -18,6 +19,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int|null $language_id
  * @property string $language_code
  * @property int|null $addon_purchase_id
+ * @property TranslationRunTrigger $trigger purchase (full run) or weekly delta
  * @property TranslationRunStatus $status
  * @property int $progress
  * @property int $total_items
@@ -43,10 +45,15 @@ class StoreTranslationRun extends Model
     protected $table = 'store_translation_runs';
 
     /**
+     * @var array<string, mixed>
+     */
+    protected $attributes = ['trigger' => 'purchase'];
+
+    /**
      * @var list<string>
      */
     protected $fillable = [
-        'tenant_id', 'language_id', 'language_code', 'addon_purchase_id', 'status', 'progress', 'total_items',
+        'tenant_id', 'language_id', 'language_code', 'addon_purchase_id', 'trigger', 'status', 'progress', 'total_items',
         'done_items', 'failed_items', 'attempts', 'last_error', 'provider', 'model', 'prompt_tokens', 'completion_tokens',
         'queued_at', 'started_at', 'finished_at',
     ];
@@ -58,6 +65,7 @@ class StoreTranslationRun extends Model
     {
         return [
             'status' => TranslationRunStatus::class,
+            'trigger' => TranslationRunTrigger::class,
             'progress' => 'integer',
             'total_items' => 'integer',
             'done_items' => 'integer',

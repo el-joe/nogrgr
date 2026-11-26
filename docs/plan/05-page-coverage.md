@@ -139,7 +139,7 @@
 | ADM-070i | ↳ Tab: Vendor leaderboard | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69998 | P9 | done — P9 (decision #90) |
 | ADM-070j | ↳ Tab: Product performance | `admin.reports.show` | views, add-to-cart, conversion | — (new) | designed: Admin Panel 75:69998 | P9 | done — P9 (decision #90) |
 | ADM-070k | ↳ Tab: Customers (new / returning) | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69998 | P9 | done — P9 (decision #90) |
-| ADM-070l | ↳ Tab: AI usage (tokens, cost per tenant/feature) | `admin.reports.show` | | — (new, A6c) | designed: Admin Panel 75:69998 | P10 | todo |
+| ADM-070l | ↳ Tab: AI usage (tokens, cost per tenant/feature) | `admin.reports.show` | | — (new, A6c) | designed: Admin Panel 75:69998 | P10 | done |
 | ADM-080 | Blog categories | `admin.content.blog-categories.index` | Std; list, delete | admin.blog.categories | designed: Admin Panel 76:70524 | P6 | done |
 | ADM-080a | ↳ Blog category create / edit | `admin.content.blog-categories.create` / `.edit` | translations | admin.blog.categories.create, admin.blog.categories.edit | designed: Admin Panel 76:76659 | P6 | done |
 | ADM-081 | Blog posts | `admin.content.blog-posts.index` | Std; list, publish, archive, delete | admin.blog.posts | designed: Admin Panel 76:71416 | P6 | done |
@@ -231,11 +231,11 @@
 | VEN-010c | ↳ AI Advertising Studio / social posts modal (4 steps) | modal | platform, language, image, copy/download | tenant.products.social | 12:15119 | P10 | todo |
 | VEN-010d | ↳ Share modal | modal | copy, share links | tenant.products.share | designed: Vendor Panel (new screens) 83:104181 | P8 | todo |
 | VEN-010e | ↳ Shipping details modal (per destination fee) | modal | country select | — (Figma) | 12:16200 | P4 | done |
-| VEN-011 | New central products | `vendor.catalog.products.new` | Std; import selected / all | tenant.products.new | m 12:21874 | P3 | done |
+| VEN-011 | New central products | `vendor.catalog.products.new` | Std; import selected / all | tenant.products.new | 12:13819 ("New in products", named "Own products inner page"), m 12:21874 | P3 | done |
 | VEN-011a | ↳ New product preview | `vendor.catalog.products.new.show` | add | tenant.products.new.show | designed: Vendor Panel (new screens) 83:104181 | P3 | todo |
 | VEN-012 | Product edit (overrides) | `vendor.catalog.products.edit` | Std; save, protected central fields (422) | tenant.products.edit, tenant.products.create | designed: Vendor Panel (new screens) 83:100772 | P3 | done |
 | VEN-012a | ↳ Tab: Pricing per variant / country | tab | real/sell/margin | SaveProductRequest | designed: Vendor Panel (new screens) 83:100772 | P3 | done |
-| VEN-012b | ↳ Tab: Content & translations (+ "Translate with AI") | tab | preview, regenerate | ProductAiTranslationController | designed: Vendor Panel (new screens) 83:101628 | P10 | todo |
+| VEN-012b | ↳ Tab: Content & translations (+ "Translate with AI") | tab | preview, regenerate | ProductAiTranslationController | designed: Vendor Panel (new screens) 83:101628 | P10 | done |
 | VEN-012c | ↳ Tab: Stock & weight overrides | tab | | SaveProductRequest | designed: Vendor Panel (new screens) 83:101628 | P3 | done |
 | VEN-012d | ↳ Tab: Categories & badges | tab | | SaveProductRequest | designed: Vendor Panel (new screens) 83:101628 | P3 | done |
 | VEN-012e | ↳ Central snapshot (read-only) | panel | | tenant.products.central-snapshot, tenant.products.central-search | designed: Vendor Panel (new screens) 83:101628 | P3 | done |
@@ -246,7 +246,7 @@
 | VEN-015a | ↳ Select markets modal | modal | countries, search | — (Figma) | 12:14756 | P3 | todo |
 | VEN-015b | ↳ Select markets: already added state | modal state | | — (Figma) | 12:14923 | P3 | todo |
 | VEN-016 | Own products list | `vendor.catalog.own-products.index` | Std; delete, toggle | tenant.own-products.index | 12:13462 | P3 | done |
-| VEN-016a | ↳ Own product inner page | `vendor.catalog.own-products.show` | | — (Figma) | 12:13819 | P3 | todo |
+| VEN-016a | ↳ Own product inner page | `vendor.catalog.own-products.show` | | — (Figma) | no client frame (12:13819 is VEN-011 desktop) — needs a 60:10147 frame in Tenant Panel style (#101) | P3 | todo |
 | VEN-016b | ↳ Inventory (own products) | `vendor.catalog.own-products.inventory` | stock edit | — (Figma) | 12:17880, m 12:23071 | P3 | done |
 | VEN-016c | ↳ Own product create / edit (countries, variants, AI translate, AI price) | `vendor.catalog.own-products.create` / `.edit` | validation | tenant.own-products.create, tenant.own-products.edit | 12:17411, m 12:22819 | P3 | done |
 | VEN-017 | Categories | `vendor.catalog.categories.index` | Std; toggle, delete | tenant.categories.index | 12:14144 | P3 | done |
@@ -333,8 +333,8 @@
 | VEN-073 | Settings: Languages (enable free, buy paid, default, sort) | `vendor.settings.languages` | Std | tenant.settings.languages-manage, tenant.settings.languages | designed: Vendor Panel (new screens) 90:113194 | P2 | done |
 | VEN-073a | ↳ Buy language checkout → result | `vendor.settings.languages.purchase` | success / cancel | tenant.language-purchase.charge, tenant.language-purchase.cancel, tenant.language-purchase.success | designed: Vendor Panel (new screens) 90:113194 | P2 | done |
 | VEN-073b | ↳ Purchases history tab | tab | | tenant.finance.buy-languages | designed: Vendor Panel (new screens) 90:113194 | P2 | done |
-| VEN-074 | Settings: AI translation (full store, progress, history, tokens, cost) | `vendor.settings.ai-translation` | run, poll status, fail state | tenant.settings.ai-translation, tenant.settings.ai-translation.status | designed: Vendor Panel (new screens) 90:113836 | P10 | todo |
-| VEN-074a | ↳ Buy AI-translation add-on → result | `vendor.settings.ai-translation.purchase` | | tenant.ai-translation-purchase.charge, tenant.ai-translation-purchase.cancel, tenant.ai-translation-purchase.success | designed: Vendor Panel (new screens) 90:113836 | P10 | todo |
+| VEN-074 | Settings: AI translation (full store, progress, history, tokens, cost) | `vendor.settings.ai-translation` | run, poll status, fail state | tenant.settings.ai-translation, tenant.settings.ai-translation.status | designed: 180:28706 (en) · 180:29374 (ar) · m 182:29054 — aligned to Tenant Panel, #99 / #101 (old 90:113836 superseded) | P10 | todo |
+| VEN-074a | ↳ Buy AI-translation add-on → result | `vendor.settings.ai-translation.purchase` | | tenant.ai-translation-purchase.charge, tenant.ai-translation-purchase.cancel, tenant.ai-translation-purchase.success | designed: 180:28706 Languages card + result banner (ar 180:29374, m 182:29054) | P10 | todo |
 | VEN-075 | Settings: Store translations (keys, locked keys, AI translate) | `vendor.settings.translations` | save key, AI one/all | tenant.settings.translations | designed: Vendor Panel (new screens) 90:114518 | P8 | done |
 | VEN-076 | Settings: Staff | `vendor.settings.staff.index` | Std; activate, delete | tenant.settings.admins | designed: Vendor Panel (new screens) 90:115176 | P8 | done |
 | VEN-076a | ↳ Staff create / edit | modal | | tenant.settings.admins.show | designed: Vendor Panel (new screens) 90:115176 | P8 | done |

@@ -5,8 +5,9 @@ namespace App\Modules\Ai\Services\StoreTranslation;
 use App\Modules\Ai\Contracts\ReportsTokenUsage;
 use App\Modules\Ai\Contracts\TranslationClient;
 use App\Modules\Ai\DTOs\AiProviderConfig;
-use App\Modules\Ai\DTOs\TranslationItemData;
+use App\Modules\Ai\DTOs\AiUsageContext;
 use App\Modules\Ai\Enums\AiErrorType;
+use App\Modules\Ai\Enums\AiFeature;
 use App\Modules\Ai\Enums\StoreTranslationSection;
 use App\Modules\Ai\Enums\TranslationPurpose;
 use App\Modules\Ai\Events\StoreTranslationRunUpdated;
@@ -15,11 +16,12 @@ use App\Modules\Ai\Jobs\FinishStoreTranslationRun;
 use App\Modules\Ai\Jobs\TranslateStoreChunk;
 use App\Modules\Ai\Notifications\StoreTranslationRunNotification;
 use App\Modules\Ai\Repositories\Contracts\StoreTranslationItemRepositoryContract;
+use App\Modules\Ai\Services\Translation\GuardedTranslator;
 use App\Modules\Ai\Services\Translation\TranslationClientFactory;
-use App\Modules\Ai\Support\PlaceholderGuard;
 use App\Modules\Ai\Support\StoreTranslationRegistry;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffRepositoryContract;
 use App\Modules\Localization\Enums\TranslationRunStatus;
+use App\Modules\Localization\Enums\TranslationRunTrigger;
 use App\Modules\Localization\Models\StoreTranslationRun;
 use App\Modules\Localization\Repositories\Contracts\LanguageRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\StoreTranslationRunRepositoryContract;
@@ -46,6 +48,10 @@ use Throwable;
  *  3. finish: completed → the language is switched on for the store, or failed with
  *     last_error (the vendor retries). Progress goes live over Reverb after every
  *     chunk; the store owners are notified at the end.
+ * Weekly delta runs (trigger = delta, AutoTranslateDeltas) use the same steps: unchanged
+ * items are skipped by their source hash, so only new / changed content is sent; they
+ * never switch the language on and notify owners only when they fail. Token usage also
+ * goes to the AI usage log (GuardedTranslator).
  */
 class StoreTranslationRunService extends BaseService
 {
@@ -68,6 +74,7 @@ class StoreTranslationRunService extends BaseService
         private readonly TranslationClientFactory $clients,
         private readonly LanguageService $languages,
         private readonly LanguageRepositoryContract $languageRows,
+        private readonly GuardedTranslator $translator,
     ) {}
 
     public function start(int $runId): void
@@ -168,7 +175,11 @@ class StoreTranslationRunService extends BaseService
             return;
         }
 
-        $this->languages->activateForTenant($tenant, $run->language_code);
+        // A weekly delta only refreshes a bought language: it never switches one back on.
+        if ($run->trigger !== TranslationRunTrigger::Delta) {
+            $this->languages->activateForTenant($tenant, $run->language_code);
+        }
+
         $tenant->run(fn () => app(StoreTranslationService::class)->forgetStaticTexts($run->language_code));
 
         $run = $this->update($run, [
@@ -177,7 +188,10 @@ class StoreTranslationRunService extends BaseService
             'finished_at' => now(),
         ]);
         $this->broadcast($run);
-        $this->notifyOwners($tenant, $run, 'translation_completed');
+
+        if ($run->trigger !== TranslationRunTrigger::Delta) {
+            $this->notifyOwners($tenant, $run, 'translation_completed');
+        }
     }
 
     /**
@@ -272,7 +286,11 @@ class StoreTranslationRunService extends BaseService
         $usageBefore = $this->usage();
 
         try {
-            $results = $this->translateItems($pending, $locale, [(string) $tenant->name => '']);
+            $results = $this->translator->translate($this->client(), $pending, $locale, [(string) $tenant->name => ''], new AiUsageContext(
+                $run->trigger === TranslationRunTrigger::Delta ? AiFeature::DeltaTranslation : AiFeature::StoreTranslation,
+                (int) $run->tenant_id,
+                'run:'.$run->id,
+            ));
         } catch (AiRequestException $exception) {
             if (! $lastAttempt && ! in_array($exception->type, self::FATAL, true)) {
                 throw $exception;
@@ -313,66 +331,6 @@ class StoreTranslationRunService extends BaseService
         }
 
         return [$done, $failed];
-    }
-
-    /**
-     * Item key => translated fields, or null when a text lost its placeholders twice.
-     *
-     * @param  array<string, TranslationItemData>  $items
-     * @param  array<string, string>  $glossary
-     * @return array<string, array<string, string>|null>
-     *
-     * @throws AiRequestException
-     */
-    private function translateItems(array $items, string $locale, array $glossary): array
-    {
-        $results = [];
-
-        $groups = [];
-
-        foreach ($items as $key => $item) {
-            foreach ($item->texts as $field => $text) {
-                $groups[$item->from[$field]][] = [(string) $key, $field, $text];
-            }
-        }
-
-        foreach ($groups as $from => $entries) {
-            $texts = [];
-
-            foreach ($entries as $index => [, , $text]) {
-                $texts['t'.$index] = $text;
-            }
-
-            $translated = $this->client()->translate($texts, (string) $from, $locale, $glossary);
-
-            foreach ($entries as $index => [$key, $field, $text]) {
-                if (array_key_exists($key, $results) && $results[$key] === null) {
-                    continue;
-                }
-
-                $checked = $this->checked($text, (string) ($translated['t'.$index] ?? ''), (string) $from, $locale, $glossary);
-                $results[$key] = $checked === null ? null : [...($results[$key] ?? []), $field => $checked];
-            }
-        }
-
-        return $results;
-    }
-
-    /**
-     * The translation when it keeps the source's placeholders; otherwise one more try
-     * for that text alone, then null.
-     *
-     * @param  array<string, string>  $glossary
-     */
-    private function checked(string $source, string $translation, string $from, string $locale, array $glossary): ?string
-    {
-        if (trim($translation) !== '' && PlaceholderGuard::preserved($source, $translation)) {
-            return $translation;
-        }
-
-        $retry = (string) ($this->client()->translate(['text' => $source], $from, $locale, $glossary)['text'] ?? '');
-
-        return trim($retry) !== '' && PlaceholderGuard::preserved($source, $retry) ? $retry : null;
     }
 
     private function advance(int $runId, int $done, int $failed): void
