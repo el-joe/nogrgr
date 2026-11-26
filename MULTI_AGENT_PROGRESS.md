@@ -96,3 +96,4 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - Running: notif (VEN-087/090, OWN-008, dashboard widgets, analytics VEN-024/045x), langs-domains (VEN-073 languages purchase, VEN-075 translations, VEN-082 domains). Next: P10 AI, P11 mobile, P12 migration/launch, final QA gate.
 - Committed 313f1ca (languages/translations/domains #97), 782ff4c (vendor analytics #96), e53212d (P10 paid full-store translation run #98). Client chose per-language model for VEN-074 (#99).
 - Running: dash-widgets (VEN-009a/c/d/f), p10-tools (override-per-language read check, VEN-012b, ADM-091b/092a, weekly delta, AI usage log, connection test, VEN-074). Left in P10: price finder, social posts, logo generator, image search, plan limits, glossary/cost estimate/review screen.
+- Client: re-design VEN-074 in Figma first (new frame on our own page, per #99), then code it. QUEUED "ven074-design" (uiux-designer) for the next free slot, then "ven074-code".
