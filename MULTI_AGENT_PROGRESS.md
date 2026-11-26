@@ -76,3 +76,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - fixes started: permissions:sync, QA-P5-011, MAIL-015, table sort-arrow cosmetic.
 - fixes committed 3f9ca0f (suite 2020/2020): permissions:sync (QA-P5-019), ledger reconcile (QA-P5-011; run `finance:backfill-ledger --tenant=1` on nogrgr_qa), MAIL-015 review button (partial: Figma 130:10889 unchecked), sort-arrow fix, docs/plan/deploy.md, decision #80.
 - vendorp8 started: P8 vendor panel rest (VEN-030 themes, VEN-035 banners, settings, customers, marketing, staff/roles, compliance, VEN-061 invoices).
+- elora committed a3e1a12: Elora ×6 (SF-ELO all except 013/P10), store-own categories + badge shelves on all families, decision #79. Filtered suite 330/330 (full suite pending next run). Open: Elora phone v3-v6 not compared one by one, 7px mega-menu overflow (given to souqify).
+- souqify started: P7 batch 3 Souqify ×6.
