@@ -70,3 +70,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - polish batch committed cb8e8e7: store categories & badges (VEN-017/018, #74), vendor subscription VEN-060 (#75), finance:backfill-ledger, QA-P5-009/012-016 fixed, VEN-041b, admin promotion modals, overdue setting, case-insensitive picker. Suite 1983/1984 (1 = themes WIP LayeringTest).
 - themes (P7 batch 1: storefront foundation + Ecommet; sub-agents sf-catalog/sf-checkout/sf-account done) still running, uncommitted.
 - qa-p5 started: browser re-check of finance + new vendor pages, coverage flips.
+- themes P7 batch 1 committed 29be999 (full suite 1984/1984): storefront foundation + Ecommet (SF-ECO all except 012), SF-ALL-001..004, ADM-085/085a, decisions #76-#78. Open: Stripe.js CDN exception (#78, needs user), store-own categories on storefront, VEN-030/035 vendor pages, social login, Authorize.Net/2Checkout drivers, MAIL-015.
+- elora started: P7 batch 2 Elora ×6 + store-own categories on storefront.
