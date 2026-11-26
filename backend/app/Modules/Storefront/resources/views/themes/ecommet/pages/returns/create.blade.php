@@ -87,6 +87,10 @@
                 </p>
             @endif
 
+            @if (filled($o['policy']['text'] ?? null))
+                <p class="whitespace-pre-line text-xs leading-5 text-sf-muted" data-store-return-policy>{{ $o['policy']['text'] }}</p>
+            @endif
+
             <div><x-sf::form.button type="submit" size="lg" :busy="__st('returns.sending')">{{ __st('returns.submit') }}</x-sf::form.button></div>
         </form>
     @endif

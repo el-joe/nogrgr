@@ -4,6 +4,7 @@ namespace App\Modules\Storefront\Repositories\Contracts;
 
 use App\Modules\Storefront\Models\StorePage;
 use App\Shared\Repositories\Contracts\RepositoryContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -24,4 +25,12 @@ interface StorePageRepositoryContract extends RepositoryContract
      * @return list<string>
      */
     public function slugs(): array;
+
+    /**
+     * Vendor list (VEN-033): search in slug / any title, status (published | draft), type.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return Builder<StorePage>
+     */
+    public function listing(array $filters): Builder;
 }

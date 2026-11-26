@@ -1,6 +1,6 @@
 /**
- * Shared request conversation ([data-thread]) of the admin Requests center and the vendor
- * Requests pages: Enter-to-send composer with up to 5 attachments, live refresh over
+ * Shared conversation ([data-thread]) of the admin Requests center, the vendor Requests
+ * pages and the Support tickets (admin / vendor / owner): Enter-to-send composer with up to 5 attachments, live refresh over
  * Reverb (private-requests.<kind>.<id>, channel auth URL from the JSON island) with a
  * 15 s polling fallback, read receipts and the status badge refresh.
  */
@@ -210,6 +210,12 @@ export function bindThread(root) {
         const data = new FormData();
         data.append('body', body.value);
         files.forEach((file) => data.append('files[]', file));
+        // Extra composer fields (e.g. the support "Internal note" switch): checked boxes / values.
+        form.querySelectorAll('[data-thread-extra]').forEach((input) => {
+            if (input.type === 'checkbox' ? input.checked : input.value !== '') {
+                data.append(input.name, input.type === 'checkbox' ? input.value || '1' : input.value);
+            }
+        });
         submit?.setAttribute('data-loading', '');
         submit?.setAttribute('aria-busy', 'true');
 

@@ -2,8 +2,8 @@
     Admin › Vendors › Vendor profile (ADM-041 / 041a, Figma 72:49758): header with
     status, subtitle (host · owner · plan · since) and Impersonate / Suspend|Activate /
     Edit store. Tabs (?tab=): Overview, Plan & subscription, Domains, Profit &
-    commission, Compliance. Stats & orders, Mobile app and Limits belong to later phases
-    and are not rendered; neither are the KPI row and Sales chart (they need orders).
+    commission, Stats & orders (ADM-041e, Figma 72:51480), Compliance. Mobile app and
+    Limits belong to later phases and are not rendered.
     Pending / provisioning / failed stores show a banner with the error and Retry.
 --}}
 @use('App\Modules\Platform\Enums\TenantStatus')

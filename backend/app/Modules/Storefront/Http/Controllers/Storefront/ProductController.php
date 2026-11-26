@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Http\Controllers\Storefront;
 
+use App\Modules\Storefront\Events\ProductViewed;
 use App\Modules\Storefront\Services\Catalog\ProductPageService;
 use App\Modules\Storefront\Services\Seo\StorefrontSeo;
 use App\Modules\Storefront\Support\StorefrontView;
@@ -31,9 +32,23 @@ class ProductController extends Controller
             return redirect()->to($page->url.($request->getQueryString() ? '?'.$request->getQueryString() : ''), 301);
         }
 
+        if (tenancy()->initialized && ! self::isPrefetch($request)) {
+            ProductViewed::dispatch((int) tenant()->getTenantKey(), $product, $page->name);
+        }
+
         return StorefrontView::make('pages.product', [
             'page' => $page,
             'seo' => $this->seo->product($page),
         ]);
+    }
+
+    /**
+     * Browser / link prefetches are not views (product performance, ADM-070j).
+     */
+    private static function isPrefetch(Request $request): bool
+    {
+        $purpose = strtolower((string) ($request->header('Sec-Purpose') ?? $request->header('Purpose') ?? ''));
+
+        return str_contains($purpose, 'prefetch');
     }
 }

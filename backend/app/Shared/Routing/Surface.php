@@ -89,7 +89,7 @@ enum Surface: string
     public function mounts(string $centralDomain): array
     {
         return match ($this) {
-            self::Central => [new RouteMount($this, '', 'central.', ['web'], $centralDomain)],
+            self::Central => [new RouteMount($this, '', 'central.', ['web', 'affiliate.referral'], $centralDomain)],
             self::Admin => [new RouteMount($this, 'admin', 'admin.', ['web', 'audit.requests'], $centralDomain)],
             self::Affiliate => [new RouteMount($this, 'affiliate', 'affiliate.', ['web', 'audit.requests'], $centralDomain)],
             self::Owner => [new RouteMount($this, 'my-account', 'owner.', ['web', 'audit.requests'], $centralDomain)],

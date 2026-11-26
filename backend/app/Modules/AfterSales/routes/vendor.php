@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\AfterSales\Http\Controllers\Vendor\ReturnPolicyController;
 use App\Modules\AfterSales\Http\Controllers\Vendor\VendorAfterSalesController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,4 +38,13 @@ Route::middleware('auth:vendor')->prefix('sales')->name('sales.')->controller(Ve
         Route::get('refunds/{refund}/{action}', 'refundActionForm')->whereNumber('refund')->whereIn('action', ['retry', 'complete', 'reject'])->name('refunds.action.form');
         Route::post('refunds/{refund}/action', 'refundAct')->whereNumber('refund')->name('refunds.action');
     });
+});
+
+/*
+|   vendor.settings.return-policy*   the store's stricter return policy (VEN-079);
+|                                    settings.return-policy.view | manage
+*/
+Route::middleware('auth:vendor')->prefix('settings/return-policy')->controller(ReturnPolicyController::class)->group(function (): void {
+    Route::get('/', 'edit')->middleware('permission:settings.return-policy.view,vendor')->name('settings.return-policy');
+    Route::put('/', 'update')->middleware(['permission:settings.return-policy.manage,vendor', 'throttle:30,1'])->name('settings.return-policy.update');
 });

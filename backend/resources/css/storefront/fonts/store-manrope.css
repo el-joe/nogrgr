@@ -1,0 +1,10 @@
+/*
+ * Store font "Manrope" (Vendor › Appearance › Colours & fonts, VEN-034b): self-hosted @fontsource
+ * faces, its own Vite input loaded only when a store picks it (StoreFont::cssEntry()).
+ * The family is applied through --nog-font-latin / --nog-font-arabic in the store's
+ * appearance stylesheet (decision #91).
+ */
+@import '@fontsource/manrope/latin-400.css';
+@import '@fontsource/manrope/latin-500.css';
+@import '@fontsource/manrope/latin-600.css';
+@import '@fontsource/manrope/latin-700.css';

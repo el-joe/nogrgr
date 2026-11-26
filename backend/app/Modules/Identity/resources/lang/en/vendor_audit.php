@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'title' => 'Audit log',
+    'subtitle' => 'Every change made by your team and by Nogrgr support. Times in :timezone.',
+    'search' => 'Search action',
+    'empty_title' => 'No activity yet',
+    'empty_description' => 'Changes made by your team and by Nogrgr support will be listed here as they happen.',
+    'support' => 'Nogrgr support',
+    'support_name' => ':name (Nogrgr support)',
+    'impersonation' => 'impersonation',
+    'automatic' => 'Automatic',
+    'former_member' => 'Former member #:id',
+    'removed' => 'Removed from the team',
+    'columns' => [
+        'when' => 'When',
+        'member' => 'Member',
+        'action' => 'Action',
+        'ip' => 'IP',
+    ],
+    'filters' => [
+        'member' => 'Member',
+        'area' => 'Area',
+        'period' => 'Date',
+    ],
+    'areas' => [
+        'account' => 'Account',
+        'auth' => 'Sign-in',
+        'catalog' => 'Catalog',
+        'coupon' => 'Coupons',
+        'customer' => 'Customers',
+        'http' => 'Requests',
+        'order' => 'Orders',
+        'payment' => 'Payments',
+        'product' => 'Products',
+        'role' => 'Roles',
+        'settings' => 'Settings',
+        'staff' => 'Staff',
+        'store' => 'Store settings',
+        'support' => 'Support',
+        'vendor_staff' => 'Staff',
+    ],
+];

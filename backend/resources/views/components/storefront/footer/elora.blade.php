@@ -2,13 +2,14 @@
     Elora footer (Figma "Elora Variants" footer 1:26977 / phone m 1:21125 bottom): #3A3A3A block —
     store logo, "We accept" payment badges (the store's gateways) at the start, link columns
     (store pages + catalog links) at the end; grey legal bar; dark copyright bar. Phones: centred
-    logo, two-column links. Social icons are left out until stores can set their profiles.
+    logo, two-column links. The store's about line and social icons (Appearance, VEN-034e/f) sit under the logo.
 --}}
-@props(['columns' => [], 'legal' => [], 'name'])
+@props(['columns' => [], 'legal' => [], 'name', 'copyright' => null])
 <footer class="elo-footer mt-auto text-white" aria-label="{{ __st('shell.footer.label') }}">
     <div class="mx-auto grid max-w-[1440px] gap-10 px-6 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:px-[152px]">
         <div class="grid content-start gap-6 max-lg:justify-items-center">
             <x-sf::logo tone="light" size="lg" />
+            <x-sf::footer.social class="max-lg:justify-items-center max-lg:text-center" />
             <div class="grid gap-3 max-lg:justify-items-center">
                 <p class="text-base font-medium">{{ __st('elora.footer.we_accept') }}</p>
                 <x-sf::cart.pay-badges class="elo-footer-badges" />
@@ -35,6 +36,6 @@
         </nav>
     @endif
     <div class="bg-[#262626] py-3 text-center text-sm max-lg:pb-24">
-        <p>{{ __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
+        <p>{{ $copyright ?? __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
     </div>
 </footer>

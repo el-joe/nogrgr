@@ -10,6 +10,7 @@ use App\Modules\Storefront\Models\StorePage;
 use App\Modules\Storefront\Repositories\Contracts\StorePageRepositoryContract;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 
 /**
  * Store CMS pages (tenant DB): the system pages every store starts with (seeded on
@@ -74,15 +75,41 @@ class StorePageService
         ]);
     }
 
+    public function find(int $id): StorePage
+    {
+        /** @var StorePage $page */
+        $page = $this->pages->findOrFail($id);
+
+        return $page;
+    }
+
     public function update(StorePage $page, StorePageData $data): StorePage
     {
         $attributes = $this->attributes($data);
+
+        // Replace (not merge) the translations so a cleared language is really removed.
+        foreach (['title', 'body', 'meta_description'] as $field) {
+            $page->replaceTranslations($field, $attributes[$field]);
+            unset($attributes[$field]);
+        }
 
         if ($page->type === StorePageType::Custom && $data->slug !== null && Str::slug($data->slug) !== $page->slug) {
             $attributes['slug'] = $this->uniqueSlug($data->slug);
         }
 
         return $this->pages->update($page, $attributes);
+    }
+
+    /**
+     * Inline switch of the list: published (is_active) or "show in footer".
+     */
+    public function setFlag(StorePage $page, string $flag, bool $value): StorePage
+    {
+        if (! in_array($flag, ['is_active', 'show_in_footer'], true)) {
+            throw new InvalidArgumentException("Unknown page flag [{$flag}].");
+        }
+
+        return $this->pages->update($page, [$flag => $value]);
     }
 
     public function delete(StorePage $page): void

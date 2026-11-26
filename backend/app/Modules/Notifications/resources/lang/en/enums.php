@@ -7,6 +7,7 @@ return [
         'payments' => 'Payments',
         'requests' => 'Requests',
         'system' => 'System',
+        'support' => 'Support',
     ],
     'notification_channel' => [
         'in_app' => 'In-app',
@@ -50,7 +51,11 @@ return [
         'customer.password_reset' => 'Password reset',
         'affiliate.welcome' => 'Welcome affiliate',
         'affiliate.payout_sent' => 'Payout sent',
+        'affiliate.activated' => 'Affiliate account activated',
+        'affiliate.conversion' => 'Conversion approved / reversed',
+        'affiliate.payout' => 'Payout paid / rejected',
         'admin.new_vendor' => 'New vendor registered',
         'admin.payment_failed' => 'Vendor payment failed',
+        'support.ticket_reply' => 'Support ticket reply',
     ],
 ];

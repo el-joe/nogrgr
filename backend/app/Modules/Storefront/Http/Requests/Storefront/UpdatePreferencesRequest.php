@@ -4,6 +4,7 @@ namespace App\Modules\Storefront\Http\Requests\Storefront;
 
 use App\Modules\Localization\Models\Currency;
 use App\Modules\Localization\Services\StoreCountries;
+use App\Modules\Localization\Services\StoreCurrencyService;
 use App\Modules\Storefront\DTOs\StorefrontPreferencesData;
 use App\Shared\Support\Locale;
 use Closure;
@@ -27,7 +28,14 @@ class UpdatePreferencesRequest extends FormRequest
     {
         return [
             'locale' => ['nullable', 'string', Rule::in(array_keys(Locale::enabled()))],
-            'currency' => ['nullable', 'string', 'size:3', Rule::exists(Currency::class, 'code')->where('is_active', true)],
+            'currency' => ['nullable', 'string', 'size:3', Rule::exists(Currency::class, 'code')->where('is_active', true), function (string $attribute, mixed $value, Closure $fail): void {
+                // VEN-072: only the currencies this store offers in its switcher.
+                $offered = app(StoreCurrencyService::class)->switcherCurrencies()->pluck('code')->all();
+
+                if (! in_array(strtoupper((string) $value), $offered, true)) {
+                    $fail(__('validation.exists', ['attribute' => $attribute]));
+                }
+            }],
             'country_id' => ['nullable', 'integer', function (string $attribute, mixed $value, Closure $fail): void {
                 if (! app(StoreCountries::class)->isAvailable((int) $value)) {
                     $fail(__('validation.exists', ['attribute' => $attribute]));

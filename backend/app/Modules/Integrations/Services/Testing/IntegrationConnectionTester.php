@@ -57,7 +57,7 @@ class IntegrationConnectionTester
                 IntegrationSection::Ai => $this->ai($settings, TranslationProvider::from((string) $target)),
                 IntegrationSection::Neozena => $this->neozena($settings),
                 IntegrationSection::Geocoding => $this->geocoding($settings),
-                IntegrationSection::Billing, IntegrationSection::Commerce, IntegrationSection::Domains => throw new ConnectionTestFailed(ConnectionErrorType::Misconfigured),
+                IntegrationSection::Billing, IntegrationSection::Commerce, IntegrationSection::Domains, IntegrationSection::Affiliates => throw new ConnectionTestFailed(ConnectionErrorType::Misconfigured),
             };
         } catch (ConnectionTestFailed $exception) {
             return ConnectionTestResult::failure($exception->type, $exception->detail);

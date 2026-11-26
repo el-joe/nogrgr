@@ -47,6 +47,8 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int|null $fulfilment_branch_id
  * @property Carbon|null $delivery_min_date
  * @property Carbon|null $delivery_max_date
+ * @property string|null $customer_email
+ * @property string|null $coupon_code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -63,7 +65,7 @@ class OrderFact extends Model
         'items_count', 'items_grand_total', 'flash_discount', 'shipping_charge', 'coupon_discount', 'coupon_source', 'grand_total',
         'platform_profit', 'vendor_profit', 'payment_gateway', 'placed_at', 'paid_at', 'shipped_at', 'delivered_at', 'cancelled_at',
         'order_id', 'customer_name', 'customer_city', 'payment_source', 'fulfilment_status', 'shipping_company_id', 'shipping_company_name',
-        'tracking_number', 'weight_grams', 'fulfilment_branch_id', 'delivery_min_date', 'delivery_max_date',
+        'tracking_number', 'weight_grams', 'fulfilment_branch_id', 'delivery_min_date', 'delivery_max_date', 'customer_email', 'coupon_code',
     ];
 
     /**

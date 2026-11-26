@@ -5,7 +5,7 @@
 @php
     $context = app(\App\Modules\Storefront\Services\StorefrontContext::class);
     $locales = \App\Shared\Support\Locale::enabled();
-    $currencies = app(\App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract::class)->active();
+    $currencies = app(\App\Modules\Localization\Services\StoreCurrencyService::class)->switcherCurrencies();
     $countries = app(\App\Modules\Localization\Services\StoreCountries::class)->available()
         ->map(fn ($country) => ['id' => $country->id, 'iso2' => strtolower($country->iso2), 'flag' => $country->flag, 'name' => $country->name])->values()->all();
     $redirect = '/'.ltrim(request()->path() === '/' ? '' : request()->path(), '/');

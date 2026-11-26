@@ -95,6 +95,18 @@ final class PermissionCatalog
                 'content.faqs.view', 'content.faqs.manage',
                 'content.newsletter.view', 'content.newsletter.manage', 'content.newsletter.export',
                 'content.contact.view',
+                // Reporting: reports hub, shoppers (P9, ADM-070 / ADM-043); developer docs (ADM-115)
+                'reports.view', 'reports.export',
+                'vendors.shoppers.view', 'vendors.shoppers.export',
+                'system.docs.view',
+                // Support tickets (P9, ADM-116)
+                'support.tickets.view', 'support.tickets.manage',
+                // Affiliate program (P9, ADM-060…063)
+                'affiliates.view', 'affiliates.manage',
+                'affiliates.conversions.view', 'affiliates.conversions.manage',
+                'affiliates.payouts.view', 'affiliates.payouts.manage',
+                'affiliates.promo-codes.view', 'affiliates.promo-codes.manage',
+                'affiliates.settings.manage',
             ],
             Guard::Affiliate->value => ['dashboard.view', 'notifications.view'],
         ];
@@ -145,6 +157,20 @@ final class PermissionCatalog
                 // P8: staff & roles (VEN-076 / 077)
                 'settings.staff.view', 'settings.staff.manage',
                 'settings.roles.view', 'settings.roles.manage',
+                // P8 batch 2: analytics, store pages & appearance, settings (VEN-024/033/034/045/070-086)
+                'analytics.view',
+                'store.pages.view', 'store.pages.manage',
+                'store.appearance.view', 'store.appearance.manage',
+                'settings.general.view', 'settings.general.manage',
+                'settings.currencies.view', 'settings.currencies.manage',
+                'settings.translations.view', 'settings.translations.manage',
+                'settings.return-policy.view', 'settings.return-policy.manage',
+                'settings.mail.view', 'settings.mail.manage',
+                'settings.tracking.view', 'settings.tracking.manage',
+                'settings.api-keys.view', 'settings.api-keys.manage',
+                'settings.audit.view',
+                // P9: support tickets (VEN-091)
+                'support.view', 'support.manage',
             ],
         ];
     }

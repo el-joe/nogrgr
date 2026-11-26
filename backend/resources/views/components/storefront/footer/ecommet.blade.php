@@ -3,7 +3,7 @@
     store logo, "We accept" payment badges; grey legal bar; dark copyright bar. Phones stack
     the columns with dividers.
 --}}
-@props(['columns' => [], 'legal' => [], 'name'])
+@props(['columns' => [], 'legal' => [], 'name', 'copyright' => null])
 @php($badges = app(\App\Modules\Storefront\Services\Catalog\StorefrontShell::class)->paymentBadges())
 <footer class="eco-footer mt-auto" aria-label="{{ __st('shell.footer.label') }}">
     <div class="eco-container grid gap-6 pb-8 pt-8 lg:grid-cols-[1fr_auto] lg:gap-10 lg:pb-6 lg:pt-12">
@@ -40,6 +40,7 @@
         </div>
         <div class="grid content-start gap-4 border-t border-white/20 pt-5 lg:min-w-[190px] lg:border-0 lg:pt-0">
             <x-sf::logo tone="light" />
+            <x-sf::footer.social />
             <x-sf::locale-button class="w-fit" />
         </div>
     </div>
@@ -50,5 +51,5 @@
             </nav>
         </div>
     @endif
-    <p class="bg-sf-footer-bottom py-4 text-center text-xs text-white/80 lg:text-sm lg:text-white">{{ __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
+    <p class="bg-sf-footer-bottom py-4 text-center text-xs text-white/80 lg:text-sm lg:text-white">{{ $copyright ?? __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
 </footer>

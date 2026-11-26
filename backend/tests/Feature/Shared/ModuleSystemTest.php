@@ -10,7 +10,7 @@ it('registers every module listed in config/modules.php', function (): void {
         expect(app()->getProvider($provider))->not->toBeNull();
     }
 
-    expect(config('modules.modules'))->toHaveCount(18);
+    expect(config('modules.modules'))->toHaveCount(19);
 });
 
 it('registers module view and translation namespaces', function (): void {

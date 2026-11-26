@@ -1,0 +1,12 @@
+/*
+ * Store font "Tajawal" (Vendor › Appearance › Colours & fonts, VEN-034b): self-hosted @fontsource
+ * faces, its own Vite input loaded only when a store picks it (StoreFont::cssEntry()).
+ * The family is applied through --nog-font-latin / --nog-font-arabic in the store's
+ * appearance stylesheet (decision #91).
+ */
+@import '@fontsource/tajawal/arabic-400.css';
+@import '@fontsource/tajawal/arabic-500.css';
+@import '@fontsource/tajawal/arabic-700.css';
+@import '@fontsource/tajawal/latin-400.css';
+@import '@fontsource/tajawal/latin-500.css';
+@import '@fontsource/tajawal/latin-700.css';

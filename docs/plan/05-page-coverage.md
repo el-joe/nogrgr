@@ -14,7 +14,7 @@
 | ADM-003 | Reset password | `admin.auth.password.reset` | Std; invalid/expired token | — (new) | designed: Admin Panel 81:97545 | P2 | todo |
 | ADM-004 | Panel shell (sidebar, top bar, breadcrumb, bell dropdown, dark/light, locale) | layout `x-admin::layout` | permission-filtered nav, live bell (Reverb), unread count | AdminNavigation, admin-notification-bell | designed: Admin Panel 41:12632 · Sidebar 37:12436 · Topbar 35:11474 | P2 | todo |
 | ADM-005 | My profile & password | `admin.account.edit` | Std; edit, change password | — (new) | designed: Admin Panel 80:97736 | P2 | done |
-| ADM-006 | Dashboard | `admin.dashboard` | Std; KPI cards, revenue chart, latest payments, period filter | admin.dashboard | 41:12632, m 43:13511, RTL 56:17016, dark 57:17198 | P9 | partial — shell + layout built in P0 (live store counts, real config health, 0-valued commerce metrics). Hidden until data + route exist (no dead buttons): "All countries" filter, "Export report", needs-attention chevrons/links, "View all" / "Leaderboard" / "System tools" card links |
+| ADM-006 | Dashboard | `admin.dashboard` | Std; KPI cards, revenue chart, latest payments, period filter | admin.dashboard | 41:12632, m 43:13511, RTL 56:17016, dark 57:17198 | P9 | done — P9 (decision #90): KPIs / revenue 7D·30D·12M / orders by status / recent orders / top vendors from Reporting facts; country filter, Export report (Sales CSV), needs-attention links, View all / Leaderboard / System tools |
 | ADM-007 | Notifications inbox | `admin.notifications.index` | Std; filter type, open, mark read / all read, delete | admin.notifications.index, admin.notifications.latest, admin.notifications.open | designed: Admin Panel 80:96878 | P2 | done |
 | ADM-007a | ↳ Notification preferences tab | `admin.notifications.preferences` | Std; per-channel toggles | — (new, A6) | designed: Admin Panel 80:96878 | P2 | done |
 | ADM-010 | Products list | `admin.catalog.products.index` | Std; list, filter (status/category/scope/stock/trashed), delete, restore, export | admin.products.index | designed: Admin Panel 44:13636 · m 45:14601 · filters sheet 45:14748 | P3 | done |
@@ -94,13 +94,13 @@
 | ADM-041b | ↳ Tab: Plan & subscription (assign plan modal) | tab | manual billing | AssignPackageModal | designed: Admin Panel 72:50656 | P2 | done |
 | ADM-041c | ↳ Tab: Domains | tab | list, mark connected | DomainRequestsList | designed: Admin Panel 72:51480 | P2 | done |
 | ADM-041d | ↳ Tab: Profit % & affiliate commission | tab | edit | AddEditTenant | designed: Admin Panel 72:51480 | P2 | done |
-| ADM-041e | ↳ Tab: Stats & orders | tab | KPIs, orders table | — (new, A4) | designed: Admin Panel 72:51480 | P9 | todo |
+| ADM-041e | ↳ Tab: Stats & orders | tab | KPIs, orders table | — (new, A4) | designed: Admin Panel 72:51480 | P9 | done — P9 (decision #90): last-12-month tiles, orders by month, store orders table (`admin.vendors.stats.orders`) |
 | ADM-041f | ↳ Tab: Compliance | tab | verify / needs action | ComplianceDetailPage | designed: Admin Panel 72:51480 | P2 | done |
 | ADM-041g | ↳ Tab: Mobile app settings | tab | build config, flavor, store links | TenantMobileAppController | designed: Admin Panel 72:51480 | P11 | todo |
 | ADM-041h | ↳ Tab: Limit overrides (AI logo, image search, AI calls) | tab | per-tenant override | admin.settings.ai-logo-limit | designed: Admin Panel 72:51480 | P10 | todo |
 | ADM-041i | ↳ Impersonate confirm modal (audited) | modal | reason, opens vendor panel | admin.plans.users.impersonate | designed: Admin Panel 72:52459 | P2 | done |
 | ADM-042 | Pending registrations | `admin.vendors.pending` | Std; filter status/plan, delete, resend link | admin.plans.pending-registrations | designed: Admin Panel 73:51922 | P2 | done |
-| ADM-043 | Shoppers (read-only, all tenants) | `admin.vendors.shoppers` | Std; filter status, new only, export | admin.customers.index | designed: Admin Panel 73:52854 | P9 | todo |
+| ADM-043 | Shoppers (read-only, all tenants) | `admin.vendors.shoppers` | Std; filter status, new only, export | admin.customers.index | designed: Admin Panel 73:52854 | P9 | done — P9 (decision #90): `admin.vendors.shoppers.index|data|export`, masked, store / country / status / new-only filters, CSV |
 | ADM-044 | Compliance overview | `admin.vendors.compliance.index` | Std; filter status | admin.compliance.index | designed: Admin Panel 73:53809 | P2 | done |
 | ADM-044a | ↳ Compliance detail (verify / needs action + note) | `admin.vendors.compliance.show` | documents preview | admin.compliance.show | designed: Admin Panel 73:54733 | P2 | done |
 | ADM-045 | Domains | `admin.vendors.domains.index` | Std | — | designed: Admin Panel 73:55481 | P2 | done |
@@ -120,25 +120,25 @@
 | ADM-054a | ↳ Invoice detail (print / PDF) | `admin.finance.invoices.show` | print | admin.invoices.show | designed: Admin Panel 74:65309 | P2 | done |
 | ADM-055 | Payment logs | `admin.finance.payment-logs.index` | Std; filter status/gateway | admin.payment-logs.index | designed: Admin Panel 74:66052 | P2 | done |
 | ADM-055a | ↳ Payment log detail (refund → affiliate reversal) | `admin.finance.payment-logs.show` | status change | admin.payment-logs.show | designed: Admin Panel 74:66052 | P2 | done |
-| ADM-060 | Affiliate accounts | `admin.affiliates.index` | Std; filter type/status | admin.affiliates.index | designed: Admin Panel 74:66931 | P9 | todo |
-| ADM-060a | ↳ Edit affiliate modal (commission, status) | modal | activate, suspend | AffiliatesListPage | designed: Admin Panel 74:68877 | P9 | todo |
-| ADM-060b | ↳ Pay out modal (amount, reference, attachment) | modal | min/balance validation | AffiliatesListPage | designed: Admin Panel 74:68877 | P9 | todo |
-| ADM-060c | ↳ Program settings modal (cookie days, default commission, min payout) | modal | save | AffiliatesListPage | designed: Admin Panel 74:68877 | P9 | todo |
-| ADM-061 | Affiliate conversions (reverse modal) | `admin.affiliates.conversions` | Std; filter status, reverse | admin.affiliates.conversions | designed: Admin Panel 74:67899 · 74:68877 | P9 | todo |
-| ADM-062 | Affiliate payout requests (details, mark paid, reject) | `admin.affiliates.payouts` | Std | admin.affiliates.payouts | designed: Admin Panel 74:67899 · 74:68877 | P9 | todo |
-| ADM-063 | Affiliate promo codes (CRUD modal) | `admin.affiliates.promo-codes` | Std; create, edit, delete | admin.affiliates.coupons | designed: Admin Panel 74:67899 · 74:68877 | P9 | todo |
-| ADM-070 | Reports hub | `admin.reports.index` | Std; period/tenant/country filters, CSV/XLSX export on every tab | — (new, A7) | designed: Admin Panel 75:68061 | P9 | todo |
-| ADM-070a | ↳ Tab: Sales | `admin.reports.show` | charts + table | — (new) | designed: Admin Panel 75:68061 | P9 | todo |
-| ADM-070b | ↳ Tab: Orders report | `admin.reports.show` | monthly series, per tenant | admin.orders.report | designed: Admin Panel 75:69019 | P9 | todo |
-| ADM-070c | ↳ Tab: Platform vs vendor profit (finance) | `admin.reports.show` | tabs from old finance reports | admin.finance.reports | designed: Admin Panel 75:69019 | P9 | todo |
-| ADM-070d | ↳ Tab: Refunds & returns (return analytics) | `admin.reports.show` | per tenant | admin.orders.returns.analytics | designed: Admin Panel 75:69019 | P9 | todo |
-| ADM-070e | ↳ Tab: Shipping (company/zone, delivery performance) | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69019 | P9 | todo |
-| ADM-070f | ↳ Tab: Coupons & flash-sale impact | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69019 | P9 | todo |
-| ADM-070g | ↳ Tab: Subscriptions / MRR / churn / trials | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69998 | P9 | todo |
-| ADM-070h | ↳ Tab: Affiliates (clicks → conversions → payouts) | `admin.reports.show` | | admin.affiliates.reports | designed: Admin Panel 75:69998 | P9 | todo |
-| ADM-070i | ↳ Tab: Vendor leaderboard | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69998 | P9 | todo |
-| ADM-070j | ↳ Tab: Product performance | `admin.reports.show` | views, add-to-cart, conversion | — (new) | designed: Admin Panel 75:69998 | P9 | todo |
-| ADM-070k | ↳ Tab: Customers (new / returning) | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69998 | P9 | todo |
+| ADM-060 | Affiliate accounts | `admin.affiliates.index` | Std; filter type/status | admin.affiliates.index | designed: Admin Panel 74:66931 | P9 | done — decision #93: tabs all / vendor-linked / independent / pending / suspended, type + status filters, detail modal |
+| ADM-060a | ↳ Edit affiliate modal (commission, status) | modal | activate, suspend | AffiliatesListPage | designed: Admin Panel 74:68877 | P9 | done — `admin.affiliates.edit/update` (decision #93) |
+| ADM-060b | ↳ Pay out modal (amount, reference, attachment) | modal | min/balance validation | AffiliatesListPage | designed: Admin Panel 74:68877 | P9 | done — `admin.affiliates.payout.create/store`, oldest-first allocation (decision #93) |
+| ADM-060c | ↳ Program settings modal (cookie days, default commission, min payout) | modal | save | AffiliatesListPage | designed: Admin Panel 74:68877 | P9 | done — `admin.affiliates.settings.edit/update`, DB section `affiliates` (decision #93) |
+| ADM-061 | Affiliate conversions (reverse modal) | `admin.affiliates.conversions` | Std; filter status, reverse | admin.affiliates.conversions | designed: Admin Panel 74:67899 · 74:68877 | P9 | done — `admin.affiliates.conversions.index` + reverse / reject (decision #93) |
+| ADM-062 | Affiliate payout requests (details, mark paid, reject) | `admin.affiliates.payouts` | Std | admin.affiliates.payouts | designed: Admin Panel 74:67899 · 74:68877 | P9 | done — `admin.affiliates.payouts.index` (requests) + `.history` (paid payouts) (decision #93) |
+| ADM-063 | Affiliate promo codes (CRUD modal) | `admin.affiliates.promo-codes` | Std; create, edit, delete | admin.affiliates.coupons | designed: Admin Panel 74:67899 · 74:68877 | P9 | done — `admin.affiliates.promo-codes.index` (decision #93) |
+| ADM-070 | Reports hub | `admin.reports.index` | Std; period/tenant/country filters, CSV/XLSX export on every tab | — (new, A7) | designed: Admin Panel 75:68061 | P9 | done — P9 (decision #90): `admin.reports.index` → Sales; period / store / country filters, CSV export (no XLSX package) |
+| ADM-070a | ↳ Tab: Sales | `admin.reports.show` | charts + table | — (new) | designed: Admin Panel 75:68061 | P9 | done — P9 (decision #90) |
+| ADM-070b | ↳ Tab: Orders report | `admin.reports.show` | monthly series, per tenant | admin.orders.report | designed: Admin Panel 75:69019 | P9 | done — P9 (decision #90) |
+| ADM-070c | ↳ Tab: Platform vs vendor profit (finance) | `admin.reports.show` | tabs from old finance reports | admin.finance.reports | designed: Admin Panel 75:69019 | P9 | done — P9 (decision #90) |
+| ADM-070d | ↳ Tab: Refunds & returns (return analytics) | `admin.reports.show` | per tenant | admin.orders.returns.analytics | designed: Admin Panel 75:69019 | P9 | done — P9 (decision #90) |
+| ADM-070e | ↳ Tab: Shipping (company/zone, delivery performance) | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69019 | P9 | done — P9 (decision #90) |
+| ADM-070f | ↳ Tab: Coupons & flash-sale impact | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69019 | P9 | done — P9 (decision #90) |
+| ADM-070g | ↳ Tab: Subscriptions / MRR / churn / trials | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69998 | P9 | done — P9 (decision #90) |
+| ADM-070h | ↳ Tab: Affiliates (clicks → conversions → payouts) | `admin.reports.show` | | admin.affiliates.reports | designed: Admin Panel 75:69998 | P9 | done — tab + repository (decision #90) on the Affiliates tables (decision #93) |
+| ADM-070i | ↳ Tab: Vendor leaderboard | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69998 | P9 | done — P9 (decision #90) |
+| ADM-070j | ↳ Tab: Product performance | `admin.reports.show` | views, add-to-cart, conversion | — (new) | designed: Admin Panel 75:69998 | P9 | done — P9 (decision #90) |
+| ADM-070k | ↳ Tab: Customers (new / returning) | `admin.reports.show` | | — (new) | designed: Admin Panel 75:69998 | P9 | done — P9 (decision #90) |
 | ADM-070l | ↳ Tab: AI usage (tokens, cost per tenant/feature) | `admin.reports.show` | | — (new, A6c) | designed: Admin Panel 75:69998 | P10 | todo |
 | ADM-080 | Blog categories | `admin.content.blog-categories.index` | Std; list, delete | admin.blog.categories | designed: Admin Panel 76:70524 | P6 | done |
 | ADM-080a | ↳ Blog category create / edit | `admin.content.blog-categories.create` / `.edit` | translations | admin.blog.categories.create, admin.blog.categories.edit | designed: Admin Panel 76:76659 | P6 | done |
@@ -194,10 +194,10 @@
 | ADM-114 | Cache tools | `admin.system.cache` | confirm modal | — | designed: Admin Panel 80:93684 | P2 | todo |
 | ADM-114a | ↳ Tab: Main cache | tab | clear | admin.cache.main | designed: Admin Panel 80:93684 | P2 | todo |
 | ADM-114b | ↳ Tab: Tenants cache | tab | clear all / one | admin.cache.tenants | designed: Admin Panel 80:93684 | P2 | todo |
-| ADM-115 | Developer docs index | `admin.system.docs.index` | | admin.dev-docs.index | designed: Admin Panel 80:94467 | P9 | todo |
-| ADM-115a | ↳ Docs topic | `admin.system.docs.show` | | admin.dev-docs.show | designed: Admin Panel 80:94467 | P9 | todo |
-| ADM-116 | Support tickets | `admin.support.tickets.index` | Std; filter status/priority | admin.support.index | designed: Admin Panel 80:95200 | P9 | todo |
-| ADM-116a | ↳ Ticket detail (live chat, status, priority) | `admin.support.tickets.show` | reply, attach | admin.support.show | designed: Admin Panel 80:96112 | P9 | todo |
+| ADM-115 | Developer docs index | `admin.system.docs.index` | | admin.dev-docs.index | designed: Admin Panel 80:94467 | P9 | done — P9 (decision #90) |
+| ADM-115a | ↳ Docs topic | `admin.system.docs.show` | | admin.dev-docs.show | designed: Admin Panel 80:94467 | P9 | done — P9 (decision #90): Getting started, Store API v1, Payment webhooks, Mobile API, Storefront themes |
+| ADM-116 | Support tickets | `admin.support.tickets.index` | Std; filter status/priority | admin.support.index | designed: Admin Panel 80:95200 | P9 | done — P9 (decision #92): tabs open / waiting / resolved / closed / all, filters priority / assignee / category / store, search, resolve |
+| ADM-116a | ↳ Ticket detail (live chat, status, priority) | `admin.support.tickets.show` | reply, attach | admin.support.show | designed: Admin Panel 80:96112 | P9 | done — P9 (decision #92): live thread (Reverb + polling), replies + internal notes with files, status / priority / assignee, SLA, impersonate link, resolve |
 | ADM-120 | Error 403 | view `errors.admin.403` | back / login | bootstrap/app.php JSON 403 | designed: Admin Panel 81:97588 | P2 | todo |
 | ADM-121 | Error 404 | view `errors.admin.404` | | bootstrap/app.php JSON 404 | designed: Admin Panel 81:98238 | P2 | todo |
 | ADM-122 | Error 419 (session expired) | view `errors.admin.419` | reload | bootstrap/app.php 419 | designed: Admin Panel 81:98888 | P2 | todo |
@@ -276,15 +276,15 @@
 | VEN-030b | ↳ Country home-variant modal | modal | | tenant.store.themes.country-variants | designed: Vendor Panel (new screens) 85:110108 | P7 | done — remote modal `store.themes.variant` (radio list of the family variants) |
 | VEN-031 | Home variants | `vendor.store.home-variants` | select | tenant.store.home-variants | designed: Vendor Panel (new screens) 85:104756 | P7 | done — `vendor.store.home-variants`: per-country table, change variant (030b), use store default, preview |
 | VEN-032 | Page builder (sections order / visibility) | `vendor.store.page-builder` | drag, toggle, preview | tenant.store.page-builder | designed: Vendor Panel (new screens) 85:105527 | P7 | todo |
-| VEN-033 | Pages | `vendor.store.pages.index` | Std; delete | tenant.store.pages | designed: Vendor Panel (new screens) 85:106165 | P8 | todo |
-| VEN-033a | ↳ Page create / edit | `vendor.store.pages.create` / `.edit` | translations | tenant.store.pages.create, tenant.store.pages.edit | designed: Vendor Panel (new screens) 85:106165 | P8 | todo |
-| VEN-034 | Appearance | `vendor.store.appearance` | save per tab | tenant.store.appearance | designed: Vendor Panel (new screens) 85:106903 | P8 | todo |
+| VEN-033 | Pages | `vendor.store.pages.index` | Std; delete | tenant.store.pages | designed: Vendor Panel (new screens) 85:106165 | P8 | done |
+| VEN-033a | ↳ Page create / edit | `vendor.store.pages.create` / `.edit` | translations | tenant.store.pages.create, tenant.store.pages.edit | designed: Vendor Panel (new screens) 85:106165 | P8 | done |
+| VEN-034 | Appearance | `vendor.store.appearance` | save per tab | tenant.store.appearance | designed: Vendor Panel (new screens) 85:106903 | P8 | done |
 | VEN-034a | ↳ Tab: Logo (builder + AI logo generator) | tab | generate, limit reached | AppearanceController, LogoGeneratorService | designed: Vendor Panel (new screens) 85:106903 | P10 | todo |
-| VEN-034b | ↳ Tab: Colors & fonts (LTR/RTL, reset) | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | todo |
-| VEN-034c | ↳ Tab: Promo banner | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | todo |
-| VEN-034d | ↳ Tab: Top header links | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | todo |
-| VEN-034e | ↳ Tab: Footer | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | todo |
-| VEN-034f | ↳ Tab: Social links (CRUD) | tab | | tenant.store.appearance.social.index, tenant.store.appearance.social.show | designed: Vendor Panel (new screens) 85:107559 | P8 | todo |
+| VEN-034b | ↳ Tab: Colors & fonts (LTR/RTL, reset) | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | done |
+| VEN-034c | ↳ Tab: Promo banner | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | done |
+| VEN-034d | ↳ Tab: Top header links | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | done |
+| VEN-034e | ↳ Tab: Footer | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | done |
+| VEN-034f | ↳ Tab: Social links (CRUD) | tab | | tenant.store.appearance.social.index, tenant.store.appearance.social.show | designed: Vendor Panel (new screens) 85:107559 | P8 | done |
 | VEN-035 | Banners (country tabs, show/hide admin banners, sort) | `vendor.store.banners.index` | Std; plan limit | tenant.store.banners.index, tenant.store.banners | designed: Vendor Panel (new screens) 85:108271 | P8 | done |
 | VEN-035a | ↳ Banner create / edit | modal | | tenant.store.banners.show | designed: Vendor Panel (new screens) 85:110108 | P8 | done |
 | VEN-036 | Custom themes (Twig): upload ZIP, validation report, versions, submit, activate, delete | `vendor.store.custom-themes.index` | Std; rejected reason | tenant.store.blade-theme | designed: Vendor Panel (new screens) 85:108862 | P7 | todo |
@@ -325,11 +325,11 @@
 | VEN-062 | Vendor purchases (owed to platform) | `vendor.finance.purchases.index` | Std; export, settle | tenant.finance.vendor-purchases, tenant.finance.vendor-purchases.export | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
 | VEN-063 | Settlement payments | `vendor.finance.settlements.index` | Std | tenant.finance.settlement-payments | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
 | VEN-064 | Payouts received | `vendor.finance.payouts.index` | Std | tenant.finance.payouts | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
-| VEN-070 | Settings: Account (profile, password) | `vendor.settings.account` | save | tenant.settings.account | designed: Vendor Panel (new screens) 90:111315 | P8 | todo |
-| VEN-071 | Settings: General (default profit %) | `vendor.settings.general` | save | tenant.settings.general | designed: Vendor Panel (new screens) 90:112042 | P8 | todo |
-| VEN-071a | ↳ Country change request modal | modal | pending state | GeneralSettingsController | designed: Vendor Panel (new screens) 91:119876 | P8 | todo |
-| VEN-071b | ↳ Category change request modal | modal | pending state | GeneralSettingsController@submitCategoryRequest | designed: Vendor Panel (new screens) 91:119876 | P8 | todo |
-| VEN-072 | Settings: Currencies | `vendor.settings.currencies` | toggle, default | tenant.settings.currencies | designed: Vendor Panel (new screens) 90:112623 | P8 | todo |
+| VEN-070 | Settings: Account (profile, password) | `vendor.settings.account` | save | tenant.settings.account | designed: Vendor Panel (new screens) 90:111315 | P8 | done |
+| VEN-071 | Settings: General (default profit %) | `vendor.settings.general` | save | tenant.settings.general | designed: Vendor Panel (new screens) 90:112042 | P8 | done |
+| VEN-071a | ↳ Country change request modal | modal | pending state | GeneralSettingsController | designed: Vendor Panel (new screens) 91:119876 | P8 | done |
+| VEN-071b | ↳ Category change request modal | modal | pending state | GeneralSettingsController@submitCategoryRequest | designed: Vendor Panel (new screens) 91:119876 | P8 | done |
+| VEN-072 | Settings: Currencies | `vendor.settings.currencies` | toggle, default | tenant.settings.currencies | designed: Vendor Panel (new screens) 90:112623 | P8 | done |
 | VEN-073 | Settings: Languages (enable free, buy paid, default, sort) | `vendor.settings.languages` | Std | tenant.settings.languages-manage, tenant.settings.languages | designed: Vendor Panel (new screens) 90:113194 | P2 | todo |
 | VEN-073a | ↳ Buy language checkout → result | `vendor.settings.languages.purchase` | success / cancel | tenant.language-purchase.charge, tenant.language-purchase.cancel, tenant.language-purchase.success | designed: Vendor Panel (new screens) 90:113194 | P2 | todo |
 | VEN-073b | ↳ Purchases history tab | tab | | tenant.finance.buy-languages | designed: Vendor Panel (new screens) 90:113194 | P2 | todo |
@@ -343,23 +343,23 @@
 | VEN-078 | Settings: Payment gateways | `vendor.settings.payment-gateways.index` | Std; set primary | tenant.settings.payment-gateways | designed: Vendor Panel (new screens) 90:116465 | P5 | done |
 | VEN-078a | ↳ Gateway credentials (own creds, sandbox, check connection) | `vendor.settings.payment-gateways.show` | test result | tenant.settings.payment-gateways.show | designed: Vendor Panel (new screens) 90:116465 | P5 | done |
 | VEN-078b | ↳ Payment readiness checklist | `vendor.settings.payment-readiness` | | tenant.settings.payment-readiness | designed: Vendor Panel (new screens) 90:116465 | P5 | todo |
-| VEN-079 | Settings: Return policy | `vendor.settings.return-policy` | override platform default | tenant.settings.return-policy | designed: Vendor Panel (new screens) 90:117144 | P5 | todo |
-| VEN-080 | Settings: Email templates | `vendor.settings.email-templates.index` | resync from central | tenant.settings.email-templates | designed: Vendor Panel (new screens) 91:114835 | P8 | todo |
-| VEN-080a | ↳ Email template edit (per locale) | `vendor.settings.email-templates.edit` | preview | tenant.settings.email-templates.edit | designed: Vendor Panel (new screens) 91:114835 | P8 | todo |
-| VEN-081 | Settings: Mail (SMTP, send test) | `vendor.settings.mail` | test result | tenant.settings.mail | designed: Vendor Panel (new screens) 91:115511 | P8 | todo |
+| VEN-079 | Settings: Return policy | `vendor.settings.return-policy` | override platform default | tenant.settings.return-policy | designed: Vendor Panel (new screens) 90:117144 | P5 | done |
+| VEN-080 | Settings: Email templates | `vendor.settings.email-templates.index` | resync from central | tenant.settings.email-templates | designed: Vendor Panel (new screens) 91:114835 | P8 | done |
+| VEN-080a | ↳ Email template edit (per locale) | `vendor.settings.email-templates.edit` | preview | tenant.settings.email-templates.edit | designed: Vendor Panel (new screens) 91:114835 | P8 | done |
+| VEN-081 | Settings: Mail (SMTP, send test) | `vendor.settings.mail` | test result | tenant.settings.mail | designed: Vendor Panel (new screens) 91:115511 | P8 | done |
 | VEN-082 | Settings: Domains (add, DNS check) | `vendor.settings.domains.index` | Std | tenant.settings.domains | designed: Vendor Panel (new screens) 91:116087 | P2 | todo |
 | VEN-082a | ↳ Domain detail (DNS records, status) | `vendor.settings.domains.show` | re-check | tenant.settings.domains.show | designed: Vendor Panel (new screens) 91:116087 | P2 | todo |
-| VEN-083 | Settings: Tracking pixels (Meta, TikTok, Snap, GA4) | `vendor.settings.tracking` | | tenant.settings.tracking | designed: Vendor Panel (new screens) 91:116736 | P8 | todo |
+| VEN-083 | Settings: Tracking pixels (Meta, TikTok, Snap, GA4) | `vendor.settings.tracking` | | tenant.settings.tracking | designed: Vendor Panel (new screens) 91:116736 | P8 | done |
 | VEN-084 | Settings: Compliance center (identity, company, bank, documents, accept terms) | `vendor.settings.compliance.edit` (+ `.update`, `.submit`, `.cities`, `.documents.show`, `.documents.destroy`) | review status | tenant.settings.compliance, tenant.settings.compliance.cities-by-country, tenant.compliance.accept | designed: Vendor Panel (new screens) 91:117308 | P8 | done |
 | VEN-085 | Settings: API keys (public API v1) | `vendor.settings.api-keys` | create, revoke, copy once | — (new, §D) | designed: Vendor Panel (new screens) 91:117954 | P8 | todo |
-| VEN-086 | Settings: Audit log | `vendor.settings.audit` | Std; filter | — (new, §B) | designed: Vendor Panel (new screens) 91:118575 | P8 | todo |
+| VEN-086 | Settings: Audit log | `vendor.settings.audit` | Std; filter | — (new, §B) | designed: Vendor Panel (new screens) 91:118575 | P8 | done |
 | VEN-087 | Settings: Notification preferences | `vendor.settings.notifications` | toggles | — (new) | designed: Vendor Panel (new screens) 91:119215 | P9 | todo |
 | VEN-090 | Notifications | `vendor.notifications.index` | Std; feed, open, mark read / all | tenant.notifications.index, tenant.notifications.feed, tenant.notifications.latest, tenant.notifications.open | 12:17282, m 12:24611 | P9 | todo |
-| VEN-091 | Support tickets | `vendor.support.index` | Std | tenant.support.index | designed: Vendor Panel (new screens) 88:111731 | P9 | todo |
-| VEN-091a | ↳ New ticket | `vendor.support.create` | attach | tenant.support.create | designed: Vendor Panel (new screens) 88:113398 | P9 | todo |
-| VEN-091b | ↳ Ticket thread (live) | `vendor.support.show` | reply | tenant.support.show, tenant.support.thread | designed: Vendor Panel (new screens) 88:111731 | P9 | todo |
-| VEN-092 | Help center | `vendor.help.index` | search | tenant.help.index | designed: Vendor Panel (new screens) 88:112298 | P9 | todo |
-| VEN-092a | ↳ Help article | `vendor.help.article` | | tenant.help.article | designed: Vendor Panel (new screens) 88:112298 | P9 | todo |
+| VEN-091 | Support tickets | `vendor.support.index` | Std | tenant.support.index | designed: Vendor Panel (new screens) 88:111731 | P9 | done — P9 (decision #92): My tickets (server-side, search + status) beside the open thread, unread badge |
+| VEN-091a | ↳ New ticket | `vendor.support.create` | attach | tenant.support.create | designed: Vendor Panel (new screens) 88:113398 | P9 | done — P9 (decision #92): modal + full page, subject / category / priority / message / up to 5 files |
+| VEN-091b | ↳ Ticket thread (live) | `vendor.support.show` | reply | tenant.support.show, tenant.support.thread | designed: Vendor Panel (new screens) 88:111731 | P9 | done — P9 (decision #92): live thread, reply with files, close / reopen |
+| VEN-092 | Help center | `vendor.help.index` | search | tenant.help.index | designed: Vendor Panel (new screens) 88:112298 | P9 | done — P9 (decision #92): 8 topics / 19 articles (en + ar), search, topic lists |
+| VEN-092a | ↳ Help article | `vendor.help.article` | | tenant.help.article | designed: Vendor Panel (new screens) 88:112298 | P9 | done — P9 (decision #92): sections / steps / tips, read time, related, helpful vote, ticket CTA |
 | VEN-093 | UI kit / component gallery (internal) | `vendor.ui-kit` | | tenant.ui-kit, tenant.ui-kit.data | designed: Vendor Panel (new screens) 92:130313 | P2 | todo |
 | VEN-094 | Plan-limit reached / upgrade modal | modal | upgrade CTA | PlanLimitService | designed: Vendor Panel (new screens) 82:102216 | P2 | todo |
 | VEN-095 | Subscription expired / store suspended screen | view | renew CTA | — (new) | designed: Vendor Panel (new screens) 82:101634 | P2 | todo |
@@ -406,7 +406,7 @@
 | OWN-006 | Profile & password / linked Google-Apple | `owner.profile` | save | — (new) | designed: Affiliate & Owner 122:104562 | P2 | done |
 | OWN-007 | Add another store | `owner.stores.create` | → register flow WEB-016 | — (new, §D one owner many stores) | designed: Affiliate & Owner 122:104860 | P2 | done |
 | OWN-008 | Notifications | `owner.notifications` | Std | — (new) | designed: Affiliate & Owner 122:105109 | P9 | todo |
-| OWN-009 | Help & support (contact channels from General settings; tickets action added in P9) | `owner.support` | empty state when no channel configured | — (new, QA-P2-007) | new (owner portal design language) | P2 | todo |
+| OWN-009 | Help & support (contact channels from General settings; tickets action added in P9) | `owner.support` | empty state when no channel configured | — (new, QA-P2-007) | new (owner portal design language) | P2 | done — P9 (decision #92): contact channels + support tickets (list, new ticket per store or account, thread, reply, close / reopen) |
 
 ## 5. Central website (`{central}/`)
 
@@ -694,10 +694,10 @@
 | MAIL-034 | Custom theme approved / rejected | `tenant.theme_reviewed` | | — (new) | designed: Emails & printables 131:10978 | P7 | todo |
 | MAIL-035 | Language / AI add-on purchase receipt | `tenant.addon_receipt` | | — (new) | designed: Emails & printables 131:11023 | P2 | todo |
 | MAIL-036 | AI job finished / failed (store translation, catalog) | `tenant.ai_job_status` | | — (new, A6c) | designed: Emails & printables 131:11071 | P10 | todo |
-| MAIL-037 | Support ticket reply (admin ↔ vendor) | `support.ticket_reply` | | — (new) | designed: Emails & printables 131:11125 | P9 | todo |
-| MAIL-038 | Affiliate: account activated | `affiliate.activated` | | — (new, §C) | designed: Emails & printables 131:11159 | P9 | todo |
-| MAIL-039 | Affiliate: conversion approved / reversed | `affiliate.conversion` | | — (new, §C) | designed: Emails & printables 131:11207 | P9 | todo |
-| MAIL-040 | Affiliate: payout paid / rejected | `affiliate.payout` | | — (new, §C) | designed: Emails & printables 131:11262 | P9 | todo |
+| MAIL-037 | Support ticket reply (admin ↔ vendor) | `support.ticket_reply` | | — (new) | designed: Emails & printables 131:11125 | P9 | done — P9 (decision #92): `support.ticket_reply` template event + built-in branded layout (en / ar RTL) |
+| MAIL-038 | Affiliate: account activated | `affiliate.activated` | | — (new, §C) | designed: Emails & printables 131:11159 | P9 | done — AffiliateNotification + affiliates::mail.affiliate (decision #93) |
+| MAIL-039 | Affiliate: conversion approved / reversed | `affiliate.conversion` | | — (new, §C) | designed: Emails & printables 131:11207 | P9 | done — AffiliateNotification + affiliates::mail.affiliate (decision #93) |
+| MAIL-040 | Affiliate: payout paid / rejected | `affiliate.payout` | | — (new, §C) | designed: Emails & printables 131:11262 | P9 | done — AffiliateNotification + affiliates::mail.affiliate (decision #93) |
 | MAIL-041 | Contact form → admin | `admin.contact_message` | | website.contact | designed: Emails & printables 131:11316 | P6 | todo |
 | MAIL-042 | Customer welcome (storefront register) | `store.welcome` | | — (new) | designed: Emails & printables 131:11367 | P7 | todo |
 | MAIL-043 | Printable: customer invoice | `store.orders.invoice` | print, PDF, ar/en | tenant.storefront.order-invoice | designed: Emails & printables 132:10518 | P5 | todo |

@@ -1,5 +1,7 @@
 <?php
 
+use App\Modules\Identity\Http\Controllers\Vendor\AccountController;
+use App\Modules\Identity\Http\Controllers\Vendor\AuditLogController;
 use App\Modules\Identity\Http\Controllers\Vendor\RoleController;
 use App\Modules\Identity\Http\Controllers\Vendor\StaffController;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 | Surface: vendor panel (both host modes) — link with vendor_route():
 |   vendor.settings.staff.*   store team (VEN-076 / 076a), {staff} = vendor_staff id
 |   vendor.settings.roles.*   store roles & permissions (VEN-077 / 077a), {role} = role id
+|   vendor.settings.account*  the signed-in member's own account (VEN-070); dashboard.view
+|   vendor.settings.audit*    store audit log (VEN-086); settings.audit.view
 | `*.view` reads, `*.manage` changes. Owners and the "owner" role are untouchable.
 */
 
@@ -42,4 +46,15 @@ Route::middleware('auth:vendor')->prefix('settings')->name('settings.')->group(f
             Route::delete('{role}', 'destroy')->whereNumber('role')->name('destroy');
         });
     });
+});
+
+Route::middleware(['auth:vendor', 'permission:dashboard.view,vendor'])->prefix('settings/account')->controller(AccountController::class)->group(function (): void {
+    Route::get('/', 'edit')->name('settings.account');
+    Route::put('/', 'update')->middleware('throttle:20,1')->name('settings.account.update');
+    Route::put('password', 'password')->middleware('throttle:10,1')->name('settings.account.password');
+});
+
+Route::middleware(['auth:vendor', 'permission:settings.audit.view,vendor'])->prefix('settings/audit')->controller(AuditLogController::class)->group(function (): void {
+    Route::get('/', 'index')->name('settings.audit');
+    Route::get('data', 'data')->name('settings.audit.data');
 });

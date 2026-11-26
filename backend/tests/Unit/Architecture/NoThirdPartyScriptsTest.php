@@ -4,9 +4,11 @@ use Symfony\Component\Finder\Finder;
 
 /*
 | Decision #78 (b): every script is a Vite input served by the app (CLAUDE.md "no CDN").
-| The ONE exception (client, 2026-11-26) is Stripe.js `https://js.stripe.com/v3/` for the
-| inline Stripe card, and only from the shared loader resources/js/core/payments/stripe-card.js
-| (loaded on demand when Stripe is chosen). Anything else fails.
+| Exceptions (exact lines in one loader file each, anything else fails):
+|   - Stripe.js `https://js.stripe.com/v3/` for the inline Stripe card (client, 2026-11-26),
+|     only from resources/js/core/payments/stripe-card.js (loaded when Stripe is chosen);
+|   - the store's tracking pixels (Meta, TikTok, Snap, GA4 — VEN-083, decision #91), only
+|     from resources/js/storefront/core/tracking.js and only after the shopper's consent.
 | Scans every Blade view and JS module under resources/ and app/Modules for:
 |   - a known third-party script / SDK host (Stripe.js, PayPal SDK, CDNs, tag managers…);
 |   - a <script> or <link rel=stylesheet|preload|modulepreload> pointing at another host;
@@ -19,6 +21,22 @@ const STRIPE_LOADER_PATH = 'js/core/payments/stripe-card.js';
 
 const STRIPE_JS_LINE = "const STRIPE_JS = 'https://js.stripe.com/v3/';";
 
+/** The only file allowed to reference marketing pixel SDKs (decision #91), and its exact lines. */
+const TRACKING_LOADER_PATH = 'js/storefront/core/tracking.js';
+
+/**
+ * @return list<string>
+ */
+function trackingPixelLines(): array
+{
+    return [
+        "meta: 'https://connect.facebook.net/en_US/fbevents.js',",
+        "tiktok: 'https://analytics.tiktok.com/i18n/pixel/events.js',",
+        "snap: 'https://sc-static.net/scevent.min.js',",
+        "ga4: 'https://www.googletagmanager.com/gtag/js?id=',",
+    ];
+}
+
 /**
  * @return list<string>
  */
@@ -29,6 +47,7 @@ function thirdPartyScriptHosts(): array
         'cdn.jsdelivr.net', 'unpkg.com', 'cdnjs.cloudflare.com', 'code.jquery.com', 'ajax.googleapis.com',
         'maps.googleapis.com', 'googletagmanager.com', 'google-analytics.com', 'connect.facebook.net',
         'www.google.com/recaptcha', 'hcaptcha.com', 'cdn.tailwindcss.com', 'static.cloudflareinsights.com',
+        'analytics.tiktok.com', 'sc-static.net',
     ];
 }
 
@@ -75,6 +94,10 @@ function thirdPartyScriptViolations(string $path, string $source): array
             continue;
         }
 
+        if (in_array(str_replace('\\', '/', $path), [TRACKING_LOADER_PATH, 'resources/'.TRACKING_LOADER_PATH], true) && in_array(trim($line), trackingPixelLines(), true)) {
+            continue;
+        }
+
         foreach (thirdPartyScriptHosts() as $host) {
             if (stripos($line, $host) !== false) {
                 $violations[] = $path.':'.($index + 1).' — third-party host '.$host;
@@ -111,6 +134,23 @@ it('allows Stripe.js only through the shared Stripe loader', function (): void {
         ->and(thirdPartyScriptViolations('resources/js/storefront/commerce/payment.js', STRIPE_JS_LINE))->not->toBe([])
         ->and(thirdPartyScriptViolations('resources/'.STRIPE_LOADER_PATH, "const SDK = 'https://js.stripe.com/v2/';"))->not->toBe([])
         ->and(thirdPartyScriptViolations('resources/'.STRIPE_LOADER_PATH, "script.src = 'https://cdn.example.com/x.js';"))->not->toBe([]);
+});
+
+it('allows the tracking pixel SDKs only through the consent-gated tracking loader', function (): void {
+    $loader = (string) file_get_contents(dirname(__DIR__, 3).'/resources/'.TRACKING_LOADER_PATH);
+
+    foreach (trackingPixelLines() as $line) {
+        expect($loader)->toContain($line)
+            // The same line anywhere else still fails.
+            ->and(thirdPartyScriptViolations('resources/js/storefront/core/index.js', $line))->not->toBe([]);
+    }
+
+    expect(thirdPartyScriptViolations('resources/'.TRACKING_LOADER_PATH, $loader))->toBe([])
+        // Pixels load only from start(), which runs after a "granted" answer.
+        ->and($loader)->toContain("if (answer === 'granted')")
+        ->and($loader)->toContain("if (value === 'granted')")
+        // Another pixel host in the loader still fails.
+        ->and(thirdPartyScriptViolations('resources/'.TRACKING_LOADER_PATH, "x: 'https://connect.facebook.net/signals/config.js',"))->not->toBe([]);
 });
 
 it('recognises the remote script loaders it guards against', function (string $source): void {

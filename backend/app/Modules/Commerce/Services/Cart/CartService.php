@@ -8,6 +8,7 @@ use App\Modules\Commerce\DTOs\Cart\AddCartItemData;
 use App\Modules\Commerce\DTOs\Cart\CartContextData;
 use App\Modules\Commerce\DTOs\Cart\CartSummary;
 use App\Modules\Commerce\Enums\CartLineIssue;
+use App\Modules\Commerce\Events\CartItemAdded;
 use App\Modules\Commerce\Exceptions\CommerceException;
 use App\Modules\Commerce\Models\Cart;
 use App\Modules\Commerce\Models\CartItem;
@@ -88,6 +89,10 @@ class CartService extends BaseService
 
         $this->carts->putLine($cart, $data->storeProductId, $variantKey, $quantity);
         $this->carts->touch($cart);
+
+        if (tenancy()->initialized) {
+            CartItemAdded::dispatch((int) tenant()->getTenantKey(), $data->storeProductId, max(1, $data->quantity));
+        }
 
         return $this->summaryOf($cart->refresh(), $context->customer);
     }

@@ -31,4 +31,31 @@ enum StoreSettingKey: string
 
     /** bool: product reviews wait for the store's approval before they are public (Engagement\Services\Reviews\ReviewSettingsService, default false = publish). */
     case ReviewsRequireApproval = 'reviews_require_approval';
+
+    /** Appearance › Colours & fonts (Storefront\Services\Appearance\StoreAppearanceService): {"primary": "#rrggbb"|null, "font_ltr": StoreFont|null, "font_rtl": StoreFont|null}. */
+    case AppearanceColors = 'appearance_colors';
+
+    /** Appearance › Promo bar: {"enabled": bool, "text": {locale: string}, "link": string|null, "background": "#rrggbb"}. */
+    case PromoBar = 'promo_bar';
+
+    /** Appearance › Footer: {"about": {locale: string}, "copyright": {locale: string}, "show_social": bool}. */
+    case FooterSettings = 'footer_settings';
+
+    /** Settings › Tracking pixels (Storefront\Services\Tracking\TrackingPixelService): {pixel: {"id": string|null, "enabled": bool}}. */
+    case TrackingPixels = 'tracking_pixels';
+
+    /** Settings › Mail (Notifications\Services\StoreMailSettingsService): SMTP host / port / encryption / username / encrypted password / from. */
+    case MailSmtp = 'mail_smtp';
+
+    /** Settings › General (Platform\Services\StoreGeneralSettingsService): shopper support e-mail (string). */
+    case SupportEmail = 'support_email';
+
+    /** Settings › General: the store's timezone identifier (string, default the app timezone). */
+    case Timezone = 'timezone';
+
+    /** Settings › Currencies (Localization\Services\StoreCurrencyService): {"inactive": [code], "not_default": [code]}. */
+    case Currencies = 'currencies';
+
+    /** Settings › Return policy (AfterSales\Services\ReturnPolicyService): stricter store override of the platform default. */
+    case ReturnPolicy = 'return_policy';
 }

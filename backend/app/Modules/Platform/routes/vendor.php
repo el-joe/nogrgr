@@ -3,6 +3,7 @@
 use App\Modules\Identity\Http\Controllers\Vendor\ImpersonationController;
 use App\Modules\Platform\Http\Controllers\Vendor\ComplianceController;
 use App\Modules\Platform\Http\Controllers\Vendor\DashboardController;
+use App\Modules\Platform\Http\Controllers\Vendor\GeneralSettingsController;
 use App\Modules\Platform\Http\Controllers\Vendor\OnboardingController;
 use App\Modules\Platform\Http\Controllers\Vendor\SetupWizardController;
 use Illuminate\Support\Facades\Route;
@@ -62,5 +63,17 @@ Route::middleware('auth:vendor')->prefix('settings/compliance')->name('settings.
         Route::post('/', 'update')->name('update');
         Route::post('submit', 'submit')->name('submit');
         Route::delete('documents/{document}', 'destroyDocument')->whereNumber('document')->name('documents.destroy');
+    });
+});
+
+/*
+| Settings › General (VEN-071 / 071a / 071b): vendor.settings.general* — store card and
+| the countries / categories change requests ({type} = countries | categories).
+*/
+Route::middleware('auth:vendor')->prefix('settings/general')->controller(GeneralSettingsController::class)->group(function (): void {
+    Route::get('/', 'index')->middleware('permission:settings.general.view,vendor')->name('settings.general');
+    Route::middleware('permission:settings.general.manage,vendor')->name('settings.general.')->group(function (): void {
+        Route::put('/', 'update')->middleware('throttle:30,1')->name('update');
+        Route::post('requests/{type}', 'requestChange')->whereIn('type', ['countries', 'categories'])->middleware('throttle:10,1')->name('request');
     });
 });

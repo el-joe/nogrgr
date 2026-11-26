@@ -1,0 +1,10 @@
+/*
+ * Store font "Inter" (Vendor › Appearance › Colours & fonts, VEN-034b): self-hosted @fontsource
+ * faces, its own Vite input loaded only when a store picks it (StoreFont::cssEntry()).
+ * The family is applied through --nog-font-latin / --nog-font-arabic in the store's
+ * appearance stylesheet (decision #91).
+ */
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';

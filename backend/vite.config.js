@@ -22,10 +22,15 @@ const centralImages = readdirSync('resources/images/central', { recursive: true 
     .filter((file) => /\.(webp|avif|svg|png)$/.test(file))
     .map((file) => `resources/images/central/${file}`);
 
+/** Store fonts a vendor can pick in Appearance (VEN-034b, StoreFont::cssEntry()), loaded only when chosen. */
+const storeFonts = readdirSync('resources/css/storefront/fonts')
+    .filter((file) => file.endsWith('.css'))
+    .map((file) => `resources/css/storefront/fonts/${file}`);
+
 export default defineConfig({
     plugins: [
         laravel({
-            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages],
+            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages, ...storeFonts],
             refresh: ['resources/views/**', 'app/Modules/**/resources/views/**', 'app/Modules/**/routes/**', 'lang/**'],
         }),
         tailwindcss(),

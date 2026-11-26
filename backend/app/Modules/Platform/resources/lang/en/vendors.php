@@ -129,6 +129,7 @@ return [
             'plan' => 'Plan & subscription',
             'domains' => 'Domains',
             'commission' => 'Profit & commission',
+            'stats' => 'Stats & orders',
             'compliance' => 'Compliance',
         ],
         'store_info' => 'Store info',

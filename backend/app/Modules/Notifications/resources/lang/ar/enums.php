@@ -7,6 +7,7 @@ return [
         'payments' => 'المدفوعات',
         'requests' => 'الطلبات الخاصة',
         'system' => 'النظام',
+        'support' => 'الدعم الفني',
     ],
     'notification_channel' => [
         'in_app' => 'داخل اللوحة',
@@ -50,7 +51,11 @@ return [
         'customer.password_reset' => 'إعادة تعيين كلمة المرور',
         'affiliate.welcome' => 'ترحيب بالمسوّق',
         'affiliate.payout_sent' => 'إرسال الدفعة',
+        'affiliate.activated' => 'تفعيل حساب المسوّق',
+        'affiliate.conversion' => 'اعتماد / إلغاء تحويل',
+        'affiliate.payout' => 'صرف / رفض دفعة',
         'admin.new_vendor' => 'تسجيل بائع جديد',
         'admin.payment_failed' => 'فشل دفعة بائع',
+        'support.ticket_reply' => 'رد على تذكرة دعم',
     ],
 ];

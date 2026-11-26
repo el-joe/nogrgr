@@ -105,6 +105,22 @@ return [
         'ui_kit' => 'مكتبة المكونات',
     ],
     'vendor' => [
+        // P9: support + help center (VEN-091 / 092)
+        'support' => 'الدعم الفني',
+        'help_center' => 'مركز المساعدة',
+        // P8 batch 2: analytics, pages, appearance, settings
+        'analytics' => 'التحليلات',
+        'returns_analytics' => 'تحليلات المرتجعات',
+        'pages' => 'الصفحات',
+        'appearance' => 'المظهر',
+        'account' => 'الحساب',
+        'general' => 'عام',
+        'currencies' => 'العملات',
+        'translations' => 'ترجمات المتجر',
+        'return_policy' => 'سياسة الإرجاع',
+        'mail' => 'البريد (SMTP)',
+        'tracking' => 'بكسلات التتبع',
+        'audit' => 'سجل التدقيق',
         // P8: store banners, invoices
         'store_design' => 'متجرك',
         'banners' => 'البانرات',

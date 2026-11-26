@@ -101,5 +101,15 @@ return [
         'notification_preferences' => [
             'updated' => 'تعديل تفضيلات الإشعارات',
         ],
+        'store' => [
+            'settings_updated' => 'تعديل إعدادات المتجر',
+            'change_requested' => 'طلب تغيير الدول / الفئات',
+            'currencies_updated' => 'تعديل العملات',
+            'return_policy_updated' => 'تعديل سياسة الإرجاع',
+        ],
+        'account' => [
+            'updated' => 'تعديل الملف الشخصي',
+            'password_changed' => 'تغيير كلمة المرور',
+        ],
     ],
 ];

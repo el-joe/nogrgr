@@ -55,6 +55,14 @@ class TenantChangeService extends BaseService
     }
 
     /**
+     * The store's open request of one type (vendor Settings › General pending state).
+     */
+    public function pendingFor(int $tenantId, TenantChangeType $type): ?TenantChangeRequest
+    {
+        return $this->changes->pendingFor($tenantId, $type->value);
+    }
+
+    /**
      * Vendor API (vendor panel "Change requests"): one pending request per store and type.
      */
     public function submit(TenantChangeSubmissionData $data): TenantChangeRequest

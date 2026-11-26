@@ -101,5 +101,15 @@ return [
         'notification_preferences' => [
             'updated' => 'Notification preferences changed',
         ],
+        'store' => [
+            'settings_updated' => 'Store settings changed',
+            'change_requested' => 'Countries / categories change requested',
+            'currencies_updated' => 'Currencies changed',
+            'return_policy_updated' => 'Return policy changed',
+        ],
+        'account' => [
+            'updated' => 'Own profile changed',
+            'password_changed' => 'Own password changed',
+        ],
     ],
 ];

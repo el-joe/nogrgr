@@ -68,7 +68,9 @@ it('renders the admin shell, dashboard and only registered sidebar links', funct
         ->assertSee(__('platform::dashboard.kpi.gross_sales'))
         ->assertSee(__('platform::dashboard.attention.title'))
         ->assertSee(__('navigation.admin.dashboard'))
-        ->assertDontSee(__('navigation.admin.support_tickets'));
+        // Support tickets became a real page in P9 (ADM-116): the link now points at it.
+        ->assertSee(__('navigation.admin.support_tickets'))
+        ->assertSee(route('admin.support.tickets.index'), false);
 });
 
 it('renders the dashboard in Arabic as RTL', function (): void {

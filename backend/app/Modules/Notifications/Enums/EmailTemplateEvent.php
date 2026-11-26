@@ -30,8 +30,12 @@ enum EmailTemplateEvent: string
     case CustomerPasswordReset = 'customer.password_reset';
     case AffiliateWelcome = 'affiliate.welcome';
     case AffiliatePayoutSent = 'affiliate.payout_sent';
+    case AffiliateActivated = 'affiliate.activated';
+    case AffiliateConversion = 'affiliate.conversion';
+    case AffiliatePayout = 'affiliate.payout';
     case AdminNewVendor = 'admin.new_vendor';
     case AdminPaymentFailed = 'admin.payment_failed';
+    case SupportTicketReply = 'support.ticket_reply';
 
     public function audience(): EmailAudience
     {
@@ -39,6 +43,7 @@ enum EmailTemplateEvent: string
             'vendor' => EmailAudience::Vendors,
             'order', 'customer' => EmailAudience::Shoppers,
             'affiliate' => EmailAudience::Affiliates,
+            'support' => EmailAudience::Vendors,
             default => EmailAudience::Admins,
         };
     }
@@ -71,8 +76,12 @@ enum EmailTemplateEvent: string
             self::CustomerPasswordReset => $customer + ['reset.url' => 'https://megz.example.com/reset-password'],
             self::AffiliateWelcome => ['affiliate.name' => 'Sara Nabil', 'login.url' => 'https://nogrgr.example.com/affiliate/login'],
             self::AffiliatePayoutSent => ['affiliate.name' => 'Sara Nabil', 'payout.amount' => '$310.00', 'payout.reference' => 'PO-2026-118'],
+            self::AffiliateActivated => ['affiliate.name' => 'Sara Nabil', 'affiliate.code' => 'SARA2026', 'referral.url' => 'https://nogrgr.example.com/?ref=SARA2026', 'login.url' => 'https://nogrgr.example.com/affiliate/login'],
+            self::AffiliateConversion => ['affiliate.name' => 'Sara Nabil', 'conversion.status' => 'Approved', 'store.name' => 'Megz Store', 'plan.name' => 'Growth', 'commission.amount' => '$237.60', 'conversion.note' => '', 'dashboard.url' => 'https://nogrgr.example.com/affiliate'],
+            self::AffiliatePayout => ['affiliate.name' => 'Sara Nabil', 'payout.status' => 'Paid', 'payout.amount' => '$310.00', 'payout.reference' => 'PP-7781-22', 'payout.method' => 'Bank transfer', 'payout.note' => '', 'dashboard.url' => 'https://nogrgr.example.com/affiliate'],
             self::AdminNewVendor => $store + ['vendor.name' => 'Mona Khaled', 'admin.url' => 'https://nogrgr.example.com/admin/vendors'],
             self::AdminPaymentFailed => $store + $invoice + ['payment.gateway' => 'Stripe'],
+            self::SupportTicketReply => $store + ['recipient.name' => 'Mohamed', 'ticket.reference' => 'T-4471', 'ticket.subject' => 'Shipping zone not saving', 'reply.author' => 'Laila, Nogrgr support', 'reply.excerpt' => 'We fixed the shipping zone sync. Please try saving the zone again and tell us if it works.', 'ticket.url' => 'https://nogrgr.example.com/tenant/megz/admin/support/4471'],
         };
     }
 

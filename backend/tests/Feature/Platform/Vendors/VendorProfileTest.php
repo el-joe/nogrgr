@@ -45,7 +45,7 @@ it('renders only the built tabs and hides manage buttons from viewers', function
         ->assertSee($tenant->subdomainHost())
         ->assertSee(__('platform::vendors.profile.tabs.plan'))
         ->assertSee(__('platform::vendors.profile.tabs.compliance'))
-        ->assertDontSee('Stats &amp; orders', false)
+        ->assertSee(__('platform::vendors.profile.tabs.stats'))
         ->assertDontSee('Mobile app')
         ->assertDontSee('>Limits<', false)
         ->assertDontSee(__('platform::vendors.profile.edit_store'))

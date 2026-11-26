@@ -5,6 +5,7 @@ namespace App\Modules\AfterSales\Http\Resources\StoreApi;
 use App\Modules\AfterSales\Enums\ReturnBlock;
 use App\Modules\AfterSales\Models\ReturnPolicy;
 use App\Modules\AfterSales\Models\ReturnReason;
+use App\Modules\AfterSales\Services\ReturnPolicyService;
 use App\Modules\AfterSales\Support\ReturnUploadLimits;
 use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Models\OrderItem;
@@ -65,6 +66,8 @@ class ReturnOptionsResource extends JsonResource
                 'return_shipping_payer' => $policy->return_shipping_payer->value,
                 'return_shipping_payer_label' => $policy->return_shipping_payer->label(),
                 'uploads' => ReturnUploadLimits::toArray(),
+                // The store's own policy text (VEN-079), null when it has none.
+                'text' => app(ReturnPolicyService::class)->storeText(),
             ],
         ];
     }

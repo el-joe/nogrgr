@@ -18,16 +18,17 @@ final class PermissionMatrix
      * @var array<string, list<string>>
      */
     private const MODULES = [
-        'overview' => ['dashboard'],
+        'overview' => ['dashboard', 'reports'],
         'catalog' => ['catalog'],
         'requests' => ['requests'],
         'vendors' => ['vendors', 'tenants'],
         'billing' => ['plans', 'subscriptions', 'finance'],
+        'affiliates' => ['affiliates'],
         'localization' => ['localization'],
         'content' => ['email-templates', 'notifications', 'content'],
         'integrations' => ['integrations'],
         'identity' => ['admins', 'roles', 'audit'],
-        'system' => ['system', 'horizon', 'settings'],
+        'system' => ['system', 'horizon', 'settings', 'support'],
     ];
 
     /**
@@ -36,7 +37,7 @@ final class PermissionMatrix
      * @var array<string, list<string>>
      */
     private const VENDOR_MODULES = [
-        'overview' => ['dashboard', 'onboarding', 'notifications'],
+        'overview' => ['dashboard', 'onboarding', 'notifications', 'analytics', 'support'],
         'catalog' => ['catalog'],
         'sales' => ['orders', 'returns', 'refunds'],
         'customers' => ['customers', 'subscribers'],

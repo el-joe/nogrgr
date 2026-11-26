@@ -4,12 +4,13 @@ namespace App\Modules\Storefront\Services\Catalog;
 
 use App\Modules\Commerce\Models\StorePaymentGateway;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
+use App\Modules\Storefront\Services\Appearance\StorefrontAppearance;
 use App\Modules\Storefront\Services\Pages\StorePageReader;
 use Illuminate\Support\Facades\Route;
 
 /**
  * Footer data of the store (Ecommet 1:573): link columns from the store pages (sf-data's
- * StorePageReader) + catalog / account links, and the "We accept" badges of the store's
+ * StorePageReader), the store's own footer links (VEN-034e) + catalog / account links, and the "We accept" badges of the store's
  * active payment methods.
  */
 class StorefrontShell
@@ -29,6 +30,13 @@ class StorefrontShell
                 } else {
                     $columns[$link['group']][] = ['title' => $link['title'], 'url' => $link['url']];
                 }
+            }
+        }
+
+        // The store's own footer links (Appearance › Footer, VEN-034e) after its pages.
+        foreach (app(StorefrontAppearance::class)->footerLinks() as $column => $links) {
+            foreach ($links as $link) {
+                $columns[$column][] = ['title' => $link['title'], 'url' => $link['url']];
             }
         }
 

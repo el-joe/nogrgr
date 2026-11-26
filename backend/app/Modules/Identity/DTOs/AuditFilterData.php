@@ -5,10 +5,15 @@ namespace App\Modules\Identity\DTOs;
 use App\Shared\DTOs\BaseDTO;
 
 /**
- * Audit log filters (list, export): free text, admin actor, tenant, event, period.
+ * Audit log filters (list, export): free text, actor (an admin unless `actorType` names
+ * another model, e.g. a store's VendorStaff), tenant, event, area (action prefix), period
+ * and the guards to keep (null = all; a null entry keeps guard-less system events).
  */
 final class AuditFilterData extends BaseDTO
 {
+    /**
+     * @param  list<string|null>|null  $guards
+     */
     public function __construct(
         public readonly ?string $search = null,
         public readonly ?int $actor = null,
@@ -16,6 +21,9 @@ final class AuditFilterData extends BaseDTO
         public readonly ?string $event = null,
         public readonly ?string $dateFrom = null,
         public readonly ?string $dateTo = null,
+        public readonly ?string $area = null,
+        public readonly ?string $actorType = null,
+        public readonly ?array $guards = null,
     ) {}
 
     /**
@@ -34,6 +42,17 @@ final class AuditFilterData extends BaseDTO
             event: $string('event'),
             dateFrom: $date('date_from'),
             dateTo: $date('date_to'),
+            area: ($area = $string('area')) !== null && preg_match('/^[a-z0-9_]+$/', $area) === 1 ? $area : null,
         );
+    }
+
+    /**
+     * The same filters pinned to an actor model and a set of guards (vendor audit log).
+     *
+     * @param  list<string|null>  $guards
+     */
+    public function scopedTo(string $actorType, array $guards): self
+    {
+        return new self($this->search, $this->actor, $this->tenant, $this->event, $this->dateFrom, $this->dateTo, $this->area, $actorType, $guards);
     }
 }

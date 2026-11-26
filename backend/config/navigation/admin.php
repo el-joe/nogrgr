@@ -94,7 +94,7 @@ return [
                 ['key' => 'vendors.pending', 'label' => 'navigation.admin.pending_registrations', 'route' => 'admin.vendors.pending', 'permission' => 'vendors.view', 'active' => 'admin.vendors.pending*'],
                 ['key' => 'vendors.compliance', 'label' => 'navigation.admin.compliance_kyc', 'route' => 'admin.vendors.compliance.index', 'permission' => 'vendors.kyc.view', 'active' => 'admin.vendors.compliance.*'],
                 ['key' => 'vendors.domains', 'label' => 'navigation.admin.domains_dns', 'route' => 'admin.vendors.domains.index', 'permission' => 'vendors.domains.view', 'active' => 'admin.vendors.domains.*'],
-                ['key' => 'vendors.shoppers', 'label' => 'navigation.admin.shoppers', 'route' => 'admin.vendors.shoppers.index', 'permission' => 'vendors.shoppers.view'],
+                ['key' => 'vendors.shoppers', 'label' => 'navigation.admin.shoppers', 'route' => 'admin.vendors.shoppers.index', 'permission' => 'vendors.shoppers.view', 'active' => 'admin.vendors.shoppers.*'],
             ]],
             ['key' => 'plans', 'label' => 'navigation.admin.plans', 'icon' => 'star', 'route' => 'admin.plans.index', 'permission' => 'plans.view'],
             ['key' => 'subscriptions', 'label' => 'navigation.admin.subscriptions', 'icon' => 'credit-card', 'route' => 'admin.billing.subscriptions.index', 'permission' => 'subscriptions.view'],
@@ -119,7 +119,7 @@ return [
                 ['key' => 'affiliates.promo-codes', 'label' => 'navigation.admin.promo_codes', 'route' => 'admin.affiliates.promo-codes.index', 'permission' => 'affiliates.promo-codes.view'],
                 ['key' => 'affiliates.settings', 'label' => 'navigation.admin.program_settings', 'route' => 'admin.affiliates.settings.edit', 'permission' => 'affiliates.settings.manage'],
             ]],
-            ['key' => 'reports', 'label' => 'navigation.admin.reports', 'icon' => 'chart', 'route' => 'admin.reports.index', 'permission' => 'reports.view'],
+            ['key' => 'reports', 'label' => 'navigation.admin.reports', 'icon' => 'chart', 'route' => 'admin.reports.index', 'permission' => 'reports.view', 'active' => 'admin.reports.*'],
         ],
     ],
     [
@@ -159,7 +159,7 @@ return [
                 ['key' => 'settings.integrations', 'label' => 'navigation.admin.integrations', 'route' => 'admin.integrations.index', 'permission' => 'integrations.view', 'active' => 'admin.integrations.*'],
                 ['key' => 'settings.email-templates', 'label' => 'navigation.admin.email_templates', 'route' => 'admin.settings.email-templates.index', 'permission' => 'email-templates.view', 'active' => 'admin.settings.email-templates.*'],
             ]],
-            ['key' => 'tickets', 'label' => 'navigation.admin.support_tickets', 'icon' => 'lifebuoy', 'route' => 'admin.tickets.index', 'permission' => 'tickets.view', 'badge' => 'tickets'],
+            ['key' => 'support', 'label' => 'navigation.admin.support_tickets', 'icon' => 'lifebuoy', 'route' => 'admin.support.tickets.index', 'permission' => 'support.tickets.view', 'badge' => 'support', 'active' => 'admin.support.*'],
             ['key' => 'notifications', 'label' => 'navigation.admin.notifications', 'icon' => 'bell', 'route' => 'admin.notifications.index', 'permission' => 'notifications.view'],
             ['key' => 'admins', 'label' => 'navigation.admin.admins_roles', 'icon' => 'shield', 'children' => [
                 ['key' => 'admins.index', 'label' => 'navigation.admin.admins_list', 'route' => 'admin.system.admins.index', 'permission' => 'admins.view'],
@@ -169,7 +169,7 @@ return [
             ['key' => 'system-tools', 'label' => 'navigation.admin.system_tools', 'icon' => 'server', 'children' => [
                 ['key' => 'system.maintenance', 'label' => 'navigation.admin.maintenance_windows', 'route' => 'admin.system.maintenance.index', 'permission' => 'system.maintenance.view'],
                 ['key' => 'system.cache', 'label' => 'navigation.admin.cache_tools', 'route' => 'admin.system.cache.index', 'permission' => 'system.cache.manage'],
-                ['key' => 'system.docs', 'label' => 'navigation.admin.developer_docs', 'route' => 'admin.system.docs', 'permission' => 'system.docs.view'],
+                ['key' => 'system.docs', 'label' => 'navigation.admin.developer_docs', 'route' => 'admin.system.docs.index', 'permission' => 'system.docs.view', 'active' => 'admin.system.docs.*'],
                 ['key' => 'system.ui-kit', 'label' => 'navigation.admin.ui_kit', 'route' => 'admin.ui-kit', 'permission' => 'system.ui-kit.view', 'active' => 'admin.ui-kit'],
             ]],
         ],

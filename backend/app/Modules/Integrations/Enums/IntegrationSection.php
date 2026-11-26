@@ -30,13 +30,14 @@ enum IntegrationSection: string
     case Billing = 'billing';
     case Commerce = 'commerce';
     case Domains = 'domains';
+    case Affiliates = 'affiliates';
 
     /**
      * Business settings (Admin › Settings › Platform) rather than an integration.
      */
     public function isBusiness(): bool
     {
-        return in_array($this, [self::Billing, self::Commerce, self::Domains], true);
+        return in_array($this, [self::Billing, self::Commerce, self::Domains, self::Affiliates], true);
     }
 
     /**
@@ -77,6 +78,7 @@ enum IntegrationSection: string
             self::Billing => 'percent',
             self::Commerce => 'cart',
             self::Domains => 'link',
+            self::Affiliates => 'gift',
         };
     }
 
@@ -182,6 +184,11 @@ enum IntegrationSection: string
             self::Domains => [
                 new SettingField('edge_ipv4', SettingFieldType::Ipv4, maxLength: 15),
             ],
+            self::Affiliates => [
+                new SettingField('cookie_days', SettingFieldType::Number, true, default: 30, min: 1, max: 365),
+                new SettingField('default_commission_bps', SettingFieldType::Number, true, default: 3000, min: 0, max: 10000),
+                new SettingField('min_payout_cents', SettingFieldType::Number, true, default: 5000, min: 0, max: 100000000),
+            ],
         };
     }
 
@@ -272,6 +279,7 @@ enum IntegrationSection: string
                 'checkout_rate_limit' => ['commerce.checkout_rate_limit'],
             ],
             self::Domains => [],
+            self::Affiliates => [],
         };
     }
 

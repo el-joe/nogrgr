@@ -44,14 +44,22 @@ class AuditLogService extends BaseService
     /**
      * @return Builder<AuditEvent>
      */
-    public function query(AuditFilterData $filters): Builder
+    public function query(AuditFilterData $filters, ?string $timezone = null): Builder
     {
-        $timezone = $this->timezone();
+        $timezone ??= $this->timezone();
 
         return $this->events->query()
             ->when($filters->actor !== null, fn (Builder $query) => $query
-                ->where('actor_type', (new Admin)->getMorphClass())
+                ->where('actor_type', $filters->actorType ?? (new Admin)->getMorphClass())
                 ->where('actor_id', $filters->actor))
+            ->when($filters->area !== null, fn (Builder $query) => $query->where('action', 'like', addcslashes((string) $filters->area, '%_\\').'.%'))
+            ->when($filters->guards !== null, function (Builder $query) use ($filters): void {
+                $guards = array_values(array_filter((array) $filters->guards, static fn (mixed $guard): bool => $guard !== null));
+                $withNull = in_array(null, (array) $filters->guards, true);
+                $query->where(fn (Builder $query) => $query
+                    ->whereIn('guard', $guards === [] ? [''] : $guards)
+                    ->when($withNull, fn (Builder $query) => $query->orWhereNull('guard')));
+            })
             ->when($filters->tenant !== null, fn (Builder $query) => $query->where('tenant_id', $filters->tenant))
             ->when($filters->event !== null, fn (Builder $query) => $query->where('action', $filters->event))
             ->when($filters->dateFrom !== null, fn (Builder $query) => $query->where('created_at', '>=', Carbon::parse((string) $filters->dateFrom, $timezone)->startOfDay()->utc()))
@@ -160,9 +168,9 @@ class AuditLogService extends BaseService
         return $this->actorNames[$key];
     }
 
-    public function localTime(?Carbon $date): ?Carbon
+    public function localTime(?Carbon $date, ?string $timezone = null): ?Carbon
     {
-        return $date?->copy()->setTimezone($this->timezone())->locale(app()->getLocale());
+        return $date?->copy()->setTimezone($timezone ?? $this->timezone())->locale(app()->getLocale());
     }
 
     /**

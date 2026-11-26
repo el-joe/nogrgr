@@ -53,6 +53,8 @@ class RecordOrderFacts
             'fulfilment_branch_id' => $order->fulfilment_branch_id,
             'delivery_min_date' => $order->delivery_min_date,
             'delivery_max_date' => $order->delivery_max_date,
+            'customer_email' => is_string($order->customer_email) ? mb_substr($order->customer_email, 0, 120) : null,
+            'coupon_code' => is_string($order->coupon_code) ? mb_substr($order->coupon_code, 0, 40) : null,
         ]);
     }
 

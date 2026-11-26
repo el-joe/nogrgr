@@ -40,6 +40,11 @@ export function bootStorefront(callback) {
             initLazyAccount();
         }
 
+        /* Store tracking pixels (VEN-083): only when the store has some on; consent first. */
+        if (document.getElementById('sf-tracking')) {
+            import('./tracking.js').then(({ initTracking }) => initTracking());
+        }
+
         callback?.();
     });
 }

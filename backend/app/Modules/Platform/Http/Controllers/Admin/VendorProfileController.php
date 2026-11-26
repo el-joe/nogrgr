@@ -13,6 +13,7 @@ use App\Modules\Platform\Http\Requests\Admin\VendorStoreInfoRequest;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Services\VendorProfileService;
 use App\Modules\Platform\Services\VendorService;
+use App\Modules\Reporting\Services\VendorStatsService;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
 use Illuminate\Contracts\View\View;
@@ -21,19 +22,19 @@ use Illuminate\Http\Request;
 
 /**
  * Admin › Vendors › Vendor profile (ADM-041…041f): Overview, Plan & subscription,
- * Domains, Profit & commission and Compliance tabs (?tab=), the Edit store form and
+ * Domains, Profit & commission, Stats & orders (ADM-041e) and Compliance tabs (?tab=), the Edit store form and
  * the profit / commission form.
  */
 class VendorProfileController extends Controller
 {
-    public const TABS = ['overview', 'plan', 'domains', 'commission', 'compliance'];
+    public const TABS = ['overview', 'plan', 'domains', 'commission', 'stats', 'compliance'];
 
     public function __construct(
         private readonly VendorService $vendors,
         private readonly VendorProfileService $profile,
     ) {}
 
-    public function show(Request $request, Tenant $tenant, PlanRepositoryContract $plans, CountryService $countries): View
+    public function show(Request $request, Tenant $tenant, PlanRepositoryContract $plans, CountryService $countries, VendorStatsService $stats): View
     {
         $tab = $request->query('tab');
         $tab = is_string($tab) && in_array($tab, self::TABS, true) ? $tab : 'overview';
@@ -54,6 +55,7 @@ class VendorProfileController extends Controller
             'activePlans' => $tab === 'plan' ? $plans->options(activeOnly: true) : [],
             'terms' => BillingTerm::options(),
             'domainRequests' => $tab === 'domains' ? $this->profile->domainRequests($tenant) : collect(),
+            'stats' => $tab === 'stats' ? $stats->overview((int) $tenant->id) : null,
         ]);
     }
 

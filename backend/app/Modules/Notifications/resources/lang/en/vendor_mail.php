@@ -1,0 +1,41 @@
+<?php
+
+return [
+    'title' => 'Mail (SMTP)',
+    'subtitle' => 'Send store emails from your own domain. Leave empty to use Nogrgr mail.',
+    'crumb' => 'Settings',
+    'save' => 'Save',
+    'send_test' => 'Send test email',
+    'test_title' => 'Send a test email',
+    'test_help' => 'Uses the values on this page, before you save them.',
+    'send' => 'Send',
+    'cancel' => 'Cancel',
+    'use_platform' => 'Use Nogrgr mail',
+    'use_platform_title' => 'Stop using your SMTP server?',
+    'use_platform_message' => 'Your store e-mails are sent by Nogrgr mail again. The saved server details are removed.',
+    'status' => [
+        'own' => 'Your store e-mails are sent from :address through :host.',
+        'platform' => 'Your store e-mails are sent by Nogrgr mail.',
+    ],
+    'fields' => [
+        'host' => 'Host',
+        'port' => 'Port',
+        'encryption' => 'Encryption',
+        'username' => 'Username',
+        'password' => 'Password',
+        'password_saved' => 'Saved — leave empty to keep it',
+        'from_address' => 'From address',
+        'from_name' => 'From name',
+        'test_email' => 'Send to',
+    ],
+    'saved' => 'Mail settings saved. Your store e-mails use your server now.',
+    'cleared' => 'Your store e-mails use Nogrgr mail again.',
+    'test_sent' => 'Test email delivered to :email in :seconds s.',
+    'test_failed' => 'The test email was not delivered: :error',
+    'test_incomplete' => 'Enter the host and the from address first.',
+    'test_subject' => 'Test email from :store',
+    'test_body' => 'Your SMTP settings work: e-mails from :store are delivered through your own server.',
+    'validation' => [
+        'host' => 'Enter a server name such as smtp.example.com.',
+    ],
+];

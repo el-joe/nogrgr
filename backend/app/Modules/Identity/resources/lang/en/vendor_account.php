@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'title' => 'Account',
+    'profile' => 'Profile',
+    'password' => 'Password',
+    'linked' => 'Linked sign-in',
+    'save' => 'Save',
+    'change_password' => 'Change password',
+    'updated' => 'Your profile was saved.',
+    'updated_verify' => 'Your profile was saved. We sent a confirmation link to :email.',
+    'password_changed' => 'Your password was changed.',
+    'linked_badge' => 'Linked',
+    'not_linked' => 'Not linked',
+    'linked_help' => 'Sign-in methods belong to your owner account.',
+    'manage_linked' => 'Manage in your owner account',
+    'fields' => [
+        'name' => 'Name',
+        'email' => 'Email',
+        'email_help' => 'Changing it sends a confirmation link to the new address.',
+        'email_owner_help' => 'The store owner\'s email is changed from the owner account.',
+        'phone' => 'Phone',
+        'language' => 'Language',
+        'current_password' => 'Current password',
+        'new_password' => 'New password',
+        'confirm_password' => 'Confirm',
+        'password_help' => 'At least 8 characters with letters and numbers.',
+        'password_owner_help' => 'At least 8 characters with letters and numbers. Applies to your owner account and all your stores.',
+    ],
+];

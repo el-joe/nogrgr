@@ -227,6 +227,20 @@ return [
                 'edge_ipv4' => 'Public IPv4 of the store edge, listed as the apex A record. Leave empty to list only the CNAME and TXT records.',
             ],
         ],
+        'affiliates' => [
+            'title' => 'Affiliate program',
+            'description' => 'Referral cookie lifetime, default commission and minimum payout of the affiliate program.',
+            'fields' => [
+                'cookie_days' => 'Referral cookie (days)',
+                'default_commission_bps' => 'Default commission (basis points)',
+                'min_payout_cents' => 'Minimum payout (US cents)',
+            ],
+            'help' => [
+                'cookie_days' => 'A store that signs up within this many days of the affiliate link is credited to the affiliate.',
+                'default_commission_bps' => '100 = 1 %. 3000 = 30 % of the first paid subscription payment.',
+                'min_payout_cents' => '5000 = $50.00. Payouts below this amount are refused unless they empty the balance.',
+            ],
+        ],
     ],
     'gateways' => [
         'search' => 'Search gateways',

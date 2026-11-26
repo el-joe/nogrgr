@@ -40,3 +40,6 @@ require __DIR__.'/admin/vendors.php';
 require __DIR__.'/admin/registrations.php';
 require __DIR__.'/admin/compliance.php';
 require __DIR__.'/admin/domains.php';
+
+// System tools › Developer docs (P9, ADM-115 / 115a).
+require __DIR__.'/admin/developer-docs.php';

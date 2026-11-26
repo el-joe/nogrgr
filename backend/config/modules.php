@@ -35,6 +35,7 @@ return [
         App\Modules\Ai\ModuleServiceProvider::class,
         App\Modules\Reporting\ModuleServiceProvider::class,
         App\Modules\Api\ModuleServiceProvider::class,
+        App\Modules\Support\ModuleServiceProvider::class,
         // make:module inserts above this line
     ],
 

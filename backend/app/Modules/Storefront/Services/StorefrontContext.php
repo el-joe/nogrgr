@@ -9,6 +9,7 @@ use App\Modules\Localization\Models\Country;
 use App\Modules\Localization\Models\Currency;
 use App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract;
 use App\Modules\Localization\Services\StoreCountries;
+use App\Modules\Localization\Services\StoreCurrencyService;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Storefront\DTOs\ResolvedThemeData;
 use App\Modules\Storefront\Services\Themes\ThemePreviewService;
@@ -52,6 +53,7 @@ class StorefrontContext
         private readonly CustomerAddressRepositoryContract $addresses,
         private readonly MoneyPresenter $money,
         private readonly ThemePreviewService $previews,
+        private readonly StoreCurrencyService $storeCurrencies,
     ) {}
 
     public function country(): ?Country
@@ -111,9 +113,17 @@ class StorefrontContext
         }
 
         $this->currencyResolved = true;
+        // Session choice when the store still offers it, else the country's currency when the
+        // store shows it by default there (VEN-072), else USD.
         $code = request()->hasSession() ? request()->session()->get(self::CURRENCY_SESSION_KEY) : null;
-        $code = is_string($code) && $code !== '' ? $code : $this->country()?->currency_code;
         $currency = is_string($code) && $code !== '' ? $this->currencies->findByCode(strtoupper($code)) : null;
+        $currency = $currency !== null && $this->storeCurrencies->isAvailable($currency) ? $currency : null;
+
+        if ($currency === null) {
+            $code = $this->country()?->currency_code;
+            $currency = is_string($code) && $code !== '' ? $this->currencies->findByCode(strtoupper($code)) : null;
+            $currency = $currency !== null && $this->storeCurrencies->isCountryDefault($currency) ? $currency : null;
+        }
 
         return $this->currency = $currency !== null && $currency->is_active && ! $currency->isBase() ? $currency : null;
     }

@@ -8,6 +8,7 @@ const pages = {
     'owner-invoices': () => import('./invoices.js'),
     'owner-domains': () => import('./domains.js'),
     'owner-profile': () => import('./profile.js'),
+    'owner-support': () => import('./support.js'),
 };
 
 export function initOwner() {

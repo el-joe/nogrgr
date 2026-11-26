@@ -11,20 +11,27 @@ use App\Modules\Storefront\Repositories\Contracts\BannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\HiddenBannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StoreBannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StorefrontCatalogRepositoryContract;
+use App\Modules\Storefront\Repositories\Contracts\StoreMenuLinkRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StorePageRepositoryContract;
+use App\Modules\Storefront\Repositories\Contracts\StoreSocialLinkRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\ThemeRepositoryContract;
 use App\Modules\Storefront\Repositories\Eloquent\BannerRepository;
 use App\Modules\Storefront\Repositories\Eloquent\HiddenBannerRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StoreBannerRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StorefrontCatalogRepository;
+use App\Modules\Storefront\Repositories\Eloquent\StoreMenuLinkRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StorePageRepository;
+use App\Modules\Storefront\Repositories\Eloquent\StoreSocialLinkRepository;
 use App\Modules\Storefront\Repositories\Eloquent\ThemeRepository;
+use App\Modules\Storefront\Services\Appearance\StorefrontAppearance;
 use App\Modules\Storefront\Services\Catalog\BadgeShelves;
 use App\Modules\Storefront\Services\Catalog\CategoryCatalog;
 use App\Modules\Storefront\Services\Catalog\ProductCards;
 use App\Modules\Storefront\Services\Catalog\ProductIndex;
 use App\Modules\Storefront\Services\StorefrontContext;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
+use App\Shared\Routing\ModuleRouteRegistry;
+use App\Shared\Routing\Surface;
 use Illuminate\Support\Facades\Event;
 
 class ModuleServiceProvider extends BaseModuleServiceProvider
@@ -41,6 +48,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         StoreBannerRepositoryContract::class => StoreBannerRepository::class,
         HiddenBannerRepositoryContract::class => HiddenBannerRepository::class,
         StorePageRepositoryContract::class => StorePageRepository::class,
+        StoreMenuLinkRepositoryContract::class => StoreMenuLinkRepository::class,
+        StoreSocialLinkRepositoryContract::class => StoreSocialLinkRepository::class,
     ];
 
     public function register(): void
@@ -55,11 +64,19 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         $this->app->scoped(CategoryCatalog::class);
         $this->app->scoped(BadgeShelves::class);
         $this->app->scoped(ProductCards::class);
+
+        // Store appearance read model (promo bar, links, fonts) memoised per request (VEN-034).
+        $this->app->scoped(StorefrontAppearance::class);
     }
 
     public function boot(): void
     {
         parent::boot();
+
+        // Vendor › Pages / Appearance / Tracking pixels and the storefront appearance stylesheet (VEN-033/034/083).
+        $registry = $this->app->make(ModuleRouteRegistry::class);
+        $registry->add(Surface::Vendor, $this->modulePath('routes/vendor-appearance.php'));
+        $registry->add(Surface::Storefront, $this->modulePath('routes/storefront-appearance.php'));
 
         // System CMS pages for every new store (sf-data).
         Event::listen(TenantProvisioned::class, EnsureStorePages::class);

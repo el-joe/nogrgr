@@ -17,6 +17,7 @@ enum NotificationCategory: string
     case Payments = 'payments';
     case Requests = 'requests';
     case System = 'system';
+    case Support = 'support';
 
     public function icon(): string
     {
@@ -26,6 +27,7 @@ enum NotificationCategory: string
             self::Payments => 'credit-card',
             self::Requests => 'message',
             self::System => 'settings',
+            self::Support => 'lifebuoy',
         };
     }
 
@@ -37,6 +39,7 @@ enum NotificationCategory: string
             self::Payments => 'success',
             self::Requests => 'warning',
             self::System => 'info',
+            self::Support => 'brand',
         };
     }
 

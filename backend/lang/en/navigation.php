@@ -105,6 +105,22 @@ return [
         'ui_kit' => 'Component library',
     ],
     'vendor' => [
+        // P9: support + help center (VEN-091 / 092)
+        'support' => 'Support',
+        'help_center' => 'Help center',
+        // P8 batch 2: analytics, pages, appearance, settings
+        'analytics' => 'Analytics',
+        'returns_analytics' => 'Return analytics',
+        'pages' => 'Pages',
+        'appearance' => 'Appearance',
+        'account' => 'Account',
+        'general' => 'General',
+        'currencies' => 'Currencies',
+        'translations' => 'Store translations',
+        'return_policy' => 'Return policy',
+        'mail' => 'Mail (SMTP)',
+        'tracking' => 'Tracking pixels',
+        'audit' => 'Audit log',
         // P8: store banners, invoices
         'store_design' => 'Your Store',
         'banners' => 'Banners',

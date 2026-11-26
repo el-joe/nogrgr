@@ -19,6 +19,14 @@ const pages = {
     'vendor-compliance': () => import('./compliance.js'),
     'vendor-themes': () => import('./themes.js'),
     'vendor-staff': () => import('./staff.js'),
+    'vendor-store-pages': () => import('./store-pages.js'),
+    'vendor-appearance': () => import('./appearance.js'),
+    'vendor-email-templates': () => import('./email-templates.js'),
+    'vendor-mail': () => import('./mail.js'),
+    'vendor-support': () => import('./support.js'),
+    'vendor-help': () => import('./help.js'),
+    'vendor-account': () => import('./account.js'),
+    'vendor-currencies': () => import('./currencies.js'),
 };
 
 export function initVendor() {
