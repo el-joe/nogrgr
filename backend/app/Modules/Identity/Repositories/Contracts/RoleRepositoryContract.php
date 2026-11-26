@@ -37,9 +37,17 @@ interface RoleRepositoryContract extends RepositoryContract
 
     /**
      * Make sure every permission name exists for the guard (catalog entries added after
-     * the last seed).
+     * the last seed); returns how many were created.
      *
      * @param  list<string>  $names
      */
-    public function ensurePermissions(array $names, string $guard): void;
+    public function ensurePermissions(array $names, string $guard): int;
+
+    /**
+     * Find or create the role and give it exactly these permissions; returns how many
+     * permissions it did not hold before.
+     *
+     * @param  list<string>  $permissions
+     */
+    public function syncRole(string $name, string $guard, array $permissions): int;
 }

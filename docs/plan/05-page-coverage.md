@@ -462,12 +462,12 @@
 |---|---|---|---|---|---|---|---|
 | SF-ECO-001 | Home — Ecommet | `store.home` | sections from page builder, load more, tabbed products, flash countdown, empty section hidden | tenant.home, preview, preview.home.tabbed-products, tenant.storefront.home.tabbed-products (themes.ecommet) | 1:1002, m 1:2656 | P7 | todo |
 | SF-ECO-001a | ↳ Home mobile alt "Star" | `store.home` | | — (Figma) | m 1:2710 | P7 | todo |
-| SF-ELO-001 | Home — Elora v1 (base) | `store.home` | as above + card-fan slider, marquee | tenant.home (elora home) | 1:15432, m 1:21125 | P7 | todo |
-| SF-ELO-002 | Home — Elora v2 (Theme #1) | `store.home` | | tenant.home (elora home-v2) | 1:26559, m 1:24137 | P7 | todo |
-| SF-ELO-003 | Home — Elora v3 (Theme #2) | `store.home` | | tenant.home (elora home-v3) | 1:26978, m 1:24477 | P7 | todo |
-| SF-ELO-004 | Home — Elora v4 (Theme #3) | `store.home` | | tenant.home (elora home-v4) | 1:27464, m 1:24870 | P7 | todo |
-| SF-ELO-005 | Home — Elora v5 (Theme #4) | `store.home` | | tenant.home (elora home-v5) | 1:28050, m 1:25467 | P7 | todo |
-| SF-ELO-006 | Home — Elora v6 (Theme #5) | `store.home` | | tenant.home (elora home-v6) | 1:28992, m 1:25994 | P7 | todo |
+| SF-ELO-001 | Home — Elora v1 (base) | `store.home` | as above + card-fan slider, marquee | tenant.home (elora home) | 1:15432, m 1:21125 | P7 | done |
+| SF-ELO-002 | Home — Elora v2 (Theme #1) | `store.home` | | tenant.home (elora home-v2) | 1:26559, m 1:24137 | P7 | done |
+| SF-ELO-003 | Home — Elora v3 (Theme #2) | `store.home` | | tenant.home (elora home-v3) | 1:26978, m 1:24477 | P7 | done |
+| SF-ELO-004 | Home — Elora v4 (Theme #3) | `store.home` | | tenant.home (elora home-v4) | 1:27464, m 1:24870 | P7 | done |
+| SF-ELO-005 | Home — Elora v5 (Theme #4) | `store.home` | | tenant.home (elora home-v5) | 1:28050, m 1:25467 | P7 | done |
+| SF-ELO-006 | Home — Elora v6 (Theme #5) | `store.home` | | tenant.home (elora home-v6) | 1:28992, m 1:25994 | P7 | done |
 | SF-SQF-001 | Home — Souqify v1 (base) | `store.home` | flash countdown, deals | tenant.home (souqify home) | 1:72835, m 1:77852 | P7 | todo |
 | SF-SQF-002 | Home — Souqify v2 (Theme #1) | `store.home` | | tenant.home (souqify home-v2) | 1:81585, m 1:78202 | P7 | todo |
 | SF-SQF-003 | Home — Souqify v3 (Theme #2) | `store.home` | | tenant.home (souqify home-v3) | 1:82288, m 1:78599 | P7 | todo |
@@ -534,53 +534,53 @@
 
 | ID | Page / screen | Route (new, proposed name) | Key actions & states | Old source | Figma node | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| SF-ELO-010 | Layout: navbar (6 header variants), footer, locale switcher, mobile nav | layout | | themes.elora.layout, partials/header-v* | 1:20866 | P7 | todo |
-| SF-ELO-011 | Components: cards, inputs, sale tags, marquee, card-fan, swatches (36) | components | | themes.elora | 1:18492, 1:20559, 1:20567, 1:20600, 1:20631, 1:20764, 1:20802, 1:22460, 1:22593, 1:22714, 1:22747, 1:22760, 1:23902, 1:23921, 1:23938, 1:23953, 1:24018, 1:24039, 1:24104, 1:25363, 1:25364, 1:25458, 1:25459, 1:25465, 1:25466, 1:29865, 1:30232, 1:26485–1:26557 | P7 | todo |
-| SF-ELO-012 | Search autocomplete | `store.search.autocomplete` | | tenant.storefront.search.autocomplete | designed: Storefront additions 135:111544 · m 135:111756 | P7 | todo |
+| SF-ELO-010 | Layout: navbar (6 header variants), footer, locale switcher, mobile nav | layout | | themes.elora.layout, partials/header-v* | 1:20866 | P7 | done |
+| SF-ELO-011 | Components: cards, inputs, sale tags, marquee, card-fan, swatches (36) | components | | themes.elora | 1:18492, 1:20559, 1:20567, 1:20600, 1:20631, 1:20764, 1:20802, 1:22460, 1:22593, 1:22714, 1:22747, 1:22760, 1:23902, 1:23921, 1:23938, 1:23953, 1:24018, 1:24039, 1:24104, 1:25363, 1:25364, 1:25458, 1:25459, 1:25465, 1:25466, 1:29865, 1:30232, 1:26485–1:26557 | P7 | done |
+| SF-ELO-012 | Search autocomplete | `store.search.autocomplete` | | tenant.storefront.search.autocomplete | designed: Storefront additions 135:111544 · m 135:111756 | P7 | done |
 | SF-ELO-013 | Image search modal | `store.search.image` | | tenant.storefront.search.image | designed: Storefront additions 135:111805 · results 135:111835 · m 135:111893 | P10 | todo |
-| SF-ELO-014 | Search results | `store.search` | empty | tenant.storefront.search | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | todo |
-| SF-ELO-015 | Best selling | `store.best-selling` | | tenant.storefront.best-selling | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | todo |
-| SF-ELO-016 | New in | `store.new-in` | | tenant.storefront.new-in | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | todo |
-| SF-ELO-017 | Top rated (full star) | `store.top-rated` | | tenant.storefront.full-star | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | todo |
-| SF-ELO-018 | Offers | `store.offers` | | tenant.storefront.offers | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | todo |
-| SF-ELO-019 | Product listing / category | `store.category` | sort, filter, load more, empty | tenant.storefront.category | 1:17172, m 1:21453 | P7 | todo |
-| SF-ELO-019a | ↳ Filter sheet (mobile) | modal | | CategoryPage | m 1:22799 | P7 | todo |
-| SF-ELO-019b | ↳ Sort-by popup (mobile) | modal | | CategoryPage | m 1:23024 | P7 | todo |
-| SF-ELO-020 | Product details | `store.product` | | tenant.storefront.product | 1:16245, m 1:21580 | P7 | todo |
-| SF-ELO-020a | ↳ Product details (no recommendations variant) | state | | ProductPage | 1:16088 | P7 | todo |
-| SF-ELO-020b | ↳ Delivery popup | modal | | — (A3 popup days) | m 1:23053 | P7 | todo |
-| SF-ELO-020c | ↳ Privacy & secure payment popup | modal | | — (Figma) | m 1:23152 | P7 | todo |
-| SF-ELO-020d | ↳ Reviews modal | modal | | ProductPage | designed: Storefront additions 135:111928 · write 135:112064 · m 135:112101 | P7 | todo |
-| SF-ELO-021 | Mini cart / item added | dropdown | | CartDropdown | designed: Storefront additions 137:112132 · m 137:112323 | P7 | todo |
-| SF-ELO-022 | Cart | `store.cart` | | tenant.storefront.cart | 1:17541, m 1:22029 | P7 | todo |
-| SF-ELO-022a | ↳ Cart empty | state | | CartPage | m 1:23315 | P7 | todo |
-| SF-ELO-023 | Checkout | `store.checkout` | | tenant.storefront.checkout | 1:18245, m 1:22186 · Storefront additions: 98:100761 + states 98:101058, m 98:101146 + m states 98:101243 | P7 | todo |
-| SF-ELO-023a | ↳ Step: shipping information | step | | CheckoutPage | 1:18002 | P7 | todo |
-| SF-ELO-023b | ↳ Step: payment details (card) | step | | CheckoutPage | 1:17863 | P7 | todo |
-| SF-ELO-023c | ↳ Add address modal | modal | | CheckoutPage | 1:20817, m 1:22912 · Storefront additions: canonical 97:101294, m sheets 97:102977–97:103768 | P7 | todo |
-| SF-ELO-023d | ↳ Select address modal | modal | | CheckoutPage | 1:21111, m 1:22988 · Storefront additions: checkout list 98:100761, m 98:101146 | P7 | todo |
-| SF-ELO-023e | ↳ Payment redirect / cancelled | `store.payment.charge` / `.cancel` | | tenant.payment.charge, .cancel | designed: redirect 115:110169 / m 115:110374 · not completed 115:110200 / m 115:110405 · toasts 115:110460 / m 115:110530 | P7 | todo |
-| SF-ELO-024 | Order success | `store.orders.status` | | tenant.storefront.order-status | m 1:23007 | P7 | todo |
-| SF-ELO-025 | Login / register | `store.auth.login` | | tenant.storefront.login | Storefront additions: 99:101528, m 99:102013 / 99:102077 | P7 | todo |
-| SF-ELO-025a | ↳ Forgot password | `store.auth.password.request` | | — (new) | Storefront additions: 99:101813, m 99:102156 | P7 | todo |
-| SF-ELO-025b | ↳ Reset password | `store.auth.password.reset` | | — (new) | Storefront additions: 99:101813, m 99:102156 | P7 | todo |
-| SF-ELO-025c | ↳ Verify email | `store.auth.verify` | | — (new) | designed: Storefront additions 115:108883 / m 115:109067 | P7 | todo |
-| SF-ELO-026 | Account / profile (info, addresses) | `store.account` | | tenant.storefront.profile | Storefront additions: profile 101:104351, m 101:104642; addresses 101:104772, m 101:105047 | P7 | todo |
-| SF-ELO-027 | Favorites | `store.favorites` | | tenant.storefront.favorites | 1:18588, m 1:23220 | P7 | todo |
-| SF-ELO-027a | ↳ Favorites empty | state | | FavoritesPage | m 1:23277 | P7 | todo |
-| SF-ELO-028 | Orders | `store.orders.index` | track, reorder, review | ProfilePage orders | 1:18739, m 1:23374 · Storefront additions: 100:102812, m 100:103463 | P7 | todo |
-| SF-ELO-028a | ↳ Orders empty | state | | ProfilePage | 1:19347, m 1:23542 | P7 | todo |
-| SF-ELO-029 | Order details (download invoice) | `store.orders.show` | | tenant.storefront.order-status | 1:18987, m 1:23600 · Storefront additions: 100:103150, m 100:103617 | P7 | todo |
-| SF-ELO-029a | ↳ Cancel order modal | modal | | ManagesOrderCancellation | Storefront additions: modals 103:108307, m sheets 103:108522 | P7 | todo |
-| SF-ELO-029b | ↳ Write review modal | modal | | OrderStatusPage | Storefront additions: modals 103:108307, m sheets 103:108522 | P7 | todo |
-| SF-ELO-030 | Order tracking | `store.orders.tracking` | | tenant.storefront.order-tracking | 1:19981, m 1:23708 | P7 | todo |
-| SF-ELO-030a | ↳ Live tracking | state | | — (Figma) | m 1:20213 | P7 | todo |
-| SF-ELO-031 | Request return | `store.returns.create` | | tenant.storefront.order-return | Storefront additions: 102:106680, m 102:106976 | P7 | todo |
-| SF-ELO-032 | Returns list | `store.returns.index` | | ProfilePage returns | Storefront additions: 102:105879, m 102:106155 | P7 | todo |
-| SF-ELO-033 | Return detail | `store.returns.show` | | tenant.storefront.return-detail | Storefront additions: 102:106266, m 102:106559 | P7 | todo |
-| SF-ELO-034 | CMS page | `store.page` | | tenant.storefront.page | designed: Storefront additions 115:109132 / m 115:109325 | P7 | todo |
-| SF-ELO-035 | Support request form / newsletter signup | component | | SupportRequestForm | designed: Storefront additions 115:109381 / m 115:109628 (form + newsletter + success toast) | P7 | todo |
-| SF-ELO-036 | 404 (themed) | `store.not-found` | | tenant.storefront.not-found | designed: Storefront additions 115:109756 / m 115:109946 | P7 | todo |
+| SF-ELO-014 | Search results | `store.search` | empty | tenant.storefront.search | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | done |
+| SF-ELO-015 | Best selling | `store.best-selling` | | tenant.storefront.best-selling | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | done |
+| SF-ELO-016 | New in | `store.new-in` | | tenant.storefront.new-in | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | done |
+| SF-ELO-017 | Top rated (full star) | `store.top-rated` | | tenant.storefront.full-star | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | done |
+| SF-ELO-018 | Offers | `store.offers` | | tenant.storefront.offers | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | done |
+| SF-ELO-019 | Product listing / category | `store.category` | sort, filter, load more, empty | tenant.storefront.category | 1:17172, m 1:21453 | P7 | done |
+| SF-ELO-019a | ↳ Filter sheet (mobile) | modal | | CategoryPage | m 1:22799 | P7 | done |
+| SF-ELO-019b | ↳ Sort-by popup (mobile) | modal | | CategoryPage | m 1:23024 | P7 | done |
+| SF-ELO-020 | Product details | `store.product` | | tenant.storefront.product | 1:16245, m 1:21580 | P7 | done |
+| SF-ELO-020a | ↳ Product details (no recommendations variant) | state | | ProductPage | 1:16088 | P7 | done |
+| SF-ELO-020b | ↳ Delivery popup | modal | | — (A3 popup days) | m 1:23053 | P7 | done |
+| SF-ELO-020c | ↳ Privacy & secure payment popup | modal | | — (Figma) | m 1:23152 | P7 | done |
+| SF-ELO-020d | ↳ Reviews modal | modal | | ProductPage | designed: Storefront additions 135:111928 · write 135:112064 · m 135:112101 | P7 | done |
+| SF-ELO-021 | Mini cart / item added | dropdown | | CartDropdown | designed: Storefront additions 137:112132 · m 137:112323 | P7 | done |
+| SF-ELO-022 | Cart | `store.cart` | | tenant.storefront.cart | 1:17541, m 1:22029 | P7 | done |
+| SF-ELO-022a | ↳ Cart empty | state | | CartPage | m 1:23315 | P7 | done |
+| SF-ELO-023 | Checkout | `store.checkout` | | tenant.storefront.checkout | 1:18245, m 1:22186 · Storefront additions: 98:100761 + states 98:101058, m 98:101146 + m states 98:101243 | P7 | done |
+| SF-ELO-023a | ↳ Step: shipping information | step | | CheckoutPage | 1:18002 | P7 | done |
+| SF-ELO-023b | ↳ Step: payment details (card) | step | | CheckoutPage | 1:17863 | P7 | done |
+| SF-ELO-023c | ↳ Add address modal | modal | | CheckoutPage | 1:20817, m 1:22912 · Storefront additions: canonical 97:101294, m sheets 97:102977–97:103768 | P7 | done |
+| SF-ELO-023d | ↳ Select address modal | modal | | CheckoutPage | 1:21111, m 1:22988 · Storefront additions: checkout list 98:100761, m 98:101146 | P7 | done |
+| SF-ELO-023e | ↳ Payment redirect / cancelled | `store.payment.charge` / `.cancel` | | tenant.payment.charge, .cancel | designed: redirect 115:110169 / m 115:110374 · not completed 115:110200 / m 115:110405 · toasts 115:110460 / m 115:110530 | P7 | done |
+| SF-ELO-024 | Order success | `store.orders.status` | | tenant.storefront.order-status | m 1:23007 | P7 | done |
+| SF-ELO-025 | Login / register | `store.auth.login` | | tenant.storefront.login | Storefront additions: 99:101528, m 99:102013 / 99:102077 | P7 | done |
+| SF-ELO-025a | ↳ Forgot password | `store.auth.password.request` | | — (new) | Storefront additions: 99:101813, m 99:102156 | P7 | done |
+| SF-ELO-025b | ↳ Reset password | `store.auth.password.reset` | | — (new) | Storefront additions: 99:101813, m 99:102156 | P7 | done |
+| SF-ELO-025c | ↳ Verify email | `store.auth.verify` | | — (new) | designed: Storefront additions 115:108883 / m 115:109067 | P7 | done |
+| SF-ELO-026 | Account / profile (info, addresses) | `store.account` | | tenant.storefront.profile | Storefront additions: profile 101:104351, m 101:104642; addresses 101:104772, m 101:105047 | P7 | done |
+| SF-ELO-027 | Favorites | `store.favorites` | | tenant.storefront.favorites | 1:18588, m 1:23220 | P7 | done |
+| SF-ELO-027a | ↳ Favorites empty | state | | FavoritesPage | m 1:23277 | P7 | done |
+| SF-ELO-028 | Orders | `store.orders.index` | track, reorder, review | ProfilePage orders | 1:18739, m 1:23374 · Storefront additions: 100:102812, m 100:103463 | P7 | done |
+| SF-ELO-028a | ↳ Orders empty | state | | ProfilePage | 1:19347, m 1:23542 | P7 | done |
+| SF-ELO-029 | Order details (download invoice) | `store.orders.show` | | tenant.storefront.order-status | 1:18987, m 1:23600 · Storefront additions: 100:103150, m 100:103617 | P7 | done |
+| SF-ELO-029a | ↳ Cancel order modal | modal | | ManagesOrderCancellation | Storefront additions: modals 103:108307, m sheets 103:108522 | P7 | done |
+| SF-ELO-029b | ↳ Write review modal | modal | | OrderStatusPage | Storefront additions: modals 103:108307, m sheets 103:108522 | P7 | done |
+| SF-ELO-030 | Order tracking | `store.orders.tracking` | | tenant.storefront.order-tracking | 1:19981, m 1:23708 | P7 | done |
+| SF-ELO-030a | ↳ Live tracking | state | | — (Figma) | m 1:20213 | P7 | done |
+| SF-ELO-031 | Request return | `store.returns.create` | | tenant.storefront.order-return | Storefront additions: 102:106680, m 102:106976 | P7 | done |
+| SF-ELO-032 | Returns list | `store.returns.index` | | ProfilePage returns | Storefront additions: 102:105879, m 102:106155 | P7 | done |
+| SF-ELO-033 | Return detail | `store.returns.show` | | tenant.storefront.return-detail | Storefront additions: 102:106266, m 102:106559 | P7 | done |
+| SF-ELO-034 | CMS page | `store.page` | | tenant.storefront.page | designed: Storefront additions 115:109132 / m 115:109325 | P7 | done |
+| SF-ELO-035 | Support request form / newsletter signup | component | | SupportRequestForm | designed: Storefront additions 115:109381 / m 115:109628 (form + newsletter + success toast) | P7 | done |
+| SF-ELO-036 | 404 (themed) | `store.not-found` | | tenant.storefront.not-found | designed: Storefront additions 115:109756 / m 115:109946 | P7 | done |
 
 ### 6.4 Souqify shared pages
 
@@ -672,7 +672,7 @@
 | MAIL-012 | Order confirmation (customer) | `tenant.order_confirmation` | | TenantOrderConfirmation | designed: Emails & printables 130:10687 | P5 | todo |
 | MAIL-013 | Order processing | `tenant.order_processing` | | TenantOrderProcessing | designed: Emails & printables 130:10758 | P5 | todo |
 | MAIL-014 | Shipping update (tracking link, estimate) | `tenant.shipping_update` | | TenantShippingUpdate | designed: Emails & printables 130:10820 | P5 | todo |
-| MAIL-015 | Order delivered (review CTA) | `tenant.order_delivered` | | TenantOrderDelivered | designed: Emails & printables 130:10889 | P5 | todo |
+| MAIL-015 | Order delivered (review CTA) | `tenant.order_delivered` | | TenantOrderDelivered | designed: Emails & printables 130:10889 | P5 | partial |
 | MAIL-016 | Order cancelled | `tenant.order_cancelled` | | TenantOrderCancelled | designed: Emails & printables 130:10968 | P5 | todo |
 | MAIL-017 | Payment receipt | `tenant.payment_receipt` | | TenantPaymentReceipt | designed: Emails & printables 130:11011 | P5 | todo |
 | MAIL-018 | Refund processed | `tenant.refund_processed` | | TenantRefundProcessed | designed: Emails & printables 130:11069 | P5 | todo |

@@ -18,6 +18,8 @@ return [
     'customer' => [
         'greeting' => 'Hello :customer_first_name,',
         'view_order' => 'View order',
+        'write_review' => 'Write a review',
+        'review_prompt' => 'How was your order? Rate the products you received, it helps other shoppers.',
         'confirmation' => ['subject' => 'Order :order_number confirmed', 'body' => 'Thank you for your order :order_number at :store_name. Total: :order_total.'],
         'shipped' => ['subject' => 'Order :order_number shipped', 'body' => 'Your order :order_number is on its way. Tracking number: :shipment_tracking_no.'],
         'delivered' => ['subject' => 'Order :order_number delivered', 'body' => 'Your order :order_number has been delivered. Enjoy!'],

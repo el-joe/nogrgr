@@ -18,6 +18,7 @@ use App\Modules\Identity\Repositories\Contracts\VendorStaffRepositoryContract;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Services\NotificationDispatcher;
 use App\Modules\Platform\Models\Tenant;
+use App\Modules\Platform\Services\StoreSettingsService;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\Notification;
 
@@ -78,7 +79,10 @@ class SendOrderNotifications
 
     public function delivered(OrderDelivered $event): void
     {
-        $this->notifyCustomer($event->order, EmailTemplateEvent::OrderDelivered, 'delivered');
+        // MAIL-015: the e-mail's button opens the review modal of the storefront order page.
+        $this->notifyCustomer($event->order, EmailTemplateEvent::OrderDelivered, 'delivered', [
+            'order.review_url' => $this->storeBaseUrl().route('storefront.orders.show', ['order' => $event->order->uuid, 'review' => 1], false),
+        ]);
     }
 
     public function cancelled(OrderCancelled $event): void
@@ -101,16 +105,28 @@ class SendOrderNotifications
 
         $tenant = tenant();
         $store = $tenant instanceof Tenant ? $tenant->name : '';
+        $base = $this->storeBaseUrl();
 
         $customer->notify(new OrderCustomerNotification($template, $name, [
             'customer.first_name' => (string) strtok((string) $customer->name, ' '),
             'customer.name' => (string) $customer->name,
             'store.name' => (string) $store,
-            'store.url' => url('/'),
+            'store.url' => $base,
             'order.number' => $order->number,
             'order.total' => $order->money('grand_total')->format(),
-            'order.url' => url('/orders/'.$order->uuid),
+            'order.url' => $base.route('storefront.orders.show', ['order' => $order->uuid], false),
         ] + $extra, $order->uuid));
+    }
+
+    /**
+     * Storefront base URL of the current store: links in customer e-mails must point to the
+     * store even when the event fires from the admin panel (central request).
+     */
+    private function storeBaseUrl(): string
+    {
+        $tenant = tenant();
+
+        return $tenant instanceof Tenant ? StoreSettingsService::storeUrl($tenant) : rtrim(url('/'), '/');
     }
 
     /**

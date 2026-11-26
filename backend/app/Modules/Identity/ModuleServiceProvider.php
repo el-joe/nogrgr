@@ -2,6 +2,7 @@
 
 namespace App\Modules\Identity;
 
+use App\Modules\Identity\Console\SyncPermissionsCommand;
 use App\Modules\Identity\Events\AdminAccountCreated;
 use App\Modules\Identity\Events\AdminPasswordChanged;
 use App\Modules\Identity\Events\AdminRoleChanged;
@@ -66,6 +67,10 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Gate::define('manage-own-account', static fn (mixed $user): bool => $user instanceof Admin);
 
         $this->bootPermissionRules();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([SyncPermissionsCommand::class]);
+        }
     }
 
     /**

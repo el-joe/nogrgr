@@ -18,6 +18,8 @@ return [
     'customer' => [
         'greeting' => 'مرحباً :customer_first_name،',
         'view_order' => 'عرض الطلب',
+        'write_review' => 'اكتب تقييمًا',
+        'review_prompt' => 'كيف كان طلبك؟ قيّم المنتجات التي استلمتها لتساعد المتسوقين الآخرين.',
         'confirmation' => ['subject' => 'تم تأكيد الطلب :order_number', 'body' => 'شكراً لطلبك :order_number من :store_name. الإجمالي: :order_total.'],
         'shipped' => ['subject' => 'تم شحن الطلب :order_number', 'body' => 'طلبك :order_number في الطريق إليك. رقم التتبع: :shipment_tracking_no.'],
         'delivered' => ['subject' => 'تم توصيل الطلب :order_number', 'body' => 'تم توصيل طلبك :order_number. نتمنى أن ينال إعجابك!'],

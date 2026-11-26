@@ -75,6 +75,12 @@ class OrderCustomerNotification extends Notification implements ShouldQueue
             ->greeting((string) __('commerce::notifications.customer.greeting', $params, $locale))
             ->line((string) __('commerce::notifications.customer.'.$this->eventName.'.body', $params, $locale));
 
+        // MAIL-015: delivered → "Write a review" opens the review modal of the order page.
+        if (($this->variables['order.review_url'] ?? '') !== '') {
+            return $mail->line((string) __('commerce::notifications.customer.review_prompt', $params, $locale))
+                ->action((string) __('commerce::notifications.customer.write_review', [], $locale), $this->variables['order.review_url']);
+        }
+
         return ($this->variables['order.url'] ?? '') !== ''
             ? $mail->action((string) __('commerce::notifications.customer.view_order', [], $locale), $this->variables['order.url'])
             : $mail;

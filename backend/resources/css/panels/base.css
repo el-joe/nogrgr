@@ -934,9 +934,22 @@ html[data-sidebar-mode-ready='false'] :where(.ui-sidebar, .ui-shell-main) {
     box-shadow: none !important;
 }
 
-:root .ui-datatable table.dataTable :is(th, td).dt-type-numeric,
-:root .ui-datatable table.dataTable :is(th, td)[data-align='end'] {
+:root .ui-datatable table.dataTable :is(th, td):is(.dt-type-numeric, .dt-type-date, .dt-right, [data-align='end']) {
     text-align: end;
+}
+
+/*
+ * End-aligned columns: DataTables reverses the header (arrow first, title grown to fill),
+ * which leaves the sort arrow alone at the start of the cell. Keep the title and its
+ * arrow together at the cell's end, in reading order, in both LTR and RTL.
+ */
+:root .ui-datatable table.dataTable thead th:is(.dt-type-numeric, .dt-type-date, .dt-right, [data-align='end']) div.dt-column-header {
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+:root .ui-datatable table.dataTable thead th:is(.dt-type-numeric, .dt-type-date, .dt-right, [data-align='end']) div.dt-column-header .dt-column-title {
+    flex-grow: 0;
 }
 
 :root .ui-datatable table.dataTable > tbody > tr:last-child > td {

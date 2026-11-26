@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 
 /**
  * Posts paid orders, settlements and invoices that predate the ledger (decision #74 d).
+ * Orders already posted whose ledger drifted from the formulas get one correcting posting.
  * Idempotent: the live listeners' keys are reused, so it can run any number of times.
  *
  *   php artisan finance:backfill-ledger --dry-run
@@ -33,6 +34,7 @@ class BackfillLedgerCommand extends Command
 
         $this->table(['', $dryRun ? 'Would post' : 'Posted', 'Already in ledger', 'Nothing to post'], [
             ['Orders', $report->ordersPosted, $report->ordersExisting, $report->ordersUnchanged],
+            ['Order corrections', $report->ordersCorrected, '-', '-'],
             ['Settlements', $report->settlementsPosted, $report->settlementsExisting, '-'],
             ['Invoices', $report->invoicesPosted, $report->invoicesExisting, '-'],
         ]);

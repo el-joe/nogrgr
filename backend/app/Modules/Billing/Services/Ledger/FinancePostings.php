@@ -65,7 +65,26 @@ class FinancePostings
         return $this->deltas($tenantId, $order, $figures);
     }
 
-    public function order(int $tenantId, Order $order, string $key, LedgerSource $source = LedgerSource::Order, ?string $sourceReference = null, ?CarbonInterface $occurredAt = null): ?LedgerTransaction
+    /**
+     * Brings an order whose ledger drifted from the formulas (postings written by an earlier
+     * release, e.g. a refund above the vendor share that only reversed the payable,
+     * QA-P5-011) back onto the OrderSettlement figures. The key names the posted and the
+     * target balances, so a re-run with nothing to correct posts nothing.
+     */
+    public function reconcile(int $tenantId, Order $order): ?LedgerTransaction
+    {
+        $state = $this->state($tenantId, $order, $this->finance->figures($order, $tenantId));
+
+        if ($state['target_payable'] === $state['posted_payable'] && $state['target_receivable'] === $state['posted_receivable']) {
+            return null;
+        }
+
+        $key = self::orderKey($tenantId, $order->uuid, 'adjust:'.implode(':', $state));
+
+        return $this->order($tenantId, $order, $key, descriptionKey: 'order_adjustment');
+    }
+
+    public function order(int $tenantId, Order $order, string $key, LedgerSource $source = LedgerSource::Order, ?string $sourceReference = null, ?CarbonInterface $occurredAt = null, ?string $descriptionKey = null): ?LedgerTransaction
     {
         $figures = $this->finance->figures($order, $tenantId);
         ['payable' => $payableDelta, 'receivable' => $receivableDelta] = $this->deltas($tenantId, $order, $figures);
@@ -81,7 +100,7 @@ class FinancePostings
             LedgerLine::change(LedgerAccount::PlatformRevenue, $receivableDelta, $order->uuid, $order->number),
         ];
         $reversal = $payableDelta < 0 || $receivableDelta < 0;
-        $descriptionKey = match (true) {
+        $descriptionKey ??= match (true) {
             $source === LedgerSource::Refund => 'refund',
             $reversal => 'order_void',
             $figures->collectedBy === CollectedBy::Platform => 'order_vendor_share',
@@ -107,15 +126,28 @@ class FinancePostings
      */
     private function deltas(int $tenantId, Order $order, SettlementFigures $figures): array
     {
+        $state = $this->state($tenantId, $order, $figures);
+
+        return ['payable' => $state['target_payable'] - $state['posted_payable'], 'receivable' => $state['target_receivable'] - $state['posted_receivable']];
+    }
+
+    /**
+     * What the formulas say the order's payable / receivable is, and what order / refund
+     * postings already accrued for it (minor units).
+     *
+     * @return array{target_payable: int, target_receivable: int, posted_payable: int, posted_receivable: int}
+     */
+    private function state(int $tenantId, Order $order, SettlementFigures $figures): array
+    {
         $accrualSources = [LedgerSource::Order, LedgerSource::Refund];
 
-        $targetPayable = $figures->collectedBy === CollectedBy::Platform ? $figures->owedToVendor->minor : 0;
-        // A platform-collected order whose refunds exceed the vendor share leaves the store owing the shortfall.
-        $targetReceivable = $figures->collectedBy === CollectedBy::Vendor ? $figures->platformShare->minor : max(0, -$figures->vendorShare->minor);
-        $postedPayable = -$this->entries->accountBalance($tenantId, LedgerAccount::VendorPayable, $order->uuid, $accrualSources);
-        $postedReceivable = $this->entries->accountBalance($tenantId, LedgerAccount::VendorReceivable, $order->uuid, $accrualSources);
-
-        return ['payable' => $targetPayable - $postedPayable, 'receivable' => $targetReceivable - $postedReceivable];
+        return [
+            'target_payable' => $figures->collectedBy === CollectedBy::Platform ? $figures->owedToVendor->minor : 0,
+            // A platform-collected order whose refunds exceed the vendor share leaves the store owing the shortfall.
+            'target_receivable' => $figures->collectedBy === CollectedBy::Vendor ? $figures->platformShare->minor : max(0, -$figures->vendorShare->minor),
+            'posted_payable' => -$this->entries->accountBalance($tenantId, LedgerAccount::VendorPayable, $order->uuid, $accrualSources),
+            'posted_receivable' => $this->entries->accountBalance($tenantId, LedgerAccount::VendorReceivable, $order->uuid, $accrualSources),
+        ];
     }
 
     public function settlement(OrderSettlement $settlement): ?LedgerTransaction

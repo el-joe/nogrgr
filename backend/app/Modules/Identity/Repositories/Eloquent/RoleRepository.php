@@ -76,11 +76,24 @@ class RoleRepository extends BaseRepository implements RoleRepositoryContract
         return $this->query()->where('guard_name', $guard)->count();
     }
 
-    public function ensurePermissions(array $names, string $guard): void
+    public function ensurePermissions(array $names, string $guard): int
     {
+        $existing = Permission::query()->where('guard_name', $guard)->whereIn('name', $names)->pluck('name')->all();
+
         foreach ($names as $name) {
             Permission::findOrCreate($name, $guard);
         }
+
+        return count(array_diff(array_unique($names), $existing));
+    }
+
+    public function syncRole(string $name, string $guard, array $permissions): int
+    {
+        $role = Role::findOrCreate($name, $guard);
+        $held = $role->permissions()->pluck('name')->all();
+        $role->syncPermissions($permissions);
+
+        return count(array_diff($permissions, $held));
     }
 
     private function userMorphClass(string $guard): string

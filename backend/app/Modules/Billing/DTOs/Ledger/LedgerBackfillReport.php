@@ -17,6 +17,9 @@ final class LedgerBackfillReport
 
     public int $ordersUnchanged = 0;
 
+    /** Orders already in the ledger that got a correcting posting. */
+    public int $ordersCorrected = 0;
+
     public int $settlementsPosted = 0;
 
     public int $settlementsExisting = 0;
@@ -32,6 +35,6 @@ final class LedgerBackfillReport
 
     public function posted(): int
     {
-        return $this->ordersPosted + $this->settlementsPosted + $this->invoicesPosted;
+        return $this->ordersPosted + $this->ordersCorrected + $this->settlementsPosted + $this->invoicesPosted;
     }
 }

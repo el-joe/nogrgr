@@ -24,7 +24,8 @@ use Throwable;
  * (`order:<tenant>:<uuid>:paid`, `settlement:<id>`, `invoice:<id>`). A second run, or a
  * live event after the back-fill, therefore posts nothing twice; order postings are
  * deltas against what the ledger already holds for the order, so they always land on the
- * ORDER_FORMULAS §3 figures. A dry run only reports what would be posted.
+ * ORDER_FORMULAS §3 figures; an order already posted whose ledger drifted from them
+ * (postings of an earlier release) gets one correcting posting. A dry run only reports what would be posted.
  */
 class LedgerBackfillService extends BaseService
 {
@@ -76,6 +77,7 @@ class LedgerBackfillService extends BaseService
 
             if ($this->ledger->findByKey($key) !== null) {
                 $report->ordersExisting++;
+                $this->correct($tenantId, $order, $report, $dryRun);
 
                 return;
             }
@@ -91,6 +93,27 @@ class LedgerBackfillService extends BaseService
                 ? $report->ordersPosted++
                 : $report->ordersUnchanged++;
         });
+    }
+
+    /**
+     * An order already in the ledger whose postings drifted from the formulas (written by an
+     * earlier release) gets one correcting posting (QA-P5-011).
+     */
+    private function correct(int $tenantId, Order $order, LedgerBackfillReport $report, bool $dryRun): void
+    {
+        if ($dryRun) {
+            $deltas = $this->postings->orderDeltas($tenantId, $order);
+
+            if ($deltas['payable'] !== 0 || $deltas['receivable'] !== 0) {
+                $report->ordersCorrected++;
+            }
+
+            return;
+        }
+
+        if ($this->postings->reconcile($tenantId, $order) !== null) {
+            $report->ordersCorrected++;
+        }
     }
 
     private function settlementsOf(int $tenantId, LedgerBackfillReport $report, bool $dryRun): void
