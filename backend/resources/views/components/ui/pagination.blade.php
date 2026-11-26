@@ -9,7 +9,7 @@
     $last = $paginator->lastPage();
     $pages = collect([1, $last, $current - 1, $current, $current + 1])->filter(fn ($page) => $page >= 1 && $page <= $last)->unique()->sort()->values();
 @endphp
-<nav {{ $attributes->class(['flex flex-wrap items-center justify-between gap-3 text-[13px]']) }} aria-label="{{ __('ui.table.pagination') }}">
+<nav {{ $attributes->class(['ui-pager flex flex-wrap items-center justify-between gap-3 text-[13px]']) }} aria-label="{{ __('ui.table.pagination') }}">
     <p class="text-ink-secondary">
         @if ($paginator->total() > 0)
             {{ __('ui.table.showing', ['from' => $number($paginator->firstItem()), 'to' => $number($paginator->lastItem()), 'total' => $number($paginator->total())]) }}
@@ -19,23 +19,23 @@
     </p>
     <div class="flex items-center gap-1">
         @if ($paginator->onFirstPage())
-            <span class="grid size-8 place-items-center rounded-chip text-ink-muted" aria-disabled="true"><x-ui::icon name="chevron-left" :size="16" /></span>
+            <span class="ui-pager-btn grid size-8 place-items-center rounded-chip text-ink-muted" data-pager="step" aria-disabled="true"><x-ui::icon name="chevron-left" :size="16" /><span class="ui-pager-label">{{ __('ui.table.previous_short') }}</span></span>
         @else
-            <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="grid size-8 place-items-center rounded-chip text-ink hover:bg-subtle" aria-label="{{ __('ui.table.previous') }}"><x-ui::icon name="chevron-left" :size="16" /></a>
+            <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="ui-pager-btn grid size-8 place-items-center rounded-chip text-ink hover:bg-subtle" data-pager="step" aria-label="{{ __('ui.table.previous') }}"><x-ui::icon name="chevron-left" :size="16" /><span class="ui-pager-label">{{ __('ui.table.previous_short') }}</span></a>
         @endif
         <span class="hidden items-center gap-1 sm:flex">
             @foreach ($pages as $index => $page)
                 @if ($index > 0 && $page - $pages[$index - 1] > 1)
                     <span class="px-1 text-ink-muted" aria-hidden="true">…</span>
                 @endif
-                <a href="{{ $paginator->url($page) }}" @class(['grid h-8 min-w-8 place-items-center rounded-chip px-2 font-medium', 'bg-primary text-on-primary' => $page === $current, 'text-ink hover:bg-subtle' => $page !== $current]) @if ($page === $current) aria-current="page" @endif>{{ $number($page) }}</a>
+                <a href="{{ $paginator->url($page) }}" data-pager="page" @class(['ui-pager-btn grid h-8 min-w-8 place-items-center rounded-chip px-2 font-medium', 'bg-primary text-on-primary' => $page === $current, 'text-ink hover:bg-subtle' => $page !== $current]) @if ($page === $current) aria-current="page" @endif>{{ $number($page) }}</a>
             @endforeach
         </span>
         <span class="px-2 text-ink-secondary sm:hidden">{{ __('ui.table.page_of', ['page' => $number($current), 'pages' => $number($last)]) }}</span>
         @if ($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="grid size-8 place-items-center rounded-chip text-ink hover:bg-subtle" aria-label="{{ __('ui.table.next') }}"><x-ui::icon name="chevron-right" :size="16" /></a>
+            <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="ui-pager-btn grid size-8 place-items-center rounded-chip text-ink hover:bg-subtle" data-pager="step" aria-label="{{ __('ui.table.next') }}"><span class="ui-pager-label">{{ __('ui.table.next_short') }}</span><x-ui::icon name="chevron-right" :size="16" /></a>
         @else
-            <span class="grid size-8 place-items-center rounded-chip text-ink-muted" aria-disabled="true"><x-ui::icon name="chevron-right" :size="16" /></span>
+            <span class="ui-pager-btn grid size-8 place-items-center rounded-chip text-ink-muted" data-pager="step" aria-disabled="true"><span class="ui-pager-label">{{ __('ui.table.next_short') }}</span><x-ui::icon name="chevron-right" :size="16" /></span>
         @endif
     </div>
 </nav>

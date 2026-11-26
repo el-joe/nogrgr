@@ -119,6 +119,11 @@
         display: none;
     }
 
+    /* Pager step text ("Previous" / "Next") is shown only by surfaces that ask for it (vendor TP/Pagination). */
+    .ui-pager-label {
+        display: none;
+    }
+
     /* ---------- Checkbox / Radio / Switch ---------- */
     .ui-check {
         appearance: none;

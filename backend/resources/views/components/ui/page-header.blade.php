@@ -16,7 +16,7 @@
             @endif
         </div>
         @isset($actions)
-            <div class="flex flex-wrap items-center gap-3">{{ $actions }}</div>
+            <div class="ui-page-actions flex flex-wrap items-center gap-3">{{ $actions }}</div>
         @endisset
     </div>
     {{ $tabs ?? '' }}

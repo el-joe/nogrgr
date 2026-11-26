@@ -19,7 +19,7 @@
 @endphp
 <div @unless ($isLinks) data-tabs data-tabs-param="{{ $param }}" @endunless id="{{ $id }}" {{ $attributes->class(['min-w-0']) }}>
     <div @unless ($isLinks) role="tablist" @endunless aria-label="{{ $label ?? __('ui.tabs') }}" @unless ($segmented) data-tabs-scroll @endunless @class([
-        'flex gap-6 overflow-x-auto overflow-y-hidden overscroll-x-contain border-b border-line [scrollbar-width:none] [&::-webkit-scrollbar]:hidden data-fade-left:mask-l-from-[calc(100%-3rem)] data-fade-right:mask-r-from-[calc(100%-3rem)]' => ! $segmented && ! $pill,
+        'ui-tabs-underline flex gap-6 overflow-x-auto overflow-y-hidden overscroll-x-contain border-b border-line [scrollbar-width:none] [&::-webkit-scrollbar]:hidden data-fade-left:mask-l-from-[calc(100%-3rem)] data-fade-right:mask-r-from-[calc(100%-3rem)]' => ! $segmented && ! $pill,
         'ui-tabs-pill flex gap-2 overflow-x-auto overflow-y-hidden overscroll-x-contain py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden data-fade-left:mask-l-from-[calc(100%-3rem)] data-fade-right:mask-r-from-[calc(100%-3rem)]' => $pill,
         'inline-flex gap-1 rounded-control bg-subtle p-1' => $segmented,
     ])>
@@ -30,7 +30,7 @@
                     ? 'ui-tab-pill inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-muted px-4 text-sm text-ink-secondary transition-colors hover:text-ink aria-selected:bg-primary aria-selected:font-medium aria-selected:text-on-primary aria-[current=page]:bg-primary aria-[current=page]:font-medium aria-[current=page]:text-on-primary'
                     : ($segmented
                     ? 'inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-chip px-3 text-[13px] text-ink-secondary transition-colors hover:text-ink aria-selected:bg-surface aria-selected:font-medium aria-selected:text-ink aria-selected:shadow-card aria-[current=page]:bg-surface aria-[current=page]:text-ink aria-[current=page]:shadow-card'
-                    : 'relative -mb-px inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent py-3 text-sm text-ink-secondary transition-colors hover:border-line-strong hover:text-ink aria-selected:border-primary aria-selected:text-ink-brand aria-[current=page]:border-primary aria-[current=page]:text-ink-brand');
+                    : 'ui-tab-underline relative -mb-px inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent py-3 text-sm text-ink-secondary transition-colors hover:border-line-strong hover:text-ink aria-selected:border-primary aria-selected:text-ink-brand aria-[current=page]:border-primary aria-[current=page]:text-ink-brand');
             @endphp
             @if ($isLinks)
                 <a href="{{ $item['href'] ?? '#' }}" class="group {{ $classes }}" @if ($selected) aria-current="page" @endif>

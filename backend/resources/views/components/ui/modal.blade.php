@@ -26,16 +26,16 @@
     <div class="ui-overlay-scrim"></div>
     <div {{ $attributes->class(['ui-overlay-panel', $width]) }}>
         <div class="ui-sheet-grabber mx-auto mt-2 h-1 w-10 rounded-full bg-line-strong" data-sheet-handle aria-hidden="true"></div>
-        <header class="flex items-start gap-4 border-b border-line px-6 py-5" data-sheet-handle>
+        <header class="ui-modal-header flex items-start gap-4 border-b border-line px-6 py-5" data-sheet-handle>
             <div class="min-w-0 flex-1">
-                <h2 id="{{ $id }}-title" class="text-xl font-semibold leading-7 text-ink">{{ $title }}</h2>
+                <h2 id="{{ $id }}-title" class="ui-modal-title text-xl font-semibold leading-7 text-ink">{{ $title }}</h2>
                 @if ($subtitle)
-                    <p id="{{ $id }}-subtitle" class="mt-0.5 text-[13px] text-ink-secondary">{{ $subtitle }}</p>
+                    <p id="{{ $id }}-subtitle" class="ui-modal-subtitle mt-0.5 text-[13px] text-ink-secondary">{{ $subtitle }}</p>
                 @endif
             </div>
-            <x-ui::icon-button icon="x" :label="__('ui.close')" size="sm" data-overlay-close />
+            <x-ui::icon-button icon="x" :label="__('ui.close')" size="sm" class="ui-modal-close" data-overlay-close />
         </header>
-        <div class="min-h-0 flex-1 overflow-y-auto p-6">
+        <div class="ui-modal-body min-h-0 flex-1 overflow-y-auto p-6">
             {{ $slot }}
         </div>
         @isset($footer)

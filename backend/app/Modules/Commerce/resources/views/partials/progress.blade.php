@@ -1,10 +1,10 @@
 {{-- Progress steps of an order / return header: $steps = [[label, meta|null]], $current = 1-based step reached, $failed = bool. --}}
-<ol class="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-card border border-line bg-surface px-4 py-3 shadow-card sm:flex-nowrap">
+<ol class="ui-steps flex flex-wrap items-center gap-x-3 gap-y-2 rounded-card border border-line bg-surface px-4 py-3 shadow-card sm:flex-nowrap">
     @foreach ($steps as $index => [$label, $meta])
         @php $n = $index + 1; $done = $n < $current || ($n === $current && ($complete ?? false)); $now = $n === $current && ! ($complete ?? false); @endphp
         <li class="flex min-w-0 flex-1 items-center gap-2.5">
             <span @class([
-                'grid size-7 shrink-0 place-items-center rounded-full text-xs font-semibold',
+                'ui-steps-dot grid size-7 shrink-0 place-items-center rounded-full text-xs font-semibold',
                 'bg-success text-white' => $done,
                 'bg-primary text-on-primary' => $now && ! ($failed ?? false),
                 'bg-danger text-white' => $now && ($failed ?? false),
@@ -23,7 +23,7 @@
                 @endif
             </span>
             @unless ($loop->last)
-                <span @class(['hidden h-0.5 flex-1 rounded-full sm:block', 'bg-success' => $done, 'bg-line' => ! $done]) aria-hidden="true"></span>
+                <span @class(['ui-steps-line hidden h-0.5 flex-1 rounded-full sm:block', 'bg-success' => $done, 'bg-line' => ! $done]) aria-hidden="true"></span>
             @endunless
         </li>
     @endforeach

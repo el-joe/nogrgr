@@ -72,7 +72,13 @@
     --vnd-text-side: #5e5e5e;
     --vnd-text-faint: #a3a3a3;
     --vnd-box: #f5f5f5;
-    --vnd-field: #eaeaea;
+    --vnd-field: #ececec;
+    --vnd-label: #787878;
+    --vnd-required: #e00000;
+    --vnd-placeholder: #c1c1c1;
+    --vnd-tab-idle: #dcdcdc;
+    --vnd-pager-idle: #a3a3a3;
+    --vnd-toast-shadow: 0 8px 12px rgb(0 0 0 / 0.08);
     --vnd-field-focus: #ffffff;
     --vnd-store-menu: #e7e7e7;
     --vnd-table-head: #f5f5f5;
@@ -141,6 +147,12 @@
     --vnd-text-faint: #8a8a8a;
     --vnd-box: #1f1f1f;
     --vnd-field: #262626;
+    --vnd-label: #a3a3a3;
+    --vnd-required: #ff5a5a;
+    --vnd-placeholder: #6b6b6b;
+    --vnd-tab-idle: #2a2a2a;
+    --vnd-pager-idle: #6b6b6b;
+    --vnd-toast-shadow: 0 8px 12px rgb(0 0 0 / 0.4);
     --vnd-field-focus: #161616;
     --vnd-store-menu: #262626;
     --vnd-table-head: #1f1f1f;

@@ -12,7 +12,7 @@
                 :delta="$kpi['delta']"
                 :comparison="$comparison"
                 :spark="$kpi['spark']"
-                :highlight="$loop->first"
+                :highlight="$loop->first && ! ($plainKpis ?? false)"
                 :count-up="in_array($kpi['format'], ['number', 'percent'], true) ? $kpi['raw'] : null"
                 :count-format="$kpi['format']"
                 data-reveal="fade-up"

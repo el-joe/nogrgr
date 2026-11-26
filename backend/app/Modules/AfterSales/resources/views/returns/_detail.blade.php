@@ -21,8 +21,10 @@
 <div class="grid gap-6">
     <x-ui::page-header :title="$title"
         :breadcrumbs="$vendor ? [__('navigation.vendor.orders') => vendor_route('sales.orders.index'), __('after-sales::returns.title') => vendor_route('sales.returns.index'), $return->reference => null] : [__('navigation.sections.sales') => null, __('after-sales::returns.title') => route('admin.returns.index'), $return->reference => null]">
-        <x-slot:actions>
+        <x-slot:status>
             @include('commerce::partials.status-badge', ['value' => $return->status])
+        </x-slot:status>
+        <x-slot:actions>
             @if ($canManage)
                 @foreach ($actions as $action)
                     @continue($primary === $action)

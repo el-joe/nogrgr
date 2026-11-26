@@ -82,26 +82,26 @@ export function toast(tone, title, message = '', options = {}) {
     element.style.setProperty('--toast-accent', config.accent);
     element.setAttribute('role', tone === 'error' ? 'alert' : 'status');
 
-    const icon = svg(config.icon, 'mt-px');
+    const icon = svg(config.icon, 'ui-toast-icon mt-px');
     icon.style.color = config.accent;
 
     const body = document.createElement('div');
     body.className = 'min-w-0 flex-1';
     const heading = document.createElement('p');
-    heading.className = 'text-sm font-medium text-ink';
+    heading.className = 'ui-toast-title text-sm font-medium text-ink';
     heading.textContent = title;
     body.appendChild(heading);
 
     if (message) {
         const text = document.createElement('p');
-        text.className = 'mt-0.5 text-[13px] leading-[18px] text-ink-secondary';
+        text.className = 'ui-toast-text mt-0.5 text-[13px] leading-[18px] text-ink-secondary';
         text.textContent = message;
         body.appendChild(text);
     }
 
     const close = document.createElement('button');
     close.type = 'button';
-    close.className = 'grid size-6 shrink-0 place-items-center rounded-chip text-ink-muted hover:bg-subtle hover:text-ink';
+    close.className = 'ui-toast-close grid size-6 shrink-0 place-items-center rounded-chip text-ink-muted hover:bg-subtle hover:text-ink';
     close.setAttribute('aria-label', t('ui.close'));
     close.appendChild(svg(iconClose, 'size-4'));
     close.addEventListener('click', () => dismissToast(element));

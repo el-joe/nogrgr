@@ -66,8 +66,8 @@ function renderPagination(card, api) {
     }
 
     const pages = Math.max(info.pages, 1);
-    const button = (label, page, { current = false, disabled = false, aria = '' } = {}) =>
-        `<button type="button" data-dt-page="${page}" class="grid h-8 min-w-8 place-items-center rounded-chip px-2 text-[13px] font-medium transition-colors ${
+    const button = (label, page, { current = false, disabled = false, aria = '', kind = 'page' } = {}) =>
+        `<button type="button" data-dt-page="${page}" data-pager="${kind}" class="ui-pager-btn grid h-8 min-w-8 place-items-center rounded-chip px-2 text-[13px] font-medium transition-colors ${
             current ? 'bg-primary text-on-primary' : 'text-ink hover:bg-subtle'
         } disabled:pointer-events-none disabled:text-ink-muted" ${current ? 'aria-current="page"' : ''} ${disabled ? 'disabled' : ''} ${aria ? `aria-label="${aria}"` : ''}>${label}</button>`;
     const arrow = (direction) =>
@@ -78,10 +78,10 @@ function renderPagination(card, api) {
         .join('');
 
     nav.innerHTML = `
-        ${button(arrow('prev'), info.page - 1, { disabled: info.page <= 0, aria: t('table.previous') })}
+        ${button(`${arrow('prev')}<span class="ui-pager-label">${t('table.previous_short')}</span>`, info.page - 1, { disabled: info.page <= 0, aria: t('table.previous'), kind: 'step' })}
         <span class="hidden items-center gap-1 sm:flex">${desktop}</span>
         <span class="px-2 text-[13px] text-ink-secondary sm:hidden">${t('table.page_of', { page: number.format(info.page + 1), pages: number.format(pages) })}</span>
-        ${button(arrow('next'), info.page + 1, { disabled: info.page >= pages - 1, aria: t('table.next') })}`;
+        ${button(`<span class="ui-pager-label">${t('table.next_short')}</span>${arrow('next')}`, info.page + 1, { disabled: info.page >= pages - 1, aria: t('table.next'), kind: 'step' })}`;
 }
 
 function selectedIds(card) {

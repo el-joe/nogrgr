@@ -254,6 +254,35 @@ Mobile 375 frames reuse the 182:29054 shell: black header with r24 bottom, #FFF5
 | Finance & support modals (060a, 060b, 091a) | 88:113398 | **206:40420** | — |
 | 093 UI kit | 92:130313 | **191:30163** | — |
 
+### Code status of batch 3 (align-code, 2026-11-26)
+
+**Kit in code** (`resources/css/tokens/vendor.css`, `resources/css/panels/vendor-shell.css` "Aligned kit 191:30163" block; hooks on the shared `x-ui` components, restyled only under `:root[data-surface='vendor']`):
+- TP/Field: #ECECEC r12 h48, 14 Regular, label 14 #787878, star #E00000 (`.ui-label` / `.ui-required`), placeholder #C1C1C1, helper 12 #A3A3A3, focus white + 1 px #FD6F04. Select2 the same. Filter-row search / selects stay #F5F5F5 r8 h40.
+- TP/Tab: `x-ui::tabs` pill **and** underline variants render as r38 pills (active #FD6F04 Medium 16, idle #DCDCDC 14 #5E5E5E). TP/Locale tabs: #F5F5F5 r38 track with EN / AR code pills (language name kept for screen readers).
+- TP/Pagination: datatable pager + `x-ui::pagination` — summary 14 #888580, "Previous" / "Next" r8 steps with text (new keys `ui.table.previous_short` / `next_short`, js + php), 24 px r4 outlined pages, current #FD6F04.
+- TP/Table cell: datatable card white r12 without border / shadow, body 14 #A3A3A3, lead column dark Medium; mobile < 640 rows become #F5F5F5 r12 cards (lead cell as title, 12 px label / value lines) per 205:38137 / 205:39102.
+- TP/Modal + TP/Bottom sheet: r24, 24 padding, no dividers, title SemiBold 24 + 14 #787878, 32 px circle close, equal r8 48 px buttons with primary first (secondary = white + #FD6F04 outline); < 640 bottom sheet with top r24, handle and stacked buttons.
+- TP/Toast (server + `notify.js`): white r12, 16 padding, soft shadow, no accent bar, 24 px ink icon, 20 px circle close, title 14 Medium + text 12 #787878.
+- TP/Empty state: client box illustration 12:40631 (`resources/images/vendor/empty-box.svg`, from the Figma asset), title SemiBold 24, text 16 #888580.
+- TP/Card header: SemiBold 24 #111111 + 16 #888580 (`.ui-card-title`, already from 227f2d9). Page-header breadcrumbs hidden on every vendor page; detail progress steps sit on the page bg (24 px dots).
+
+**Pages checked against their aligned frames** (1440 en/light, 1440 ar/dark, 375 en/light; no overflow, no JS errors; `figma-audit/code-after-vendor-*`):
+
+| VEN row | Aligned frame | Code change |
+|---|---|---|
+| 012b–e | 196:30720 | kit; r12 section cards, stock table in TP/Table cell grey text, locale pills |
+| 022a | 197:30913 / m 205:38137 | kit; status pill next to the title (`x-slot:status`), no breadcrumb, steps on page bg |
+| 023 / 024 | 197:31485 | kit (tables, pager, mobile cards) |
+| 025b | 197:32195 / m 205:38558 | kit |
+| 040 (+ modal) | 199:31453 / m 205:39102 | kit; modal → TP/Modal / bottom sheet |
+| 041 | 199:32265 | kit |
+| 045b / 045d | 199:32944 | kit; plain client KPI cards (no gradient highlight on vendor analytics) |
+| 060 | 199:33682 / m 205:39617 | kit; plain balance KPI, latest transactions in TP/Table cell |
+| 061 | 199:34398 | kit |
+| 091 / 092 | 206:38046 / 206:38560 | kit; TP/Empty state |
+
+Not yet compared one by one: Your Store 200:*, Settings 1 201:*, Settings 2 202:*, modal boards 206:39026 / 39513 / 39923 / 40420 (they pick up the kit automatically, but layout-level differences were not checked).
+
 **Superseded**, kept untouched as history: every "old frame" in the table above, plus 88:112846 (Notifications inbox, replaced by client 12:17282).
 
 ## 5. Still to align (60:10147 frames left in the old style)

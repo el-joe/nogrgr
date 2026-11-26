@@ -15,14 +15,14 @@
     @style(['--toast-accent: '.$accent])
     role="{{ $tone === 'error' ? 'alert' : 'status' }}"
 >
-    <x-ui::icon :name="$icons[$tone] ?? 'info'" :size="20" class="mt-px" :style="'color: '.$accent" />
+    <x-ui::icon :name="$icons[$tone] ?? 'info'" :size="20" class="ui-toast-icon mt-px" :style="'color: '.$accent" />
     <div class="min-w-0 flex-1">
-        <p class="text-sm font-medium text-ink">{{ $title }}</p>
+        <p class="ui-toast-title text-sm font-medium text-ink">{{ $title }}</p>
         @if ($message)
-            <p class="mt-0.5 text-[13px] leading-[18px] text-ink-secondary">{{ $message }}</p>
+            <p class="ui-toast-text mt-0.5 text-[13px] leading-[18px] text-ink-secondary">{{ $message }}</p>
         @endif
     </div>
-    <button type="button" data-toast-close class="grid size-6 shrink-0 place-items-center rounded-chip text-ink-muted hover:bg-subtle hover:text-ink" aria-label="{{ __('ui.close') }}">
+    <button type="button" data-toast-close class="ui-toast-close grid size-6 shrink-0 place-items-center rounded-chip text-ink-muted hover:bg-subtle hover:text-ink" aria-label="{{ __('ui.close') }}">
         <x-ui::icon name="x" :size="16" />
     </button>
 </div>

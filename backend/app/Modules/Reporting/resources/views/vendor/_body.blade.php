@@ -7,6 +7,7 @@
     @include('reporting::admin.reports._summary', [
         'funnelTitle' => __('reporting::vendor_analytics.funnel_title'),
         'leadersTitle' => __('reporting::vendor_analytics.leaders_title'),
+        'plainKpis' => true,
     ])
 @endif
 

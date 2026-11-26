@@ -6,8 +6,8 @@
 @props(['label' => null, 'for' => null, 'required' => false, 'helper' => null, 'error' => null, 'errorKey' => null, 'labelHidden' => false])
 <div data-field {{ $attributes->class(['grid content-start gap-1.5']) }}>
     @if ($label)
-        <label @if ($for) for="{{ $for }}" @endif @class(['text-sm font-medium text-ink', 'sr-only' => $labelHidden])>
-            {{ $label }}@if ($required)<span class="ms-0.5 text-danger" aria-hidden="true">*</span>@endif
+        <label @if ($for) for="{{ $for }}" @endif @class(['ui-label text-sm font-medium text-ink', 'sr-only' => $labelHidden])>
+            {{ $label }}@if ($required)<span class="ui-required ms-0.5 text-danger" aria-hidden="true">*</span>@endif
         </label>
     @endif
     {{ $slot }}

@@ -73,7 +73,7 @@
 
         @if ($tab === SubscriptionPageTab::Overview)
             <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <x-ui::kpi-card highlight icon="wallet" :label="__('billing::vendor_subscription.kpi.balance')" :value="$money($balance['net'])" :comparison="__('billing::vendor_subscription.kpi.balance_hint')" />
+                <x-ui::kpi-card icon="wallet" :label="__('billing::vendor_subscription.kpi.balance')" :value="$money($balance['net'])" :comparison="__('billing::vendor_subscription.kpi.balance_hint')" />
                 <x-ui::kpi-card icon="alert-triangle" :label="__('billing::vendor_subscription.kpi.owed')" :value="$money($balance['owed'])" :comparison="__('billing::vendor_subscription.kpi.owed_hint')" />
                 <x-ui::kpi-card icon="calendar" :label="__('billing::vendor_subscription.kpi.payout')" :value="$money($balance['open_payouts'])" :comparison="__('billing::vendor_subscription.kpi.payout_hint')" />
                 <x-ui::kpi-card icon="star" :label="__('billing::vendor_subscription.kpi.renews')"
@@ -129,20 +129,20 @@
                             <a href="{{ vendor_route('finance.subscription', ['tab' => 'transactions']) }}" class="text-sm font-medium text-ink-brand hover:underline">{{ __('billing::vendor_subscription.actions.view_all') }}</a>
                         </x-slot:actions>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                            <table class="vnd-table w-full text-sm">
                                 <thead class="bg-subtle text-xs text-ink-secondary">
                                     <tr>
-                                        <th scope="col" class="px-5 py-3 text-start font-medium">{{ __('billing::vendor_subscription.recent.date') }}</th>
-                                        <th scope="col" class="px-5 py-3 text-start font-medium">{{ __('billing::vendor_subscription.recent.description') }}</th>
-                                        <th scope="col" class="px-5 py-3 text-end font-medium">{{ __('billing::vendor_subscription.recent.amount') }}</th>
+                                        <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('billing::vendor_subscription.recent.date') }}</th>
+                                        <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('billing::vendor_subscription.recent.description') }}</th>
+                                        <th scope="col" class="px-5 py-3 text-end font-normal">{{ __('billing::vendor_subscription.recent.amount') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-line">
                                     @foreach ($recent as $transaction)
                                         <tr>
-                                            <td class="whitespace-nowrap px-5 py-4 text-ink" dir="ltr">{{ $transaction->occurred_at->locale(app()->getLocale())->translatedFormat('j M') }}</td>
-                                            <td class="px-5 py-4 text-ink">{{ \App\Modules\Billing\Support\LedgerPresenter::title($transaction) }}</td>
-                                            <td class="whitespace-nowrap px-5 py-4 text-end font-medium text-ink" dir="ltr">{{ $signed($transaction->net_amount) }}</td>
+                                            <td class="whitespace-nowrap h-12 px-5 py-3 text-ink-muted" dir="ltr">{{ $transaction->occurred_at->locale(app()->getLocale())->translatedFormat('j M') }}</td>
+                                            <td class="h-12 px-5 py-3 text-ink-muted">{{ \App\Modules\Billing\Support\LedgerPresenter::title($transaction) }}</td>
+                                            <td class="whitespace-nowrap h-12 px-5 py-3 text-end text-ink-muted" dir="ltr">{{ $signed($transaction->net_amount) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

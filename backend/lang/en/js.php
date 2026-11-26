@@ -32,6 +32,8 @@ return [
     'table.showing' => 'Showing :from–:to of :total',
     'table.showing_none' => 'Showing 0 results',
     'table.previous' => 'Previous page',
+    'table.previous_short' => 'Previous',
+    'table.next_short' => 'Next',
     'table.next' => 'Next page',
     'table.page_of' => 'Page :page of :pages',
     'table.select_row' => 'Select row',

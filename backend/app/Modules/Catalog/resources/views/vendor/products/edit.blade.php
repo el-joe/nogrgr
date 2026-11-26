@@ -61,7 +61,7 @@
             {{-- 012a Pricing per variant / country --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="pricing" :active="$tab === 'pricing'" class="pt-5">
                 <div class="grid items-start gap-4 lg:grid-cols-[1fr_262px]">
-                    <section class="overflow-hidden rounded-[24px] bg-surface">
+                    <section class="overflow-hidden rounded-[12px] bg-surface">
                         <header class="flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
                             <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.price_per_country') }}</h2>
                             @if ($canManage && $rows !== [])
@@ -112,7 +112,7 @@
                             </div>
                         @endif
                     </section>
-                    <aside class="grid gap-3 rounded-[24px] bg-surface p-4 sm:p-6" data-pricing-summary>
+                    <aside class="grid gap-3 rounded-[12px] bg-surface p-4 sm:p-6" data-pricing-summary>
                         <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.summary') }}</h2>
                         <dl class="grid gap-2.5 text-sm">
                             <div class="flex justify-between gap-3"><dt class="text-ink-secondary">{{ __('catalog::vendor.edit.central_price') }}</dt><dd class="font-semibold text-ink" dir="ltr" data-summary="central">{{ $summary['central'] ?? '—' }}</dd></div>
@@ -127,7 +127,7 @@
 
             {{-- 012c Stock & weight (central, read-only) --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="stock" :active="$tab === 'stock'" class="pt-5">
-                <section class="grid gap-4 rounded-[24px] bg-surface p-4 sm:p-6">
+                <section class="grid gap-4 rounded-[12px] bg-surface p-4 sm:p-6">
                     <header class="flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.stock_title') }}</h2>
@@ -149,15 +149,15 @@
                             <tbody class="divide-y divide-line">
                                 @forelse ($view->variants as $variant)
                                     <tr>
-                                        <td class="px-4 py-4 text-ink">{{ $variant->label }}</td>
-                                        <td class="px-4 py-4 text-end text-ink" dir="ltr">{{ number_format($variant->stock) }}</td>
-                                        <td class="px-4 py-4 text-end text-ink" dir="ltr">{{ number_format($variant->weightGrams) }}@if ($variant->weightOverridden) <x-ui::badge tone="brand">{{ __('catalog::vendor.edit.overridden') }}</x-ui::badge>@endif</td>
+                                        <td class="h-12 px-4 py-3 text-ink-muted">{{ $variant->label }}</td>
+                                        <td class="h-12 px-4 py-3 text-end text-ink-muted" dir="ltr">{{ number_format($variant->stock) }}</td>
+                                        <td class="h-12 px-4 py-3 text-end text-ink-muted" dir="ltr">{{ number_format($variant->weightGrams) }}@if ($variant->weightOverridden) <x-ui::badge tone="brand">{{ __('catalog::vendor.edit.overridden') }}</x-ui::badge>@endif</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td class="px-4 py-4 text-ink">{{ __('catalog::vendor.price_list.all') }}</td>
-                                        <td class="px-4 py-4 text-end text-ink" dir="ltr">{{ number_format($view->stock) }}</td>
-                                        <td class="px-4 py-4 text-end text-ink" dir="ltr">{{ number_format($view->weightGrams) }}@if ($view->weightOverridden) <x-ui::badge tone="brand">{{ __('catalog::vendor.edit.overridden') }}</x-ui::badge>@endif</td>
+                                        <td class="h-12 px-4 py-3 text-ink-muted">{{ __('catalog::vendor.price_list.all') }}</td>
+                                        <td class="h-12 px-4 py-3 text-end text-ink-muted" dir="ltr">{{ number_format($view->stock) }}</td>
+                                        <td class="h-12 px-4 py-3 text-end text-ink-muted" dir="ltr">{{ number_format($view->weightGrams) }}@if ($view->weightOverridden) <x-ui::badge tone="brand">{{ __('catalog::vendor.edit.overridden') }}</x-ui::badge>@endif</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -168,7 +168,7 @@
 
             {{-- 012d Categories & badges (store placement) --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="categories" :active="$tab === 'categories'" class="pt-5">
-                <section class="grid max-w-[640px] gap-4 rounded-[24px] bg-surface p-4 sm:p-6">
+                <section class="grid max-w-[640px] gap-4 rounded-[12px] bg-surface p-4 sm:p-6">
                     <input type="hidden" name="placement" value="1">
                     <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.categories_title') }}</h2>
                     <x-ui::select name="category_ids" multiple :label="__('catalog::vendor.edit.your_categories')" :options="$categoryOptions" :selected="$view->categoryIds" :disabled="! $canManage" :placeholder="__('catalog::vendor.edit.pick_categories')" />
@@ -186,7 +186,7 @@
             {{-- 012e Central snapshot (read-only) --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="snapshot" :active="$tab === 'snapshot'" class="pt-5">
                 <div class="grid items-start gap-4 lg:grid-cols-2">
-                    <section class="grid gap-4 rounded-[24px] bg-surface p-4 sm:p-6">
+                    <section class="grid gap-4 rounded-[12px] bg-surface p-4 sm:p-6">
                         <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.snapshot_title') }}</h2>
                         <dl class="grid gap-2.5 text-sm">
                             <div class="flex justify-between gap-3"><dt class="text-ink-secondary">{{ __('catalog::vendor.edit.central_title') }}</dt><dd class="text-end font-medium text-ink">{{ $central?->name ?? '—' }}</dd></div>
@@ -199,7 +199,7 @@
                             <p class="text-sm leading-6 text-ink-secondary">{{ $central->summary }}</p>
                         @endif
                     </section>
-                    <section class="grid gap-3 rounded-[24px] bg-surface p-4 sm:p-6">
+                    <section class="grid gap-3 rounded-[12px] bg-surface p-4 sm:p-6">
                         <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.overrides_title') }}</h2>
                         @if ($overridden === [])
                             <p class="text-sm text-ink-secondary">{{ __('catalog::vendor.edit.no_overrides') }}</p>

@@ -122,6 +122,8 @@ return [
         'showing_none' => 'عرض 0 نتيجة',
         'page_of' => 'صفحة :page من :pages',
         'previous' => 'الصفحة السابقة',
+        'previous_short' => 'السابق',
+        'next_short' => 'التالي',
         'next' => 'الصفحة التالية',
     ],
     'filters' => [

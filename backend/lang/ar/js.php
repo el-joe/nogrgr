@@ -29,6 +29,8 @@ return [
     'table.showing' => 'عرض :from–:to من :total',
     'table.showing_none' => 'عرض 0 نتيجة',
     'table.previous' => 'الصفحة السابقة',
+    'table.previous_short' => 'السابق',
+    'table.next_short' => 'التالي',
     'table.next' => 'الصفحة التالية',
     'table.page_of' => 'صفحة :page من :pages',
     'table.select_row' => 'تحديد الصف',

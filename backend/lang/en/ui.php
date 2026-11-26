@@ -122,6 +122,8 @@ return [
         'showing_none' => 'Showing 0 results',
         'page_of' => 'Page :page of :pages',
         'previous' => 'Previous page',
+        'previous_short' => 'Previous',
+        'next_short' => 'Next',
         'next' => 'Next page',
     ],
     'filters' => [

@@ -717,4 +717,50 @@
             transition: none;
         }
     }
+
+    /* ---------- Search by image (SF-ECO-012 / SF-ELO-013 / SF-SQF-013) ---------- */
+    .sf-image-drop {
+        transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .sf-image-drop[data-dragover] {
+        transform: scale(1.01);
+        border-style: solid;
+    }
+
+    .sf-image-scan {
+        position: absolute;
+        inset-inline: 0;
+        top: 0;
+        height: 2px;
+        background: var(--color-sf-accent);
+        box-shadow: 0 0 12px var(--color-sf-accent);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    [data-image-search-result][data-busy] .sf-image-preview img {
+        opacity: 0.55;
+    }
+
+    [data-image-search-result][data-busy] .sf-image-scan {
+        opacity: 1;
+        animation: sf-image-scan 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes sf-image-scan {
+        from { top: 0; }
+        to { top: calc(100% - 2px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sf-image-drop {
+            transition: none;
+        }
+
+        [data-image-search-result][data-busy] .sf-image-scan {
+            animation: none;
+            opacity: 0;
+        }
+    }
 }
