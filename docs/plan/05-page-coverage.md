@@ -220,7 +220,7 @@
 | VEN-008 | Setup progress widget | `vendor.widgets.setup-progress` | % done, links | tenant.widgets.setup-progress | designed: Vendor Panel (new screens) 82:100227 | P2 | done |
 | VEN-009 | Dashboard | `vendor.dashboard` | Std; period selector, KPIs, latest orders, top customers/products | tenant.dashboard | 12:11267, m 12:18171 | P8 | partial — P2 foundation at the panel home: welcome header (View store), store hero with "Store power" = setup progress and readiness chips, setup widget (VEN-008), store status card. KPI cards, period selector, latest orders / top customers wait for their P5 / P8 data (no sample numbers) |
 | VEN-009a | ↳ Owed-to-platform alert → settle | widget | pay link | dashboard `_hero`, `_pay-alert` | 12:11267 | P8 | todo |
-| VEN-009b | ↳ Partner program banner | widget | copy link | dashboard `_partner` | 12:11267 | P9 | todo |
+| VEN-009b | ↳ Partner program banner | widget | copy link | dashboard `_partner` | 12:11267 | P9 | done — dashboard banner (view composer `affiliates::vendor._partner`): commission, requestable balance, referral link + copy, link to VEN-055; hidden without partner.view (#95) |
 | VEN-009c | ↳ Opportunities + flash-sale suggestion modal | widget + modal | create flash sale | dashboard `_opportunities`, `_opp-flash-sale-modal` | 12:11267 | P8 | todo |
 | VEN-009d | ↳ New-in central products widget | widget | add to store | dashboard `_new-in` | 12:11267 | P8 | todo |
 | VEN-009e | ↳ AI ads widget → AI Advertising Studio | widget | opens VEN-010c | dashboard `_ads` | 12:11267 | P10 | todo |
@@ -313,8 +313,8 @@
 | VEN-050h | ↳ New brand request | `vendor.requests.brand.create` | | tenant.brand-requests.create | designed: Vendor Panel (new screens) 87:111915 | P3 | done |
 | VEN-050i | ↳ Brand request detail (chat, pay request) | `vendor.requests.brand.show` | | tenant.brand-requests.show | designed: Vendor Panel (new screens) 87:110114 | P3 | todo |
 | VEN-050j | ↳ Request payment result (success / cancel) | `vendor.requests.payment.result` | | tenant.manufacturing-payment.charge, tenant.manufacturing-payment.cancel, tenant.manufacturing-payment.success, tenant.brand-request-payment.charge, tenant.brand-request-payment.cancel, tenant.brand-request-payment.success | designed: Vendor Panel (new screens) 87:110730 | P5 | todo |
-| VEN-055 | Partner program (link, stats, conversions, payouts, SSO) | `vendor.partner.index` | Std; copy, share | tenant.partner-program, tenant.finance.wallet.partner.conversions.data, tenant.finance.wallet.partner.payouts.data | designed: Vendor Panel (new screens) 87:111264 | P9 | todo |
-| VEN-055a | ↳ Withdraw request modal | modal | min / requestable | PartnerWithdrawRequest | designed: Vendor Panel (new screens) 87:111915 | P9 | todo |
+| VEN-055 | Partner program (link, stats, conversions, payouts, SSO) | `vendor.partner.index` | Std; copy, share | tenant.partner-program, tenant.finance.wallet.partner.conversions.data, tenant.finance.wallet.partner.payouts.data | designed: Vendor Panel (new screens) 87:111264 | P9 | done — `vendor.partner.index`: balance (requestable) / clicks / conversions / earned KPIs, referral link + promo code (copy), conversions + payouts DataTables, "Open affiliate dashboard" one-time SSO (new tab), permissions partner.view / partner.manage (#95) |
+| VEN-055a | ↳ Withdraw request modal | modal | min / requestable | PartnerWithdrawRequest | designed: Vendor Panel (new screens) 87:111915 | P9 | done — Withdraw modal: requestable + minimum, amount + note, 422 on amount; creates affiliate_payout_requests (#95) |
 | VEN-060 | Subscription & balance | `vendor.finance.subscription` | Std; plan, usage vs limits | tenant.finance.wallet | designed: Vendor Panel (new screens) 88:109601 | P2 | done |
 | VEN-060a | ↳ Subscribe / renew / upgrade modal → gateway | modal | | SubscriptionPaymentController | designed: Vendor Panel (new screens) 88:113398 | P2 | done |
 | VEN-060b | ↳ Subscription payment result (success / cancel) | `vendor.finance.subscription.result` | | tenant.subscription-payment.charge, tenant.subscription-payment.cancel, tenant.subscription-payment.success | designed: Vendor Panel (new screens) 88:113398 | P2 | partial (QA-P5 re-check: gateway-error state verified in browser; paid/cancel result pages only covered by Pest, QA has no working subscription gateway) |
@@ -353,8 +353,8 @@
 | VEN-084 | Settings: Compliance center (identity, company, bank, documents, accept terms) | `vendor.settings.compliance.edit` (+ `.update`, `.submit`, `.cities`, `.documents.show`, `.documents.destroy`) | review status | tenant.settings.compliance, tenant.settings.compliance.cities-by-country, tenant.compliance.accept | designed: Vendor Panel (new screens) 91:117308 | P8 | done |
 | VEN-085 | Settings: API keys (public API v1) | `vendor.settings.api-keys` | create, revoke, copy once | — (new, §D) | designed: Vendor Panel (new screens) 91:117954 | P8 | todo |
 | VEN-086 | Settings: Audit log | `vendor.settings.audit` | Std; filter | — (new, §B) | designed: Vendor Panel (new screens) 91:118575 | P8 | done |
-| VEN-087 | Settings: Notification preferences | `vendor.settings.notifications` | toggles | — (new) | designed: Vendor Panel (new screens) 91:119215 | P9 | todo |
-| VEN-090 | Notifications | `vendor.notifications.index` | Std; feed, open, mark read / all | tenant.notifications.index, tenant.notifications.feed, tenant.notifications.latest, tenant.notifications.open | 12:17282, m 12:24611 | P9 | todo |
+| VEN-087 | Settings: Notification preferences | `vendor.settings.notifications` | toggles | — (new) | designed: Vendor Panel (new screens) 91:119215 | P9 | done — P9 (decision #94): event × channel matrix (in-app / email / push) stored per member in the store DB, enforced on every panel notification via NotificationSending; SMS column not built (no SMS gateway) |
+| VEN-090 | Notifications | `vendor.notifications.index` | Std; feed, open, mark read / all | tenant.notifications.index, tenant.notifications.feed, tenant.notifications.latest, tenant.notifications.open | 12:17282, m 12:24611 | P9 | done — P9: verified vs Figma 12:17282 — unread pill, mark all, chips, row mark read / unread, open, live bell |
 | VEN-091 | Support tickets | `vendor.support.index` | Std | tenant.support.index | designed: Vendor Panel (new screens) 88:111731 | P9 | done — P9 (decision #92): My tickets (server-side, search + status) beside the open thread, unread badge |
 | VEN-091a | ↳ New ticket | `vendor.support.create` | attach | tenant.support.create | designed: Vendor Panel (new screens) 88:113398 | P9 | done — P9 (decision #92): modal + full page, subject / category / priority / message / up to 5 files |
 | VEN-091b | ↳ Ticket thread (live) | `vendor.support.show` | reply | tenant.support.show, tenant.support.thread | designed: Vendor Panel (new screens) 88:111731 | P9 | done — P9 (decision #92): live thread, reply with files, close / reopen |
@@ -372,24 +372,24 @@
 
 | ID | Page / screen | Route (new, proposed name) | Key actions & states | Old source | Figma node | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| AFF-001 | Login | `affiliate.auth.login` | Std; throttle, inactive/pending error | affiliate.login | designed: Affiliate & Owner 119:100054 · error 119:100128 · m 119:101143 | P9 | todo |
-| AFF-002 | Register | `affiliate.auth.register` | validation | affiliate.register | designed: Affiliate & Owner 119:100207 · validation 119:100321 · m 119:101191 | P9 | todo |
-| AFF-003 | Pending approval notice | `affiliate.auth.pending` | | RegisterPage (pending) | designed: Affiliate & Owner 119:100433 | P9 | todo |
-| AFF-004 | Forgot password | `affiliate.auth.password.request` | sent state | — (new, §C) | designed: Affiliate & Owner 119:100492 · sent 119:100552 | P9 | todo |
-| AFF-005 | Reset password | `affiliate.auth.password.reset` | invalid token | — (new, §C) | designed: Affiliate & Owner 119:100603 · invalid token 119:100669 | P9 | todo |
-| AFF-006 | Verify email | `affiliate.auth.verify` | resend, expired | — (new) | designed: Affiliate & Owner 119:100720 · expired 119:100776 | P9 | todo |
-| AFF-007 | SSO landing (from vendor partner program) | `affiliate.sso` | invalid / used / expired token | affiliate.sso | designed: Affiliate & Owner 119:100823 · invalid/used/expired 119:100873 | P9 | todo |
-| AFF-008 | Panel shell | layout `x-affiliate::layout` | bell, locale | layouts.affiliate | designed: Affiliate & Owner shell 121:100334 · sidebar comp 118:99699 · m 121:102977 | P9 | todo |
-| AFF-009 | Dashboard | `affiliate.dashboard` | Std; stat cards, recent conversions | affiliate.dashboard | designed: Affiliate & Owner 121:100334 · m 121:102977 | P9 | todo |
-| AFF-010 | Links & promo codes | `affiliate.links` | copy link, clicks | affiliate.links | designed: Affiliate & Owner 121:100742 | P9 | todo |
-| AFF-011 | Conversions | `affiliate.conversions` | Std; filter status | affiliate.conversions | designed: Affiliate & Owner 121:101191 · m 121:103181 | P9 | todo |
-| AFF-012 | Payouts (history + requests) | `affiliate.payouts` | Std | affiliate.payouts | designed: Affiliate & Owner 121:101567 | P9 | todo |
-| AFF-012a | ↳ Request payout modal | modal | min / max requestable | PayoutsPage | designed: Affiliate & Owner 121:101861 · validation 121:103254 · sheet m 121:103107 | P9 | todo |
-| AFF-013 | Profile | `affiliate.profile` | save | affiliate.profile | designed: Affiliate & Owner 121:102088 | P9 | todo |
-| AFF-013a | ↳ Tab: Payout details (PayPal, bank, IBAN) | tab | | ProfilePage | designed: Affiliate & Owner 121:102328 | P9 | todo |
-| AFF-013b | ↳ Tab: Change password | tab | | ProfilePage | designed: Affiliate & Owner 121:102571 | P9 | todo |
-| AFF-014 | Notifications | `affiliate.notifications.index` | Std; mark read | — (new, §C) | designed: Affiliate & Owner 121:102771 | P9 | todo |
-| AFF-015 | Error 403 / 404 / 419 / 500 | views | | — | designed: Affiliate & Owner 403 119:100939 · 404 119:100989 · 419 119:101040 · 500 119:101091 | P9 | todo |
+| AFF-001 | Login | `affiliate.auth.login` | Std; throttle, inactive/pending error | affiliate.login | designed: Affiliate & Owner 119:100054 · error 119:100128 · m 119:101143 | P9 | done — Identity login + "awaiting approval" message for pending, "not active" for suspended; link to sign-up (#95) |
+| AFF-002 | Register | `affiliate.auth.register` | validation | affiliate.register | designed: Affiliate & Owner 119:100207 · validation 119:100321 · m 119:101191 | P9 | done — `affiliate.register`: name, e-mail, phone (intl-tel-input), password, terms; pending account + role + confirmation mail (#95) |
+| AFF-003 | Pending approval notice | `affiliate.auth.pending` | | RegisterPage (pending) | designed: Affiliate & Owner 119:100433 | P9 | done — pending notice on the register page after sign-up (steps, resend link) (#95) |
+| AFF-004 | Forgot password | `affiliate.auth.password.request` | sent state | — (new, §C) | designed: Affiliate & Owner 119:100492 · sent 119:100552 | P9 | done — Identity PanelPasswordResetController (P2) for the affiliate guard |
+| AFF-005 | Reset password | `affiliate.auth.password.reset` | invalid token | — (new, §C) | designed: Affiliate & Owner 119:100603 · invalid token 119:100669 | P9 | done — Identity PanelPasswordResetController (P2) for the affiliate guard |
+| AFF-006 | Verify email | `affiliate.auth.verify` | resend, expired | — (new) | designed: Affiliate & Owner 119:100720 · expired 119:100776 | P9 | done — signed `affiliate.verification.verify` (confirmed / expired 410) + guest resend (#95) |
+| AFF-007 | SSO landing (from vendor partner program) | `affiliate.sso` | invalid / used / expired token | affiliate.sso | designed: Affiliate & Owner 119:100823 · invalid/used/expired 119:100873 | P9 | done — `affiliate.sso/{token}`: one-time 120 s token from VEN-055, invalid / used / expired 410 states (#95) |
+| AFF-008 | Panel shell | layout `x-affiliate::layout` | bell, locale | layouts.affiliate | designed: Affiliate & Owner shell 121:100334 · sidebar comp 118:99699 · m 121:102977 | P9 | done — shared panel layout, sidebar config/navigation/affiliate.php (dashboard, links, conversions, payouts, notifications, profile), bell + Reverb `affiliate.{id}` |
+| AFF-009 | Dashboard | `affiliate.dashboard` | Std; stat cards, recent conversions | affiliate.dashboard | designed: Affiliate & Owner 121:100334 · m 121:102977 | P9 | done — KPIs (clicks 30 d, conversions, pending commission, available to withdraw, USD, deltas), clicks & conversions chart 7D/30D/12M, referral card, recent conversions; "Next payout" replaced by "Requested payouts" (no schedule exists) (#95) |
+| AFF-010 | Links & promo codes | `affiliate.links` | copy link, clicks | affiliate.links | designed: Affiliate & Owner 121:100742 | P9 | done — referral link + copy, all-time clicks / conversions / rate, cookie window, own promo codes DataTable (#95) |
+| AFF-011 | Conversions | `affiliate.conversions` | Std; filter status | affiliate.conversions | designed: Affiliate & Owner 121:101191 · m 121:103181 | P9 | done — totals + own conversions DataTable, status filter (#95) |
+| AFF-012 | Payouts (history + requests) | `affiliate.payouts` | Std | affiliate.payouts | designed: Affiliate & Owner 121:101567 | P9 | done — summary KPIs, requests + history DataTables (tabs), blocked-state notice (#95) |
+| AFF-012a | ↳ Request payout modal | modal | min / max requestable | PayoutsPage | designed: Affiliate & Owner 121:101861 · validation 121:103254 · sheet m 121:103107 | P9 | done — request modal: requestable = balance − open requests, ≥ minimum, payout details required (#95) |
+| AFF-013 | Profile | `affiliate.profile` | save | affiliate.profile | designed: Affiliate & Owner 121:102088 | P9 | done — profile tab: name, phone, language, code / type (#95) |
+| AFF-013a | ↳ Tab: Payout details (PayPal, bank, IBAN) | tab | | ProfilePage | designed: Affiliate & Owner 121:102328 | P9 | done — PayPal or bank (bank, holder, IBAN encrypted + format check) (#95) |
+| AFF-013b | ↳ Tab: Change password | tab | | ProfilePage | designed: Affiliate & Owner 121:102571 | P9 | done — current + new confirmed password (#95) |
+| AFF-014 | Notifications | `affiliate.notifications.index` | Std; mark read | — (new, §C) | designed: Affiliate & Owner 121:102771 | P9 | done — `affiliate.notifications.*` inbox: read-state filter, open, mark read / unread / all, delete, bell feed, broadcast auth (#95) |
+| AFF-015 | Error 403 / 404 / 419 / 500 | views | | — | designed: Affiliate & Owner 403 119:100939 · 404 119:100989 · 419 119:101040 · 500 119:101091 | P9 | done — `affiliates::errors.page` for {central}/affiliate/* 403 / 404 / 419 / 500 (#95) |
 
 ## 4. Owner portal (`{central}/my-account`)
 
@@ -405,7 +405,7 @@
 | OWN-005 | Invoices (all stores) | `owner.invoices` | Std; download | — (new) | designed: Affiliate & Owner 122:104137 | P2 | done |
 | OWN-006 | Profile & password / linked Google-Apple | `owner.profile` | save | — (new) | designed: Affiliate & Owner 122:104562 | P2 | done |
 | OWN-007 | Add another store | `owner.stores.create` | → register flow WEB-016 | — (new, §D one owner many stores) | designed: Affiliate & Owner 122:104860 | P2 | done |
-| OWN-008 | Notifications | `owner.notifications` | Std | — (new) | designed: Affiliate & Owner 122:105109 | P9 | todo |
+| OWN-008 | Notifications | `owner.notifications` | Std | — (new) | designed: Affiliate & Owner 122:105109 | P9 | done — P9 (decision #94): All / Unread tabs, open, mark read / unread, mark all, bell + Reverb channel owner.{id} |
 | OWN-009 | Help & support (contact channels from General settings; tickets action added in P9) | `owner.support` | empty state when no channel configured | — (new, QA-P2-007) | new (owner portal design language) | P2 | done — P9 (decision #92): contact channels + support tickets (list, new ticket per store or account, thread, reply, close / reopen) |
 
 ## 5. Central website (`{central}/`)

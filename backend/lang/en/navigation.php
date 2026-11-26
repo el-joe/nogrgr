@@ -105,6 +105,8 @@ return [
         'ui_kit' => 'Component library',
     ],
     'vendor' => [
+        // P9: partner program (VEN-055)
+        'partner_program' => 'Partner program',
         // P9: support + help center (VEN-091 / 092)
         'support' => 'Support',
         'help_center' => 'Help center',
@@ -121,6 +123,7 @@ return [
         'mail' => 'Mail (SMTP)',
         'tracking' => 'Tracking pixels',
         'audit' => 'Audit log',
+        'notification_preferences' => 'Notifications',
         // P8: store banners, invoices
         'store_design' => 'Your Store',
         'banners' => 'Banners',
@@ -169,8 +172,17 @@ return [
         'subscriptions' => 'Subscriptions',
         'domains' => 'Domains',
         'invoices' => 'Invoices',
+        'notifications' => 'Notifications',
         'profile' => 'Profile',
         'add_store' => 'Add another store',
         'support' => 'Help & support',
+    ],
+    'affiliate' => [
+        'dashboard' => 'Dashboard',
+        'links' => 'Links & promo codes',
+        'conversions' => 'Conversions',
+        'payouts' => 'Payouts',
+        'notifications' => 'Notifications',
+        'profile' => 'Profile',
     ],
 ];

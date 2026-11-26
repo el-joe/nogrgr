@@ -55,7 +55,7 @@ class SessionAuthService extends BaseService
         if (! $this->isActive($user)) {
             $this->auditFailure($guard, $credentials, 'inactive');
 
-            throw ValidationException::withMessages(['email' => __('identity::auth.inactive')]);
+            throw ValidationException::withMessages(['email' => __($this->isPending($user) ? 'identity::auth.pending' : 'identity::auth.inactive')]);
         }
 
         RateLimiter::clear($this->throttleKey($guard, $credentials, $request));
@@ -117,6 +117,14 @@ class SessionAuthService extends BaseService
         $status = $user->getAttribute('status');
 
         return $status === null || $status === AccountStatus::Active;
+    }
+
+    /**
+     * A pending account (e.g. a partner sign-up awaiting approval) gets its own message.
+     */
+    private function isPending(Authenticatable $user): bool
+    {
+        return $user instanceof Model && $user->getAttribute('status') === AccountStatus::Pending;
     }
 
     private function ensureIsNotRateLimited(Guard $guard, LoginCredentialsData $credentials, Request $request): void

@@ -31,6 +31,8 @@ return [
             'subtitle' => 'Track your referrals, conversions and payouts in real time.',
             'intro' => 'Sign in to your partner account.',
             'console' => 'Partner panel',
+            'register_prompt' => 'New partner?',
+            'register' => 'Create a partner account',
         ],
     ],
     'stats' => [
@@ -42,6 +44,7 @@ return [
     'audit_note' => 'Sign-ins are recorded in the audit log',
     'copyright' => '© :year Nogrgr · :console',
     'or' => 'or',
+    'pending' => 'This account is awaiting approval. You will receive an e-mail as soon as it is activated.',
     'inactive' => 'This account is not active. Please contact support.',
     'google' => 'Continue with Google',
     'reset' => [

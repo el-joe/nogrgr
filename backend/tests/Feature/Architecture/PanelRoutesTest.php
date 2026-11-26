@@ -31,12 +31,13 @@ const PANEL_GUEST_ROUTE_SUFFIXES = [
     'invitation.accept',
     'register',
     'register.store',
+    'verification.resend',
 ];
 
 const PANEL_AUTH_ONLY_ROUTE_SUFFIXES = ['logout', 'impersonation.leave'];
 
 /* Signed result pages that work signed in or not; the controller validates the signature. */
-const PANEL_SIGNED_PUBLIC_ROUTE_SUFFIXES = ['verification.verify'];
+const PANEL_SIGNED_PUBLIC_ROUTE_SUFFIXES = ['verification.verify', 'sso'];
 
 it('protects every panel route with auth and a permission', function (): void {
     $violations = [];

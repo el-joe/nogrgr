@@ -66,6 +66,7 @@ return [
             ['key' => 'finance.purchases', 'label' => 'navigation.vendor.purchases', 'icon' => 'file', 'route' => 'vendor.finance.purchases.index', 'permission' => 'finance.purchases.view'],
             ['key' => 'finance.settlements', 'label' => 'navigation.vendor.settlements', 'icon' => 'wallet', 'route' => 'vendor.finance.settlements.index', 'permission' => 'finance.settlements.view'],
             ['key' => 'finance.payouts', 'label' => 'navigation.vendor.payouts', 'icon' => 'download', 'route' => 'vendor.finance.payouts.index', 'permission' => 'finance.payouts.view'],
+            ['key' => 'partner', 'label' => 'navigation.vendor.partner_program', 'icon' => 'gift', 'route' => 'vendor.partner.index', 'permission' => 'partner.view', 'active' => 'vendor.partner.*'],
         ],
     ],
     [
@@ -89,6 +90,7 @@ return [
                 ['key' => 'settings.staff', 'label' => 'navigation.vendor.staff', 'route' => 'vendor.settings.staff.index', 'permission' => 'settings.staff.view'],
                 ['key' => 'settings.roles', 'label' => 'navigation.vendor.roles', 'route' => 'vendor.settings.roles.index', 'permission' => 'settings.roles.view', 'active' => 'vendor.settings.roles.*'],
                 ['key' => 'settings.audit', 'label' => 'navigation.vendor.audit', 'route' => 'vendor.settings.audit', 'permission' => 'settings.audit.view', 'active' => 'vendor.settings.audit*'],
+                ['key' => 'settings.notifications', 'label' => 'navigation.vendor.notification_preferences', 'route' => 'vendor.settings.notifications', 'permission' => 'notifications.view', 'active' => 'vendor.settings.notifications*'],
             ]],
             ['key' => 'support', 'label' => 'navigation.vendor.support', 'icon' => 'lifebuoy', 'route' => 'vendor.support.index', 'permission' => 'support.view', 'badge' => 'vendor-support', 'active' => 'vendor.support.*'],
             ['key' => 'help', 'label' => 'navigation.vendor.help_center', 'icon' => 'file', 'route' => 'vendor.help.index', 'permission' => 'dashboard.view', 'active' => 'vendor.help.*'],

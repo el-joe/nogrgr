@@ -108,7 +108,13 @@ final class PermissionCatalog
                 'affiliates.promo-codes.view', 'affiliates.promo-codes.manage',
                 'affiliates.settings.manage',
             ],
-            Guard::Affiliate->value => ['dashboard.view', 'notifications.view'],
+            Guard::Affiliate->value => [
+                'dashboard.view', 'notifications.view',
+                // Affiliate panel (P9, AFF-009…014)
+                'links.view', 'conversions.view',
+                'payouts.view', 'payouts.request',
+                'profile.manage',
+            ],
         ];
     }
 
@@ -171,6 +177,8 @@ final class PermissionCatalog
                 'settings.audit.view',
                 // P9: support tickets (VEN-091)
                 'support.view', 'support.manage',
+                // P9: partner program (VEN-055 / 055a)
+                'partner.view', 'partner.manage',
             ],
         ];
     }

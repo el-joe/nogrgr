@@ -87,6 +87,7 @@ return [
         'affiliates.settings' => 'إعدادات برنامج التسويق بالعمولة',
         'support.tickets' => 'تذاكر الدعم',
         'support' => 'الدعم الفني',
+        'partner' => 'برنامج الشركاء',
         'dashboard' => 'لوحة التحكم',
         'horizon' => 'مراقبة الطوابير (Horizon)',
         'tenants' => 'المتاجر (الدخول كتاجر)',

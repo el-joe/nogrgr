@@ -105,6 +105,8 @@ return [
         'ui_kit' => 'مكتبة المكونات',
     ],
     'vendor' => [
+        // P9: partner program (VEN-055)
+        'partner_program' => 'برنامج الشركاء',
         // P9: support + help center (VEN-091 / 092)
         'support' => 'الدعم الفني',
         'help_center' => 'مركز المساعدة',
@@ -121,6 +123,7 @@ return [
         'mail' => 'البريد (SMTP)',
         'tracking' => 'بكسلات التتبع',
         'audit' => 'سجل التدقيق',
+        'notification_preferences' => 'الإشعارات',
         // P8: store banners, invoices
         'store_design' => 'متجرك',
         'banners' => 'البانرات',
@@ -169,8 +172,17 @@ return [
         'subscriptions' => 'الاشتراكات',
         'domains' => 'النطاقات',
         'invoices' => 'الفواتير',
+        'notifications' => 'الإشعارات',
         'profile' => 'الملف الشخصي',
         'add_store' => 'إضافة متجر آخر',
         'support' => 'المساعدة والدعم',
+    ],
+    'affiliate' => [
+        'dashboard' => 'لوحة التحكم',
+        'links' => 'الروابط وأكواد الخصم',
+        'conversions' => 'التحويلات',
+        'payouts' => 'المدفوعات',
+        'notifications' => 'الإشعارات',
+        'profile' => 'الملف الشخصي',
     ],
 ];

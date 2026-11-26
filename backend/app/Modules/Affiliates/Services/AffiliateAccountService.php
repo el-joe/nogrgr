@@ -14,6 +14,7 @@ use App\Modules\Platform\Models\Tenant;
 use App\Shared\Services\BaseService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * Affiliate accounts (ADM-060 / 060a):
@@ -26,6 +27,8 @@ use Illuminate\Support\Str;
  */
 class AffiliateAccountService extends BaseService
 {
+    public const PANEL_ROLE = 'affiliate';
+
     public function __construct(
         private readonly AffiliateRepositoryContract $affiliates,
         private readonly ProgramSettingsService $settings,
@@ -54,7 +57,7 @@ class AffiliateAccountService extends BaseService
                 'approved_at' => now(),
             ]);
 
-            return $affiliate;
+            return $affiliate->refresh();
         }, (new Affiliate)->getConnectionName());
     }
 
@@ -94,6 +97,31 @@ class AffiliateAccountService extends BaseService
         [$type, $value] = $this->commissionFor($affiliate);
 
         return CommissionCalculator::label($type, $value);
+    }
+
+    public function defaultCommissionLabel(): string
+    {
+        [$type, $value] = $this->settings->defaultCommission();
+
+        return CommissionCalculator::label($type, $value);
+    }
+
+    /**
+     * Gives the affiliate the system "affiliate" role of its guard (the panel
+     * permissions, kept in sync by permissions:sync) when it does not have it yet.
+     * Call it in central context: roles live in the central database.
+     */
+    public function ensurePanelRole(Affiliate $affiliate): void
+    {
+        if ($affiliate->hasRole(self::PANEL_ROLE)) {
+            return;
+        }
+
+        $role = Role::query()->where('name', self::PANEL_ROLE)->where('guard_name', 'affiliate')->first();
+
+        if ($role !== null) {
+            $affiliate->assignRole($role);
+        }
     }
 
     public function generateCode(): string

@@ -109,4 +109,6 @@
             </dl>
         </section>
     </div>
+
+    @include('affiliates::vendor._partner')
 </x-vendor::layout>

@@ -43,6 +43,13 @@
         <x-ui::button :href="$googleUrl" variant="secondary" size="lg" block>{{ __('identity::auth.google') }}</x-ui::button>
     @endif
 
+    @if ($surface === 'affiliate' && ($registerUrl = $shell->url($surface, 'register')))
+        <p class="mt-6 text-center text-sm text-ink-secondary">
+            {{ __('identity::auth.panel.'.$surface.'.register_prompt') }}
+            <a href="{{ $registerUrl }}" class="font-medium text-ink-brand hover:underline">{{ __('identity::auth.panel.'.$surface.'.register') }}</a>
+        </p>
+    @endif
+
     @if ($surface === 'admin')
         <p class="mt-6 flex items-center justify-center gap-1.5 text-xs text-ink-muted">
             <x-ui::icon name="shield" :size="14" />{{ __('identity::auth.audit_note') }}

@@ -12,7 +12,9 @@
         || in_array($raw, ['Forbidden', 'This action is unauthorized.', 'Unauthorized.'], true);
     $forbiddenMessage = $generic ? __('ui.http.forbidden') : __($raw);
 @endphp
-@if ($storeView = \App\Modules\Storefront\Support\StoreErrorPage::view('403'))
+@if (\App\Modules\Affiliates\Support\AffiliateErrorPage::applies())
+    @include('affiliates::errors.page', ['code' => '403', 'message' => $generic ? null : $forbiddenMessage])
+@elseif ($storeView = \App\Modules\Storefront\Support\StoreErrorPage::view('403'))
     @include($storeView)
 @else
     @include('errors._fallback', ['code' => '403', 'message' => $forbiddenMessage])

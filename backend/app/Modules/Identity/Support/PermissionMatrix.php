@@ -44,7 +44,7 @@ final class PermissionMatrix
         'store' => ['store'],
         'marketing' => ['coupons', 'flash-sales'],
         'requests' => ['requests'],
-        'billing' => ['finance'],
+        'billing' => ['finance', 'partner'],
         'settings' => ['settings'],
     ];
 

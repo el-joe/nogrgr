@@ -87,6 +87,7 @@ return [
         'affiliates.settings' => 'Affiliate program settings',
         'support.tickets' => 'Support tickets',
         'support' => 'Support',
+        'partner' => 'Partner program',
         'dashboard' => 'Dashboard',
         'horizon' => 'Queue monitor (Horizon)',
         'tenants' => 'Stores (sign in as vendor)',
