@@ -74,3 +74,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - elora started: P7 batch 2 Elora ×6 + store-own categories on storefront.
 - qa-p5 committed b86e938: finance + vendor polish re-check PASS (suite 2013/2013), 4 bugs fixed (QA-P5-017/018 + 2 low), 26 coverage rows done. Open: QA-P5-019 permissions sync, QA-P5-011 refund store-borne ledger part, VEN-061/061a unchecked, VEN-060b partial.
 - fixes started: permissions:sync, QA-P5-011, MAIL-015, table sort-arrow cosmetic.
+- fixes committed 3f9ca0f (suite 2020/2020): permissions:sync (QA-P5-019), ledger reconcile (QA-P5-011; run `finance:backfill-ledger --tenant=1` on nogrgr_qa), MAIL-015 review button (partial: Figma 130:10889 unchecked), sort-arrow fix, docs/plan/deploy.md, decision #80.
+- vendorp8 started: P8 vendor panel rest (VEN-030 themes, VEN-035 banners, settings, customers, marketing, staff/roles, compliance, VEN-061 invoices).
