@@ -64,3 +64,9 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - **polish**: QA-P5-009 (VEN-017/018 store categories & badges), 012–016, VEN-041b button, admin promo modals, ledger back-fill, overdue threshold → settings, picker case, VEN-060 subscription page.
 - Shared test DB: every test command runs under `flock /tmp/nogrgr-tests.lock`. Agents don't commit; orchestrator commits after the batch.
 - Next: P5 QA re-check (finance pages, browser) · P7 themes · P8 vendor panel rest · P9 · P10 AI · P11 mobile · P12 · Language purchases tab (ADM-094) · per-tenant `tenant_static_texts` (#45) · P2 QA gate.
+
+
+## 2026-11-26 update
+- polish batch committed cb8e8e7: store categories & badges (VEN-017/018, #74), vendor subscription VEN-060 (#75), finance:backfill-ledger, QA-P5-009/012-016 fixed, VEN-041b, admin promotion modals, overdue setting, case-insensitive picker. Suite 1983/1984 (1 = themes WIP LayeringTest).
+- themes (P7 batch 1: storefront foundation + Ecommet; sub-agents sf-catalog/sf-checkout/sf-account done) still running, uncommitted.
+- qa-p5 started: browser re-check of finance + new vendor pages, coverage flips.
