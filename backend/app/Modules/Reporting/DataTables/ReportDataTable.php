@@ -5,6 +5,7 @@ namespace App\Modules\Reporting\DataTables;
 use App\Modules\Reporting\DTOs\ReportColumn;
 use App\Modules\Reporting\DTOs\ReportFilterData;
 use App\Modules\Reporting\Enums\ReportTab;
+use App\Modules\Reporting\Services\Reports\Report;
 use App\Modules\Reporting\Services\ReportService;
 use App\Modules\Reporting\Support\ReportCell;
 use Illuminate\Database\Query\Builder;
@@ -25,7 +26,15 @@ final class ReportDataTable
     public function toJson(ReportTab $tab, ReportFilterData $filters): JsonResponse
     {
         $filters = $this->reports->filtersFor($tab, $filters);
-        $report = $this->reports->report($tab);
+
+        return $this->forReport($this->reports->report($tab), $filters);
+    }
+
+    /**
+     * Table of any report (admin tabs, vendor analytics) for already-normalised filters.
+     */
+    public function forReport(Report $report, ReportFilterData $filters): JsonResponse
+    {
         $rows = $report->rows($filters);
 
         /** @var DataTableAbstract $table */

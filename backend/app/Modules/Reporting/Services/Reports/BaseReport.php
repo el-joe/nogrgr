@@ -25,6 +25,14 @@ abstract class BaseReport implements Report
     }
 
     /**
+     * Translation file of the KPI / tile / chart labels (vendor analytics use their own).
+     */
+    protected function lang(): string
+    {
+        return 'reporting::reports';
+    }
+
+    /**
      * @param  'money'|'number'|'decimal'|'percent'  $format
      * @param  list<int|float>  $spark
      * @return array{key: string, label: string, value: string, raw: int|float, format: string, icon: string, delta: float|null, spark: list<int|float>}
@@ -33,7 +41,7 @@ abstract class BaseReport implements Report
     {
         return [
             'key' => $key,
-            'label' => __('reporting::reports.kpi.'.$key),
+            'label' => __($this->lang().'.kpi.'.$key),
             'value' => $this->display($current, $format),
             'raw' => $current,
             'format' => $format,
@@ -48,7 +56,7 @@ abstract class BaseReport implements Report
      */
     protected function tile(string $key, string $value, string $tone = 'neutral'): array
     {
-        return ['label' => __('reporting::reports.tiles.'.$key), 'value' => $value, 'tone' => $tone];
+        return ['label' => __($this->lang().'.tiles.'.$key), 'value' => $value, 'tone' => $tone];
     }
 
     /**
@@ -61,8 +69,8 @@ abstract class BaseReport implements Report
     {
         return [
             'id' => $id,
-            'title' => __('reporting::reports.charts.'.$id.'.title'),
-            'subtitle' => __('reporting::reports.charts.'.$id.'.subtitle'),
+            'title' => __($this->lang().'.charts.'.$id.'.title'),
+            'subtitle' => __($this->lang().'.charts.'.$id.'.subtitle'),
             'type' => $type,
             'labels' => ReportFormat::bucketLabels($filters),
             'series' => $series,
@@ -82,12 +90,12 @@ abstract class BaseReport implements Report
 
         return [
             'id' => $id,
-            'title' => __('reporting::reports.charts.'.$id.'.title'),
-            'subtitle' => __('reporting::reports.charts.'.$id.'.subtitle'),
+            'title' => __($this->lang().'.charts.'.$id.'.title'),
+            'subtitle' => __($this->lang().'.charts.'.$id.'.subtitle'),
             'type' => 'doughnut',
             'labels' => array_map('strval', array_keys($slices)),
             'series' => [[
-                'label' => __('reporting::reports.charts.'.$id.'.title'),
+                'label' => __($this->lang().'.charts.'.$id.'.title'),
                 'data' => array_values($slices),
                 'tones' => array_slice(self::SLICE_TONES, 0, count($slices)),
             ]],

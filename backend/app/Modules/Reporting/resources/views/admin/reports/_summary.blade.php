@@ -1,4 +1,4 @@
-{{-- KPI cards, highlight tiles, charts, funnel and leaderboard of a report tab. --}}
+{{-- KPI cards, highlight tiles, charts, funnel and leaderboard of a report tab (admin reports and vendor analytics; optional $funnelTitle / $leadersTitle). --}}
 @php
     $comparison = __('reporting::reports.vs_previous', ['days' => \Illuminate\Support\Number::format($filters->days(), locale: \App\Shared\Support\Locale::numberLocale())]);
 @endphp
@@ -59,7 +59,7 @@
 @if ($summary->funnel || $summary->leaders)
     <div class="grid gap-4 lg:grid-cols-2">
         @if ($summary->funnel)
-            <x-ui::card :title="__('reporting::reports.funnel_title')" data-reveal="fade-up">
+            <x-ui::card :title="$funnelTitle ?? __('reporting::reports.funnel_title')" data-reveal="fade-up">
                 <ul class="grid gap-4" role="list">
                     @foreach ($summary->funnel as $step)
                         <li class="grid gap-2">
@@ -76,7 +76,7 @@
             </x-ui::card>
         @endif
         @if ($summary->leaders)
-            <x-ui::card :title="__('reporting::reports.leaderboard')" data-reveal="fade-up">
+            <x-ui::card :title="$leadersTitle ?? __('reporting::reports.leaderboard')" data-reveal="fade-up">
                 <ol class="grid gap-4">
                     @foreach ($summary->leaders as $leader)
                         <li class="flex items-center gap-3">

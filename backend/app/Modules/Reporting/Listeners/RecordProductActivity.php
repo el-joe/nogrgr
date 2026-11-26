@@ -12,8 +12,9 @@ use Throwable;
 /**
  * Feeds `product_daily_facts` (ADM-070j): +1 view per product page view, +1 add-to-cart
  * per cart add, and per paid order +1 order / units / revenue (line grand total) for each
- * of its products. A paid order is counted once even if OrderPaid is replayed. Reporting
- * never breaks the shopper's request: failures are reported and swallowed.
+ * of its products, plus the store's profit of those lines (PricedLine::vendorShare,
+ * VEN-045d). A paid order is counted once even if OrderPaid is replayed. Reporting never
+ * breaks the shopper's request: failures are reported and swallowed.
  */
 class RecordProductActivity
 {
@@ -46,14 +47,15 @@ class RecordProductActivity
         $lines = [];
 
         foreach ($order->items as $item) {
-            $line = $lines[$item->store_product_id] ?? ['name' => $item->name, 'units' => 0, 'revenue' => 0];
+            $line = $lines[$item->store_product_id] ?? ['name' => $item->name, 'units' => 0, 'revenue' => 0, 'profit' => 0];
             $line['units'] += (int) $item->quantity;
             $line['revenue'] += (int) $item->grand_total;
+            $line['profit'] += $item->pricedLine()->vendorShare()->minor;
             $lines[$item->store_product_id] = $line;
         }
 
         foreach ($lines as $storeProductId => $line) {
-            $this->products->increment($event->tenantId, (int) $storeProductId, $day, $line['name'], ['orders' => 1, 'units' => $line['units'], 'revenue' => $line['revenue']]);
+            $this->products->increment($event->tenantId, (int) $storeProductId, $day, $line['name'], ['orders' => 1, 'units' => $line['units'], 'revenue' => $line['revenue'], 'profit' => $line['profit']]);
         }
     }
 }

@@ -6,6 +6,7 @@ use App\Modules\Reporting\DTOs\ReportFilterData;
 use App\Modules\Reporting\Models\ProductDailyFact;
 use App\Modules\Reporting\Repositories\Contracts\ProductActivityRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
  */
 class ProductActivityRepository extends BaseRepository implements ProductActivityRepositoryContract
 {
-    private const COUNTERS = ['views', 'cart_adds', 'orders', 'units', 'revenue'];
+    private const COUNTERS = ['views', 'cart_adds', 'orders', 'units', 'revenue', 'profit'];
 
     protected function model(): string
     {
@@ -84,15 +85,24 @@ class ProductActivityRepository extends BaseRepository implements ProductActivit
                 .' SUM(orders) AS orders, SUM(units) AS units, SUM(revenue) AS revenue')
             ->groupBy('tenant_id', 'store_product_id');
 
-        return DB::query()->fromSub($rows, 'p')
+        return $this->central()->query()->fromSub($rows, 'p')
             ->join('tenants', 'tenants.id', '=', 'p.tenant_id')
             ->selectRaw('p.*, tenants.name AS tenant_name, tenants.slug AS tenant_slug');
     }
 
     private function scoped(ReportFilterData $filters): QueryBuilder
     {
-        return DB::table('product_daily_facts')
+        return $this->central()->table('product_daily_facts')
             ->whereBetween('day', [$filters->start()->toDateString(), $filters->end()->toDateString()])
             ->when($filters->tenantId !== null, static fn (QueryBuilder $query) => $query->where('tenant_id', $filters->tenantId));
+    }
+
+    /**
+     * Reporting tables are central: queries must not follow the tenant connection that the
+     * vendor panel switches to.
+     */
+    private function central(): ConnectionInterface
+    {
+        return DB::connection(config('tenancy.database.central_connection'));
     }
 }

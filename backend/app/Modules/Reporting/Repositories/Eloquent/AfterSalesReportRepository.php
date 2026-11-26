@@ -8,6 +8,7 @@ use App\Modules\AfterSales\Models\ReturnRequest;
 use App\Modules\Reporting\DTOs\ReportFilterData;
 use App\Modules\Reporting\Repositories\Contracts\AfterSalesReportRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
@@ -78,7 +79,7 @@ class AfterSalesReportRepository extends BaseRepository implements AfterSalesRep
 
     private function returns(ReportFilterData $filters): QueryBuilder
     {
-        return DB::table('return_requests')
+        return $this->central()->table('return_requests')
             ->whereBetween('return_requests.created_at', [$filters->start(), $filters->end()])
             ->when($filters->tenantId !== null, static fn (QueryBuilder $query) => $query->where('return_requests.tenant_id', $filters->tenantId))
             ->when($filters->countryId !== null, static fn (QueryBuilder $query) => $query
@@ -88,12 +89,21 @@ class AfterSalesReportRepository extends BaseRepository implements AfterSalesRep
 
     private function refunds(ReportFilterData $filters): QueryBuilder
     {
-        return DB::table('refunds')
+        return $this->central()->table('refunds')
             ->where('refunds.status', 'completed')
             ->whereBetween('refunds.processed_at', [$filters->start(), $filters->end()])
             ->when($filters->tenantId !== null, static fn (QueryBuilder $query) => $query->where('refunds.tenant_id', $filters->tenantId))
             ->when($filters->countryId !== null, static fn (QueryBuilder $query) => $query
                 ->join('order_facts', static fn (JoinClause $join) => $join->on('order_facts.tenant_id', '=', 'refunds.tenant_id')->on('order_facts.order_uuid', '=', 'refunds.order_uuid'))
                 ->where('order_facts.country_id', $filters->countryId));
+    }
+
+    /**
+     * Reporting tables are central: queries must not follow the tenant connection that the
+     * vendor panel switches to.
+     */
+    private function central(): ConnectionInterface
+    {
+        return DB::connection(config('tenancy.database.central_connection'));
     }
 }

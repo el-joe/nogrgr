@@ -22,7 +22,7 @@ interface ProductActivityRepositoryContract extends RepositoryContract
     public function increment(int $tenantId, int $storeProductId, string $day, ?string $productName, array $increments): void;
 
     /**
-     * @return array{views: int, cart_adds: int, orders: int, units: int, revenue: int}
+     * @return array{views: int, cart_adds: int, orders: int, units: int, revenue: int, profit: int}
      */
     public function totals(ReportFilterData $filters): array;
 

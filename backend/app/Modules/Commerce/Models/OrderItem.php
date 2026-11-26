@@ -4,6 +4,8 @@ namespace App\Modules\Commerce\Models;
 
 use App\Modules\Catalog\Enums\StoreProductSource;
 use App\Modules\Commerce\Enums\DiscountSource;
+use App\Modules\Commerce\Pricing\PricedLine;
+use App\Shared\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -90,5 +92,31 @@ class OrderItem extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    /**
+     * The line's money snapshot as the PricedLine it was stored from (shares per
+     * ORDER_FORMULAS §2 come from PricedLine, never recomputed elsewhere).
+     */
+    public function pricedLine(): PricedLine
+    {
+        $money = static fn (?int $minor): Money => Money::ofMinor((int) $minor);
+
+        return new PricedLine(
+            key: (string) $this->line_key,
+            own: $this->product_source === StoreProductSource::Own,
+            quantity: (int) $this->quantity,
+            cost: $money($this->cost),
+            profitAmount: $money($this->profit_amount),
+            price: $money($this->price),
+            subTotal: $money($this->sub_total),
+            fixedShipping: $money($this->fixed_shipping),
+            discount: $money($this->discount),
+            discountSource: $this->discount_source,
+            tax: $money($this->tax),
+            shippingFee: $money($this->shipping_fee),
+            grandTotal: $money($this->grand_total),
+            weightGrams: (int) $this->weight_grams,
+        );
     }
 }

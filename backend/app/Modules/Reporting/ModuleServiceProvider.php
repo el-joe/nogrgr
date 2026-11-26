@@ -14,12 +14,14 @@ use App\Modules\Reporting\Repositories\Contracts\OrderFactRepositoryContract;
 use App\Modules\Reporting\Repositories\Contracts\ProductActivityRepositoryContract;
 use App\Modules\Reporting\Repositories\Contracts\ReportFactRepositoryContract;
 use App\Modules\Reporting\Repositories\Contracts\SubscriptionReportRepositoryContract;
+use App\Modules\Reporting\Repositories\Contracts\VendorAnalyticsRepositoryContract;
 use App\Modules\Reporting\Repositories\Eloquent\AffiliateReportRepository;
 use App\Modules\Reporting\Repositories\Eloquent\AfterSalesReportRepository;
 use App\Modules\Reporting\Repositories\Eloquent\OrderFactRepository;
 use App\Modules\Reporting\Repositories\Eloquent\ProductActivityRepository;
 use App\Modules\Reporting\Repositories\Eloquent\ReportFactRepository;
 use App\Modules\Reporting\Repositories\Eloquent\SubscriptionReportRepository;
+use App\Modules\Reporting\Repositories\Eloquent\VendorAnalyticsRepository;
 use App\Modules\Storefront\Events\ProductViewed;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
 use Illuminate\Support\Facades\Event;
@@ -38,6 +40,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         SubscriptionReportRepositoryContract::class => SubscriptionReportRepository::class,
         AffiliateReportRepositoryContract::class => AffiliateReportRepository::class,
         ProductActivityRepositoryContract::class => ProductActivityRepository::class,
+        VendorAnalyticsRepositoryContract::class => VendorAnalyticsRepository::class,
     ];
 
     public function boot(): void

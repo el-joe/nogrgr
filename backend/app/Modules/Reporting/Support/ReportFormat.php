@@ -48,6 +48,14 @@ final class ReportFormat
         );
     }
 
+    /**
+     * A date / timestamp as "5 Aug 2026" in the current locale.
+     */
+    public static function day(string $value): string
+    {
+        return CarbonImmutable::parse($value)->locale(app()->getLocale())->isoFormat('D MMM YYYY');
+    }
+
     public static function month(string $key): string
     {
         return CarbonImmutable::parse(substr($key, 0, 7).'-01')->locale(app()->getLocale())->isoFormat('MMMM YYYY');

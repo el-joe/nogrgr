@@ -20,6 +20,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int $orders
  * @property int $units
  * @property int $revenue
+ * @property int $profit
  */
 class ProductDailyFact extends Model
 {
@@ -29,7 +30,7 @@ class ProductDailyFact extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['tenant_id', 'store_product_id', 'day', 'product_name', 'views', 'cart_adds', 'orders', 'units', 'revenue'];
+    protected $fillable = ['tenant_id', 'store_product_id', 'day', 'product_name', 'views', 'cart_adds', 'orders', 'units', 'revenue', 'profit'];
 
     /**
      * @return array<string, string>
@@ -45,6 +46,7 @@ class ProductDailyFact extends Model
             'orders' => 'integer',
             'units' => 'integer',
             'revenue' => 'integer',
+            'profit' => 'integer',
         ];
     }
 }

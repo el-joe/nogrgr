@@ -9,6 +9,7 @@ use App\Modules\Reporting\Repositories\Contracts\ReportFactRepositoryContract;
 use App\Modules\Reporting\Support\SqlDialect;
 use App\Shared\Repositories\BaseRepository;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
@@ -96,14 +97,14 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
 
     public function byTenant(ReportFilterData $filters): QueryBuilder
     {
-        $refunds = DB::table('refunds')
+        $refunds = $this->central()->table('refunds')
             ->selectRaw('tenant_id, SUM(amount) AS refunded, COUNT(*) AS refunds_count')
             ->where('status', 'completed')
             ->whereBetween('processed_at', [$filters->start(), $filters->end()])
             ->when($filters->tenantId !== null, static fn (QueryBuilder $query) => $query->where('tenant_id', $filters->tenantId))
             ->groupBy('tenant_id');
 
-        $returns = DB::table('return_requests')
+        $returns = $this->central()->table('return_requests')
             ->selectRaw('tenant_id, COUNT(*) AS returns_count, SUM(CASE WHEN seller_fault = 1 THEN 1 ELSE 0 END) AS seller_fault')
             ->whereBetween('created_at', [$filters->start(), $filters->end()])
             ->groupBy('tenant_id');
@@ -112,7 +113,7 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
             ->selectRaw('tenant_id, COUNT(*) AS orders, SUM(grand_total) AS gross, SUM(items_count) AS units, SUM(platform_profit) AS platform, SUM(vendor_profit) AS vendor')
             ->groupBy('tenant_id');
 
-        return DB::query()->fromSub($sales, 's')
+        return $this->central()->query()->fromSub($sales, 's')
             ->join('tenants', 'tenants.id', '=', 's.tenant_id')
             ->leftJoinSub($refunds, 'r', 'r.tenant_id', '=', 's.tenant_id')
             ->leftJoinSub($returns, 'rt', 'rt.tenant_id', '=', 's.tenant_id')
@@ -134,7 +135,7 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
             ->groupBy('tenant_id')
             ->groupByRaw($month);
 
-        return DB::query()->fromSub($rows, 'm')
+        return $this->central()->query()->fromSub($rows, 'm')
             ->join('tenants', 'tenants.id', '=', 'm.tenant_id')
             ->selectRaw('m.tenant_id, m.month, tenants.name AS tenant_name, tenants.slug AS tenant_slug, m.orders, m.delivered, m.cancelled, m.gross, m.units');
     }
@@ -151,7 +152,7 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
                 .' SUM(weight_grams) AS weight')
             ->groupByRaw("COALESCE(shipping_company_name, ''), COALESCE(country_id, 0)");
 
-        return DB::query()->fromSub($rows, 'sh')->select('sh.*');
+        return $this->central()->query()->fromSub($rows, 'sh')->select('sh.*');
     }
 
     public function shippingTotals(ReportFilterData $filters): array
@@ -189,7 +190,7 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
                 .' SUM(coupon_discount) AS discount, SUM(grand_total) AS revenue, COUNT(DISTINCT tenant_id) AS stores')
             ->groupByRaw("COALESCE(coupon_code, ''), COALESCE(coupon_source, '')");
 
-        return DB::query()->fromSub($rows, 'c')->select('c.*');
+        return $this->central()->query()->fromSub($rows, 'c')->select('c.*');
     }
 
     public function customersByTenant(ReportFilterData $filters): QueryBuilder
@@ -200,19 +201,19 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
             ->groupBy('tenant_id')
             ->groupByRaw(self::CUSTOMER_KEY);
 
-        $rows = DB::query()->fromSub($buyers, 'b')
+        $rows = $this->central()->query()->fromSub($buyers, 'b')
             ->joinSub($this->firstOrders($filters), 'f', static fn (JoinClause $join) => $join->on('f.tenant_id', '=', 'b.tenant_id')->on('f.ckey', '=', 'b.ckey'))
             ->selectRaw('b.tenant_id, COUNT(*) AS customers, SUM(CASE WHEN f.first_at >= ? THEN 1 ELSE 0 END) AS new_customers, SUM(b.orders) AS orders, SUM(b.spent) AS spent', [$filters->start()])
             ->groupBy('b.tenant_id');
 
-        return DB::query()->fromSub($rows, 'c')
+        return $this->central()->query()->fromSub($rows, 'c')
             ->join('tenants', 'tenants.id', '=', 'c.tenant_id')
             ->selectRaw('c.tenant_id, tenants.name AS tenant_name, tenants.slug AS tenant_slug, c.customers, c.new_customers, c.customers - c.new_customers AS returning_customers, c.orders, c.spent');
     }
 
     public function customerTotals(ReportFilterData $filters): array
     {
-        $row = DB::query()->fromSub($this->customersByTenant($filters), 't')
+        $row = $this->central()->query()->fromSub($this->customersByTenant($filters), 't')
             ->selectRaw('COALESCE(SUM(customers), 0) AS customers, COALESCE(SUM(new_customers), 0) AS new_customers')
             ->first();
 
@@ -224,7 +225,7 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
 
     public function newCustomersDaily(ReportFilterData $filters): array
     {
-        return DB::query()->fromSub($this->firstOrders($filters), 'f')
+        return $this->central()->query()->fromSub($this->firstOrders($filters), 'f')
             ->whereBetween('f.first_at', [$filters->start(), $filters->end()])
             ->selectRaw('DATE(f.first_at) AS day, COUNT(*) AS total')
             ->groupByRaw('DATE(f.first_at)')
@@ -240,7 +241,7 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
             ->selectRaw('DATE(placed_at) AS day, tenant_id, '.self::CUSTOMER_KEY.' AS ckey')
             ->groupByRaw('DATE(placed_at), tenant_id, '.self::CUSTOMER_KEY);
 
-        return DB::query()->fromSub($buyers, 'b')
+        return $this->central()->query()->fromSub($buyers, 'b')
             ->selectRaw('b.day, COUNT(*) AS total')
             ->groupBy('b.day')
             ->pluck('total', 'day')
@@ -285,7 +286,7 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
         $search = trim((string) ($options['search'] ?? ''));
         $status = ShopperStatus::tryFrom((string) ($options['status'] ?? ''));
 
-        return DB::query()->fromSub($rows, 'sh')
+        return $this->central()->query()->fromSub($rows, 'sh')
             ->join('tenants', 'tenants.id', '=', 'sh.tenant_id')
             ->selectRaw('sh.*, tenants.name AS tenant_name, tenants.slug AS tenant_slug,'
                 .' CASE WHEN sh.first_order_at >= ? THEN ? WHEN sh.last_order_at >= ? THEN ? ELSE ? END AS shopper_status',
@@ -301,7 +302,7 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
 
     public function shopperTotals(ReportFilterData $filters): array
     {
-        $row = DB::query()->fromSub($this->shoppers($filters), 't')
+        $row = $this->central()->query()->fromSub($this->shoppers($filters), 't')
             ->selectRaw('COUNT(*) AS shoppers, COALESCE(SUM(CASE WHEN shopper_status = ? THEN 1 ELSE 0 END), 0) AS new_shoppers,'
                 .' COALESCE(SUM(CASE WHEN orders > 1 THEN 1 ELSE 0 END), 0) AS returning_shoppers, COALESCE(SUM(orders), 0) AS orders', [ShopperStatus::New->value])
             ->first();
@@ -355,5 +356,14 @@ class ReportFactRepository extends BaseRepository implements ReportFactRepositor
             ->selectRaw('tenant_id, '.self::CUSTOMER_KEY.' AS ckey, MIN(placed_at) AS first_at')
             ->groupBy('tenant_id')
             ->groupByRaw(self::CUSTOMER_KEY);
+    }
+
+    /**
+     * Reporting tables are central: queries must not follow the tenant connection that the
+     * vendor panel switches to.
+     */
+    private function central(): ConnectionInterface
+    {
+        return DB::connection(config('tenancy.database.central_connection'));
     }
 }

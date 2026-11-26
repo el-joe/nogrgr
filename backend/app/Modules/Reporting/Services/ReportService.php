@@ -60,10 +60,19 @@ class ReportService extends BaseService
     public function export(ReportTab $tab, ReportFilterData $filters): StreamedResponse
     {
         $filters = $this->filtersFor($tab, $filters);
-        $report = $this->report($tab);
+
+        return $this->exportReport($this->report($tab), $filters, 'report-'.$tab->value);
+    }
+
+    /**
+     * Streams the table of any report as CSV (UTF-8 BOM, raw USD decimals):
+     * `<prefix>-<from>-<to>.csv`.
+     */
+    public function exportReport(Report $report, ReportFilterData $filters, string $prefix): StreamedResponse
+    {
         $columns = $report->columns($filters);
         $rows = $report->rows($filters);
-        $filename = 'report-'.$tab->value.'-'.$filters->start()->toDateString().'-'.$filters->end()->toDateString().'.csv';
+        $filename = $prefix.'-'.$filters->start()->toDateString().'-'.$filters->end()->toDateString().'.csv';
 
         return response()->streamDownload(function () use ($columns, $rows): void {
             $out = fopen('php://output', 'wb');
