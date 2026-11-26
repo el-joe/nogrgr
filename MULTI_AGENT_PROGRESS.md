@@ -83,3 +83,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - stripe-redirect started: Stripe via hosted Checkout only, remove js.stripe.com, arch test for external scripts.
 - stripe-redirect committed ee39a64 (suite 2125/2125). Then client chose option 1: inline Stripe card via Stripe.js from js.stripe.com (only allowed external script), no webhook, like old project. Stripe test keys imported from old dokan_v2 into dev nogrgr + nogrgr_qa (dev DB migrated/seeded non-destructively). Test webhook endpoint created then deleted per client.
 - stripe-inline started: restore inline Stripe Elements on checkout + registration + vendor subscription (+ other pay points), arch test exception for js.stripe.com only.
+- vendorp8 done (uncommitted, interleaved with stripe-inline WIP): 18 VEN rows (customers/subscribers #81, banners+invoices #82, compliance #84, themes #85, staff & roles #86, VEN-007). Dev + QA migrated, permissions synced. Will commit together with stripe-inline after a full suite run.
+- qa-p8 started: browser QA of the new vendor pages.
