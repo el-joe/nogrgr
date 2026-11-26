@@ -265,7 +265,7 @@
 | VEN-022 | Returns | `vendor.sales.returns.index` | Std; filter | tenant.returns.index | designed: Vendor Panel (new screens) 84:103852 | P5 | done |
 | VEN-022a | ↳ Return detail (all transitions: approve, reject, info, received, inspect, refund, exchange, close, note) | `vendor.sales.returns.show` | one modal per action | tenant.returns.show | designed: Vendor Panel (new screens) 84:104582 | P5 | done |
 | VEN-023 | Refunds (retry, complete, reject) | `vendor.sales.refunds.index` | Std | tenant.refunds.index | designed: Vendor Panel (new screens) 84:105181 | P5 | done |
-| VEN-024 | Return analytics | `vendor.sales.returns.analytics` | charts, export | tenant.returns.analytics | designed: Vendor Panel (new screens) 84:105181 | P8 | todo |
+| VEN-024 | Return analytics | `vendor.sales.returns.analytics` | charts, export | tenant.returns.analytics | designed: Vendor Panel (new screens) 84:105181 | P8 | done — Refunds / Return analytics tabs, period + CSV, return rate / refunded / exchanges / avg resolution, reasons donut, refunds over time, refunds table (#96) |
 | VEN-025 | Customers | `vendor.sales.customers.index` | Std; export, delete | tenant.customers.index, tenant.customers.export | 12:15544, m 12:23838 | P8 | done |
 | VEN-025a | ↳ Customer create | `vendor.sales.customers.create` | intl-tel-input | tenant.customers.create | designed: Vendor Panel (new screens) 84:107236 | P8 | done |
 | VEN-025b | ↳ Customer detail (profile, toggle active, payments) | `vendor.sales.customers.show` | | tenant.customers.show | designed: Vendor Panel (new screens) 84:105854 | P8 | done |
@@ -297,11 +297,11 @@
 | VEN-041 | Flash sales (own + read-only central tab) | `vendor.marketing.flash-sales.index` | Std; per country | tenant.store.flash-sales.index, tenant.store.flash-sales | designed: Vendor Panel (new screens) 87:108154 | P5 | done |
 | VEN-041a | ↳ Flash sale create / edit (product search, banner) | modal | | tenant.store.flash-sales.show, tenant.store.flash-sales.products.search | designed: Vendor Panel (new screens) 87:111915 | P5 | done |
 | VEN-041b | ↳ Attach product to flash sale (from product) | modal | | tenant.store.flash-sales.available-for-product | designed: Vendor Panel (new screens) 87:111915 | P5 | done |
-| VEN-045 | Analytics (tabs) | `vendor.analytics` | Std; period filter | tenant.analytics | — | P8 | todo |
-| VEN-045a | ↳ Tab: Order analytics | `vendor.analytics?tab=orders` | charts | tenant.analytics.orders.data.monthly, tenant.analytics.orders.data.status | 12:16223, m 12:24731 | P8 | todo |
-| VEN-045b | ↳ Tab: Shipping analytics | `vendor.analytics?tab=shipping` | | tenant.analytics.shipping.data.monthly | designed: Vendor Panel (new screens) 87:108835 | P8 | todo |
-| VEN-045c | ↳ Tab: Customer lifetime value | `vendor.analytics?tab=clv` | | tenant.analytics.clv.data | 12:16815, m 12:25310 | P8 | todo |
-| VEN-045d | ↳ Tab: Product profitability | `vendor.analytics?tab=profitability` | | tenant.analytics.profitability.data | designed: Vendor Panel (new screens) 87:108835 | P8 | todo |
+| VEN-045 | Analytics (tabs) | `vendor.analytics` | Std; period filter | tenant.analytics | — | P8 | done — period filter, CSV export per tab, empty state, store-scoped facts (#96) |
+| VEN-045a | ↳ Tab: Order analytics | `vendor.analytics?tab=orders` | charts | tenant.analytics.orders.data.monthly, tenant.analytics.orders.data.status | 12:16223, m 12:24731 | P8 | done — gross / collected / outstanding / avg order, gross vs collected, status mix, customer momentum, status proportions, monthly table (#96) |
+| VEN-045b | ↳ Tab: Shipping analytics | `vendor.analytics?tab=shipping` | | tenant.analytics.shipping.data.monthly | designed: Vendor Panel (new screens) 87:108835 | P8 | done — on-time, avg delivery, shipping cost / order, delayed, deliveries by company, fulfilment mix, carrier × country table (#96) |
+| VEN-045c | ↳ Tab: Customer lifetime value | `vendor.analytics?tab=clv` | | tenant.analytics.clv.data | 12:16815, m 12:25310 | P8 | done — customers / buyers / repeat / avg lifetime, top spend, buyer mix, momentum, customer ranking table (#96) |
+| VEN-045d | ↳ Tab: Product profitability | `vendor.analytics?tab=profitability` | | tenant.analytics.profitability.data | designed: Vendor Panel (new screens) 87:108835 | P8 | done — revenue / profit / margin / units, most profitable products, product table (new `product_daily_facts.profit`, #96) |
 | VEN-050 | Requests hub (product / manufacturing / brand tabs, unread badges) | `vendor.requests.index` | Std | — (Figma) | 12:15910, m 12:24211 | P3 | done |
 | VEN-050a | ↳ Product requests list | `vendor.requests.product.index` | | tenant.product-requests.index | 12:15910 | P3 | done |
 | VEN-050b | ↳ New product request ("Order new product" modal) | `vendor.requests.product.create` | files, target markets | tenant.product-requests.create | 12:14977 | P3 | done |
@@ -330,12 +330,12 @@
 | VEN-071a | ↳ Country change request modal | modal | pending state | GeneralSettingsController | designed: Vendor Panel (new screens) 91:119876 | P8 | done |
 | VEN-071b | ↳ Category change request modal | modal | pending state | GeneralSettingsController@submitCategoryRequest | designed: Vendor Panel (new screens) 91:119876 | P8 | done |
 | VEN-072 | Settings: Currencies | `vendor.settings.currencies` | toggle, default | tenant.settings.currencies | designed: Vendor Panel (new screens) 90:112623 | P8 | done |
-| VEN-073 | Settings: Languages (enable free, buy paid, default, sort) | `vendor.settings.languages` | Std | tenant.settings.languages-manage, tenant.settings.languages | designed: Vendor Panel (new screens) 90:113194 | P2 | todo |
-| VEN-073a | ↳ Buy language checkout → result | `vendor.settings.languages.purchase` | success / cancel | tenant.language-purchase.charge, tenant.language-purchase.cancel, tenant.language-purchase.success | designed: Vendor Panel (new screens) 90:113194 | P2 | todo |
-| VEN-073b | ↳ Purchases history tab | tab | | tenant.finance.buy-languages | designed: Vendor Panel (new screens) 90:113194 | P2 | todo |
+| VEN-073 | Settings: Languages (enable free, buy paid, default, sort) | `vendor.settings.languages` | Std | tenant.settings.languages-manage, tenant.settings.languages | designed: Vendor Panel (new screens) 90:113194 | P2 | done |
+| VEN-073a | ↳ Buy language checkout → result | `vendor.settings.languages.purchase` | success / cancel | tenant.language-purchase.charge, tenant.language-purchase.cancel, tenant.language-purchase.success | designed: Vendor Panel (new screens) 90:113194 | P2 | done |
+| VEN-073b | ↳ Purchases history tab | tab | | tenant.finance.buy-languages | designed: Vendor Panel (new screens) 90:113194 | P2 | done |
 | VEN-074 | Settings: AI translation (full store, progress, history, tokens, cost) | `vendor.settings.ai-translation` | run, poll status, fail state | tenant.settings.ai-translation, tenant.settings.ai-translation.status | designed: Vendor Panel (new screens) 90:113836 | P10 | todo |
 | VEN-074a | ↳ Buy AI-translation add-on → result | `vendor.settings.ai-translation.purchase` | | tenant.ai-translation-purchase.charge, tenant.ai-translation-purchase.cancel, tenant.ai-translation-purchase.success | designed: Vendor Panel (new screens) 90:113836 | P10 | todo |
-| VEN-075 | Settings: Store translations (keys, locked keys, AI translate) | `vendor.settings.translations` | save key, AI one/all | tenant.settings.translations | designed: Vendor Panel (new screens) 90:114518 | P8 | todo |
+| VEN-075 | Settings: Store translations (keys, locked keys, AI translate) | `vendor.settings.translations` | save key, AI one/all | tenant.settings.translations | designed: Vendor Panel (new screens) 90:114518 | P8 | done |
 | VEN-076 | Settings: Staff | `vendor.settings.staff.index` | Std; activate, delete | tenant.settings.admins | designed: Vendor Panel (new screens) 90:115176 | P8 | done |
 | VEN-076a | ↳ Staff create / edit | modal | | tenant.settings.admins.show | designed: Vendor Panel (new screens) 90:115176 | P8 | done |
 | VEN-077 | Settings: Roles & permissions | `vendor.settings.roles.index` | Std | tenant.settings.roles-permissions | designed: Vendor Panel (new screens) 90:115822 | P8 | done |
@@ -347,8 +347,8 @@
 | VEN-080 | Settings: Email templates | `vendor.settings.email-templates.index` | resync from central | tenant.settings.email-templates | designed: Vendor Panel (new screens) 91:114835 | P8 | done |
 | VEN-080a | ↳ Email template edit (per locale) | `vendor.settings.email-templates.edit` | preview | tenant.settings.email-templates.edit | designed: Vendor Panel (new screens) 91:114835 | P8 | done |
 | VEN-081 | Settings: Mail (SMTP, send test) | `vendor.settings.mail` | test result | tenant.settings.mail | designed: Vendor Panel (new screens) 91:115511 | P8 | done |
-| VEN-082 | Settings: Domains (add, DNS check) | `vendor.settings.domains.index` | Std | tenant.settings.domains | designed: Vendor Panel (new screens) 91:116087 | P2 | todo |
-| VEN-082a | ↳ Domain detail (DNS records, status) | `vendor.settings.domains.show` | re-check | tenant.settings.domains.show | designed: Vendor Panel (new screens) 91:116087 | P2 | todo |
+| VEN-082 | Settings: Domains (add, DNS check) | `vendor.settings.domains.index` | Std | tenant.settings.domains | designed: Vendor Panel (new screens) 91:116087 | P2 | done |
+| VEN-082a | ↳ Domain detail (DNS records, status) | `vendor.settings.domains.show` | re-check | tenant.settings.domains.show | designed: Vendor Panel (new screens) 91:116087 | P2 | done |
 | VEN-083 | Settings: Tracking pixels (Meta, TikTok, Snap, GA4) | `vendor.settings.tracking` | | tenant.settings.tracking | designed: Vendor Panel (new screens) 91:116736 | P8 | done |
 | VEN-084 | Settings: Compliance center (identity, company, bank, documents, accept terms) | `vendor.settings.compliance.edit` (+ `.update`, `.submit`, `.cities`, `.documents.show`, `.documents.destroy`) | review status | tenant.settings.compliance, tenant.settings.compliance.cities-by-country, tenant.compliance.accept | designed: Vendor Panel (new screens) 91:117308 | P8 | done |
 | VEN-085 | Settings: API keys (public API v1) | `vendor.settings.api-keys` | create, revoke, copy once | — (new, §D) | designed: Vendor Panel (new screens) 91:117954 | P8 | todo |

@@ -15,4 +15,14 @@ interface AiTranslatable
      * @return list<string>
      */
     public function aiTranslatableFields(): array;
+
+    /**
+     * One locale of a translatable attribute (spatie HasTranslations).
+     */
+    public function getTranslation(string $key, string $locale, bool $useFallbackLocale = true): mixed;
+
+    /**
+     * Set one locale of a translatable attribute (spatie HasTranslations).
+     */
+    public function setTranslation(string $key, string $locale, mixed $value): self;
 }

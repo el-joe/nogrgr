@@ -39,4 +39,29 @@ final class TranslationRuleException extends DomainException
     {
         return new self(__('localization::translations.errors.unknown_file'));
     }
+
+    public static function languageNotPurchasable(): self
+    {
+        return new self(__('localization::vendor_languages.errors.not_purchasable'));
+    }
+
+    public static function defaultMustBeEnabled(): self
+    {
+        return new self(__('localization::vendor_languages.errors.default_disabled'));
+    }
+
+    public static function runNotRetryable(): self
+    {
+        return new self(__('localization::vendor_languages.errors.not_retryable'));
+    }
+
+    public static function translationUnavailable(): self
+    {
+        return new self(__('localization::vendor_translations.errors.ai_unavailable'));
+    }
+
+    public static function unknownContent(): self
+    {
+        return new self(__('localization::vendor_translations.errors.unknown_content'));
+    }
 }

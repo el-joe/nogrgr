@@ -41,4 +41,15 @@ return [
         'overridden' => 'Edited',
         'missing' => 'Missing',
     ],
+    'translation_run_status' => [
+        'queued' => 'Queued',
+        'translating' => 'Translating',
+        'completed' => 'Done',
+        'failed' => 'Failed',
+    ],
+    'store_content_type' => [
+        'category' => 'Categories',
+        'product' => 'Own products',
+        'flash_sale' => 'Flash sales',
+    ],
 ];

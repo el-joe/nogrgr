@@ -139,7 +139,14 @@ class DomainService extends BaseService
         $this->guard($request, DomainRequestStatus::Removed);
 
         $this->transaction(function () use ($request): void {
-            $request->domain()->first()?->delete();
+            /** @var Domain|null $domain */
+            $domain = $request->domain()->first();
+
+            if ($domain !== null && $domain->is_primary) {
+                $this->restoreSubdomainPrimary((int) $request->tenant_id, (int) $domain->id);
+            }
+
+            $domain?->delete();
 
             $this->requests->update($request, [
                 'status' => DomainRequestStatus::Removed,
@@ -285,6 +292,63 @@ class DomainService extends BaseService
             str_ends_with($host, '.'.$domain) || $host === $domain => $host,
             default => $host.'.'.$domain,
         };
+    }
+
+    /**
+     * Vendor "Verify & connect" (VEN-082a): only once the last DNS check found every
+     * record; admins can still connect by hand (ADM domain requests).
+     */
+    public function connectVerified(DomainRequest $request): DomainRequest
+    {
+        if ($request->dns_status !== DnsCheckStatus::Ok) {
+            throw new PlatformRuleException(__('platform::vendor_domains.errors.not_verified', ['host' => $request->host]));
+        }
+
+        return $this->markConnected($request);
+    }
+
+    /**
+     * Tenancy domain rows of the store (sub-domain + connected custom hosts).
+     *
+     * @return Collection<int, Domain>
+     */
+    public function tenantDomains(Tenant $tenant): Collection
+    {
+        /** @var Collection<int, Domain> $domains */
+        $domains = Domain::query()->where('tenant_id', $tenant->id)->orderBy('id')->get();
+
+        return $domains;
+    }
+
+    /**
+     * Make one of the store's tenancy domains (its sub-domain or a connected custom
+     * host) the primary one; exactly one primary per store.
+     */
+    public function setPrimary(Tenant $tenant, int $domainId): Domain
+    {
+        /** @var Domain|null $domain */
+        $domain = Domain::query()->where('tenant_id', $tenant->id)->whereKey($domainId)->first();
+
+        if ($domain === null) {
+            throw new PlatformRuleException(__('platform::vendor_domains.errors.not_connected'));
+        }
+
+        $this->transaction(function () use ($tenant, $domain): void {
+            Domain::query()->where('tenant_id', $tenant->id)->whereKeyNot($domain->id)->update(['is_primary' => false]);
+            $domain->forceFill(['is_primary' => true])->save();
+        }, $domain->getConnectionName());
+
+        return $domain;
+    }
+
+    /**
+     * The primary custom host is being removed: the sub-domain becomes primary again.
+     */
+    private function restoreSubdomainPrimary(int $tenantId, int $exceptId): void
+    {
+        $fallback = Domain::query()->where('tenant_id', $tenantId)->whereKeyNot($exceptId)
+            ->orderByRaw('case when type = ? then 0 else 1 end', [DomainType::Subdomain->value])->orderBy('id')->first();
+        $fallback?->forceFill(['is_primary' => true])->save();
     }
 
     private function guard(DomainRequest $request, DomainRequestStatus $next): void

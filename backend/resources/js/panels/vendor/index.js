@@ -27,6 +27,9 @@ const pages = {
     'vendor-help': () => import('./help.js'),
     'vendor-account': () => import('./account.js'),
     'vendor-currencies': () => import('./currencies.js'),
+    'vendor-domains': () => import('./domains.js'),
+    'vendor-languages': () => import('./languages.js'),
+    'vendor-translations': () => import('./translations.js'),
 };
 
 export function initVendor() {

@@ -2,21 +2,27 @@
 
 namespace App\Modules\Localization;
 
+use App\Modules\Billing\Events\LanguagePurchasePaid;
 use App\Modules\Localization\Console\SyncStaticTextsCommand;
 use App\Modules\Localization\Enums\GeocodingProvider;
 use App\Modules\Localization\Jobs\SyncExchangeRates;
+use App\Modules\Localization\Listeners\QueueStoreTranslationRun;
 use App\Modules\Localization\Repositories\Contracts\CityRepositoryContract;
+use App\Modules\Localization\Repositories\Contracts\ContentTranslationLockRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\CountryRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\LanguageRepositoryContract;
+use App\Modules\Localization\Repositories\Contracts\StoreTranslationRunRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\TenantLanguageRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\TenantStaticTextRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\TranslationKeyLockRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\TranslationOverrideRepositoryContract;
 use App\Modules\Localization\Repositories\Eloquent\CityRepository;
+use App\Modules\Localization\Repositories\Eloquent\ContentTranslationLockRepository;
 use App\Modules\Localization\Repositories\Eloquent\CountryRepository;
 use App\Modules\Localization\Repositories\Eloquent\CurrencyRepository;
 use App\Modules\Localization\Repositories\Eloquent\LanguageRepository;
+use App\Modules\Localization\Repositories\Eloquent\StoreTranslationRunRepository;
 use App\Modules\Localization\Repositories\Eloquent\TenantLanguageRepository;
 use App\Modules\Localization\Repositories\Eloquent\TenantStaticTextRepository;
 use App\Modules\Localization\Repositories\Eloquent\TranslationKeyLockRepository;
@@ -38,6 +44,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use InvalidArgumentException;
 
@@ -67,6 +74,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         TenantStaticTextRepositoryContract::class => TenantStaticTextRepository::class,
         TranslationOverrideRepositoryContract::class => TranslationOverrideRepository::class,
         TranslationKeyLockRepositoryContract::class => TranslationKeyLockRepository::class,
+        StoreTranslationRunRepositoryContract::class => StoreTranslationRunRepository::class,
+        ContentTranslationLockRepositoryContract::class => ContentTranslationLockRepository::class,
     ];
 
     public function register(): void
@@ -105,6 +114,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
     public function boot(): void
     {
         parent::boot();
+
+        Event::listen(LanguagePurchasePaid::class, QueueStoreTranslationRun::class);
 
         Blade::directive('st', static fn (string $expression): string => "<?php echo e(__st({$expression})); ?>");
 

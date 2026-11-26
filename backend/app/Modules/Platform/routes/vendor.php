@@ -3,6 +3,7 @@
 use App\Modules\Identity\Http\Controllers\Vendor\ImpersonationController;
 use App\Modules\Platform\Http\Controllers\Vendor\ComplianceController;
 use App\Modules\Platform\Http\Controllers\Vendor\DashboardController;
+use App\Modules\Platform\Http\Controllers\Vendor\DomainSettingsController;
 use App\Modules\Platform\Http\Controllers\Vendor\GeneralSettingsController;
 use App\Modules\Platform\Http\Controllers\Vendor\OnboardingController;
 use App\Modules\Platform\Http\Controllers\Vendor\SetupWizardController;
@@ -75,5 +76,24 @@ Route::middleware('auth:vendor')->prefix('settings/general')->controller(General
     Route::middleware('permission:settings.general.manage,vendor')->name('settings.general.')->group(function (): void {
         Route::put('/', 'update')->middleware('throttle:30,1')->name('update');
         Route::post('requests/{type}', 'requestChange')->whereIn('type', ['countries', 'categories'])->middleware('throttle:10,1')->name('request');
+    });
+});
+
+/*
+| Settings › Domains (VEN-082 / 082a): vendor.settings.domains* — sub-domain + custom
+| domains, DNS records, re-check, verify & connect, primary, remove.
+*/
+Route::middleware('auth:vendor')->prefix('settings/domains')->name('settings.domains.')->controller(DomainSettingsController::class)->group(function (): void {
+    Route::middleware('permission:settings.domains.view,vendor')->group(function (): void {
+        Route::get('/', 'index')->name('index');
+        Route::get('data', 'data')->name('data');
+        Route::get('{domain}', 'show')->whereNumber('domain')->name('show');
+    });
+    Route::middleware('permission:settings.domains.manage,vendor')->group(function (): void {
+        Route::post('/', 'store')->middleware('throttle:20,1')->name('store');
+        Route::post('{domain}/check', 'check')->whereNumber('domain')->middleware('throttle:10,1')->name('check');
+        Route::post('{domain}/connect', 'connect')->whereNumber('domain')->middleware('throttle:20,1')->name('connect');
+        Route::post('primary/{domain}', 'primary')->whereNumber('domain')->middleware('throttle:20,1')->name('primary');
+        Route::delete('{domain}', 'destroy')->whereNumber('domain')->middleware('throttle:20,1')->name('destroy');
     });
 });

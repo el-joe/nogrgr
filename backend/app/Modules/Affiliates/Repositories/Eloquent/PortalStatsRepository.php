@@ -8,12 +8,21 @@ use App\Modules\Affiliates\Models\AffiliateClick;
 use App\Modules\Affiliates\Models\AffiliateConversion;
 use App\Modules\Affiliates\Models\AffiliatePayoutRequest;
 use App\Modules\Affiliates\Repositories\Contracts\PortalStatsRepositoryContract;
+use App\Shared\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
-class PortalStatsRepository implements PortalStatsRepositoryContract
+/**
+ * @extends BaseRepository<AffiliateConversion>
+ */
+class PortalStatsRepository extends BaseRepository implements PortalStatsRepositoryContract
 {
+    protected function model(): string
+    {
+        return AffiliateConversion::class;
+    }
+
     public function clicksBetween(int $affiliateId, Carbon $from, Carbon $to): int
     {
         return AffiliateClick::query()->where('affiliate_id', $affiliateId)->whereBetween('created_at', [$from, $to])->count();

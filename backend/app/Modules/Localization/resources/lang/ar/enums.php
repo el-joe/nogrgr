@@ -41,4 +41,15 @@ return [
         'overridden' => 'معدّل',
         'missing' => 'ناقص',
     ],
+    'translation_run_status' => [
+        'queued' => 'في قائمة الانتظار',
+        'translating' => 'جارٍ الترجمة',
+        'completed' => 'مكتملة',
+        'failed' => 'فشلت',
+    ],
+    'store_content_type' => [
+        'category' => 'التصنيفات',
+        'product' => 'منتجاتي',
+        'flash_sale' => 'العروض السريعة',
+    ],
 ];
