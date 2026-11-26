@@ -85,3 +85,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - stripe-inline started: restore inline Stripe Elements on checkout + registration + vendor subscription (+ other pay points), arch test exception for js.stripe.com only.
 - vendorp8 done (uncommitted, interleaved with stripe-inline WIP): 18 VEN rows (customers/subscribers #81, banners+invoices #82, compliance #84, themes #85, staff & roles #86, VEN-007). Dev + QA migrated, permissions synced. Will commit together with stripe-inline after a full suite run.
 - qa-p8 started: browser QA of the new vendor pages.
+- qa-p8 PASS (4 fixes, uncommitted). p8-polish started: QA-P8-005..011 + 403 page + client rule "images object-contain, not cover" (arch test).
+- QUEUED "fonts": client (2026-11-26) wants exact Figma fonts on admin/vendor panels, central website and each storefront theme family (Ecommet/Elora/Souqify + variants), en + ar; self-hosted via @fontsource / local files (no CDN); currently Outfit + IBM Plex Sans Arabic everywhere.
