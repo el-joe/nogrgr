@@ -54,6 +54,11 @@ it('renders KPI cards with trend, sparkline and the highlight gradient', functio
         ->assertSee('−0.6%');
 });
 
+it('isolates the KPI value as LTR so an Arabic currency string keeps its symbol order (QA-P5-018)', function (): void {
+    $this->blade('<x-ui::kpi-card label="Balance" :value="$value" />', ['value' => "\u{061C}-\u{200F}١١٠٫٨٧ US$"])
+        ->assertSee('<bdi dir="ltr">', false);
+});
+
 it('renders chart cards with a JSON config island, ranges and an empty state', function (): void {
     $ranges = ['7d' => ['labels' => ['Mon'], 'series' => [['label' => 'Gross', 'data' => [1], 'tone' => 'brand']]], '30d' => ['labels' => ['1'], 'series' => [['label' => 'Gross', 'data' => [2]]]]];
 

@@ -103,6 +103,7 @@ return [
         'admin' => 'الإدارة',
         'admin_row' => 'شارة الإدارة · للقراءة فقط',
         'store_row' => 'شارتك',
+        'store_group' => 'منتجاتك',
         'remove' => 'إزالة من الشارة',
         'remove_title' => 'إزالة :name من :badge؟',
         'remove_text' => 'يبقى المنتج في متجرك.',

@@ -34,7 +34,7 @@
         <h3 @class(['min-w-0 flex-1 truncate text-sm font-medium', 'text-white' => $highlight, 'text-ink-secondary' => ! $highlight])>{{ $label }}</h3>
         {{ $menu ?? '' }}
     </header>
-    <p class="text-[28px] font-semibold leading-9 tracking-tight" dir="ltr" @if ($countUp !== null) data-count-up="{{ $countUp }}" data-count-format="{{ $countFormat }}" @endif><bdi>{{ $value }}</bdi></p>
+    <p class="text-[28px] font-semibold leading-9 tracking-tight" dir="ltr" @if ($countUp !== null) data-count-up="{{ $countUp }}" data-count-format="{{ $countFormat }}" @endif><bdi dir="ltr">{{ $value }}</bdi></p>
     <footer class="flex items-center gap-2">
         @if ($deltaText !== null)
             <span dir="ltr" @class([

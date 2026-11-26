@@ -83,7 +83,7 @@
                     'rows' => $storeRows,
                     'sortUrl' => vendor_route('catalog.badges.sort', ['badge' => $badge->id]),
                     'canManage' => $canManage,
-                    'title' => __('catalog::taxonomy.badges.store_row'),
+                    'title' => __('catalog::taxonomy.badges.store_group'),
                     'note' => __('catalog::taxonomy.badges.store_row'),
                     'removeUrl' => fn (int $id): string => vendor_route('catalog.badges.products.remove', ['badge' => $badge->id, 'product' => $id]),
                     'removeLabel' => __('catalog::taxonomy.badges.remove'),

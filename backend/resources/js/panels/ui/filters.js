@@ -48,8 +48,21 @@ export function collectFilters(target) {
     return values;
 }
 
+/**
+ * Whether the person narrowed the list. A hidden field without a label (the page's tab
+ * or status scope, e.g. <input type="hidden" name="tab" data-filter>) is a fixed scope,
+ * not a filter: an empty tab shows the "nothing yet" state, not "no results" (QA-P5-017).
+ */
 export function hasActiveFilters(target) {
-    return Object.keys(collectFilters(target)).length > 0;
+    return fieldsFor(target).some((field) => {
+        if (field.type === 'hidden' && !field.hasAttribute('data-filter-label')) {
+            return false;
+        }
+
+        const value = valueOf(field);
+
+        return Array.isArray(value) ? value.length > 0 : value !== '';
+    });
 }
 
 function writeUrl(target) {

@@ -109,13 +109,13 @@
 | ADM-046 | Plans list | `admin.plans.index` | Std; list, delete | admin.plans.index | designed: Admin Panel 73:57264 | P2 | done |
 | ADM-046a | ↳ Plan create / edit (term, price, trial, features, limits, AI flags) | `admin.plans.create` / `.edit` | translations | admin.plans.create, admin.plans.edit | designed: Admin Panel 73:58030 | P2 | done |
 | ADM-047 | Subscriptions (registrations & renewals) | `admin.billing.subscriptions.index` | Std; filter status, invoice link, export | — (new, A4) | designed: Admin Panel 73:58869 | P2 | done |
-| ADM-050 | Ledger (per tenant balances) | `admin.finance.ledger.index` | Std; filter, export | admin.wallets.index | designed: Admin Panel 74:59026 | P5 | todo |
-| ADM-050a | ↳ Tenant ledger detail (mark settlement paid modal) | `admin.finance.ledger.show` | amount, method, reference | admin.wallets.show | designed: Admin Panel 74:60018 · 74:68877 | P5 | todo |
-| ADM-051 | Settlements (vendor → platform) | `admin.finance.settlements.index` | Std; filter gateway/tenant/status | admin.vendor-settlements.index | designed: Admin Panel 74:60809 | P5 | todo |
-| ADM-052 | Payouts (platform → vendor) | `admin.finance.payouts.index` | Std; list, cancel | admin.finance.payouts.index | designed: Admin Panel 74:61743 | P5 | todo |
-| ADM-052a | ↳ Create payout for tenant | `admin.finance.payouts.create` | email option | admin.finance.payouts.create | designed: Admin Panel 74:62688 | P5 | todo |
-| ADM-052b | ↳ Edit payout | `admin.finance.payouts.edit` | status, reference | admin.finance.payouts.edit | designed: Admin Panel 74:68877 | P5 | todo |
-| ADM-053 | Transactions | `admin.finance.transactions.index` | Std; filter direction/source, detail modal | admin.wallet-transactions.index | designed: Admin Panel 74:63449 · 74:68877 | P5 | todo |
+| ADM-050 | Ledger (per tenant balances) | `admin.finance.ledger.index` | Std; filter, export | admin.wallets.index | designed: Admin Panel 74:59026 | P5 | done |
+| ADM-050a | ↳ Tenant ledger detail (mark settlement paid modal) | `admin.finance.ledger.show` | amount, method, reference | admin.wallets.show | designed: Admin Panel 74:60018 · 74:68877 | P5 | done |
+| ADM-051 | Settlements (vendor → platform) | `admin.finance.settlements.index` | Std; filter gateway/tenant/status | admin.vendor-settlements.index | designed: Admin Panel 74:60809 | P5 | done |
+| ADM-052 | Payouts (platform → vendor) | `admin.finance.payouts.index` | Std; list, cancel | admin.finance.payouts.index | designed: Admin Panel 74:61743 | P5 | done |
+| ADM-052a | ↳ Create payout for tenant | `admin.finance.payouts.create` | email option | admin.finance.payouts.create | designed: Admin Panel 74:62688 | P5 | done |
+| ADM-052b | ↳ Edit payout | `admin.finance.payouts.edit` | status, reference | admin.finance.payouts.edit | designed: Admin Panel 74:68877 | P5 | done |
+| ADM-053 | Transactions | `admin.finance.transactions.index` | Std; filter direction/source, detail modal | admin.wallet-transactions.index | designed: Admin Panel 74:63449 · 74:68877 | P5 | done |
 | ADM-054 | Invoices | `admin.finance.invoices.index` | Std; filter status | admin.invoices.index | designed: Admin Panel 74:64375 | P2 | done |
 | ADM-054a | ↳ Invoice detail (print / PDF) | `admin.finance.invoices.show` | print | admin.invoices.show | designed: Admin Panel 74:65309 | P2 | done |
 | ADM-055 | Payment logs | `admin.finance.payment-logs.index` | Std; filter status/gateway | admin.payment-logs.index | designed: Admin Panel 74:66052 | P2 | done |
@@ -249,13 +249,13 @@
 | VEN-016a | ↳ Own product inner page | `vendor.catalog.own-products.show` | | — (Figma) | 12:13819 | P3 | todo |
 | VEN-016b | ↳ Inventory (own products) | `vendor.catalog.own-products.inventory` | stock edit | — (Figma) | 12:17880, m 12:23071 | P3 | done |
 | VEN-016c | ↳ Own product create / edit (countries, variants, AI translate, AI price) | `vendor.catalog.own-products.create` / `.edit` | validation | tenant.own-products.create, tenant.own-products.edit | 12:17411, m 12:22819 | P3 | done |
-| VEN-017 | Categories | `vendor.catalog.categories.index` | Std; toggle, delete | tenant.categories.index | 12:14144 | P3 | todo |
-| VEN-017a | ↳ Category inner page (products) | `vendor.catalog.categories.products` | order products | tenant.categories.products | 12:14465, m 12:22248 | P3 | todo |
-| VEN-017b | ↳ Category create / edit | `vendor.catalog.categories.create` / `.edit` | thumbnail | tenant.categories.create, tenant.categories.edit | 12:17672, m 12:22624 | P3 | todo |
-| VEN-017c | ↳ Category sort | `vendor.catalog.categories.sort` | drag & drop | tenant.categories.sort | designed: Vendor Panel (new screens) 83:102998 | P3 | todo |
-| VEN-018 | Badges | `vendor.catalog.badges.index` | Std | tenant.badges.index | designed: Vendor Panel (new screens) 83:103600 | P3 | todo |
-| VEN-018a | ↳ Badge products (search, assign category) | `vendor.catalog.badges.show` | assign, remove | tenant.badges.show, tenant.badges.search | designed: Vendor Panel (new screens) 83:103600 | P3 | todo |
-| VEN-018b | ↳ Badge sort | `vendor.catalog.badges.sort` | drag & drop | tenant.badges.sort | designed: Vendor Panel (new screens) 83:103600 | P3 | todo |
+| VEN-017 | Categories | `vendor.catalog.categories.index` | Std; toggle, delete | tenant.categories.index | 12:14144 | P3 | done |
+| VEN-017a | ↳ Category inner page (products) | `vendor.catalog.categories.products` | order products | tenant.categories.products | 12:14465, m 12:22248 | P3 | done |
+| VEN-017b | ↳ Category create / edit | `vendor.catalog.categories.create` / `.edit` | thumbnail | tenant.categories.create, tenant.categories.edit | 12:17672, m 12:22624 | P3 | done |
+| VEN-017c | ↳ Category sort | `vendor.catalog.categories.sort` | drag & drop | tenant.categories.sort | designed: Vendor Panel (new screens) 83:102998 | P3 | done |
+| VEN-018 | Badges | `vendor.catalog.badges.index` | Std | tenant.badges.index | designed: Vendor Panel (new screens) 83:103600 | P3 | done |
+| VEN-018a | ↳ Badge products (search, assign category) | `vendor.catalog.badges.show` | assign, remove | tenant.badges.show, tenant.badges.search | designed: Vendor Panel (new screens) 83:103600 | P3 | done |
+| VEN-018b | ↳ Badge sort | `vendor.catalog.badges.sort` | drag & drop | tenant.badges.sort | designed: Vendor Panel (new screens) 83:103600 | P3 | done |
 | VEN-020 | Orders | `vendor.sales.orders.index` | Std; filter, export | tenant.orders.index, tenant.orders.export | 12:15191, m 12:23476 | P5 | done |
 | VEN-021 | Order detail (totals, settlement figures, print) | `vendor.sales.orders.show` | Std | tenant.orders.show | designed: Vendor Panel (new screens) 84:102416 | P5 | done |
 | VEN-021a | ↳ Cancel modal (reason codes) | modal | | OrdersController@cancel | designed: Vendor Panel (new screens) 84:107236 | P5 | done |
@@ -292,11 +292,11 @@
 | VEN-036b | ↳ Theme settings (settings-schema form) | `vendor.store.custom-themes.settings` | | — (new, §D) | designed: Vendor Panel (new screens) 85:108862 | P7 | todo |
 | VEN-037 | Mobile app settings | `vendor.store.mobile-app` | Std; build status | tenant.store.mobile-app | designed: Vendor Panel (new screens) 85:109494 | P11 | todo |
 | VEN-037a | ↳ App theme & colors | `vendor.store.mobile-app.themes` | | tenant.store.mobile-themes | designed: Vendor Panel (new screens) 85:109494 | P11 | todo |
-| VEN-040 | Coupons (own + read-only central tab) | `vendor.marketing.coupons.index` | Std; per country | tenant.store.coupons.index, tenant.store.coupons.list | designed: Vendor Panel (new screens) 87:107268 | P5 | todo |
-| VEN-040a | ↳ Coupon create / edit | modal | | tenant.store.coupons.show | designed: Vendor Panel (new screens) 87:111915 | P5 | todo |
-| VEN-041 | Flash sales (own + read-only central tab) | `vendor.marketing.flash-sales.index` | Std; per country | tenant.store.flash-sales.index, tenant.store.flash-sales | designed: Vendor Panel (new screens) 87:108154 | P5 | todo |
-| VEN-041a | ↳ Flash sale create / edit (product search, banner) | modal | | tenant.store.flash-sales.show, tenant.store.flash-sales.products.search | designed: Vendor Panel (new screens) 87:111915 | P5 | todo |
-| VEN-041b | ↳ Attach product to flash sale (from product) | modal | | tenant.store.flash-sales.available-for-product | designed: Vendor Panel (new screens) 87:111915 | P5 | todo |
+| VEN-040 | Coupons (own + read-only central tab) | `vendor.marketing.coupons.index` | Std; per country | tenant.store.coupons.index, tenant.store.coupons.list | designed: Vendor Panel (new screens) 87:107268 | P5 | done |
+| VEN-040a | ↳ Coupon create / edit | modal | | tenant.store.coupons.show | designed: Vendor Panel (new screens) 87:111915 | P5 | done |
+| VEN-041 | Flash sales (own + read-only central tab) | `vendor.marketing.flash-sales.index` | Std; per country | tenant.store.flash-sales.index, tenant.store.flash-sales | designed: Vendor Panel (new screens) 87:108154 | P5 | done |
+| VEN-041a | ↳ Flash sale create / edit (product search, banner) | modal | | tenant.store.flash-sales.show, tenant.store.flash-sales.products.search | designed: Vendor Panel (new screens) 87:111915 | P5 | done |
+| VEN-041b | ↳ Attach product to flash sale (from product) | modal | | tenant.store.flash-sales.available-for-product | designed: Vendor Panel (new screens) 87:111915 | P5 | done |
 | VEN-045 | Analytics (tabs) | `vendor.analytics` | Std; period filter | tenant.analytics | — | P8 | todo |
 | VEN-045a | ↳ Tab: Order analytics | `vendor.analytics?tab=orders` | charts | tenant.analytics.orders.data.monthly, tenant.analytics.orders.data.status | 12:16223, m 12:24731 | P8 | todo |
 | VEN-045b | ↳ Tab: Shipping analytics | `vendor.analytics?tab=shipping` | | tenant.analytics.shipping.data.monthly | designed: Vendor Panel (new screens) 87:108835 | P8 | todo |
@@ -315,16 +315,16 @@
 | VEN-050j | ↳ Request payment result (success / cancel) | `vendor.requests.payment.result` | | tenant.manufacturing-payment.charge, tenant.manufacturing-payment.cancel, tenant.manufacturing-payment.success, tenant.brand-request-payment.charge, tenant.brand-request-payment.cancel, tenant.brand-request-payment.success | designed: Vendor Panel (new screens) 87:110730 | P5 | todo |
 | VEN-055 | Partner program (link, stats, conversions, payouts, SSO) | `vendor.partner.index` | Std; copy, share | tenant.partner-program, tenant.finance.wallet.partner.conversions.data, tenant.finance.wallet.partner.payouts.data | designed: Vendor Panel (new screens) 87:111264 | P9 | todo |
 | VEN-055a | ↳ Withdraw request modal | modal | min / requestable | PartnerWithdrawRequest | designed: Vendor Panel (new screens) 87:111915 | P9 | todo |
-| VEN-060 | Subscription & balance | `vendor.finance.subscription` | Std; plan, usage vs limits | tenant.finance.wallet | designed: Vendor Panel (new screens) 88:109601 | P2 | todo |
-| VEN-060a | ↳ Subscribe / renew / upgrade modal → gateway | modal | | SubscriptionPaymentController | designed: Vendor Panel (new screens) 88:113398 | P2 | todo |
-| VEN-060b | ↳ Subscription payment result (success / cancel) | `vendor.finance.subscription.result` | | tenant.subscription-payment.charge, tenant.subscription-payment.cancel, tenant.subscription-payment.success | designed: Vendor Panel (new screens) 88:113398 | P2 | todo |
-| VEN-060c | ↳ Tab: Subscriptions history | tab | | tenant.finance.wallet.subscriptions.data | designed: Vendor Panel (new screens) 88:109601 | P2 | todo |
-| VEN-060d | ↳ Tab: Transactions | tab | | tenant.finance.wallet.transactions.data | designed: Vendor Panel (new screens) 88:109601 | P5 | todo |
+| VEN-060 | Subscription & balance | `vendor.finance.subscription` | Std; plan, usage vs limits | tenant.finance.wallet | designed: Vendor Panel (new screens) 88:109601 | P2 | done |
+| VEN-060a | ↳ Subscribe / renew / upgrade modal → gateway | modal | | SubscriptionPaymentController | designed: Vendor Panel (new screens) 88:113398 | P2 | done |
+| VEN-060b | ↳ Subscription payment result (success / cancel) | `vendor.finance.subscription.result` | | tenant.subscription-payment.charge, tenant.subscription-payment.cancel, tenant.subscription-payment.success | designed: Vendor Panel (new screens) 88:113398 | P2 | partial (QA-P5 re-check: gateway-error state verified in browser; paid/cancel result pages only covered by Pest, QA has no working subscription gateway) |
+| VEN-060c | ↳ Tab: Subscriptions history | tab | | tenant.finance.wallet.subscriptions.data | designed: Vendor Panel (new screens) 88:109601 | P2 | done |
+| VEN-060d | ↳ Tab: Transactions | tab | | tenant.finance.wallet.transactions.data | designed: Vendor Panel (new screens) 88:109601 | P5 | done |
 | VEN-061 | Billing (invoices) | `vendor.finance.invoices.index` | Std | tenant.finance.billing, tenant.finance.billing.data | designed: Vendor Panel (new screens) 88:110393 | P2 | todo |
 | VEN-061a | ↳ Invoice detail (print / PDF) | `vendor.finance.invoices.show` | | tenant.finance.billing.detail | designed: Vendor Panel (new screens) 88:110393 | P2 | todo |
-| VEN-062 | Vendor purchases (owed to platform) | `vendor.finance.purchases.index` | Std; export, settle | tenant.finance.vendor-purchases, tenant.finance.vendor-purchases.export | designed: Vendor Panel (new screens) 88:111108 | P5 | todo |
-| VEN-063 | Settlement payments | `vendor.finance.settlements.index` | Std | tenant.finance.settlement-payments | designed: Vendor Panel (new screens) 88:111108 | P5 | todo |
-| VEN-064 | Payouts received | `vendor.finance.payouts.index` | Std | tenant.finance.payouts | designed: Vendor Panel (new screens) 88:111108 | P5 | todo |
+| VEN-062 | Vendor purchases (owed to platform) | `vendor.finance.purchases.index` | Std; export, settle | tenant.finance.vendor-purchases, tenant.finance.vendor-purchases.export | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
+| VEN-063 | Settlement payments | `vendor.finance.settlements.index` | Std | tenant.finance.settlement-payments | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
+| VEN-064 | Payouts received | `vendor.finance.payouts.index` | Std | tenant.finance.payouts | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
 | VEN-070 | Settings: Account (profile, password) | `vendor.settings.account` | save | tenant.settings.account | designed: Vendor Panel (new screens) 90:111315 | P8 | todo |
 | VEN-071 | Settings: General (default profit %) | `vendor.settings.general` | save | tenant.settings.general | designed: Vendor Panel (new screens) 90:112042 | P8 | todo |
 | VEN-071a | ↳ Country change request modal | modal | pending state | GeneralSettingsController | designed: Vendor Panel (new screens) 91:119876 | P8 | todo |

@@ -103,6 +103,7 @@ return [
         'admin' => 'Admin',
         'admin_row' => 'admin badge · read-only',
         'store_row' => 'your badge',
+        'store_group' => 'Your products',
         'remove' => 'Remove from badge',
         'remove_title' => 'Remove :name from :badge?',
         'remove_text' => 'The product stays in your store.',

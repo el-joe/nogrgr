@@ -7,7 +7,7 @@
         <x-ui::button variant="secondary" icon="chevron-left" :href="route('admin.finance.ledger.show', $tenant->id)" class="rtl:[&_svg]:rotate-180">{{ __('billing::finance.ledger.back') }}</x-ui::button>
         <x-ui::button icon="printer" data-print>{{ __('billing::finance.ledger.print') }}</x-ui::button>
     </div>
-    <section class="mx-auto mt-6 grid max-w-4xl gap-6 rounded-card bg-surface p-6" data-autoprint>
+    <section class="mx-auto mt-6 grid w-full max-w-4xl gap-6 rounded-card bg-surface p-6" data-autoprint>
         <header class="flex flex-wrap items-start justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-semibold">{{ __('billing::finance.ledger.statement_title', ['store' => $tenant->name]) }}</h1>
@@ -22,28 +22,30 @@
         @if ($transactions->isEmpty())
             <x-ui::empty-state :title="__('billing::finance.ledger.entries.empty_title')" :description="__('billing::finance.ledger.entries.empty_description')" />
         @else
-            <table class="w-full text-sm">
+            <div class="relative min-w-0 overflow-x-auto">
+            <table class="w-full min-w-[640px] text-sm">
                 <thead class="border-b border-line text-ink-secondary">
                     <tr>
-                        <th class="py-2 text-start font-medium">{{ __('billing::finance.ledger.entries.date') }}</th>
-                        <th class="py-2 text-start font-medium">{{ __('billing::finance.ledger.entries.entry') }}</th>
-                        <th class="py-2 text-end font-medium">{{ __('billing::finance.ledger.entries.debit') }}</th>
-                        <th class="py-2 text-end font-medium">{{ __('billing::finance.ledger.entries.credit') }}</th>
-                        <th class="py-2 text-end font-medium">{{ __('billing::finance.ledger.entries.balance') }}</th>
+                        <th class="px-2 py-2 text-start font-medium">{{ __('billing::finance.ledger.entries.date') }}</th>
+                        <th class="px-2 py-2 text-start font-medium">{{ __('billing::finance.ledger.entries.entry') }}</th>
+                        <th class="px-2 py-2 text-end font-medium">{{ __('billing::finance.ledger.entries.debit') }}</th>
+                        <th class="px-2 py-2 text-end font-medium">{{ __('billing::finance.ledger.entries.credit') }}</th>
+                        <th class="px-2 py-2 text-end font-medium">{{ __('billing::finance.ledger.entries.balance') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line">
                     @foreach ($transactions as $transaction)
                         <tr>
-                            <td class="py-2" dir="ltr">{{ $transaction->occurred_at->translatedFormat('j M Y') }}</td>
-                            <td class="py-2">{{ \App\Modules\Billing\Support\LedgerPresenter::title($transaction) }}<span class="block text-xs text-ink-secondary">{{ \App\Modules\Billing\Support\LedgerPresenter::subtitle($transaction) }}</span></td>
-                            <td class="py-2 text-end" dir="ltr">{{ $transaction->net_amount < 0 ? $money(-$transaction->net_amount) : '' }}</td>
-                            <td class="py-2 text-end" dir="ltr">{{ $transaction->net_amount > 0 ? $money($transaction->net_amount) : '' }}</td>
-                            <td class="py-2 text-end font-medium" dir="ltr">{{ $money($transaction->balance_after) }}</td>
+                            <td class="px-2 py-2" dir="ltr">{{ $transaction->occurred_at->translatedFormat('j M Y') }}</td>
+                            <td class="px-2 py-2">{{ \App\Modules\Billing\Support\LedgerPresenter::title($transaction) }}<span class="block text-xs text-ink-secondary">{{ \App\Modules\Billing\Support\LedgerPresenter::subtitle($transaction) }}</span></td>
+                            <td class="px-2 py-2 text-end" dir="ltr">{{ $transaction->net_amount < 0 ? $money(-$transaction->net_amount) : '' }}</td>
+                            <td class="px-2 py-2 text-end" dir="ltr">{{ $transaction->net_amount > 0 ? $money($transaction->net_amount) : '' }}</td>
+                            <td class="px-2 py-2 text-end font-medium" dir="ltr">{{ $money($transaction->balance_after) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+            </div>
         @endif
     </section>
 </x-layouts.panel>

@@ -191,7 +191,9 @@ it('shows the ledger list, a store ledger, its entries, statement and export', f
     $entries = $this->getJson($this->centralUrl("/admin/finance/ledger/{$this->tenantId}/entries?draw=1&start=0&length=10"))->assertOk()->json('data');
     expect($entries)->toHaveCount(1)->and($entries[0]['debit'])->toContain('$54.20');
 
-    $this->get($this->centralUrl("/admin/finance/ledger/{$this->tenantId}/statement"))->assertOk()->assertSee(__('billing::finance.ledger.print'));
+    // QA-P5: the statement table had no cell padding and the card shrank to its content.
+    $this->get($this->centralUrl("/admin/finance/ledger/{$this->tenantId}/statement"))->assertOk()->assertSee(__('billing::finance.ledger.print'))
+        ->assertSee('grid w-full max-w-4xl', false)->assertSee('class="px-2 py-2 text-end"', false)->assertSee('$54.20');
     expect($this->get($this->centralUrl('/admin/finance/ledger/export'))->assertOk()->streamedContent())->toContain($this->shop->tenant->name)->toContain('54.20');
     $this->getJson($this->centralUrl('/admin/finance/ledger/99999'))->assertNotFound();
 });

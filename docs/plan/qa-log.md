@@ -328,3 +328,58 @@ Both stores imported all central products. Owner role re-synced on both stores (
 `partial`: VEN-007 (reason updated), VEN-009 (unchanged).
 
 **Verdict: PASS.** No Critical or High issue is open; both Highs found were fixed and have regression tests. The full suite, build, Pint and PHPStan are green. Open: QA-P5-009 (Medium, vendor categories and badges VEN-017/018 not built, plus a few unexercised modals) and the Lows above.
+
+## P5 finance + vendor polish re-check (teammate "qa-p5") — 2026-11-26
+
+Scope: commits 55ef85a (finance) and cb8e8e7 (vendor polish). **Setup:** QA DB `nogrgr_qa` (tenant suffix `_qa`), `php artisan serve --port=8095 --no-reload`, file cache with its own prefix, sync queue. Headless Chromium driven by Playwright scripts. Every page was checked at 1440 en/light and at 375 ar/dark for HTTP status, JS errors, raw keys, horizontal overflow and placeholders. The server was stopped afterwards.
+
+**Pages (all PASS after the fixes below)**
+- Admin: ledger list (store balances) and per-store ledger (ADM-050/050a). Printable statement; it opens the print dialog on load. Mark-settlement-paid modal with a PNG proof. Settlements list, detail and proof download (ADM-051). Payouts: create, edit to paid, cancel a scheduled payout, cancel a paid payout (ADM-052/052a/052b). Transactions list, detail and CSV export; ledger CSV export (ADM-053). Coupon and flash-sale create modals; gateway edit/list; product form.
+- Vendor:
+  - Money flow: purchases owed, settlement payments and payouts received tabs, plus the settlement detail.
+  - Coupons and flash sales: the central read-only tab with "Hide from my store"; own coupon and flash sale created through the modals. VEN-041b: Smart Watch attached to the store's sale from the product page.
+  - Categories: list, create (with image, 422 on empty), inner products page with the add-product modal, edit, visibility toggle (own and central), delete.
+  - Sort page, Categories tab (move + save persisted). Badges: add products, add a whole category, reorder + save, remove.
+  - Subscription & balance: overview, history and transactions tabs; change-plan and renew modals. "Online payment unavailable" state shown with no `tenant_registration` gateway. The gateway error message shows when Stripe fails with placeholder keys.
+  - Setup wizard Countries step.
+- QA-P5-012 (wizard countries), QA-P5-014 (gateway Active switch disabled with a "save first" hint) and QA-P5-015 (tab strip scrolls without a scrollbar, with edge fades) are verified fixed.
+  - QA-P5-012: the default-country select only lists the picked countries and follows a newly added chip.
+
+**Money (ORDER_FORMULAS §1–3, by hand)**
+- ORD-10003 (central 10 % flash + central 10 % coupon, platform-collected). Marked paid via `markGroupPaid`.
+  - Price 286.61 + fixed 5.00 − flash 29.16 = line 262.45. Coupon 26.25. Total 243.70.
+  - platform 195.93 = 238.84 + 5 − 29.16 + 7.50 − 26.25; vendor 47.77. 195.93 + 47.77 = 243.70.
+  - Ledger TX-88003 credits `vendor_payable` 47.77 (= vendor_profit, §3 platform_own_vendor).
+- ORD-10901 (a vendor-collected/COD clone of ORD-10001, total 307.87).
+  - Ledger TX-88004 debits `vendor_receivable` 258.64 (= platform_profit, §3 vendor_own_platform).
+  - A settlement of 100.00 left 158.64 owed, with the same figure on the admin ledger, the vendor money flow and the subscription page.
+- Payouts:
+  - Available amount = payable 47.77. Over-limit input gets a 422.
+  - Paid PO-882 posted a 27.77 debit; cancelling it posted the reversal, back to the same balance. A scheduled payout cancelled with no ledger entry.
+
+**Fixed in this pass**
+- QA-P5-017 (Medium): every empty tab of a list scoped by a hidden `tab`/`status` filter showed "No results match your filters" + "Clear filters" instead of its own empty state and create button. Affected: vendor coupons and flash sales, payouts, settlements, returns, refunds, orders, shipping.
+  - Fix: `resources/js/panels/ui/filters.js` `hasActiveFilters()` ignores unlabelled hidden scope fields.
+  - Test: `tests/Unit/Architecture/EmptyStateFixedScopeTest.php`. Browser re-checked: "No coupons yet" + New coupon.
+- QA-P5-018 (Low): in Arabic, KPI card amounts rendered as "$US ٤٧,٧٧" because ICU puts bidi marks in the string and the `<bdi>` resolved to RTL. Fixed with `<bdi dir="ltr">` in `resources/views/components/ui/kpi-card.blade.php`. Test in `tests/Feature/Ui/DisplayComponentsTest.php`.
+- Ledger statement (Low): the table had no cell padding ("Debit CreditBalance", date touching the entry) and the card shrank to its content.
+  - Fix in `Billing/resources/views/admin/finance/ledger/statement.blade.php`: `w-full`, `px-2` cells, and a horizontal-scroll wrapper on phones.
+  - Assertion added to `FinanceLedgerTest`.
+- Vendor badges (Low): the store group heading read "your badge" (the lower-case row note). It now uses the new key `catalog::taxonomy.badges.store_group` ("Your products" / "منتجاتك"). Assertion added to `StoreTaxonomyTest`.
+
+**Open**
+- QA-P5-019 (Medium, deploy): new permissions such as `catalog.categories.*`, `catalog.badges.*` and `finance.subscription.*` never reach existing stores.
+  - Repro: QA store 1, provisioned before cb8e8e7, got **403** on `/admin/catalog/categories` and `/admin/catalog/badges` until `tenants:seed --class=TenantPermissionSeeder` was run by hand.
+  - Cause: the owner role is synced only by the tenant seeder at provisioning. There is no deploy step or command for live stores, and the central `CentralPermissionSeeder` has the same gap.
+  - Suggest: a `permissions:sync` command (central + every tenant) in the deploy script, or a tenant migration per permission batch.
+- QA-P5-011 is still open. The RF-5001 return refund (134.50) on platform-collected ORD-10001 reversed only the vendor share (49.23). The 85.27 §3 says the store bears ("partial refund reduces the vendor's share only") is not in the ledger.
+- QA-P5-010 not re-checked.
+- Notes:
+  - Right-aligned DataTable columns show their sort arrow at the start of the cell, which looks like an empty sortable column. This is cosmetic and applies to all panels.
+  - Duplicate "Electronics" root categories come from QA/demo seed data, not code.
+
+**Tests:** full suite `--parallel --processes=12` **2013/2013 passed** (24213 assertions). `npm run build` passes; Pint passes on the changed files.
+
+**Verdict: PASS** for the re-checked scope. No Critical or High issue; QA-P5-019 (Medium, permission sync on deploy) is open.
+
+**Coverage:** 26 rows set to `done`: ADM-050, 050a, 051, 052, 052a, 052b, 053; VEN-017, 017a–c, 018, 018a, 018b, 040, 040a, 041, 041a, 041b, 060, 060a, 060c, 060d, 062, 063, 064. VEN-060b is `partial`: the paid and cancelled result pages are covered only by Pest, because QA has no working subscription gateway. VEN-061/061a are untouched.
