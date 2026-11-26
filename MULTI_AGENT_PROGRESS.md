@@ -81,3 +81,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - Client rejected the Stripe.js CDN exception (#78 b updated): storefront Stripe must use hosted Stripe Checkout redirect only. Queued as next small task ("stripe-redirect") when an agent slot frees.
 - souqify committed 8f3cea5: Souqify ×6 + inner pages (45 SF-SQF rows), decision #83, Elora/Souqify overflow fixes. Full suite 2101: 3 failures belong to vendorp8's in-progress vendor-themes work (TranslationKeysExist, VendorSetupWizard, VendorOnboarding) — vendorp8 to fix.
 - stripe-redirect started: Stripe via hosted Checkout only, remove js.stripe.com, arch test for external scripts.
+- stripe-redirect committed ee39a64 (suite 2125/2125). Then client chose option 1: inline Stripe card via Stripe.js from js.stripe.com (only allowed external script), no webhook, like old project. Stripe test keys imported from old dokan_v2 into dev nogrgr + nogrgr_qa (dev DB migrated/seeded non-destructively). Test webhook endpoint created then deleted per client.
+- stripe-inline started: restore inline Stripe Elements on checkout + registration + vendor subscription (+ other pay points), arch test exception for js.stripe.com only.
