@@ -72,3 +72,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - qa-p5 started: browser re-check of finance + new vendor pages, coverage flips.
 - themes P7 batch 1 committed 29be999 (full suite 1984/1984): storefront foundation + Ecommet (SF-ECO all except 012), SF-ALL-001..004, ADM-085/085a, decisions #76-#78. Open: Stripe.js CDN exception (#78, needs user), store-own categories on storefront, VEN-030/035 vendor pages, social login, Authorize.Net/2Checkout drivers, MAIL-015.
 - elora started: P7 batch 2 Elora ×6 + store-own categories on storefront.
+- qa-p5 committed b86e938: finance + vendor polish re-check PASS (suite 2013/2013), 4 bugs fixed (QA-P5-017/018 + 2 low), 26 coverage rows done. Open: QA-P5-019 permissions sync, QA-P5-011 refund store-borne ledger part, VEN-061/061a unchecked, VEN-060b partial.
+- fixes started: permissions:sync, QA-P5-011, MAIL-015, table sort-arrow cosmetic.
