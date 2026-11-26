@@ -43,6 +43,7 @@ use Spatie\Translatable\HasTranslations;
  * @property array<int|string, array<int|string, array<string, mixed>>>|null $variant_markup central variant id => country rows
  * @property list<int>|null $category_ids store placement (central category ids; null = central categories)
  * @property list<int>|null $badge_ids store placement (central badge ids; null = central badges)
+ * @property list<int>|null $store_category_ids placement in store-own categories (decision #74)
  * @property Money|null $price
  * @property Money|null $sale_price
  * @property Money|null $cost_price
@@ -78,7 +79,7 @@ class StoreProduct extends Model implements AiTranslatable
      */
     protected $fillable = [
         'source', 'central_product_id', 'name', 'label', 'summary', 'description', 'meta_title', 'meta_description',
-        'slug', 'sku', 'is_active', 'is_featured', 'sort_order', 'markup', 'variant_markup', 'category_ids', 'badge_ids', 'price', 'sale_price', 'cost_price',
+        'slug', 'sku', 'is_active', 'is_featured', 'sort_order', 'markup', 'variant_markup', 'category_ids', 'store_category_ids', 'badge_ids', 'price', 'sale_price', 'cost_price',
         'stock', 'min_stock', 'manage_stock', 'is_taxable', 'weight_grams', 'country_ids', 'sold_count', 'imported_at',
     ];
 
@@ -106,6 +107,7 @@ class StoreProduct extends Model implements AiTranslatable
             'markup' => 'array',
             'variant_markup' => 'array',
             'category_ids' => 'array',
+            'store_category_ids' => 'array',
             'badge_ids' => 'array',
             'price' => MoneyCast::class.':USD',
             'sale_price' => MoneyCast::class.':USD',

@@ -6,6 +6,9 @@
  * The active tab is kept in the URL (?tab=) with history.replaceState. ← → Home End
  * move between tabs (mirrored in RTL). On a 422 (`form:errors`) every tab whose panel
  * holds an invalid field gets a red dot and the first one is opened.
+ * A tab strip that overflows ([data-tabs-scroll], QA-P5-015) scrolls sideways without a
+ * scrollbar; data-fade-left / data-fade-right mark the edges that hide more tabs (CSS
+ * mask) and the active tab is scrolled into view.
  */
 const tabsOf = (container) => [...container.querySelectorAll(':scope [role="tablist"]')].filter((list) => list.closest('[data-tabs]') === container).flatMap((list) => [...list.querySelectorAll('[role="tab"]')]);
 
@@ -35,12 +38,62 @@ export function activateTab(tab, { focus = false, sync = true } = {}) {
         window.history.replaceState(window.history.state, '', url);
     }
 
+    revealTab(tab);
+
     container.dispatchEvent(new CustomEvent('tabs:change', { bubbles: true, detail: { key: tab.dataset.tabKey } }));
+}
+
+function updateFades(strip) {
+    const max = strip.scrollWidth - strip.clientWidth;
+    // scrollLeft is 0 → -max in RTL (Chromium / Firefox / Safari) and 0 → max in LTR.
+    const offset = Math.abs(strip.scrollLeft);
+    const rtl = getComputedStyle(strip).direction === 'rtl';
+    const hiddenStart = max > 1 && offset > 1;
+    const hiddenEnd = max > 1 && offset < max - 1;
+
+    strip.toggleAttribute('data-fade-left', rtl ? hiddenEnd : hiddenStart);
+    strip.toggleAttribute('data-fade-right', rtl ? hiddenStart : hiddenEnd);
+}
+
+function revealTab(tab) {
+    const strip = tab.closest('[data-tabs-scroll]');
+
+    if (!strip || strip.scrollWidth <= strip.clientWidth) {
+        return;
+    }
+
+    // Horizontal only, so the page itself never jumps.
+    const box = strip.getBoundingClientRect();
+    const rect = tab.getBoundingClientRect();
+    const pad = 48;
+
+    if (rect.left < box.left + pad) {
+        strip.scrollBy({ left: rect.left - box.left - pad, behavior: 'smooth' });
+    } else if (rect.right > box.right - pad) {
+        strip.scrollBy({ left: rect.right - box.right + pad, behavior: 'smooth' });
+    }
+}
+
+function initScrollStrips(root) {
+    root.querySelectorAll('[data-tabs-scroll]:not([data-tabs-scroll-ready])').forEach((strip) => {
+        strip.dataset.tabsScrollReady = '';
+        const update = () => updateFades(strip);
+
+        strip.addEventListener('scroll', update, { passive: true });
+
+        if ('ResizeObserver' in window) {
+            new ResizeObserver(update).observe(strip);
+        }
+
+        update();
+    });
 }
 
 let bound = false;
 
 export function initTabs(root = document) {
+    initScrollStrips(root);
+
     root.querySelectorAll('[data-tabs]:not([data-tabs-ready])').forEach((container) => {
         container.dataset.tabsReady = '';
         const param = container.dataset.tabsParam;

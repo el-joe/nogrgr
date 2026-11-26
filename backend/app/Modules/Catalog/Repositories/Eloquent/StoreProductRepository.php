@@ -4,10 +4,12 @@ namespace App\Modules\Catalog\Repositories\Eloquent;
 
 use App\Modules\Catalog\Enums\OwnProductSection;
 use App\Modules\Catalog\Enums\StoreProductFilter;
+use App\Modules\Catalog\Enums\StoreProductSource;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\StoreProduct;
 use App\Modules\Catalog\Models\StoreProductMarket;
 use App\Modules\Catalog\Repositories\Contracts\StoreProductRepositoryContract;
+use App\Modules\Catalog\Support\CatalogSearch;
 use App\Shared\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -51,8 +53,7 @@ class StoreProductRepository extends BaseRepository implements StoreProductRepos
         $search = is_string($filters['search'] ?? null) ? trim($filters['search']) : '';
 
         if ($search !== '') {
-            $term = '%'.addcslashes($search, '%_\\').'%';
-            $query->where(static fn (Builder $inner) => $inner->where('name', 'like', $term)->orWhere('sku', 'like', $term));
+            CatalogSearch::nameOrSku($query, $search);
         }
 
         $section = OwnProductSection::tryFrom((string) ($filters['section'] ?? ''));
@@ -101,8 +102,7 @@ class StoreProductRepository extends BaseRepository implements StoreProductRepos
         $categoryId = filter_var($filters['category_id'] ?? null, FILTER_VALIDATE_INT);
 
         if ($search !== '') {
-            $term = '%'.addcslashes($search, '%_\\').'%';
-            $query->where(static fn (Builder $inner) => $inner->where('products.name', 'like', $term)->orWhere('products.sku', 'like', $term));
+            CatalogSearch::nameOrSku($query, $search, 'products.name', 'products.sku');
         }
 
         if ($categoryId !== false && $categoryId !== null) {
@@ -148,12 +148,18 @@ class StoreProductRepository extends BaseRepository implements StoreProductRepos
         return $this->centralListing($filters)->with($with)->orderBy('sort_order')->orderByDesc('id')->lazyById(200);
     }
 
+    public function whereMatches(Builder $query, string $term): Builder
+    {
+        $centralIds = $this->centralIdsMatching($term);
+
+        return $query->where(static fn (Builder $any) => $any
+            ->where(static fn (Builder $own) => CatalogSearch::nameOrSku($own->where('source', StoreProductSource::Own), $term))
+            ->orWhere(static fn (Builder $central) => $central->where('source', StoreProductSource::Central)->whereIn('central_product_id', $centralIds)));
+    }
+
     public function centralIdsMatching(string $term): array
     {
-        $like = '%'.addcslashes($term, '%_\\').'%';
-
-        return Product::query()
-            ->where(static fn (Builder $inner) => $inner->where('name', 'like', $like)->orWhere('sku', 'like', $like))
+        return CatalogSearch::nameOrSku(Product::query(), $term)
             ->limit(2000)
             ->pluck('id')
             ->map(static fn (mixed $id): int => (int) $id)
@@ -192,5 +198,54 @@ class StoreProductRepository extends BaseRepository implements StoreProductRepos
     public function hasAny(): bool
     {
         return $this->query()->exists();
+    }
+
+    public function placementRows(): Collection
+    {
+        return $this->query()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['id', 'source', 'central_product_id', 'category_ids', 'store_category_ids', 'badge_ids', 'sort_order', 'is_active']);
+    }
+
+    public function centralCategoryMap(array $centralIds): array
+    {
+        return $this->pivotMap('category_product', 'category_id', $centralIds, static fn ($query) => $query
+            ->join('categories', 'categories.id', '=', 'category_product.category_id')
+            ->whereNull('categories.deleted_at'));
+    }
+
+    public function centralBadgeMap(array $centralIds): array
+    {
+        return $this->pivotMap('product_badge_product', 'product_badge_id', $centralIds);
+    }
+
+    public function findManyKeyed(array $ids): Collection
+    {
+        return $ids === [] ? new Collection : $this->query()->whereKey($ids)->get()->keyBy('id');
+    }
+
+    /**
+     * @param  list<int>  $centralIds
+     * @param  (callable(\Illuminate\Database\Query\Builder): mixed)|null  $scope
+     * @return array<int, list<int>>
+     */
+    private function pivotMap(string $table, string $column, array $centralIds, ?callable $scope = null): array
+    {
+        $map = [];
+
+        foreach (array_chunk(array_values(array_unique($centralIds)), 1000) as $chunk) {
+            $query = DB::connection((new Product)->getConnectionName())->table($table)->whereIn($table.'.product_id', $chunk);
+
+            if ($scope !== null) {
+                $scope($query);
+            }
+
+            foreach ($query->get([$table.'.product_id', $table.'.'.$column]) as $row) {
+                $map[(int) $row->product_id][] = (int) $row->{$column};
+            }
+        }
+
+        return array_map(static fn (array $ids): array => array_values(array_unique($ids)), $map);
     }
 }

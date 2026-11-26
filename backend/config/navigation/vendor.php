@@ -17,9 +17,11 @@ return [
                 ['key' => 'catalog.products', 'label' => 'navigation.vendor.all_products', 'route' => 'vendor.catalog.products.index', 'permission' => 'catalog.products.view', 'active' => ['vendor.catalog.products.index', 'vendor.catalog.products.edit']],
                 ['key' => 'catalog.new', 'label' => 'navigation.vendor.new_products', 'route' => 'vendor.catalog.products.new', 'permission' => 'catalog.products.view', 'active' => ['vendor.catalog.products.new', 'vendor.catalog.products.new.*']],
                 ['key' => 'catalog.own-products', 'label' => 'navigation.vendor.own_products', 'route' => 'vendor.catalog.own-products.index', 'permission' => 'catalog.own-products.view', 'active' => ['vendor.catalog.own-products.index', 'vendor.catalog.own-products.show', 'vendor.catalog.own-products.create', 'vendor.catalog.own-products.edit']],
+                ['key' => 'catalog.categories', 'label' => 'navigation.vendor.store_categories', 'route' => 'vendor.catalog.categories.index', 'permission' => 'catalog.categories.view', 'active' => ['vendor.catalog.categories.index', 'vendor.catalog.categories.products', 'vendor.catalog.categories.create', 'vendor.catalog.categories.edit']],
+                ['key' => 'catalog.badges', 'label' => 'navigation.vendor.store_badges', 'route' => 'vendor.catalog.badges.index', 'permission' => 'catalog.badges.view', 'active' => 'vendor.catalog.badges.*'],
                 ['key' => 'catalog.own-inventory', 'label' => 'navigation.vendor.inventory', 'route' => 'vendor.catalog.own-products.inventory', 'permission' => 'catalog.own-products.view'],
                 ['key' => 'catalog.edit-requests', 'label' => 'navigation.vendor.edit_requests', 'route' => 'vendor.catalog.edit-requests.index', 'permission' => 'catalog.products.view'],
-                ['key' => 'catalog.sort', 'label' => 'navigation.vendor.product_sort', 'route' => 'vendor.catalog.products.sort', 'permission' => 'catalog.products.view'],
+                ['key' => 'catalog.sort', 'label' => 'navigation.vendor.product_sort', 'route' => 'vendor.catalog.products.sort', 'permission' => 'catalog.products.view', 'active' => ['vendor.catalog.products.sort', 'vendor.catalog.categories.sort']],
             ]],
             ['key' => 'sales', 'label' => 'navigation.vendor.orders', 'icon' => 'cart', 'children' => [
                 ['key' => 'sales.orders', 'label' => 'navigation.vendor.all_orders', 'route' => 'vendor.sales.orders.index', 'permission' => 'orders.view', 'active' => ['vendor.sales.orders.*', 'vendor.finance.settle.*']],

@@ -14,6 +14,7 @@ use App\Shared\Repositories\BaseRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\LazyCollection;
 
 /**
  * @extends BaseRepository<Order>
@@ -53,7 +54,7 @@ class OrderRepository extends BaseRepository implements OrderRepositoryContract
 
         return $this->query()
             ->where('customer_id', $customerId)
-            ->when(($filters['status'] ?? null) !== null, static fn (Builder $query) => $query->where('status', $filters['status']))
+            ->when(($filters['status'] ?? null) !== null, static fn (Builder $query) => $query->whereIn('status', (array) $filters['status']))
             ->when($search !== '', static fn (Builder $query) => $query->where(static fn (Builder $inner) => $inner
                 ->where('number', 'like', '%'.$search.'%')
                 ->orWhere('tracking_number', 'like', '%'.$search.'%')
@@ -168,5 +169,10 @@ class OrderRepository extends BaseRepository implements OrderRepositoryContract
     public function placedCountForCustomer(int $customerId): int
     {
         return $this->query()->where('customer_id', $customerId)->where('status', '!=', OrderStatus::PendingPayment->value)->count();
+    }
+
+    public function paidCursor(): LazyCollection
+    {
+        return $this->query()->whereNotNull('paid_at')->orderBy('paid_at')->orderBy('id')->lazyById(200);
     }
 }

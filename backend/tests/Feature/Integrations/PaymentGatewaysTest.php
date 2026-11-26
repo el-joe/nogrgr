@@ -168,6 +168,26 @@ it('only activates a gateway once a config is enabled', function (): void {
         ->assertOk();
 });
 
+it('disables the Active switch until an enabled config is saved (QA-P5-014)', function (): void {
+    gatewayCurrencies();
+    $admin = integrationsAdmin('integrations.manage');
+    $switch = fn (string $html): string => preg_match('/<input[^>]*name="gateway_active"[^>]*>/s', $html, $match) ? $match[0] : '';
+
+    $html = (string) $this->actingAs($admin, 'admin')->get($this->centralUrl('/admin/integrations/gateways/stripe/edit'))
+        ->assertOk()
+        ->assertSee(__('integrations::admin.gateways.activate_after_save'))
+        ->getContent();
+    expect($switch($html))->toContain('disabled');
+
+    $this->actingAs($admin, 'admin')->putJson($this->centralUrl('/admin/integrations/gateways/stripe'), stripeGatewayPayload())->assertOk();
+
+    $html = (string) $this->actingAs($admin, 'admin')->get($this->centralUrl('/admin/integrations/gateways/stripe/edit'))
+        ->assertOk()
+        ->assertDontSee(__('integrations::admin.gateways.activate_after_save'))
+        ->getContent();
+    expect($switch($html))->not->toContain('disabled');
+});
+
 it('tests a gateway config and records the verification', function (): void {
     gatewayCurrencies();
     $admin = integrationsAdmin('integrations.manage');

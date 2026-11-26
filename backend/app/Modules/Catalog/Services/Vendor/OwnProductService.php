@@ -196,6 +196,7 @@ class OwnProductService extends BaseService
             'slug' => $this->uniqueSlug($data->slug ?: (string) (self::clean($data->name)['en'] ?? (array_values(self::clean($data->name))[0] ?? 'product')), $existing?->id),
             'weight_grams' => max(0, $data->weightGrams),
             'category_ids' => array_values(array_unique(array_map('intval', $data->categoryIds))),
+            'store_category_ids' => array_values(array_unique(array_map('intval', $data->storeCategoryIds))),
             'country_ids' => $data->countryIds === null ? null : array_values(array_unique(array_map('intval', $data->countryIds))),
             'price' => $data->price,
             'sale_price' => $data->salePrice,

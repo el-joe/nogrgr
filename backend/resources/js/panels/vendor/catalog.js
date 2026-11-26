@@ -378,7 +378,8 @@ export default function initCatalog(page) {
     }
 
     page.querySelectorAll('[data-product-sort]').forEach((root) => initSort(root));
-    page.querySelectorAll('[data-own-product-form]').forEach((form) => initOwnForm(form));
+    // Own product form (VEN-016c) and store category form (VEN-017b): countries picker.
+    page.querySelectorAll('[data-own-product-form], [data-category-form]').forEach((form) => initOwnForm(form));
 
     document.addEventListener('submit', (event) => {
         const form = event.target;

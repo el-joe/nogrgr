@@ -14,6 +14,10 @@ return [
     // Days a past-due subscription keeps working before it expires.
     'grace_days' => 7,
 
+    // Days an open store receivable may wait (with no settlement since) before the
+    // finance ledger marks the store "Overdue" (ADM-050).
+    'settlement_overdue_days' => 30,
+
     // Seller block printed on invoices.
     'seller' => [
         'name' => null,

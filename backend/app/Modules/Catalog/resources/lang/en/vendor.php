@@ -117,6 +117,8 @@ return [
         'overridden' => 'Your store',
         'categories_title' => 'Categories & badges',
         'your_categories' => 'Your categories',
+        'your_store_categories' => 'Your store categories',
+        'pick_store_categories' => 'Pick your own categories',
         'your_badges' => 'Your badges',
         'pick_categories' => 'Choose categories',
         'pick_badges' => 'Choose badges',
@@ -192,9 +194,9 @@ return [
     ],
 
     'sort' => [
-        'title' => 'Sort products',
+        'title' => 'Sort products & categories',
         'crumb' => 'Sort',
-        'subtitle' => 'Drag products to set the order shoppers see.',
+        'subtitle' => 'Drag products and categories to set the order shoppers see.',
         'list_title' => 'Products (drag to sort)',
         'save' => 'Save order',
         'saved' => 'Order saved.',

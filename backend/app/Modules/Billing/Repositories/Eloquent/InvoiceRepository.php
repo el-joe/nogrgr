@@ -9,6 +9,7 @@ use App\Modules\Billing\Repositories\Contracts\InvoiceRepositoryContract;
 use App\Modules\Platform\Models\Tenant;
 use App\Shared\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\LazyCollection;
 
 /**
  * @extends BaseRepository<Invoice>
@@ -62,5 +63,15 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryContr
                 $q->where(fn (Builder $inner) => $inner->where('invoices.number', 'like', $term)
                     ->orWhereIn('invoices.tenant_id', Tenant::query()->select('id')->where('name', 'like', $term)->orWhere('slug', 'like', $term)));
             });
+    }
+
+    public function paidCursor(?array $tenantIds = null): LazyCollection
+    {
+        return Invoice::withoutTenantScope()
+            ->where('status', InvoiceStatus::Paid->value)
+            ->whereNotNull('tenant_id')
+            ->when($tenantIds !== null, static fn (Builder $query) => $query->whereIn('tenant_id', $tenantIds))
+            ->orderBy('id')
+            ->lazyById(200);
     }
 }

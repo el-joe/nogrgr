@@ -12,6 +12,7 @@ use App\Modules\Catalog\Models\StoreProduct;
 use App\Modules\Catalog\Services\Vendor\OwnProductService;
 use App\Modules\Catalog\Services\Vendor\StoreCatalogService;
 use App\Modules\Catalog\Services\Vendor\StoreProductPricingService;
+use App\Modules\Catalog\Services\Vendor\StoreTaxonomyService;
 use App\Modules\Localization\Services\CountryService;
 use App\Modules\Platform\Models\Tenant;
 use App\Shared\Http\Controller;
@@ -29,6 +30,7 @@ class OwnProductController extends Controller
     public function __construct(
         private readonly OwnProductService $own,
         private readonly StoreProductPricingService $pricing,
+        private readonly StoreTaxonomyService $taxonomy,
     ) {}
 
     public function index(): View
@@ -124,6 +126,7 @@ class OwnProductController extends Controller
         return [
             'product' => $product,
             'categoryOptions' => $catalog->categoryOptions(),
+            'storeCategoryOptions' => $this->taxonomy->ownCategoryOptions(),
             'countries' => $selling === [] ? collect() : $countries->active($selling)->values(),
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Billing;
 
+use App\Modules\Billing\Console\BackfillLedgerCommand;
 use App\Modules\Billing\Events\InvoicePaid;
 use App\Modules\Billing\Events\PaymentCaptured;
 use App\Modules\Billing\Listeners\PostLedgerEntries;
@@ -65,5 +66,9 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         // Owner portal: only subscriptions / invoices of the owner's own stores.
         Gate::define('owner.subscriptions.manage', [OwnerBillingPolicy::class, 'subscription']);
         Gate::define('owner.invoices.view', [OwnerBillingPolicy::class, 'invoice']);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([BackfillLedgerCommand::class]);
+        }
     }
 }

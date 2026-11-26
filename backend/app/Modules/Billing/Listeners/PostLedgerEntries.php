@@ -37,7 +37,7 @@ class PostLedgerEntries
 
     public function orderPaid(OrderPaid $event): void
     {
-        $this->postings->order($event->tenantId, $event->order, 'order:'.$event->tenantId.':'.$event->order->uuid.':paid');
+        $this->postings->order($event->tenantId, $event->order, FinancePostings::orderKey($event->tenantId, $event->order->uuid));
     }
 
     public function orderStatusChanged(OrderStatusChanged $event): void
@@ -46,7 +46,7 @@ class PostLedgerEntries
             return;
         }
 
-        $this->postings->order($event->tenantId, $event->order, 'order:'.$event->tenantId.':'.$event->order->uuid.':'.$event->to->value);
+        $this->postings->order($event->tenantId, $event->order, FinancePostings::orderKey($event->tenantId, $event->order->uuid, $event->to->value));
     }
 
     public function refundCompleted(RefundCompleted $event): void

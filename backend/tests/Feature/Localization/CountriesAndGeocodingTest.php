@@ -48,9 +48,16 @@ it('seeds major cities idempotently and keeps admin activation choices', functio
         ->and($riyadh->getTranslation('name', 'ar'))->toBe('الرياض')
         ->and(Country::query()->where('iso2', 'SA')->value('is_active'))->toBeFalse();
 
-    foreach (['SA', 'AE', 'KW', 'QA', 'BH', 'OM', 'EG', 'JO', 'LB', 'SY', 'PS', 'IQ', 'MA', 'DZ', 'TN', 'LY'] as $iso2) {
+    foreach (['SA', 'AE', 'KW', 'QA', 'BH', 'OM', 'YE', 'EG', 'JO', 'LB', 'SY', 'PS', 'IQ', 'MA', 'DZ', 'TN', 'LY'] as $iso2) {
         expect(City::query()->whereRelation('country', 'iso2', $iso2)->count())->toBeGreaterThan(5, $iso2);
     }
+
+    // QA-P5-013: the Gulf countries carry enough real cities for a branch / address.
+    foreach (['AE', 'KW', 'QA', 'BH', 'OM'] as $iso2) {
+        expect(City::query()->whereRelation('country', 'iso2', $iso2)->count())->toBeGreaterThanOrEqual(10, $iso2);
+    }
+
+    expect(City::query()->whereRelation('country', 'iso2', 'AE')->pluck('slug')->all())->toContain('dubai', 'abu-dhabi', 'jebel-ali');
 });
 
 it('lists the countries the store sells to, sorted by localized name', function (): void {

@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Http\Requests\Vendor;
 
 use App\Modules\Catalog\DTOs\Vendor\StoreProductUpdateData;
+use App\Modules\Catalog\Models\StoreCategory;
 use App\Modules\Commerce\Enums\ProfitType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -46,6 +47,8 @@ class StoreProductUpdateRequest extends FormRequest
             'placement' => ['sometimes', 'boolean'],
             'category_ids' => ['nullable', 'array', 'max:50'],
             'category_ids.*' => ['integer', 'min:1'],
+            'store_category_ids' => ['nullable', 'array', 'max:50'],
+            'store_category_ids.*' => ['integer', 'min:1', Rule::exists(StoreCategory::class, 'id')],
             'badge_ids' => ['nullable', 'array', 'max:50'],
             'badge_ids.*' => ['integer', 'min:1'],
             'is_active' => ['sometimes', 'boolean'],
@@ -83,6 +86,7 @@ class StoreProductUpdateRequest extends FormRequest
             pricing: $pricing,
             categoryIds: $placement ? array_values(array_map('intval', (array) $this->validated('category_ids', []))) : null,
             badgeIds: $placement ? array_values(array_map('intval', (array) $this->validated('badge_ids', []))) : null,
+            storeCategoryIds: $placement ? array_values(array_unique(array_map('intval', (array) $this->validated('store_category_ids', [])))) : null,
             isActive: $this->boolean('is_active'),
             isFeatured: $this->boolean('is_featured'),
         );

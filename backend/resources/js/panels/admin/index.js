@@ -28,6 +28,7 @@ const pages = {
     'admin-finance': () => import('./finance.js'),
     'admin-content': () => import('./content.js'),
     'admin-banners': () => import('./banners.js'),
+    'admin-promotions': () => import('./promotions.js'),
 };
 
 export function initAdmin() {

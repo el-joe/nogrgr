@@ -191,6 +191,7 @@ return [
                 'tax_rate_bp' => 'Tax rate (basis points)',
                 'invoice_due_days' => 'Invoice due after (days)',
                 'grace_days' => 'Grace period after due date (days)',
+                'settlement_overdue_days' => 'Settlement overdue after (days)',
                 'seller_name' => 'Seller name',
                 'seller_tax_number' => 'Seller tax number',
                 'seller_address' => 'Seller address',
@@ -198,6 +199,7 @@ return [
             'help' => [
                 'tax_rate_bp' => '100 = 1 %. 1500 = 15 %. 0 = no tax line.',
                 'grace_days' => 'A past-due subscription keeps working this many days before it expires.',
+                'settlement_overdue_days' => 'A store whose open balance is older than this, with no settlement since, shows as Overdue in Finance › Ledger.',
                 'seller_name' => 'Printed on invoices. Defaults to the platform name.',
             ],
         ],
@@ -297,6 +299,7 @@ return [
         'activated' => ':name is active.',
         'deactivated' => ':name is inactive.',
         'activate_needs_config' => 'Enable vendor payments or tenant registration for :name before activating it.',
+        'activate_after_save' => 'Save an enabled vendor-payments or tenant-registration config first, then switch the gateway on.',
         'mode_key_mismatch' => 'The keys do not match :mode.',
     ],
 ];

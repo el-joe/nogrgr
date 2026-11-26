@@ -12,6 +12,7 @@ const pages = {
     'vendor-notifications': () => import('./notifications.js'),
     'vendor-setup-wizard': () => import('./setup-wizard.js'),
     'vendor-orders': () => import('./orders.js'),
+    'vendor-subscription': () => import('./subscription.js'),
 };
 
 export function initVendor() {

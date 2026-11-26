@@ -198,12 +198,7 @@ class VendorPromotionPageService
         $query = $this->products->query()->with('centralProduct')->orderBy('sort_order')->orderBy('id');
 
         if ($term !== null) {
-            $like = '%'.addcslashes($term, '%_\\').'%';
-            $centralIds = $this->products->centralIdsMatching($term);
-
-            $query->where(static fn (Builder $any) => $any
-                ->where(static fn (Builder $own) => $own->where('source', StoreProductSource::Own)->where(static fn (Builder $match) => $match->where('name', 'like', $like)->orWhere('sku', 'like', $like)))
-                ->orWhere(static fn (Builder $central) => $central->where('source', StoreProductSource::Central)->whereIn('central_product_id', $centralIds)));
+            $this->products->whereMatches($query, $term);
         }
 
         $results = $query->paginate(self::PER_PAGE, ['*'], 'page', $page);

@@ -136,7 +136,7 @@ class PaymentGatewayService extends BaseService
 
     public function setActive(PaymentGateway $gateway, bool $active): void
     {
-        if ($active && ! $gateway->code->isOffline() && $gateway->configs->doesntContain(static fn (PaymentGatewayConfig $config): bool => $config->is_enabled)) {
+        if ($active && ! $gateway->canBeActivated()) {
             throw new DomainException(__('integrations::admin.gateways.activate_needs_config', ['name' => $gateway->code->brand()]));
         }
 

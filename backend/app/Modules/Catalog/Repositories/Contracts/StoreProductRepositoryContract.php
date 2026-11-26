@@ -99,7 +99,46 @@ interface StoreProductRepositoryContract extends RepositoryContract
     public function centralIdsMatching(string $term): array;
 
     /**
+     * Narrow store rows to a case-insensitive name / sku search: own products on their own
+     * columns, imported ones on the central product (pickers, e.g. flash-sale products).
+     *
+     * @param  Builder<StoreProduct>  $query
+     * @return Builder<StoreProduct>
+     */
+    public function whereMatches(Builder $query, string $term): Builder;
+
+    /**
      * Whether the store sells at least one product (imported central or own).
      */
     public function hasAny(): bool;
+
+    /**
+     * Light rows for category / badge placement (decision #74): id, source, central id,
+     * placement columns, sort order, active.
+     *
+     * @return Collection<int, StoreProduct>
+     */
+    public function placementRows(): Collection;
+
+    /**
+     * Central categories of central products: central product id => category ids.
+     *
+     * @param  list<int>  $centralIds
+     * @return array<int, list<int>>
+     */
+    public function centralCategoryMap(array $centralIds): array;
+
+    /**
+     * Central badges of central products (any country): central product id => badge ids.
+     *
+     * @param  list<int>  $centralIds
+     * @return array<int, list<int>>
+     */
+    public function centralBadgeMap(array $centralIds): array;
+
+    /**
+     * @param  list<int>  $ids
+     * @return Collection<int, StoreProduct> keyed by id
+     */
+    public function findManyKeyed(array $ids): Collection;
 }

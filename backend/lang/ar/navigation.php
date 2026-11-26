@@ -120,6 +120,8 @@ return [
         'all_products' => 'كل المنتجات',
         'new_products' => 'منتجات جديدة',
         'own_products' => 'المنتجات الخاصة',
+        'store_categories' => 'الأقسام',
+        'store_badges' => 'الشارات',
         'inventory' => 'المخزون',
         'edit_requests' => 'طلبات التعديل',
         'product_sort' => 'ترتيب المنتجات',

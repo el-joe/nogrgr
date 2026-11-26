@@ -55,7 +55,7 @@ it('lists sales per phase with counts, products and countries', function (): voi
     FlashSale::factory()->scheduled()->create(['title' => ['en' => 'Mega Sale']]);
     FlashSale::factory()->ended()->create(['title' => ['en' => 'Old Sale']]);
 
-    $this->get($this->centralUrl('/admin/promotions/flash-sales'))->assertOk()->assertSee(__('commerce::flash_sales.tabs.scheduled'));
+    $this->get($this->centralUrl('/admin/promotions/flash-sales'))->assertOk()->assertSee(__('commerce::flash_sales.tabs.scheduled'))->assertSee('data-page="admin-promotions"', false);
 
     $data = fn (string $query): array => $this->getJson($this->centralUrl('/admin/promotions/flash-sales/data?draw=1&start=0&length=10'.$query))->assertOk()->json();
     $row = $data('&phase=live')['data'][0];

@@ -19,6 +19,7 @@ final class OwnProductData extends BaseDTO
      * @param  array<string, string|null>  $description
      * @param  list<int>|null  $countryIds
      * @param  list<int>  $categoryIds
+     * @param  list<int>  $storeCategoryIds  store-own categories (decision #74)
      * @param  list<OwnVariantData>  $variants
      * @param  list<UploadedFile>  $images
      * @param  list<int>  $keepImageIds
@@ -44,5 +45,6 @@ final class OwnProductData extends BaseDTO
         public readonly array $variants = [],
         public readonly array $images = [],
         public readonly array $keepImageIds = [],
+        public readonly array $storeCategoryIds = [],
     ) {}
 }

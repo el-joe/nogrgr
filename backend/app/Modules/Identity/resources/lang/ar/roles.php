@@ -102,6 +102,7 @@ return [
         'finance.payouts' => 'المدفوعات للمتاجر',
         'finance.transactions' => 'المعاملات',
         'finance.purchases' => 'المشتريات المستحقة للمنصة',
+        'finance.subscription' => 'الاشتراك والرصيد',
         'integrations' => 'التكاملات',
         'notifications' => 'الإشعارات',
         'email-templates' => 'قوالب البريد',

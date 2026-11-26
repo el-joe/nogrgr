@@ -1,5 +1,7 @@
 <?php
 
+use App\Modules\Integrations\Repositories\Contracts\SettingsRepositoryContract;
+use App\Modules\Integrations\Services\GeneralSettingsService;
 use App\Modules\Platform\Enums\RegistrationStatus;
 use App\Modules\Platform\Enums\TenantStatus;
 use App\Modules\Platform\Models\Tenant;
@@ -71,7 +73,7 @@ it('shows the store address and the panel link when the store is live', function
 });
 
 it('hides the technical error on failure and offers support', function (): void {
-    config(['mail.from.address' => 'support@nogrgr.test']);
+    app(SettingsRepositoryContract::class)->put(GeneralSettingsService::GROUP, ['support_email' => 'support@nogrgr.test']);
     [$registration] = provisioningRegistration(TenantStatus::Failed, ['provisioning_error' => 'SQLSTATE[HY000] secret detail']);
 
     $this->get(app(VendorRegistrationService::class)->provisioningUrl($registration))
@@ -80,6 +82,17 @@ it('hides the technical error on failure and offers support', function (): void 
         ->assertSee(__('platform::register.provisioning.failed_text'))
         ->assertSee('mailto:support@nogrgr.test', false)
         ->assertDontSee('SQLSTATE');
+});
+
+it('hides the support link when General settings has no support e-mail (QA-P5-016)', function (): void {
+    config(['mail.from.address' => 'no-reply@nogrgr.test']);
+    [$registration] = provisioningRegistration(TenantStatus::Failed);
+
+    $this->get(app(VendorRegistrationService::class)->provisioningUrl($registration))
+        ->assertOk()
+        ->assertSee('data-phase="failed"', false)
+        ->assertDontSee('mailto:', false)
+        ->assertDontSee('no-reply@nogrgr.test');
 });
 
 it('returns the status JSON for pending, active and failed stores', function (TenantStatus $status, bool $done, bool $failed): void {

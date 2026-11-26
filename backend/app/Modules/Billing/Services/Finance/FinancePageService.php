@@ -28,7 +28,8 @@ use Illuminate\Support\Collection;
 class FinancePageService
 {
     /** An open receivable older than this (days, no settlement since) is overdue. */
-    public const OVERDUE_DAYS = 30;
+    /** Fallback of Admin › Settings › Platform › Billing "settlement overdue after" (decision #69). */
+    public const DEFAULT_OVERDUE_DAYS = 30;
 
     public function __construct(
         private readonly LedgerService $ledger,
@@ -99,6 +100,16 @@ class FinancePageService
     }
 
     /**
+     * Days before an open receivable turns "overdue" (Billing settings, DB only).
+     */
+    public static function overdueDays(): int
+    {
+        $days = (int) config('billing.settlement_overdue_days', self::DEFAULT_OVERDUE_DAYS);
+
+        return $days > 0 ? $days : self::DEFAULT_OVERDUE_DAYS;
+    }
+
+    /**
      * clear | due | overdue (Figma ADM-050 status).
      */
     public static function status(int $receivable, ?string $firstOpenAt, ?string $lastSettlementAt): string
@@ -107,7 +118,7 @@ class FinancePageService
             return 'clear';
         }
 
-        $limit = CarbonImmutable::now()->subDays(self::OVERDUE_DAYS);
+        $limit = CarbonImmutable::now()->subDays(self::overdueDays());
         $stale = $firstOpenAt !== null && CarbonImmutable::parse($firstOpenAt)->lessThan($limit);
         $noRecentSettlement = $lastSettlementAt === null || CarbonImmutable::parse($lastSettlementAt)->lessThan($limit);
 

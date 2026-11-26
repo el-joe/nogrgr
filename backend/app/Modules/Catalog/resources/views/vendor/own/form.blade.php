@@ -4,7 +4,7 @@
     description, flags), Pricing (base, sale, cost USD; stock without variants), Variants
     (title per language, SKU, price, sale price, stock) and the gallery (first image =
     primary). AI translate / AI price buttons arrive with P10.
-    Data: $product (StoreProduct, new or own), $categoryOptions, $countries (store selling countries).
+    Data: $product (StoreProduct, new or own), $categoryOptions, $storeCategoryOptions, $countries (store selling countries).
 --}}
 @php
     $editing = $product->exists;
@@ -31,6 +31,9 @@
             </div>
             <div class="flex w-full flex-wrap gap-3 sm:w-auto">
                 <a href="{{ vendor_route('catalog.own-products.index') }}" class="vnd-cta vnd-cta-outline flex-1 sm:w-[183px] sm:flex-none"><x-ui::icon name="chevron-left" :size="20" data-flip />{{ __('catalog::vendor.own.back') }}</a>
+                @if ($editing && auth('vendor')->user()?->can('flash-sales.manage'))
+                    <button type="button" class="vnd-cta vnd-cta-outline flex-1 sm:flex-none sm:px-5" data-remote-modal="flash-sale-attach-modal" data-url="{{ vendor_route('marketing.flash-sales.available-for-product', ['product' => $product->id]) }}"><x-ui::icon name="zap" :size="20" />{{ __('commerce::vendor_promotions.flash_sales.attach.title') }}</button>
+                @endif
                 <button type="submit" class="vnd-cta vnd-cta-primary flex-1 sm:w-[183px] sm:flex-none">{{ __('catalog::vendor.own.save') }}</button>
             </div>
         </header>
@@ -46,6 +49,9 @@
                 <x-ui::input name="weight_grams" type="number" min="0" :label="__('catalog::vendor.own.fields.weight')" :value="$product->weight_grams ?? 0" required dir="ltr" inputmode="numeric" />
                 <x-ui::select name="category_ids" multiple :label="__('catalog::vendor.own.fields.category')" :options="$categoryOptions" :selected="$product->category_ids ?? []" required />
             </div>
+            @if ($storeCategoryOptions !== [])
+                <x-ui::select name="store_category_ids" multiple :label="__('catalog::vendor.edit.your_store_categories')" :options="$storeCategoryOptions" :selected="array_map('intval', $product->store_category_ids ?? [])" :placeholder="__('catalog::vendor.edit.pick_store_categories')" />
+            @endif
 
             <fieldset class="grid gap-3" data-country-picker>
                 <legend class="mb-2 text-sm font-medium text-ink">{{ __('catalog::vendor.own.fields.countries') }}</legend>
@@ -131,4 +137,7 @@
             <x-ui::image-upload name="images" :images="$images" :max="12" accept="image/png,image/jpeg,image/webp,image/gif" />
         </section>
     </form>
+    @if ($editing)
+        @include('commerce::vendor.flash-sales._attach-modal')
+    @endif
 </x-vendor::layout>

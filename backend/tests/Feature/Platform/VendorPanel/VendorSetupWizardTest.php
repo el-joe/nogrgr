@@ -72,6 +72,17 @@ it('saves the first countries directly and validates the default country', funct
         ->and(TenantChangeRequest::withoutTenantScope()->count())->toBe(0);
 });
 
+it('offers only the picked countries as the default country (QA-P5-012)', function (): void {
+    $this->tenant->update(['selling_country_ids' => [$this->sa->id], 'default_country_id' => $this->sa->id]);
+
+    $html = ($this->as)()->get(($this->url)('?step=countries'))->assertOk()->getContent();
+
+    preg_match('/<select[^>]*name="default_country_id"[^>]*>(.*?)<\/select>/s', (string) $html, $match);
+    preg_match_all('/<option value="(\d+)"/', $match[1] ?? '', $options);
+
+    expect($options[1])->toBe([(string) $this->sa->id]);
+});
+
 it('turns a later countries change into an admin change request', function (): void {
     $this->tenant->update(['selling_country_ids' => [$this->sa->id], 'default_country_id' => $this->sa->id]);
 

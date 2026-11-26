@@ -1,6 +1,7 @@
 {{--
     Tabs (Figma Tab 29:10316). variant: underline (12px padding, 2px brand indicator,
-    24 gap) | segmented (6×12 in a 4px track). Count pills optional.
+    24 gap) | segmented (6×12 in a 4px track). Count pills optional. An underline strip
+    wider than its column scrolls sideways (no scrollbar) with edge fades (QA-P5-015).
     items: ['general' => 'General', 'logs' => ['label' => 'Logs', 'count' => 3, 'href' => '…', 'disabled' => false]]
     With href items the tabs are links (aria-current); otherwise pair them with
     <x-ui::tab-panel tabs="<id>" key="…"> and the active tab is kept in ?<param>=.
@@ -13,8 +14,8 @@
     $segmented = $variant === 'segmented';
 @endphp
 <div @unless ($isLinks) data-tabs data-tabs-param="{{ $param }}" @endunless id="{{ $id }}" {{ $attributes->class(['min-w-0']) }}>
-    <div @unless ($isLinks) role="tablist" @endunless aria-label="{{ $label ?? __('ui.tabs') }}" @class([
-        'flex gap-6 overflow-x-auto overflow-y-hidden border-b border-line' => ! $segmented,
+    <div @unless ($isLinks) role="tablist" @endunless aria-label="{{ $label ?? __('ui.tabs') }}" @unless ($segmented) data-tabs-scroll @endunless @class([
+        'flex gap-6 overflow-x-auto overflow-y-hidden overscroll-x-contain border-b border-line [scrollbar-width:none] [&::-webkit-scrollbar]:hidden data-fade-left:mask-l-from-[calc(100%-3rem)] data-fade-right:mask-r-from-[calc(100%-3rem)]' => ! $segmented,
         'inline-flex gap-1 rounded-control bg-subtle p-1' => $segmented,
     ])>
         @foreach ($normalized as $key => $item)

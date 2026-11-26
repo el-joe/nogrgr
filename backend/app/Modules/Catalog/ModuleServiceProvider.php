@@ -30,6 +30,8 @@ use App\Modules\Catalog\Repositories\Contracts\ProductRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\ProductRequestRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\RequestMessageRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\RequestPaymentRepositoryContract;
+use App\Modules\Catalog\Repositories\Contracts\StoreBadgeRepositoryContract;
+use App\Modules\Catalog\Repositories\Contracts\StoreCategoryRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\StorePriceListRunRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\StoreProductRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\TenantChangeRequestRepositoryContract;
@@ -46,6 +48,8 @@ use App\Modules\Catalog\Repositories\Eloquent\ProductRepository;
 use App\Modules\Catalog\Repositories\Eloquent\ProductRequestRepository;
 use App\Modules\Catalog\Repositories\Eloquent\RequestMessageRepository;
 use App\Modules\Catalog\Repositories\Eloquent\RequestPaymentRepository;
+use App\Modules\Catalog\Repositories\Eloquent\StoreBadgeRepository;
+use App\Modules\Catalog\Repositories\Eloquent\StoreCategoryRepository;
 use App\Modules\Catalog\Repositories\Eloquent\StorePriceListRunRepository;
 use App\Modules\Catalog\Repositories\Eloquent\StoreProductRepository;
 use App\Modules\Catalog\Repositories\Eloquent\TenantChangeRequestRepository;
@@ -90,6 +94,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         StoreProductRepositoryContract::class => StoreProductRepository::class,
         StorePriceListRunRepositoryContract::class => StorePriceListRunRepository::class,
         ProductOverrideRepositoryContract::class => ProductOverrideRepository::class,
+        StoreCategoryRepositoryContract::class => StoreCategoryRepository::class,
+        StoreBadgeRepositoryContract::class => StoreBadgeRepository::class,
     ];
 
     public function register(): void

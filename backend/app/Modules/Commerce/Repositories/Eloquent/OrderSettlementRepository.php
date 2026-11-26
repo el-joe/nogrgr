@@ -9,6 +9,7 @@ use App\Modules\Platform\Models\Tenant;
 use App\Shared\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 
 /**
@@ -108,5 +109,14 @@ class OrderSettlementRepository extends BaseRepository implements OrderSettlemen
             ->pluck('last_paid', 'tenant_id')
             ->map(static fn ($value): string => (string) $value)
             ->all();
+    }
+
+    public function paidCursor(?array $tenantIds = null): LazyCollection
+    {
+        return OrderSettlement::withoutTenantScope()
+            ->where('status', SettlementStatus::Paid->value)
+            ->when($tenantIds !== null, static fn (Builder $query) => $query->whereIn('tenant_id', $tenantIds))
+            ->orderBy('id')
+            ->lazyById(200);
     }
 }

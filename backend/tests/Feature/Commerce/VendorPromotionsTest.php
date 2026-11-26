@@ -278,3 +278,43 @@ it('adds a product to a running store flash sale from the product (VEN-041b)', f
 
     $this->tenant->run(fn () => expect(app(FlashSaleCatalog::class)->discountsFor([ProductRef::central($this->central->id)], $this->sa->id))->toHaveKey('central:'.$this->central->id));
 });
+
+it('opens the "Add to flash sale" modal from the product pages (VEN-041b)', function (): void {
+    ($this->as)();
+
+    $this->get($this->tenantUrl($this->tenant, "admin/catalog/products/{$this->catalog->id}/edit"))
+        ->assertOk()
+        ->assertSee('data-remote-modal="flash-sale-attach-modal"', false)
+        ->assertSee('id="flash-sale-attach-modal"', false)
+        ->assertSee('/admin/marketing/flash-sales/for-product/'.$this->catalog->id, false);
+
+    $this->get($this->tenantUrl($this->tenant, "admin/catalog/own-products/{$this->own->id}/edit"))
+        ->assertOk()
+        ->assertSee('id="flash-sale-attach-modal"', false)
+        ->assertSee('/admin/marketing/flash-sales/for-product/'.$this->own->id, false);
+
+    $staff = $this->tenant->run(function (): VendorStaff {
+        $staff = VendorStaff::factory()->create();
+        $staff->givePermissionTo(['dashboard.view', 'catalog.products.view', 'catalog.products.manage', 'flash-sales.view']);
+
+        return $staff;
+    });
+
+    $this->actingAsVendor($staff, $this->tenant)
+        ->get($this->tenantUrl($this->tenant, "admin/catalog/products/{$this->catalog->id}/edit"))
+        ->assertOk()
+        ->assertDontSee('flash-sale-attach-modal', false);
+});
+
+it('searches the flash-sale product picker case-insensitively over imported and own products', function (): void {
+    ($this->as)();
+
+    $ids = fn (string $term): array => array_column($this->getJson(($this->url)('/flash-sales/products/search?q='.urlencode($term)))->assertOk()->json('results'), 'id');
+
+    expect($ids('wireless earbuds'))->toBe(['central:'.$this->central->id])
+        ->and($ids('WIRELESS'))->toBe(['central:'.$this->central->id])
+        ->and($ids('tote bag'))->toBe(['own:'.$this->own->id])
+        ->and($ids('tote-1'))->toBe(['own:'.$this->own->id])
+        ->and($ids('سماعات'))->toBe(['central:'.$this->central->id])
+        ->and($ids('en'))->not->toContain('own:'.$this->own->id);
+});

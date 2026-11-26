@@ -233,6 +233,7 @@ class StoreCatalogService extends BaseService
                 'is_featured' => $data->isFeatured,
                 'category_ids' => $data->categoryIds === null ? null : $this->validCategoryIds($data->categoryIds),
                 'badge_ids' => $data->badgeIds === null ? null : $this->validBadgeIds($data->badgeIds),
+                ...($data->storeCategoryIds !== null ? ['store_category_ids' => $data->storeCategoryIds] : []),
             ])->save();
             $this->pricing->saveRows($product, $data->pricing);
         }, $product->getConnectionName());

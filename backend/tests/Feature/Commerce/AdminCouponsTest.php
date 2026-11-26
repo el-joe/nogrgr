@@ -66,7 +66,8 @@ it('lists coupons with usage across stores, country tabs and status / type filte
     Coupon::factory()->create(['code' => 'LATER', 'starts_at' => now()->addWeek()]);
     CouponRedemption::withoutTenantScope()->create(['coupon_id' => $saudi->id, 'tenant_id' => $tenant->id, 'order_reference' => 'A1', 'redeemed_at' => now()]);
 
-    $this->get($this->centralUrl('/admin/promotions/coupons'))->assertOk()->assertSee($sa->name)->assertSee($eg->name);
+    // The page module binds the remote create / edit / view modals.
+    $this->get($this->centralUrl('/admin/promotions/coupons'))->assertOk()->assertSee($sa->name)->assertSee($eg->name)->assertSee('data-page="admin-promotions"', false);
 
     $data = fn (string $query = ''): array => $this->getJson($this->centralUrl('/admin/promotions/coupons/data?draw=1&start=0&length=10'.$query))->assertOk()->json();
     $all = collect($data()['data'])->keyBy(fn ($row) => strip_tags($row['code']) === '' ? '' : trim(explode("\n", trim(strip_tags($row['code'])))[0]));

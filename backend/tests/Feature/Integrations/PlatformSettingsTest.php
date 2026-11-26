@@ -72,7 +72,7 @@ it('saves billing, commerce and domain settings and overlays them on config', fu
     $admin = integrationsAdmin('settings.manage');
 
     $this->actingAs($admin, 'admin')->putJson($this->centralUrl('/admin/settings/platform/billing'), [
-        'tax_rate_bp' => 1500, 'invoice_due_days' => 10, 'grace_days' => 3,
+        'tax_rate_bp' => 1500, 'invoice_due_days' => 10, 'grace_days' => 3, 'settlement_overdue_days' => 45,
         'seller_name' => 'Nogrgr LLC', 'seller_tax_number' => '300000000000003', 'seller_address' => "Riyadh\nKSA",
     ])->assertOk()->assertJsonPath('success', true);
 
@@ -86,6 +86,7 @@ it('saves billing, commerce and domain settings and overlays them on config', fu
         ->and(config('billing.tax_rate_bp'))->toBe(1500)
         ->and(config('billing.invoice_due_days'))->toBe(10)
         ->and(config('billing.grace_days'))->toBe(3)
+        ->and(config('billing.settlement_overdue_days'))->toBe(45)
         ->and(config('billing.seller.name'))->toBe('Nogrgr LLC')
         ->and(config('billing.seller.address'))->toBe("Riyadh\nKSA")
         ->and(config('commerce.reservation_minutes'))->toBe(45)
@@ -98,9 +99,9 @@ it('saves billing, commerce and domain settings and overlays them on config', fu
 it('validates platform settings ranges and formats', function (): void {
     $admin = integrationsAdmin('settings.manage');
 
-    $this->actingAs($admin, 'admin')->putJson($this->centralUrl('/admin/settings/platform/billing'), ['tax_rate_bp' => 20000, 'invoice_due_days' => -1, 'grace_days' => 'x'])
+    $this->actingAs($admin, 'admin')->putJson($this->centralUrl('/admin/settings/platform/billing'), ['tax_rate_bp' => 20000, 'invoice_due_days' => -1, 'grace_days' => 'x', 'settlement_overdue_days' => 0])
         ->assertUnprocessable()
-        ->assertJsonValidationErrors(['tax_rate_bp', 'invoice_due_days', 'grace_days']);
+        ->assertJsonValidationErrors(['tax_rate_bp', 'invoice_due_days', 'grace_days', 'settlement_overdue_days']);
 
     $this->actingAs($admin, 'admin')->putJson($this->centralUrl('/admin/settings/platform/commerce'), ['reservation_minutes' => 1, 'store_api_rate_limit' => '', 'checkout_rate_limit' => 5])
         ->assertUnprocessable()

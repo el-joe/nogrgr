@@ -34,7 +34,7 @@
                     </div>
                     @if ($canManage)
                         <div data-unsaved-ignore>
-                            <x-ui::switch name="gateway_active" field="is_active" :url="route('admin.integrations.gateways.toggle', $current->code)" :checked="$current->is_active" :label="__('integrations::admin.gateways.columns.active')" :unchecked-value="null" />
+                            <x-ui::switch name="gateway_active" field="is_active" :url="route('admin.integrations.gateways.toggle', $current->code)" :checked="$current->is_active" :label="__('integrations::admin.gateways.columns.active')" :unchecked-value="null" :disabled="! $current->is_active && ! $current->canBeActivated()" :description="! $current->is_active && ! $current->canBeActivated() ? __('integrations::admin.gateways.activate_after_save') : null" />
                         </div>
                     @endif
                 </div>

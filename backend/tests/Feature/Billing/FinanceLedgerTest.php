@@ -15,6 +15,7 @@ use App\Modules\Billing\Models\LedgerEntry;
 use App\Modules\Billing\Models\LedgerTransaction;
 use App\Modules\Billing\Models\TenantPayout;
 use App\Modules\Billing\Notifications\FinanceAlertNotification;
+use App\Modules\Billing\Services\Finance\FinancePageService;
 use App\Modules\Billing\Services\Ledger\FinancePostings;
 use App\Modules\Billing\Services\Ledger\LedgerService;
 use App\Modules\Commerce\Enums\ActorType;
@@ -24,6 +25,7 @@ use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Models\OrderSettlement;
 use App\Modules\Commerce\Services\Orders\OrderFinanceService;
 use App\Modules\Identity\Models\VendorStaff;
+use App\Modules\Integrations\Enums\IntegrationSection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -319,4 +321,17 @@ it('shows the store its money flow only: purchases owed, settlements and payouts
     $this->getJson($url('settlements/data?draw=1&start=0&length=10'))->assertOk()->assertJsonPath('recordsFiltered', 0);
     $this->getJson($url('payouts/data?draw=1&start=0&length=10'))->assertOk()->assertJsonPath('recordsFiltered', 0);
     $this->get($url('settlements/ST-9999-ZZZ'), xhrHeaders())->assertNotFound();
+});
+
+it('reads the overdue threshold from Billing settings, not a constant (decision #69)', function (): void {
+    $opened = now()->subDays(15)->toDateTimeString();
+
+    expect(FinancePageService::status(500, $opened, null))->toBe('due')
+        ->and(FinancePageService::status(0, $opened, null))->toBe('clear');
+
+    $this->useSettings(IntegrationSection::Billing, ['settlement_overdue_days' => 10]);
+
+    expect(FinancePageService::overdueDays())->toBe(10)
+        ->and(FinancePageService::status(500, $opened, null))->toBe('overdue')
+        ->and(FinancePageService::status(500, $opened, now()->subDays(3)->toDateTimeString()))->toBe('due');
 });

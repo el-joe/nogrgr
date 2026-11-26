@@ -55,7 +55,7 @@
                                         <td class="px-5 py-3 text-end tabular-nums" dir="ltr">{{ number_format($gateway->fee_percent_bps / 100, 2) }}% + {{ $gateway->feeFixed()->format() }}</td>
                                         <td class="px-5 py-3">
                                             @if ($canManage)
-                                                <x-ui::switch :name="'is_active_'.$gateway->code->value" field="is_active" :url="route('admin.integrations.gateways.toggle', $gateway->code)" :checked="$gateway->is_active" :aria-label="__('integrations::admin.gateways.toggle', ['name' => $gateway->code->brand()])" />
+                                                <x-ui::switch :name="'is_active_'.$gateway->code->value" field="is_active" :url="route('admin.integrations.gateways.toggle', $gateway->code)" :checked="$gateway->is_active" :aria-label="__('integrations::admin.gateways.toggle', ['name' => $gateway->code->brand()])" :disabled="! $gateway->is_active && ! $gateway->canBeActivated()" :title="! $gateway->is_active && ! $gateway->canBeActivated() ? __('integrations::admin.gateways.activate_needs_config', ['name' => $gateway->code->brand()]) : null" />
                                             @else
                                                 <x-ui::status :status="$gateway->is_active ? 'active' : 'inactive'" />
                                             @endif

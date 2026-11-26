@@ -16,6 +16,7 @@ final class StoreProductUpdateData extends BaseDTO
      * @param  array<string, array<string, array{profit_type: string, profit_value: float|int|string}>>  $pricing
      * @param  list<int>|null  $categoryIds
      * @param  list<int>|null  $badgeIds
+     * @param  list<int>|null  $storeCategoryIds  store-own categories (decision #74; null = keep)
      */
     public function __construct(
         public readonly array $pricing = [],
@@ -23,5 +24,6 @@ final class StoreProductUpdateData extends BaseDTO
         public readonly ?array $badgeIds = null,
         public readonly bool $isActive = true,
         public readonly bool $isFeatured = false,
+        public readonly ?array $storeCategoryIds = null,
     ) {}
 }

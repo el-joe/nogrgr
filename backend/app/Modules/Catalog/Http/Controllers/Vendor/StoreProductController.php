@@ -14,6 +14,7 @@ use App\Modules\Catalog\Services\Vendor\StoreCatalogReader;
 use App\Modules\Catalog\Services\Vendor\StoreCatalogService;
 use App\Modules\Catalog\Services\Vendor\StoreProductExportService;
 use App\Modules\Catalog\Services\Vendor\StoreProductPricingService;
+use App\Modules\Catalog\Services\Vendor\StoreTaxonomyService;
 use App\Modules\Shipping\Services\ProductShippingDetailsService;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
@@ -76,7 +77,7 @@ class StoreProductController extends Controller
         );
     }
 
-    public function edit(Request $request, int $product, StoreCatalogReader $reader): View
+    public function edit(Request $request, int $product, StoreCatalogReader $reader, StoreTaxonomyService $taxonomy): View
     {
         $storeProduct = $this->catalog->find($product);
         $this->authorizeForUser($request->user('vendor'), 'view', $storeProduct);
@@ -90,6 +91,7 @@ class StoreProductController extends Controller
             'summary' => $this->pricing->summary($view, $rows),
             'categoryOptions' => $this->catalog->categoryOptions(),
             'badgeOptions' => $this->catalog->badgeOptions(),
+            'storeCategoryOptions' => $taxonomy->ownCategoryOptions(),
             'canManage' => (bool) $request->user('vendor')?->can('catalog.products.manage'),
             'tab' => in_array($request->query('tab'), ['pricing', 'stock', 'categories', 'snapshot'], true) ? (string) $request->query('tab') : 'pricing',
         ]);

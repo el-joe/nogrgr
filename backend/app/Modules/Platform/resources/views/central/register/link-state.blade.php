@@ -6,7 +6,7 @@
 @extends('platform::central.register._page', ['title' => __('platform::register.page_title'), 'page' => 'register-link'])
 
 @php
-    $supportEmail = (string) config('mail.from.address');
+    $supportEmail = app(\App\Modules\Platform\Services\OwnerSupportService::class)->supportEmail();
     $mailto = $supportEmail !== '' ? 'mailto:'.$supportEmail.'?subject='.rawurlencode(__('platform::register.link.support_subject')) : null;
     $requestUrl = \Illuminate\Support\Facades\Route::has('central.register') ? route('central.register') : null;
 

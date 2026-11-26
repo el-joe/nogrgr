@@ -6,6 +6,7 @@ use App\Modules\Commerce\Models\OrderSettlement;
 use App\Shared\Repositories\Contracts\RepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\LazyCollection;
 
 /**
  * @extends RepositoryContract<OrderSettlement>
@@ -61,4 +62,12 @@ interface OrderSettlementRepositoryContract extends RepositoryContract
      * @return array<int, string>
      */
     public function lastPaidAt(array $tenantIds): array;
+
+    /**
+     * Paid settlements (all stores, or the given ones), oldest first — the ledger back-fill source.
+     *
+     * @param  list<int>|null  $tenantIds
+     * @return LazyCollection<int, OrderSettlement>
+     */
+    public function paidCursor(?array $tenantIds = null): LazyCollection;
 }

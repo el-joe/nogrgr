@@ -104,6 +104,30 @@
         {
             "en": "Qurayyat",
             "ar": "القريات"
+        },
+        {
+            "en": "Al Qunfudhah",
+            "ar": "القنفذة"
+        },
+        {
+            "en": "Al Majmaah",
+            "ar": "المجمعة"
+        },
+        {
+            "en": "Ar Rass",
+            "ar": "الرس"
+        },
+        {
+            "en": "Bisha",
+            "ar": "بيشة"
+        },
+        {
+            "en": "Rabigh",
+            "ar": "رابغ"
+        },
+        {
+            "en": "Al Wajh",
+            "ar": "الوجه"
         }
     ],
     "AE": [
@@ -143,6 +167,46 @@
         {
             "en": "Khor Fakkan",
             "ar": "خورفكان"
+        },
+        {
+            "en": "Jebel Ali",
+            "ar": "جبل علي"
+        },
+        {
+            "en": "Hatta",
+            "ar": "حتا"
+        },
+        {
+            "en": "Kalba",
+            "ar": "كلباء"
+        },
+        {
+            "en": "Dibba Al-Fujairah",
+            "ar": "دبا الفجيرة"
+        },
+        {
+            "en": "Al Dhaid",
+            "ar": "الذيد"
+        },
+        {
+            "en": "Madinat Zayed",
+            "ar": "مدينة زايد"
+        },
+        {
+            "en": "Ruwais",
+            "ar": "الرويس"
+        },
+        {
+            "en": "Ghayathi",
+            "ar": "غياثي"
+        },
+        {
+            "en": "Al Rahba",
+            "ar": "الرحبة"
+        },
+        {
+            "en": "Khalifa City",
+            "ar": "مدينة خليفة"
         }
     ],
     "KW": [
@@ -178,6 +242,26 @@
         {
             "en": "Fahaheel",
             "ar": "الفحيحيل"
+        },
+        {
+            "en": "Jabriya",
+            "ar": "الجابرية"
+        },
+        {
+            "en": "Mangaf",
+            "ar": "المنقف"
+        },
+        {
+            "en": "Sabah Al-Salem",
+            "ar": "صباح السالم"
+        },
+        {
+            "en": "Al Wafrah",
+            "ar": "الوفرة"
+        },
+        {
+            "en": "Abdullah Al-Mubarak",
+            "ar": "عبدالله المبارك"
         }
     ],
     "QA": [
@@ -213,6 +297,22 @@
         {
             "en": "Dukhan",
             "ar": "دخان"
+        },
+        {
+            "en": "Al Shamal",
+            "ar": "الشمال"
+        },
+        {
+            "en": "Al Daayen",
+            "ar": "الضعاين"
+        },
+        {
+            "en": "Al Shahaniya",
+            "ar": "الشحانية"
+        },
+        {
+            "en": "Ras Laffan",
+            "ar": "رأس لفان"
         }
     ],
     "BH": [
@@ -244,6 +344,26 @@
         {
             "en": "A'ali",
             "ar": "عالي"
+        },
+        {
+            "en": "Budaiya",
+            "ar": "البديع"
+        },
+        {
+            "en": "Jidhafs",
+            "ar": "جدحفص"
+        },
+        {
+            "en": "Zallaq",
+            "ar": "الزلاق"
+        },
+        {
+            "en": "Hidd",
+            "ar": "الحد"
+        },
+        {
+            "en": "Juffair",
+            "ar": "الجفير"
         }
     ],
     "OM": [
@@ -287,6 +407,34 @@
         {
             "en": "Duqm",
             "ar": "الدقم"
+        },
+        {
+            "en": "Rustaq",
+            "ar": "الرستاق"
+        },
+        {
+            "en": "Bahla",
+            "ar": "بهلاء"
+        },
+        {
+            "en": "Khasab",
+            "ar": "خصب"
+        },
+        {
+            "en": "Ibra",
+            "ar": "إبراء"
+        },
+        {
+            "en": "Saham",
+            "ar": "صحم"
+        },
+        {
+            "en": "Shinas",
+            "ar": "شناص"
+        },
+        {
+            "en": "Al Suwaiq",
+            "ar": "السويق"
         }
     ],
     "YE": [
@@ -322,6 +470,26 @@
         {
             "en": "Seiyun",
             "ar": "سيئون"
+        },
+        {
+            "en": "Marib",
+            "ar": "مأرب"
+        },
+        {
+            "en": "Al Mukha",
+            "ar": "المخا"
+        },
+        {
+            "en": "Hajjah",
+            "ar": "حجة"
+        },
+        {
+            "en": "Saada",
+            "ar": "صعدة"
+        },
+        {
+            "en": "Amran",
+            "ar": "عمران"
         }
     ],
     "EG": [
@@ -441,6 +609,38 @@
         {
             "en": "Arish",
             "ar": "العريش"
+        },
+        {
+            "en": "Sheikh Zayed City",
+            "ar": "مدينة الشيخ زايد"
+        },
+        {
+            "en": "10th of Ramadan City",
+            "ar": "مدينة العاشر من رمضان"
+        },
+        {
+            "en": "El Mahalla El Kubra",
+            "ar": "المحلة الكبرى"
+        },
+        {
+            "en": "Obour City",
+            "ar": "مدينة العبور"
+        },
+        {
+            "en": "New Administrative Capital",
+            "ar": "العاصمة الإدارية الجديدة"
+        },
+        {
+            "en": "El Alamein",
+            "ar": "العلمين"
+        },
+        {
+            "en": "Dahab",
+            "ar": "دهب"
+        },
+        {
+            "en": "Kafr El Dawwar",
+            "ar": "كفر الدوار"
         }
     ],
     "JO": [
@@ -492,6 +692,22 @@
         {
             "en": "Tafilah",
             "ar": "الطفيلة"
+        },
+        {
+            "en": "Russeifa",
+            "ar": "الرصيفة"
+        },
+        {
+            "en": "Sahab",
+            "ar": "سحاب"
+        },
+        {
+            "en": "Ramtha",
+            "ar": "الرمثا"
+        },
+        {
+            "en": "Fuheis",
+            "ar": "الفحيص"
         }
     ],
     "LB": [
@@ -535,6 +751,26 @@
         {
             "en": "Aley",
             "ar": "عاليه"
+        },
+        {
+            "en": "Batroun",
+            "ar": "البترون"
+        },
+        {
+            "en": "Zgharta",
+            "ar": "زغرتا"
+        },
+        {
+            "en": "Halba",
+            "ar": "حلبا"
+        },
+        {
+            "en": "Baabda",
+            "ar": "بعبدا"
+        },
+        {
+            "en": "Broummana",
+            "ar": "برمانا"
         }
     ],
     "SY": [
@@ -586,6 +822,22 @@
         {
             "en": "Qamishli",
             "ar": "القامشلي"
+        },
+        {
+            "en": "Al-Hasakah",
+            "ar": "الحسكة"
+        },
+        {
+            "en": "Palmyra",
+            "ar": "تدمر"
+        },
+        {
+            "en": "Jableh",
+            "ar": "جبلة"
+        },
+        {
+            "en": "Douma",
+            "ar": "دوما"
         }
     ],
     "PS": [
@@ -636,6 +888,26 @@
         {
             "en": "Rafah",
             "ar": "رفح"
+        },
+        {
+            "en": "Deir al-Balah",
+            "ar": "دير البلح"
+        },
+        {
+            "en": "Jabalia",
+            "ar": "جباليا"
+        },
+        {
+            "en": "Al-Bireh",
+            "ar": "البيرة"
+        },
+        {
+            "en": "Salfit",
+            "ar": "سلفيت"
+        },
+        {
+            "en": "Tubas",
+            "ar": "طوباس"
         }
     ],
     "IQ": [
@@ -699,6 +971,30 @@
         {
             "en": "Diwaniyah",
             "ar": "الديوانية"
+        },
+        {
+            "en": "Samarra",
+            "ar": "سامراء"
+        },
+        {
+            "en": "Fallujah",
+            "ar": "الفلوجة"
+        },
+        {
+            "en": "Baqubah",
+            "ar": "بعقوبة"
+        },
+        {
+            "en": "Zakho",
+            "ar": "زاخو"
+        },
+        {
+            "en": "Halabja",
+            "ar": "حلبجة"
+        },
+        {
+            "en": "Tikrit",
+            "ar": "تكريت"
         }
     ],
     "MA": [

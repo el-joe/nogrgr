@@ -68,6 +68,15 @@ class PaymentGateway extends Model
         return $this->hasMany(PaymentGatewayConfig::class);
     }
 
+    /**
+     * Whether the gateway may be switched on: offline methods always, online ones once a
+     * saved config (vendor payments or tenant registration) is enabled. QA-P5-014.
+     */
+    public function canBeActivated(): bool
+    {
+        return $this->code->isOffline() || $this->configs->contains(static fn (PaymentGatewayConfig $config): bool => (bool) $config->is_enabled);
+    }
+
     public function config(GatewayPurpose $purpose): ?PaymentGatewayConfig
     {
         return $this->configs->first(static fn (PaymentGatewayConfig $config): bool => $config->purpose === $purpose);

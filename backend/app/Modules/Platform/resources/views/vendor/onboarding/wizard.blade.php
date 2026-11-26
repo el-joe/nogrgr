@@ -10,7 +10,9 @@
     $featured = $countries->filter(fn ($country) => in_array($country->iso2, $featuredIso, true) || in_array($country->id, $selected, true))
         ->sortBy(fn ($country) => array_search($country->iso2, $featuredIso, true) === false ? 100 : array_search($country->iso2, $featuredIso, true));
     $others = $countries->reject(fn ($country) => $featured->contains('id', $country->id))->mapWithKeys(fn ($country) => [$country->id => trim($country->flag.' '.$country->name)])->all();
-    $allOptions = $countries->mapWithKeys(fn ($country) => [$country->id => trim($country->flag.' '.$country->name)])->all();
+    // QA-P5-012: the default country is one of the countries picked above (the JS keeps it in sync).
+    $pickedIds = array_map('intval', (array) old('country_ids', $selected));
+    $defaultOptions = $countries->filter(fn ($country) => in_array($country->id, $pickedIds, true))->mapWithKeys(fn ($country) => [$country->id => trim($country->flag.' '.$country->name)])->all();
     $next = $step->next();
     $stepUrl = fn (SetupWizardStep $target) => vendor_route('onboarding.setup', ['step' => $target->value]);
     $locale = app()->getLocale();
@@ -77,7 +79,7 @@
                                 <div class="flex flex-wrap gap-2" data-country-chips>
                                     @foreach ($featured as $country)
                                         <label class="inline-flex h-7 cursor-pointer items-center gap-1 rounded-full border border-line bg-surface px-3 text-xs font-medium text-ink transition-colors hover:bg-subtle has-[:checked]:border-transparent has-[:checked]:bg-inverse has-[:checked]:text-on-inverse has-[:focus-visible]:outline-2">
-                                            <input type="checkbox" name="country_ids[]" value="{{ $country->id }}" class="peer sr-only" @checked(in_array($country->id, old('country_ids', $selected), false)) data-country-chip data-name="{{ $country->name }}">
+                                            <input type="checkbox" name="country_ids[]" value="{{ $country->id }}" class="peer sr-only" @checked(in_array($country->id, old('country_ids', $selected), false)) data-country-chip data-name="{{ $country->name }}" data-label="{{ trim($country->flag.' '.$country->name) }}">
                                             {{ $country->name }}
                                             <x-ui::icon name="check" :size="12" class="hidden peer-checked:inline" />
                                         </label>
@@ -88,7 +90,7 @@
                             @if ($others !== [])
                                 <x-ui::select name="country_ids[]" multiple :label="__('platform::setup.countries.more')" :options="$others" :selected="array_values(array_intersect(array_map('intval', (array) old('country_ids', $selected)), array_keys($others)))" :placeholder="__('platform::setup.countries.more_placeholder')" data-country-more />
                             @endif
-                            <x-ui::select name="default_country_id" :label="__('platform::setup.countries.default')" :options="$allOptions" :selected="old('default_country_id', $tenant->default_country_id)" :placeholder="__('platform::setup.countries.default_placeholder')" required data-default-country />
+                            <x-ui::select name="default_country_id" :label="__('platform::setup.countries.default')" :options="$defaultOptions" :selected="old('default_country_id', $tenant->default_country_id)" :placeholder="__('platform::setup.countries.default_placeholder')" required data-default-country />
                             <x-ui::button type="submit" size="lg" block>{{ __('platform::setup.next', ['step' => mb_strtolower(__('platform::setup.steps.languages'))]) }}</x-ui::button>
                         </form>
                     @elseif ($step === SetupWizardStep::Languages)

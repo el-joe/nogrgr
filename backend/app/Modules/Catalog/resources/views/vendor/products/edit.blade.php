@@ -5,7 +5,7 @@
     Central data — content, images, stock, weight, variants — is read-only (012c stock &
     weight, 012e central snapshot); changes go through "Request edit" (VEN-013a) and an
     approved request writes the store override. Content & AI translation (012b) is P10.
-    Data: $product, $view (StoreProductView), $rows, $summary, $categoryOptions, $badgeOptions, $canManage, $tab.
+    Data: $product, $view (StoreProductView), $rows, $summary, $categoryOptions, $badgeOptions, $storeCategoryOptions, $canManage, $tab.
 --}}
 @php
     $central = $view->central;
@@ -42,6 +42,9 @@
         @if ($canManage)
             <div class="flex flex-wrap gap-3">
                 <x-ui::button variant="secondary" icon="edit" data-remote-modal="edit-request-modal" :data-url="vendor_route('catalog.edit-requests.form', ['product' => $product->id])">{{ __('catalog::vendor.edit.request_edit') }}</x-ui::button>
+                @if (auth('vendor')->user()?->can('flash-sales.manage'))
+                    <x-ui::button variant="secondary" icon="zap" data-remote-modal="flash-sale-attach-modal" :data-url="vendor_route('marketing.flash-sales.available-for-product', ['product' => $product->id])">{{ __('commerce::vendor_promotions.flash_sales.attach.title') }}</x-ui::button>
+                @endif
                 <x-ui::button type="submit" form="product-edit-form" icon="check">{{ __('catalog::vendor.save') }}</x-ui::button>
             </div>
         @endif
@@ -169,6 +172,7 @@
                     <input type="hidden" name="placement" value="1">
                     <h2 class="text-base font-semibold text-ink">{{ __('catalog::vendor.edit.categories_title') }}</h2>
                     <x-ui::select name="category_ids" multiple :label="__('catalog::vendor.edit.your_categories')" :options="$categoryOptions" :selected="$view->categoryIds" :disabled="! $canManage" :placeholder="__('catalog::vendor.edit.pick_categories')" />
+                    <x-ui::select name="store_category_ids" multiple :label="__('catalog::vendor.edit.your_store_categories')" :options="$storeCategoryOptions" :selected="array_map('intval', $product->store_category_ids ?? [])" :disabled="! $canManage || $storeCategoryOptions === []" :placeholder="__('catalog::vendor.edit.pick_store_categories')" />
                     <x-ui::select name="badge_ids" multiple :label="__('catalog::vendor.edit.your_badges')" :options="$badgeOptions" :selected="$view->badgeIds" :disabled="! $canManage" :placeholder="__('catalog::vendor.edit.pick_badges')" />
                     <p class="text-xs text-ink-muted">{{ __('catalog::vendor.edit.placement_hint') }}</p>
                 </section>
@@ -213,4 +217,5 @@
     </form>
 
     @include('catalog::vendor.products._modals', ['canManage' => $canManage])
+    @include('commerce::vendor.flash-sales._attach-modal')
 </x-vendor::layout>

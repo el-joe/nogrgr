@@ -5,6 +5,7 @@ namespace App\Modules\Platform\Http\Controllers\Central;
 use App\Modules\Platform\Enums\TenantStatus;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Models\VendorRegistration;
+use App\Modules\Platform\Services\OwnerSupportService;
 use App\Modules\Platform\Services\VendorRegistrationService;
 use App\Modules\Platform\Support\TenantSlug;
 use App\Shared\Http\Controller;
@@ -19,7 +20,10 @@ use Illuminate\Support\Facades\URL;
  */
 class RegistrationProvisioningController extends Controller
 {
-    public function __construct(private readonly VendorRegistrationService $registrations) {}
+    public function __construct(
+        private readonly VendorRegistrationService $registrations,
+        private readonly OwnerSupportService $support,
+    ) {}
 
     public function show(Request $request, VendorRegistration $registration): View
     {
@@ -34,7 +38,7 @@ class RegistrationProvisioningController extends Controller
             'statusUrl' => $this->registrations->provisioningStatusUrl($registration),
             'storeHost' => TenantSlug::subdomainHost($tenant->slug),
             'customDomain' => $registration->custom_domain,
-            'supportEmail' => (string) config('mail.from.address'),
+            'supportEmail' => $this->support->supportEmail(),
         ]);
     }
 

@@ -10,6 +10,7 @@ use App\Shared\Repositories\Contracts\RepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\LazyCollection;
 
 /**
  * @extends RepositoryContract<Order>
@@ -30,7 +31,7 @@ interface OrderRepositoryContract extends RepositoryContract
     public function forGroup(string $checkoutGroup): Collection;
 
     /**
-     * @param  array{status?: string|null, search?: string|null}  $filters
+     * @param  array{status?: string|list<string>|null, search?: string|null}  $filters
      * @return LengthAwarePaginator<int, Order>
      */
     public function forCustomer(int $customerId, array $filters, int $perPage = 15): LengthAwarePaginator;
@@ -81,4 +82,12 @@ interface OrderRepositoryContract extends RepositoryContract
      * Orders of the store placed by a customer (for "nth order" hints).
      */
     public function placedCountForCustomer(int $customerId): int;
+
+    /**
+     * Every order of the store that was ever paid (paid_at set, whatever its status now),
+     * oldest payment first — the ledger back-fill source.
+     *
+     * @return LazyCollection<int, Order>
+     */
+    public function paidCursor(): LazyCollection;
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Billing\Http\Controllers\Vendor\MoneyFlowController;
+use App\Modules\Billing\Http\Controllers\Vendor\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -8,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 |   vendor.finance.purchases.*    purchases owed to the platform (VEN-062)
 |   vendor.finance.settlements.*  settlement payments vendor → platform (VEN-063)
 |   vendor.finance.payouts.*      payouts received platform → store (VEN-064)
+|   vendor.finance.subscription*  subscription & balance, renew / change plan / pay invoice (VEN-060…060d)
 */
 
 Route::middleware('auth:vendor')->prefix('finance')->name('finance.')->controller(MoneyFlowController::class)->group(function (): void {
@@ -26,5 +28,21 @@ Route::middleware('auth:vendor')->prefix('finance')->name('finance.')->controlle
     Route::middleware('permission:finance.payouts.view,vendor')->group(function (): void {
         Route::get('payouts', 'payouts')->name('payouts.index');
         Route::get('payouts/data', 'payoutsData')->name('payouts.data');
+    });
+});
+
+Route::middleware('auth:vendor')->prefix('finance/subscription')->controller(SubscriptionController::class)->group(function (): void {
+    Route::middleware('permission:finance.subscription.view,vendor')->group(function (): void {
+        Route::get('/', 'index')->name('finance.subscription');
+        Route::get('history/data', 'historyData')->name('finance.subscription.history.data');
+        Route::get('invoices/data', 'invoicesData')->name('finance.subscription.invoices.data');
+        Route::get('invoices/{invoice}/print', 'printInvoice')->whereNumber('invoice')->name('finance.subscription.invoices.print');
+        Route::get('transactions/data', 'transactionsData')->name('finance.subscription.transactions.data');
+    });
+
+    Route::middleware('permission:finance.subscription.manage,vendor')->group(function (): void {
+        Route::post('checkout', 'checkout')->middleware('throttle:10,1')->name('finance.subscription.checkout');
+        Route::get('payments/{payment}/result', 'result')->whereNumber('payment')->middleware('throttle:30,1')->name('finance.subscription.result');
+        Route::get('payments/{payment}/cancel', 'cancel')->whereNumber('payment')->middleware('throttle:30,1')->name('finance.subscription.cancel');
     });
 });

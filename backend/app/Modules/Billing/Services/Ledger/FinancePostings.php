@@ -16,7 +16,9 @@ use App\Modules\Billing\Repositories\Contracts\LedgerRepositoryContract;
 use App\Modules\Commerce\Enums\CollectedBy;
 use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Models\OrderSettlement;
+use App\Modules\Commerce\Pricing\SettlementFigures;
 use App\Modules\Commerce\Services\Orders\OrderFinanceService;
+use Carbon\CarbonInterface;
 
 /**
  * Turns finance events into ledger postings (decision #72).
@@ -41,19 +43,32 @@ class FinancePostings
         private readonly OrderFinanceService $finance,
     ) {}
 
-    public function order(int $tenantId, Order $order, string $key, LedgerSource $source = LedgerSource::Order, ?string $sourceReference = null): ?LedgerTransaction
+    /**
+     * Idempotency key of an order event posting (`paid`, or the void status reached).
+     * Shared by PostLedgerEntries and the ledger back-fill so neither posts twice.
+     */
+    public static function orderKey(int $tenantId, string $uuid, string $event = 'paid'): string
+    {
+        return 'order:'.$tenantId.':'.$uuid.':'.$event;
+    }
+
+    /**
+     * What an order posting would change now: [payable delta, receivable delta] (minor
+     * units; both 0 = the ledger already matches the formulas). Used by the back-fill dry run.
+     *
+     * @return array{payable: int, receivable: int}
+     */
+    public function orderDeltas(int $tenantId, Order $order): array
     {
         $figures = $this->finance->figures($order, $tenantId);
-        $accrualSources = [LedgerSource::Order, LedgerSource::Refund];
 
-        $targetPayable = $figures->collectedBy === CollectedBy::Platform ? $figures->owedToVendor->minor : 0;
-        // A platform-collected order whose refunds exceed the vendor share leaves the store owing the shortfall.
-        $targetReceivable = $figures->collectedBy === CollectedBy::Vendor ? $figures->platformShare->minor : max(0, -$figures->vendorShare->minor);
-        $postedPayable = -$this->entries->accountBalance($tenantId, LedgerAccount::VendorPayable, $order->uuid, $accrualSources);
-        $postedReceivable = $this->entries->accountBalance($tenantId, LedgerAccount::VendorReceivable, $order->uuid, $accrualSources);
+        return $this->deltas($tenantId, $order, $figures);
+    }
 
-        $payableDelta = $targetPayable - $postedPayable;
-        $receivableDelta = $targetReceivable - $postedReceivable;
+    public function order(int $tenantId, Order $order, string $key, LedgerSource $source = LedgerSource::Order, ?string $sourceReference = null, ?CarbonInterface $occurredAt = null): ?LedgerTransaction
+    {
+        $figures = $this->finance->figures($order, $tenantId);
+        ['payable' => $payableDelta, 'receivable' => $receivableDelta] = $this->deltas($tenantId, $order, $figures);
 
         if ($payableDelta === 0 && $receivableDelta === 0) {
             return null;
@@ -83,7 +98,24 @@ class FinancePostings
             orderUuid: $order->uuid,
             direction: $reversal ? LedgerDirection::Reversal : null,
             meta: ['key' => $descriptionKey, 'params' => ['number' => $order->number, 'reference' => (string) $sourceReference, 'percent' => $figures->vendorPercent, 'total' => $order->grand_total], 'collected_by' => $figures->collectedBy->value],
+            occurredAt: $occurredAt,
         ));
+    }
+
+    /**
+     * @return array{payable: int, receivable: int}
+     */
+    private function deltas(int $tenantId, Order $order, SettlementFigures $figures): array
+    {
+        $accrualSources = [LedgerSource::Order, LedgerSource::Refund];
+
+        $targetPayable = $figures->collectedBy === CollectedBy::Platform ? $figures->owedToVendor->minor : 0;
+        // A platform-collected order whose refunds exceed the vendor share leaves the store owing the shortfall.
+        $targetReceivable = $figures->collectedBy === CollectedBy::Vendor ? $figures->platformShare->minor : max(0, -$figures->vendorShare->minor);
+        $postedPayable = -$this->entries->accountBalance($tenantId, LedgerAccount::VendorPayable, $order->uuid, $accrualSources);
+        $postedReceivable = $this->entries->accountBalance($tenantId, LedgerAccount::VendorReceivable, $order->uuid, $accrualSources);
+
+        return ['payable' => $targetPayable - $postedPayable, 'receivable' => $targetReceivable - $postedReceivable];
     }
 
     public function settlement(OrderSettlement $settlement): ?LedgerTransaction

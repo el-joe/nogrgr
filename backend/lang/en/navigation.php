@@ -120,6 +120,8 @@ return [
         'all_products' => 'All products',
         'new_products' => 'New products',
         'own_products' => 'Own products',
+        'store_categories' => 'Categories',
+        'store_badges' => 'Badges',
         'inventory' => 'Inventory',
         'edit_requests' => 'Edit requests',
         'product_sort' => 'Product sort',

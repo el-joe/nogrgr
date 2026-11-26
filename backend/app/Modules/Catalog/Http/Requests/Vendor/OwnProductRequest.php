@@ -4,6 +4,7 @@ namespace App\Modules\Catalog\Http\Requests\Vendor;
 
 use App\Modules\Catalog\DTOs\Vendor\OwnProductData;
 use App\Modules\Catalog\DTOs\Vendor\OwnVariantData;
+use App\Modules\Catalog\Models\StoreCategory;
 use App\Modules\Catalog\Models\StoreProduct;
 use App\Shared\Money\Money;
 use App\Shared\Support\Locale;
@@ -47,6 +48,8 @@ class OwnProductRequest extends FormRequest
             'country_ids.*' => ['integer', 'min:1', Rule::in($this->storeCountryIds())],
             'category_ids' => ['required', 'array', 'min:1', 'max:20'],
             'category_ids.*' => ['integer', 'min:1'],
+            'store_category_ids' => ['nullable', 'array', 'max:50'],
+            'store_category_ids.*' => ['integer', 'min:1', Rule::exists(StoreCategory::class, 'id')],
             'price' => ['required', 'numeric', 'min:0', 'max:10000000'],
             'sale_price' => ['nullable', 'numeric', 'min:0', 'lt:price'],
             'cost_price' => ['nullable', 'numeric', 'min:0', 'max:10000000'],
@@ -139,6 +142,7 @@ class OwnProductRequest extends FormRequest
             variants: $variants,
             images: array_values(array_filter((array) $this->file('images', []), static fn (mixed $file): bool => $file instanceof UploadedFile)),
             keepImageIds: array_values(array_map('intval', (array) $this->validated('images_keep', []))),
+            storeCategoryIds: array_values(array_map('intval', (array) $this->validated('store_category_ids', []))),
         );
     }
 

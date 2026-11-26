@@ -102,6 +102,7 @@ return [
         'finance.payouts' => 'Payouts',
         'finance.transactions' => 'Transactions',
         'finance.purchases' => 'Purchases owed to the platform',
+        'finance.subscription' => 'Subscription & balance',
         'integrations' => 'Integrations',
         'notifications' => 'Notifications',
         'email-templates' => 'Email templates',

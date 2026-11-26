@@ -15,6 +15,17 @@ class OwnerSupportService extends BaseService
     public function __construct(private readonly GeneralSettingsService $settings) {}
 
     /**
+     * General settings `support_email` (decision #69), or '' when it is not set / invalid.
+     * Never the mail "from" address (QA-P5-016).
+     */
+    public function supportEmail(): string
+    {
+        $email = trim((string) $this->settings->current()['support_email']);
+
+        return $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) !== false ? $email : '';
+    }
+
+    /**
      * @return array{contacts: list<array{key: string, icon: string, value: string, href: string}>, socials: list<array{network: string, url: string}>}
      */
     public function channels(): array

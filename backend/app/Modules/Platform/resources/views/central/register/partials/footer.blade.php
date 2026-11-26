@@ -14,7 +14,7 @@
         ['central.privacy', 'privacy'],
         ['central.terms', 'terms'],
     ])->filter(fn (array $link): bool => \Illuminate\Support\Facades\Route::has($link[0]))->values();
-    $supportEmail = (string) config('mail.from.address');
+    $supportEmail = app(\App\Modules\Platform\Services\OwnerSupportService::class)->supportEmail();
 @endphp
 <footer class="relative mt-auto bg-(--reg-footer) text-ink">
     <div class="mx-auto grid max-w-[1200px] gap-8 px-4 pt-8 pb-10 sm:px-6 lg:grid-cols-[358px_1fr_257px] lg:gap-[104px] lg:pt-[98px] lg:pb-[120px]">

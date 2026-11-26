@@ -10,6 +10,8 @@ use App\Modules\Catalog\Http\Controllers\Vendor\ProductSortController;
 use App\Modules\Catalog\Http\Controllers\Vendor\Requests\RequestAttachmentController;
 use App\Modules\Catalog\Http\Controllers\Vendor\Requests\RequestPaymentController;
 use App\Modules\Catalog\Http\Controllers\Vendor\Requests\VendorRequestController;
+use App\Modules\Catalog\Http\Controllers\Vendor\StoreBadgeController;
+use App\Modules\Catalog\Http\Controllers\Vendor\StoreCategoryController;
 use App\Modules\Catalog\Http\Controllers\Vendor\StoreProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 | (link with vendor_route('catalog.…')). Imported central products need
 | `catalog.products.view|manage|export`, own products `catalog.own-products.view|manage`.
 | Ids are tenant `store_products.id`, except {central} (central `products.id`).
+| Store categories / badges (decision #74): `catalog.categories.view|manage`,
+| `catalog.badges.view|manage`; {category} = "central-<id>" | "store-<id>", {own} =
+| store_categories.id, {badge} = central product_badges.id.
 */
 
 Route::middleware('auth:vendor')->prefix('catalog')->name('catalog.')->group(function (): void {
@@ -62,6 +67,46 @@ Route::middleware('auth:vendor')->prefix('catalog')->name('catalog.')->group(fun
 
             Route::post('new/import', [NewProductController::class, 'import'])->middleware('throttle:30,1')->name('new.import');
             Route::post('sort', [ProductSortController::class, 'update'])->name('sort.update');
+        });
+    });
+
+    Route::controller(StoreCategoryController::class)->prefix('categories')->name('categories.')->group(function (): void {
+        $ref = '(central|store)-[1-9][0-9]{0,18}';
+
+        Route::middleware('permission:catalog.categories.view,vendor')->group(function () use ($ref): void {
+            Route::get('/', 'index')->name('index');
+            Route::get('sort', 'sort')->name('sort');
+            Route::get('{category}/products', 'products')->where('category', $ref)->name('products');
+        });
+
+        Route::middleware('permission:catalog.categories.manage,vendor')->group(function () use ($ref): void {
+            Route::get('create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('{own}/edit', 'edit')->whereNumber('own')->name('edit');
+            Route::put('{own}', 'update')->whereNumber('own')->name('update');
+            Route::delete('{own}', 'destroy')->whereNumber('own')->name('destroy');
+            Route::patch('{category}/active', 'toggle')->where('category', $ref)->name('active');
+            Route::patch('{category}/featured', 'toggle')->where('category', $ref)->name('featured');
+            Route::post('sort', 'sortUpdate')->name('sort.update');
+            Route::get('products/search', 'search')->name('search');
+            Route::post('{category}/products', 'attach')->where('category', $ref)->name('products.attach');
+            Route::delete('{category}/products/{product}', 'detach')->where('category', $ref)->whereNumber('product')->name('products.detach');
+            Route::post('{category}/products/sort', 'sortProducts')->where('category', $ref)->name('products.sort');
+        });
+    });
+
+    Route::controller(StoreBadgeController::class)->prefix('badges')->name('badges.')->group(function (): void {
+        Route::middleware('permission:catalog.badges.view,vendor')->group(function (): void {
+            Route::get('/', 'index')->name('index');
+            Route::get('{badge}', 'show')->whereNumber('badge')->name('show');
+        });
+
+        Route::middleware('permission:catalog.badges.manage,vendor')->group(function (): void {
+            Route::get('products/search', 'search')->name('search');
+            Route::post('{badge}/products', 'add')->whereNumber('badge')->name('products.add');
+            Route::post('{badge}/add-category', 'add')->whereNumber('badge')->name('add-category');
+            Route::delete('{badge}/products/{product}', 'remove')->whereNumber('badge')->whereNumber('product')->name('products.remove');
+            Route::post('{badge}/sort', 'sort')->whereNumber('badge')->name('sort');
         });
     });
 
