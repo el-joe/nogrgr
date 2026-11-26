@@ -79,3 +79,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - elora committed a3e1a12: Elora ×6 (SF-ELO all except 013/P10), store-own categories + badge shelves on all families, decision #79. Filtered suite 330/330 (full suite pending next run). Open: Elora phone v3-v6 not compared one by one, 7px mega-menu overflow (given to souqify).
 - souqify started: P7 batch 3 Souqify ×6.
 - Client rejected the Stripe.js CDN exception (#78 b updated): storefront Stripe must use hosted Stripe Checkout redirect only. Queued as next small task ("stripe-redirect") when an agent slot frees.
+- souqify committed 8f3cea5: Souqify ×6 + inner pages (45 SF-SQF rows), decision #83, Elora/Souqify overflow fixes. Full suite 2101: 3 failures belong to vendorp8's in-progress vendor-themes work (TranslationKeysExist, VendorSetupWizard, VendorOnboarding) — vendorp8 to fix.
+- stripe-redirect started: Stripe via hosted Checkout only, remove js.stripe.com, arch test for external scripts.
