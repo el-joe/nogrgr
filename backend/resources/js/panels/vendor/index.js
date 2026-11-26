@@ -30,6 +30,7 @@ const pages = {
     'vendor-currencies': () => import('./currencies.js'),
     'vendor-domains': () => import('./domains.js'),
     'vendor-languages': () => import('./languages.js'),
+    'vendor-ai-translation': () => import('./ai-translation.js'),
     'vendor-translations': () => import('./translations.js'),
 };
 

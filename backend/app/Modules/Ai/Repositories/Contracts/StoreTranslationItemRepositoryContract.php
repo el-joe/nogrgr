@@ -5,6 +5,7 @@ namespace App\Modules\Ai\Repositories\Contracts;
 use App\Modules\Ai\Enums\StoreTranslationSection;
 use App\Modules\Ai\Models\StoreTranslationItem;
 use App\Shared\Repositories\Contracts\RepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Tenant DB (current store).
@@ -31,4 +32,11 @@ interface StoreTranslationItemRepositoryContract extends RepositoryContract
      * @return array<string, array{done: int, failed: int}>
      */
     public function countsBySection(string $locale): array;
+
+    /**
+     * Failed items of one locale (latest first), for the VEN-074 failed-items list.
+     *
+     * @return Collection<int, StoreTranslationItem>
+     */
+    public function failedItems(string $locale, int $limit = 50): Collection;
 }

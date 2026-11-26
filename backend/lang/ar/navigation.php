@@ -105,6 +105,10 @@ return [
         'ui_kit' => 'مكتبة المكونات',
     ],
     'vendor' => [
+        // Tenant Panel side menu 12:15498 (decision #101)
+        'overview' => 'نظرة عامة',
+        'customers' => 'العملاء',
+        'request_product' => 'طلب منتج',
         // P9: partner program (VEN-055)
         'partner_program' => 'برنامج الشركاء',
         // P9: support + help center (VEN-091 / 092)
@@ -119,6 +123,7 @@ return [
         'general' => 'عام',
         'currencies' => 'العملات',
         'translations' => 'ترجمات المتجر',
+        'ai_translation' => 'الترجمة بالذكاء الاصطناعي',
         'return_policy' => 'سياسة الإرجاع',
         'mail' => 'البريد (SMTP)',
         'tracking' => 'بكسلات التتبع',

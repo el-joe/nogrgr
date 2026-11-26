@@ -74,5 +74,6 @@ return [
         'not_purchasable' => 'This language cannot be bought for your store.',
         'default_disabled' => 'The default language must be switched on.',
         'not_retryable' => 'Only a failed translation can be retried.',
+        'not_repeatable' => 'Only the latest completed translation of a language can run again.',
     ],
 ];

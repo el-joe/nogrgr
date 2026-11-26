@@ -105,6 +105,10 @@ return [
         'ui_kit' => 'Component library',
     ],
     'vendor' => [
+        // Tenant Panel side menu 12:15498 (decision #101)
+        'overview' => 'Overview',
+        'customers' => 'Customers',
+        'request_product' => 'Request product',
         // P9: partner program (VEN-055)
         'partner_program' => 'Partner program',
         // P9: support + help center (VEN-091 / 092)
@@ -119,6 +123,7 @@ return [
         'general' => 'General',
         'currencies' => 'Currencies',
         'translations' => 'Store translations',
+        'ai_translation' => 'AI translation',
         'return_policy' => 'Return policy',
         'mail' => 'Mail (SMTP)',
         'tracking' => 'Tracking pixels',

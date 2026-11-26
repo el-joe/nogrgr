@@ -55,6 +55,11 @@ final class TranslationRuleException extends DomainException
         return new self(__('localization::vendor_languages.errors.not_retryable'));
     }
 
+    public static function runNotRepeatable(): self
+    {
+        return new self(__('localization::vendor_languages.errors.not_repeatable'));
+    }
+
     public static function translationUnavailable(): self
     {
         return new self(__('localization::vendor_translations.errors.ai_unavailable'));

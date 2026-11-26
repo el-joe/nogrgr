@@ -7,6 +7,7 @@ use App\Modules\Ai\Enums\TranslationItemStatus;
 use App\Modules\Ai\Models\StoreTranslationItem;
 use App\Modules\Ai\Repositories\Contracts\StoreTranslationItemRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -74,6 +75,20 @@ class StoreTranslationItemRepository extends BaseRepository implements StoreTran
         }
 
         return $counts;
+    }
+
+    public function failedItems(string $locale, int $limit = 50): Collection
+    {
+        /** @var Collection<int, StoreTranslationItem> $items */
+        $items = $this->query()
+            ->where('locale', $locale)
+            ->where('status', TranslationItemStatus::Failed->value)
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->limit($limit)
+            ->get();
+
+        return $items;
     }
 
     /**

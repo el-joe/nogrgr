@@ -21,6 +21,7 @@ use App\Modules\Localization\Repositories\Contracts\StoreTranslationRunRepositor
 use App\Modules\Localization\Repositories\Contracts\TenantLanguageRepositoryContract;
 use App\Modules\Platform\Models\Tenant;
 use App\Shared\Services\BaseService;
+use Closure;
 use Illuminate\Support\Collection;
 
 /**
@@ -131,13 +132,15 @@ class StoreLanguageService extends BaseService
     }
 
     /**
-     * Buy a language: purchase + unpaid invoice (idempotent), then the checkout.
+     * Buy a language: purchase + unpaid invoice (idempotent), then the checkout. The
+     * return URLs default to this settings page; VEN-074a passes its own.
      *
+     * @param  (Closure(PaymentLog): array{success: string, cancel: string})|null  $returnUrls
      * @return array{log: PaymentLog, redirect: string}
      *
      * @throws PaymentGatewayException
      */
-    public function startPurchase(Tenant $tenant, Language $language, PaymentGatewayCode $gateway, ?string $email): array
+    public function startPurchase(Tenant $tenant, Language $language, PaymentGatewayCode $gateway, ?string $email, ?Closure $returnUrls = null): array
     {
         $purchase = $this->purchases->purchaseLanguage((int) $tenant->id, $language->id, $language->code, (string) $language->name, $language->price(), $tenant->name);
         $invoice = $this->purchases->invoiceFor($purchase) ?? throw TranslationRuleException::languageNotPurchasable();
@@ -146,7 +149,7 @@ class StoreLanguageService extends BaseService
             $invoice,
             $gateway,
             (string) __('localization::vendor_languages.checkout_description', ['language' => $language->name, 'app' => config('app.name')]),
-            static fn (PaymentLog $log): array => [
+            $returnUrls ?? static fn (PaymentLog $log): array => [
                 'success' => vendor_route('settings.languages.payment.result', ['payment' => $log->id]),
                 'cancel' => vendor_route('settings.languages.payment.cancel', ['payment' => $log->id]),
             ],
