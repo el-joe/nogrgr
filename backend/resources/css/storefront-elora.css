@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './shared/fonts.css';
+@import './fonts/storefront-elora.css';
 @import './tokens/base.css';
 @import './tokens/storefront-elora.css';
 @import './shared/base.css';

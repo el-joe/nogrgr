@@ -10,7 +10,7 @@
 <div class="grid gap-4" data-modal-title="{{ __('catalog::vendor.new.preview_named', ['name' => $product->name]) }}" data-preview-for="{{ $product->id }}" @if ($imported) data-imported @endif>
     <div class="aspect-[512/220] overflow-hidden rounded-card bg-subtle">
         @if ($image)
-            <img src="{{ $image }}" alt="{{ $product->name }}" class="size-full object-cover">
+            <img src="{{ $image }}" alt="{{ $product->name }}" class="size-full object-contain bg-media">
         @else
             <div class="grid size-full place-items-center text-ink-muted"><x-ui::icon name="image" :size="40" /></div>
         @endif

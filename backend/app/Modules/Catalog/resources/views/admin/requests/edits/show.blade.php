@@ -70,7 +70,7 @@
                                 @foreach ($request->files ?? [] as $index => $file)
                                     <li class="relative">
                                         <a href="{{ route('admin.requests.edits.file', [$request->id, $index]) }}" target="_blank" rel="noopener" class="block size-20 overflow-hidden rounded-control border border-line bg-surface">
-                                            <img src="{{ route('admin.requests.edits.file', [$request->id, $index]) }}" alt="{{ $file['name'] }}" class="size-full object-cover" loading="lazy">
+                                            <img src="{{ route('admin.requests.edits.file', [$request->id, $index]) }}" alt="{{ $file['name'] }}" class="size-full object-contain bg-media" loading="lazy">
                                         </a>
                                         @if ($loop->first)
                                             <span class="absolute bottom-1 start-1 rounded-sm bg-ink px-1.5 text-[10px] font-medium text-surface">{{ __('catalog::requests.edits.main') }}</span>
@@ -83,7 +83,7 @@
                                 @if (! empty($imageChange['current']))
                                     <ul class="mt-2 flex flex-wrap gap-2" role="list">
                                         @foreach ((array) $imageChange['current'] as $path)
-                                            <li class="size-12 overflow-hidden rounded-control border border-line bg-surface opacity-70"><img src="{{ $service->publicUrl((string) $path) }}" alt="" class="size-full object-cover" loading="lazy"></li>
+                                            <li class="size-12 overflow-hidden rounded-control border border-line bg-surface opacity-70"><img src="{{ $service->publicUrl((string) $path) }}" alt="" class="size-full object-contain bg-media" loading="lazy"></li>
                                         @endforeach
                                     </ul>
                                 @else

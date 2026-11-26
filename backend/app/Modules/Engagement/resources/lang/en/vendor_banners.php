@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Banners',
+    'subtitle' => 'Banners at the top of your storefront in each country. Drag your banners to sort them.',
+    'crumb' => 'Your store',
+    'add' => 'Add banner',
+    'create_title' => 'New banner',
+    'countries' => 'Countries',
+    'show_defaults' => 'Show :app default banners',
+    'show_defaults_help' => 'Platform banners appear between yours; hide them all here or one by one.',
+    'list_title' => ':placement — drag to sort',
+    'platform_banner' => ':app banner · read-only',
+    'your_banner' => 'Your banner',
+    'admin_badge' => 'Admin',
+    'hidden_badge' => 'Hidden',
+    'show_named' => 'Show :title on my store',
+    'shown' => 'Banner “:title” is shown on your store.',
+    'hidden' => 'Banner “:title” is hidden on your store.',
+    'defaults_shown' => 'Platform banners are shown on your store.',
+    'defaults_hidden' => 'Platform banners are hidden on your store.',
+    'quota' => ':used of :max banners on your plan',
+    'quota_unlimited' => '{1} :used banner · unlimited on your plan|[0,*] :used banners · unlimited on your plan',
+    'limit_reached' => 'Your plan allows :max banners. Delete a banner or upgrade your plan to add more.',
+    'upgrade' => 'Upgrade plan',
+    'no_countries' => 'Choose the countries you sell in first; banners are shown per country.',
+    'empty' => [
+        'title' => 'No banners in this country yet',
+        'description' => 'Add a banner to show it at the top of your storefront here.',
+    ],
+];

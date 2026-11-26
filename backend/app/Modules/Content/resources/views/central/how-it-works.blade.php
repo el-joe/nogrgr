@@ -17,7 +17,7 @@
         <h1 id="how-title" class="mb-10 text-center text-xl font-medium text-site-ink lg:sr-only">{{ __('content::site.how.title') }}</h1>
         <span class="site-glow absolute top-1/2 left-1/2 hidden size-[72px] -translate-1/2 bg-white/20 lg:block" aria-hidden="true"></span>
         <img src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/central/pages/how-it-works-person.webp') }}" alt="{{ __('content::site.how.image_alt') }}" width="1000" height="1000" fetchpriority="high"
-            class="absolute bottom-0 left-1/2 hidden aspect-[586/661] h-[687px] w-auto -translate-x-1/2 object-cover object-left lg:block" data-reveal="fade-up">
+            class="absolute bottom-0 left-1/2 hidden aspect-[586/661] h-[687px] w-auto -translate-x-1/2 object-contain lg:block" data-reveal="fade-up">
         <span class="absolute inset-x-0 bottom-0 hidden h-[352px] bg-gradient-to-b from-white/0 to-white lg:block" aria-hidden="true"></span>
         <ol class="relative mx-auto flex max-w-[343px] flex-col gap-6 sm:max-w-md lg:static lg:max-w-none">
             @foreach ($steps as $index => $step)

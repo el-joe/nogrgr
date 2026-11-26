@@ -12,7 +12,8 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 /**
  * One purpose of a gateway: enabled switch, test/live mode, encrypted credentials
- * (`encrypted:array`, hidden from serialisation), settlement currencies and the
+ * (`encrypted:array`, hidden from serialisation), the legacy `currencies` column (unused:
+ * USD is the only payment currency, decision #87) and the
  * last connection test.
  *
  * @property int $id

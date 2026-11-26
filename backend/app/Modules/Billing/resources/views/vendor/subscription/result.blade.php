@@ -51,7 +51,7 @@
                     @if ($state === 'paid')
                         <x-ui::button icon="home" :href="vendor_route('dashboard')">{{ __('billing::vendor_subscription.actions.go_dashboard') }}</x-ui::button>
                         @if ($invoice)
-                            <x-ui::button variant="secondary" icon="printer" :href="vendor_route('finance.subscription.invoices.print', ['invoice' => $invoice->id])" target="_blank" rel="noopener">{{ __('billing::invoices.print') }}</x-ui::button>
+                            <x-ui::button variant="secondary" icon="printer" :href="vendor_route('finance.invoices.print', ['invoice' => $invoice->id])" target="_blank" rel="noopener">{{ __('billing::invoices.print') }}</x-ui::button>
                         @endif
                     @elseif ($state === 'pending')
                         <x-ui::button icon="refresh" :href="vendor_route('finance.subscription.result', ['payment' => $log->id])">{{ __('billing::vendor_subscription.actions.refresh') }}</x-ui::button>

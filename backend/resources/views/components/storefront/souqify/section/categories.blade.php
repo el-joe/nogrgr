@@ -30,7 +30,7 @@
                             <a href="{{ route('storefront.category', $category->slug) }}" class="sq-hcat group">
                                 <span class="sq-hcat-art">
                                     @if ($style !== 'squares')<span class="sq-hcat-shape" aria-hidden="true"></span>@endif
-                                    <span class="sq-hcat-img"><x-sf::category-image :category="$category" :size="132" class="size-full object-cover transition duration-500 group-hover:scale-110" /></span>
+                                    <span class="sq-hcat-img"><x-sf::category-image :category="$category" :size="132" class="size-full object-contain bg-media transition duration-500 group-hover:scale-110" /></span>
                                 </span>
                                 <span class="sq-hcat-name">{{ $category->name }}</span>
                             </a>

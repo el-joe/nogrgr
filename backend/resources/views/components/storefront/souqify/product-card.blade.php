@@ -31,7 +31,7 @@
     <article {{ $attributes->class(['sq-side mo-card', 'sq-side-deal' => $deal, 'sq-side-accent' => $tone === 'accent']) }} data-product="{{ $card->id }}">
         <div class="sq-side-media mo-card-media">
             @if ($card->image)
-                <img src="{{ $card->image }}" alt="{{ $card->name }}" width="{{ $deal ? 328 : 176 }}" height="{{ $deal ? 195 : 176 }}" class="size-full object-cover" loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async" data-fly-image>
+                <img src="{{ $card->image }}" alt="{{ $card->name }}" width="{{ $deal ? 328 : 176 }}" height="{{ $deal ? 195 : 176 }}" class="size-full object-contain bg-media" loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async" data-fly-image>
                 @if ($card->image2)
                     <img src="{{ $card->image2 }}" alt="" width="176" height="176" loading="lazy" decoding="async" aria-hidden="true" data-hover-image>
                 @endif
@@ -87,7 +87,7 @@
     <article {{ $attributes->class(['sq-pc mo-card', 'sq-pc-wide' => $wide]) }} data-product="{{ $card->id }}">
         <div class="sq-pc-media mo-card-media">
             @if ($card->image)
-                <img src="{{ $card->image }}" alt="{{ $card->name }}" width="{{ $wide ? 140 : 394 }}" height="{{ $wide ? 140 : 451 }}" class="size-full object-cover" loading="{{ $eager ? 'eager' : 'lazy' }}" @if ($eager) fetchpriority="high" @endif decoding="async" data-fly-image>
+                <img src="{{ $card->image }}" alt="{{ $card->name }}" width="{{ $wide ? 140 : 394 }}" height="{{ $wide ? 140 : 451 }}" class="size-full object-contain bg-media" loading="{{ $eager ? 'eager' : 'lazy' }}" @if ($eager) fetchpriority="high" @endif decoding="async" data-fly-image>
                 @if ($card->image2)
                     <img src="{{ $card->image2 }}" alt="" width="{{ $wide ? 140 : 394 }}" height="{{ $wide ? 140 : 451 }}" loading="lazy" decoding="async" aria-hidden="true" data-hover-image>
                 @endif

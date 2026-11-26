@@ -1,7 +1,7 @@
 {{--
     WEB-016c Payment step (Figma Central Website additions 125:10606, mobile 125:10779):
-    payment method (the platform's active registration gateways that have a hosted
-    checkout, as the old project listed them) + order summary. Coupons are hidden until
+    payment method (the platform's active registration gateways, as the old project listed
+    them; Stripe = inline card, decision #78 b) + order summary. Coupons are hidden until
     Commerce coupons exist (decisions.md). Inputs: $registration, $quote, $gateways.
 --}}
 @extends('platform::central.register._page', ['title' => __('platform::signup.page_title'), 'page' => 'register-payment'])
@@ -57,7 +57,8 @@
                         @endforeach
                     </fieldset>
                     <p class="text-sm text-danger" data-message-for="gateway" role="status" @error('gateway') @else hidden @enderror>@error('gateway'){{ $message }}@enderror</p>
-                    <p class="flex items-start gap-2 rounded-xl bg-info-bg px-3.5 py-3 text-[13px] leading-5 text-ink">
+                    <x-ui::stripe-card :gateways="$gateways" :purpose="\App\Modules\Integrations\Enums\GatewayPurpose::TenantRegistration" />
+                    <p class="flex items-start gap-2 rounded-xl bg-info-bg px-3.5 py-3 text-[13px] leading-5 text-ink" data-hosted-hint>
                         <x-ui::icon name="info" :size="18" class="mt-px shrink-0 text-info" />{{ __('platform::signup.payment.methods_hint') }}
                     </p>
                 @endif

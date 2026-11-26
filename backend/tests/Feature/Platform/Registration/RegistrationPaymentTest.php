@@ -112,6 +112,67 @@ describe('payment step', function (): void {
     });
 });
 
+describe('inline stripe card (decision #78 b)', function (): void {
+    it('renders the card panel with the publishable key only, never Stripe.js itself', function (): void {
+        registrationGateway(PaymentGatewayCode::Stripe);
+        paidRegistration();
+
+        $this->get(route('central.register.payment'))
+            ->assertOk()
+            ->assertSee('data-stripe-card', false)
+            ->assertSee('data-publishable-key="pk_test_1"', false)
+            ->assertDontSee('sk_test_1')
+            ->assertDontSee('js.stripe.com');
+    });
+
+    it('starts a PaymentIntent for the card, then verifies it on the success URL without a webhook', function (): void {
+        registrationGateway(PaymentGatewayCode::Stripe);
+        $intent = ['id' => 'pi_reg_1', 'object' => 'payment_intent', 'client_secret' => 'pi_reg_1_secret_x', 'amount' => 9900, 'currency' => 'usd'];
+        Http::fake([
+            'https://api.stripe.com/v1/payment_intents' => Http::response($intent + ['status' => 'requires_payment_method']),
+            'https://api.stripe.com/v1/payment_intents/pi_reg_1' => Http::response($intent + ['status' => 'succeeded', 'amount_received' => 9900]),
+        ]);
+        $registration = paidRegistration();
+
+        $response = $this->postJson(route('central.register.payment.store'), ['gateway' => 'stripe'])
+            ->assertOk()
+            ->assertJsonPath('data.inline.client_secret', 'pi_reg_1_secret_x')
+            ->assertJsonPath('data.inline.publishable_key', 'pk_test_1');
+        $log = PaymentLog::query()->withoutGlobalScopes()->latest('id')->firstOrFail();
+
+        expect($log->gateway_reference)->toBe('pi_reg_1')
+            ->and($log->payload['inline'])->toBeTrue()
+            ->and((string) $response->json('data.inline.return_url'))->toContain('/register/payment/')->toContain('signature=');
+        Http::assertSent(fn (HttpRequest $request): bool => $request->url() === 'https://api.stripe.com/v1/payment_intents'
+            && (int) $request['amount'] === 9900 && $request['currency'] === 'usd' && $request['payment_method_types[0]'] === 'card');
+        Http::assertNotSent(fn (HttpRequest $request): bool => str_contains($request->url(), 'checkout/sessions'));
+
+        $this->get((string) $response->json('data.inline.return_url'))
+            ->assertOk()
+            ->assertSee(__('platform::signup.payment.success_title'));
+
+        expect($log->fresh()->status)->toBe(PaymentLogStatus::Captured)
+            ->and($log->fresh()->payload['transaction_id'])->toBe('pi_reg_1')
+            ->and($registration->fresh()->status)->toBe(RegistrationStatus::EmailUnverified);
+    });
+
+    it('keeps the registration payable when the card is declined', function (): void {
+        registrationGateway(PaymentGatewayCode::Stripe);
+        $intent = ['id' => 'pi_reg_2', 'object' => 'payment_intent', 'client_secret' => 'pi_reg_2_secret_x', 'amount' => 9900, 'currency' => 'usd'];
+        Http::fake([
+            'https://api.stripe.com/v1/payment_intents' => Http::response($intent + ['status' => 'requires_payment_method']),
+            'https://api.stripe.com/v1/payment_intents/pi_reg_2' => Http::response($intent + ['status' => 'requires_payment_method', 'last_payment_error' => ['message' => 'Your card was declined.']]),
+        ]);
+        $registration = paidRegistration();
+        $url = (string) $this->postJson(route('central.register.payment.store'), ['gateway' => 'stripe'])->assertOk()->json('data.inline.return_url');
+
+        $this->get($url)->assertOk()->assertSee('Your card was declined.');
+
+        expect(PaymentLog::query()->withoutGlobalScopes()->latest('id')->firstOrFail()->status)->toBe(PaymentLogStatus::Failed)
+            ->and($this->get(route('central.register.payment'))->assertOk()->getContent())->toContain('data-stripe-card');
+    });
+});
+
 describe('stripe checkout', function (): void {
     it('pays, settles the payment log and moves the registration to e-mail verification', function (): void {
         registrationGateway(PaymentGatewayCode::Stripe);

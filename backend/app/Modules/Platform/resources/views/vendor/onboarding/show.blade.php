@@ -151,7 +151,7 @@
                 <div class="flex items-center gap-4">
                     <span class="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-subtle text-ink-muted" data-logo-preview>
                         @if ($logoUrl)
-                            <img src="{{ $logoUrl }}" alt="{{ __('platform::onboarding.logo.current') }}" class="size-full object-cover" width="64" height="64">
+                            <img src="{{ $logoUrl }}" alt="{{ __('platform::onboarding.logo.current') }}" class="size-full object-contain bg-media" width="64" height="64">
                         @else
                             <x-ui::icon name="image" :size="24" />
                         @endif

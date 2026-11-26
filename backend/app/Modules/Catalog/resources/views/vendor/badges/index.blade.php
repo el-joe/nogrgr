@@ -62,7 +62,7 @@
                             <x-ui::icon name="shield" :size="18" class="text-ink-muted" />
                             <span class="w-6 text-xs text-ink-muted" dir="ltr">{{ $index + 1 }}</span>
                             @if ($view->primaryImageUrl())
-                                <img src="{{ $view->primaryImageUrl() }}" alt="" class="size-9 rounded-chip object-cover" loading="lazy">
+                                <img src="{{ $view->primaryImageUrl() }}" alt="" class="size-9 rounded-chip object-contain bg-media" loading="lazy">
                             @else
                                 <span class="grid size-9 place-items-center rounded-chip bg-primary-subtle text-ink-brand"><x-ui::icon name="box" :size="16" /></span>
                             @endif

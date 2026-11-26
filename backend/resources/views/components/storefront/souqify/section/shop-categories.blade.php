@@ -28,7 +28,7 @@
                                 <div @class(['grid h-[236px] gap-3 lg:h-[328px]', 'grid-rows-2' => count($group) === 2])>
                                     @foreach ($group as $category)
                                         <a href="{{ route('storefront.category', $category->slug) }}" class="sq-tile group">
-                                            <x-sf::category-image :category="$category" :size="322" class="size-full object-cover transition duration-700 group-hover:scale-105" />
+                                            <x-sf::category-image :category="$category" :size="322" class="size-full object-contain bg-media transition duration-700 group-hover:scale-105" />
                                             <span class="sq-tile-name">{{ $category->name }}</span>
                                         </a>
                                     @endforeach
@@ -41,7 +41,7 @@
                                 <a href="{{ route('storefront.category', $category->slug) }}" class="sq-shop-item group">
                                     <span class="sq-shop-art">
                                         <span class="sq-shop-shape" aria-hidden="true">@if ($style === 'slanted')<x-ui::icon name="sparkles" :size="28" />@endif</span>
-                                        <span class="sq-shop-img"><x-sf::category-image :category="$category" :size="200" class="size-full object-cover transition duration-700 group-hover:scale-105" /></span>
+                                        <span class="sq-shop-img"><x-sf::category-image :category="$category" :size="200" class="size-full object-contain bg-media transition duration-700 group-hover:scale-105" /></span>
                                     </span>
                                     <span class="sq-shop-name">{{ $category->name }}</span>
                                 </a>

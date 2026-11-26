@@ -31,3 +31,12 @@ it('builds initials and sparkline points', function (): void {
         ->and(Ui::sparkline([1, 2, 3], 72, 24))->toBe('0,22 36,12 72,2')
         ->and(Ui::sparkline([], 72, 24))->toBe('0,12 72,12');
 });
+
+it('keeps the casing of a role name the store typed and headlines only slugs (QA-P8-007)', function (string $role, string $label): void {
+    expect(Ui::roleLabel($role))->toBe($label);
+})->with([
+    ['QA Support', 'QA Support'],
+    ['iOS Team', 'iOS Team'],
+    ['packer', 'Packer'],
+    ['support-agent', 'Support Agent'],
+]);

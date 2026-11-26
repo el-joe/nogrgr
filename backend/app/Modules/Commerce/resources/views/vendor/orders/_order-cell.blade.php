@@ -1,7 +1,7 @@
 @php $first = $order->items->first(); @endphp
 <a href="{{ vendor_route('sales.orders.show', ['order' => $order->uuid]) }}" class="flex items-center gap-3">
     @if ($first?->image_url)
-        <img src="{{ $first->image_url }}" alt="" class="size-9 shrink-0 rounded-control object-cover" loading="lazy">
+        <img src="{{ $first->image_url }}" alt="" class="size-9 shrink-0 rounded-control object-contain bg-media" loading="lazy">
     @else
         <span class="grid size-9 shrink-0 place-items-center rounded-control bg-subtle text-ink-secondary"><x-ui::icon name="box" :size="18" /></span>
     @endif

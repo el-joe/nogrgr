@@ -49,13 +49,12 @@ export function collectFilters(target) {
 }
 
 /**
- * Whether the person narrowed the list. A hidden field without a label (the page's tab
- * or status scope, e.g. <input type="hidden" name="tab" data-filter>) is a fixed scope,
- * not a filter: an empty tab shows the "nothing yet" state, not "no results" (QA-P5-017).
+ * Whether the person narrowed the list: an empty fixed scope shows the "nothing yet"
+ * state with its create button, not "No results match your filters".
  */
 export function hasActiveFilters(target) {
     return fieldsFor(target).some((field) => {
-        if (field.type === 'hidden' && !field.hasAttribute('data-filter-label')) {
+        if (isFixedScope(field)) {
             return false;
         }
 
@@ -63,6 +62,18 @@ export function hasActiveFilters(target) {
 
         return Array.isArray(value) ? value.length > 0 : value !== '';
     });
+}
+
+/**
+ * A fixed scope is not a filter: the list is always shown for one value of it.
+ *  - a hidden field without a label (the page's tab or status scope, e.g.
+ *    <input type="hidden" name="tab" data-filter>) (QA-P5-017);
+ *  - any field marked data-filter-fixed, e.g. a select that always has a value
+ *    (the banner placement switcher, QA-P8-006). It is sent and kept in the URL but
+ *    gets no chip and "Clear filters" leaves it alone.
+ */
+function isFixedScope(field) {
+    return field.hasAttribute('data-filter-fixed') || (field.type === 'hidden' && !field.hasAttribute('data-filter-label'));
 }
 
 function writeUrl(target) {
@@ -115,7 +126,7 @@ function labelFor(field) {
 function renderChips(target) {
     const bar = document.querySelector(`[data-filters="${CSS.escape(target)}"]`);
     const chips = bar?.querySelector('[data-filter-chips]');
-    const fields = fieldsFor(target).filter((field) => field.dataset.filterLabel && valueOf(field).length !== 0 && valueOf(field) !== '');
+    const fields = fieldsFor(target).filter((field) => !isFixedScope(field) && field.dataset.filterLabel && valueOf(field).length !== 0 && valueOf(field) !== '');
     const seen = new Set();
     let count = 0;
 
@@ -259,7 +270,7 @@ export function initFilters(root = document) {
 
         if (clear) {
             const target = clear.dataset.filtersClear || clear.closest('[data-filters]')?.dataset.filters || '';
-            clearFields(target, fieldsFor(target));
+            clearFields(target, fieldsFor(target).filter((field) => !isFixedScope(field)));
         } else if (applyButton) {
             apply(applyButton.dataset.filtersApply);
         }

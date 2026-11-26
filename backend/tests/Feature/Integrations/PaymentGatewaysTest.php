@@ -115,14 +115,16 @@ it('saves both configs with encrypted credentials and fees', function (): void {
         ->and($gateway->feeFor(Money::of(100))->minor)->toBe(320)
         ->and($vendor->is_enabled)->toBeTrue()
         ->and($vendor->mode)->toBe(GatewayMode::Live)
-        ->and($vendor->currencies)->toBe(['USD', 'SAR'])
+        // USD is the only payment currency (decision #87): no settlement currencies are kept.
+        ->and($vendor->currencies)->toBeEmpty()
         ->and($vendor->credential('secret_key'))->toBe('sk_live_51NSECRETVALUE4f9K')
         ->and($vendor->getRawOriginal('credentials'))->not->toContain('SECRETVALUE')
         ->and($vendor->toArray())->not->toHaveKey('credentials')
         ->and($gateway->config(GatewayPurpose::TenantRegistration)->is_enabled)->toBeFalse();
 
     $page = $this->actingAs($admin, 'admin')->get($this->centralUrl('/admin/integrations/gateways/stripe/edit'))->assertOk();
-    expect($page->getContent())->not->toContain('sk_live_51NSECRETVALUE4f9K')->toContain('4f9K')->toContain('pk_live_51NabcdefQe');
+    expect($page->getContent())->not->toContain('sk_live_51NSECRETVALUE4f9K')->toContain('4f9K')->toContain('pk_live_51NabcdefQe')
+        ->not->toContain('[currencies]');
 
     // Blank secret keeps the stored one.
     $this->actingAs($admin, 'admin')
@@ -142,7 +144,6 @@ it('validates gateway input', function (): void {
         ->assertJsonValidationErrors([
             'fee_percent',
             'configs.vendor_payments.mode',
-            'configs.vendor_payments.currencies.0',
             'configs.vendor_payments.credentials.publishable_key',
             'configs.vendor_payments.credentials.secret_key',
         ]);

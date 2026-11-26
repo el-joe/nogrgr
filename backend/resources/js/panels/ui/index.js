@@ -14,11 +14,13 @@ import { initFilters, refreshFilterChips } from './filters';
 import { initDatePickers } from './date';
 import { initCharts } from './charts';
 import { initCommand } from './command';
+import { initLiveRegions } from './live';
 
 export { openOverlay, closeOverlay } from './overlays';
 export { confirmDialog } from './confirm';
 export { activateTab } from './tabs';
 export { toggleSidebar } from './sidebar';
+export { notifyChanged } from './live';
 
 export function initUi(root = document) {
     useConfirmDialog(confirmDialog);
@@ -34,4 +36,5 @@ export function initUi(root = document) {
     initUploads(root);
     initCharts(root);
     initCommand(root);
+    initLiveRegions();
 }

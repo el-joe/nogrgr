@@ -57,7 +57,7 @@ final class VendorPanel
      * @var list<string>
      */
     public const STORE_HOST_ONLY_ROUTES = [
-        'password.request', 'password.email', 'password.reset', 'password.store',
+        'password.request', 'password.email', 'password.reset', 'password.store', 'invitation.accept',
         'verification.verify', 'verification.send',
     ];
 

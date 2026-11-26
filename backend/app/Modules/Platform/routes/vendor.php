@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Identity\Http\Controllers\Vendor\ImpersonationController;
+use App\Modules\Platform\Http\Controllers\Vendor\ComplianceController;
 use App\Modules\Platform\Http\Controllers\Vendor\DashboardController;
 use App\Modules\Platform\Http\Controllers\Vendor\OnboardingController;
 use App\Modules\Platform\Http\Controllers\Vendor\SetupWizardController;
@@ -44,3 +45,22 @@ Route::middleware(['auth:vendor', 'permission:settings.languages.manage,vendor']
 
 /* Impersonation "End session" (VEN-005): sign-out-like, only needs the vendor session. */
 Route::middleware('auth:vendor')->post('impersonation/leave', [ImpersonationController::class, 'leave'])->name('impersonation.leave');
+
+/*
+| Settings › Compliance center (VEN-084): vendor.settings.compliance.* — the store's central
+| KYC profile (same record the admin reviews). {document} = compliance document id of the
+| current store; {country} = active central country id (Select2 city options).
+*/
+Route::middleware('auth:vendor')->prefix('settings/compliance')->name('settings.compliance.')->controller(ComplianceController::class)->group(function (): void {
+    Route::middleware('permission:settings.compliance.view,vendor')->group(function (): void {
+        Route::get('/', 'edit')->name('edit');
+        Route::get('cities-by-country/{country}', 'cities')->whereNumber('country')->name('cities');
+        Route::get('documents/{document}', 'document')->whereNumber('document')->name('documents.show');
+    });
+
+    Route::middleware(['permission:settings.compliance.manage,vendor', 'throttle:30,1'])->group(function (): void {
+        Route::post('/', 'update')->name('update');
+        Route::post('submit', 'submit')->name('submit');
+        Route::delete('documents/{document}', 'destroyDocument')->whereNumber('document')->name('documents.destroy');
+    });
+});

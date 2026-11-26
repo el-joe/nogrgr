@@ -518,7 +518,7 @@ function initSortPage(root) {
                 const image = document.createElement('img');
                 image.src = row.image;
                 image.alt = '';
-                image.className = 'size-full object-cover';
+                image.className = 'size-full object-contain bg-media';
                 item.querySelector('[data-field="image"]').appendChild(image);
             }
 

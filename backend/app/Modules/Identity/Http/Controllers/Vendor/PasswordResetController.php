@@ -54,6 +54,24 @@ class PasswordResetController extends Controller
         ]);
     }
 
+    /**
+     * Staff invitation landing (VEN-076a, QA-P8-008): the same one-time broker token as a
+     * reset, shown as "Welcome to <store> · set your password". Posts to password.store.
+     */
+    public function invitation(Request $request, string $token): View
+    {
+        $email = is_string($request->query('email')) ? $request->query('email') : null;
+
+        return view('identity::vendor.invitation', [
+            'action' => vendor_route('password.store'),
+            'token' => $token,
+            'email' => $email,
+            'store' => (string) (tenant()?->getAttribute('name') ?? config('app.name')),
+            'invalid' => ! $this->passwords->tokenIsValid(Guard::Vendor, $email, $token),
+            'loginUrl' => vendor_route('login'),
+        ]);
+    }
+
     public function store(ResetPasswordRequest $request): RedirectResponse
     {
         try {
@@ -62,6 +80,8 @@ class PasswordResetController extends Controller
             return back()->withInput($request->only('email'))->with('vendor_reset_invalid', true)->withErrors($exception->errors());
         }
 
-        return redirect()->to(vendor_route('login'))->with('success', __('identity::auth.reset.done'));
+        $done = $request->boolean('invitation') ? __('identity::vendor_auth.invitation.done') : __('identity::auth.reset.done');
+
+        return redirect()->to(vendor_route('login'))->with('success', $done);
     }
 }

@@ -18,7 +18,7 @@
     <div class="flex gap-3 rounded-xl bg-white p-3 lg:gap-6 lg:p-5" data-swipe-content>
         <a href="{{ $url }}" class="relative grid size-[96px] shrink-0 place-items-center overflow-hidden rounded-lg bg-sq-soft lg:size-[148px]" tabindex="-1">
             @if ($line['image_url'])
-                <img src="{{ $line['image_url'] }}" alt="" class="size-full object-cover" loading="lazy" decoding="async">
+                <img src="{{ $line['image_url'] }}" alt="" class="size-full object-contain bg-media" loading="lazy" decoding="async">
             @else
                 <x-ui::icon name="image" :size="28" class="text-sq-line" />
             @endif

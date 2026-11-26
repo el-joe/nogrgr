@@ -43,6 +43,7 @@
                         @else
                             <x-ui::radio-group name="gateway" :label="__('catalog::vendor_requests.payment.gateway')" :options="$gatewayOptions" :value="array_key_first($gatewayOptions)" required />
                         @endif
+                        <x-ui::stripe-card :gateways="$gateways" :purpose="\App\Modules\Integrations\Enums\GatewayPurpose::VendorPayments" />
                         <x-ui::button type="submit" icon="credit-card" class="justify-self-start">{{ __('catalog::vendor_requests.payment.pay', ['amount' => $payment->amount->format()]) }}</x-ui::button>
                     </form>
                 @endif

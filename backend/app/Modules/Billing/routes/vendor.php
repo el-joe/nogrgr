@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Billing\Http\Controllers\Vendor\InvoiceController;
 use App\Modules\Billing\Http\Controllers\Vendor\MoneyFlowController;
 use App\Modules\Billing\Http\Controllers\Vendor\SubscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -10,7 +11,20 @@ use Illuminate\Support\Facades\Route;
 |   vendor.finance.settlements.*  settlement payments vendor → platform (VEN-063)
 |   vendor.finance.payouts.*      payouts received platform → store (VEN-064)
 |   vendor.finance.subscription*  subscription & balance, renew / change plan / pay invoice (VEN-060…060d)
+|   vendor.finance.invoices.*     platform invoices list / detail / print-PDF (VEN-061 / 061a); detail and
+|                                 print also open with finance.subscription.view (links from VEN-060c)
 */
+
+Route::middleware('auth:vendor')->prefix('finance/invoices')->name('finance.invoices.')->controller(InvoiceController::class)->group(function (): void {
+    Route::middleware('permission:finance.invoices.view,vendor')->group(function (): void {
+        Route::get('/', 'index')->name('index');
+        Route::get('data', 'data')->name('data');
+    });
+    Route::middleware('permission:finance.invoices.view|finance.subscription.view,vendor')->group(function (): void {
+        Route::get('{invoice}', 'show')->whereNumber('invoice')->name('show');
+        Route::get('{invoice}/print', 'print')->whereNumber('invoice')->name('print');
+    });
+});
 
 Route::middleware('auth:vendor')->prefix('finance')->name('finance.')->controller(MoneyFlowController::class)->group(function (): void {
     Route::middleware('permission:finance.purchases.view,vendor')->group(function (): void {

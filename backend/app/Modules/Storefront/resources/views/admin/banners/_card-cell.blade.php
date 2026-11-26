@@ -19,7 +19,7 @@
         </button>
     @endif
     <span class="w-5 shrink-0 text-center text-xs text-ink-muted" dir="ltr" data-sort-position></span>
-    <img src="{{ $banner->imageUrl() }}" alt="{{ $title }}" width="86" height="52" loading="lazy" class="h-[52px] w-[86px] shrink-0 rounded-control bg-subtle object-cover">
+    <img src="{{ $banner->imageUrl() }}" alt="{{ $title }}" width="86" height="52" loading="lazy" class="h-[52px] w-[86px] shrink-0 rounded-control bg-subtle object-contain">
     <div class="min-w-0">
         <p class="truncate text-sm font-medium text-ink">{{ $title }}</p>
         <p class="mt-0.5 truncate text-xs text-ink-muted">

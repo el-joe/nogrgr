@@ -1,7 +1,7 @@
 @php $sources = $post->coverSources(); @endphp
 <div class="flex min-w-0 items-center gap-3">
     @if ($sources['src'])
-        <img src="{{ $sources['webp'] ?? $sources['src'] }}" alt="" class="h-10 w-16 shrink-0 rounded-chip object-cover" loading="lazy">
+        <img src="{{ $sources['webp'] ?? $sources['src'] }}" alt="" class="h-10 w-16 shrink-0 rounded-chip object-contain bg-media" loading="lazy">
     @else
         <span class="grid h-10 w-16 shrink-0 place-items-center rounded-chip bg-subtle text-ink-muted"><x-ui::icon name="image" :size="16" /></span>
     @endif

@@ -3,3 +3,11 @@
     --nog-primary: #ff522c;
     --nog-primary-hover: #e8441f;
 }
+
+/* Fonts (Figma "Central Website" 12:41054: Outfit; FAQ's Component uses Inter, 12:41912;
+   Arabic frames on 125:10147 use Noto Sans Arabic). Loaded by fonts/central.css. */
+:root {
+    --nog-font-latin: 'Outfit', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --nog-font-arabic: 'Noto Sans Arabic', 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --site-font-faq: 'Inter', var(--nog-font-sans);
+}

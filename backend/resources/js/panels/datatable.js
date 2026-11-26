@@ -13,7 +13,8 @@
  *     [data-bulk-confirm="message"][data-bulk-confirm-title] (asks before sending)
  *
  * Filters: every [data-filter] of the filters bar bound to the table (see filters.js)
- * is sent with each request. `datatable:reload` on the card reloads it in place.
+ * is sent with each request. `datatable:reload` on the card reloads it in place
+ * ({detail: {keepPage, quiet}}); `datatable:drawn` fires on the card after each draw.
  */
 import { $, DataTable } from './vendor-libs';
 import { t, numberLocale } from '../core/i18n';
@@ -184,13 +185,15 @@ export function initDataTable(table, options = {}) {
             renderPagination(card, instance);
             syncSelection(card);
             showState(card, instance, instance.page.info().recordsDisplay === 0 ? 'empty' : 'ready');
+            delete card.dataset.quietReload;
+            card.dispatchEvent(new CustomEvent('datatable:drawn'));
         },
         language: { processing: '', emptyTable: '', zeroRecords: '' },
         ...options,
     });
 
     api.on('processing.dt', (event, settings, processing) => {
-        if (processing) {
+        if (processing && card.dataset.quietReload === undefined) {
             card.dataset.state = 'loading';
         }
     });
@@ -262,8 +265,18 @@ export function initDataTable(table, options = {}) {
         }
     });
 
-    /* Filters/search changed: go back to page 1 (QA-P0-013). Pass detail.keepPage to stay on the current page. */
-    card.addEventListener('datatable:reload', (event) => api.ajax.reload(null, !event.detail?.keepPage));
+    /*
+     * Filters/search changed: go back to page 1 (QA-P0-013). Pass detail.keepPage to stay on
+     * the current page, detail.quiet to refresh the rows in place without the skeleton
+     * (after a row switch, QA-P8-005). `datatable:drawn` fires on the card after each draw.
+     */
+    card.addEventListener('datatable:reload', (event) => {
+        if (event.detail?.quiet) {
+            card.dataset.quietReload = '';
+        }
+
+        api.ajax.reload(null, !event.detail?.keepPage);
+    });
 
     return api;
 }

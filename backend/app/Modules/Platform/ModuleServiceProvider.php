@@ -8,10 +8,12 @@ use App\Modules\Identity\Models\Owner;
 use App\Modules\Platform\Contracts\CertificateInspector;
 use App\Modules\Platform\Contracts\DnsResolver;
 use App\Modules\Platform\Events\ComplianceReviewed;
+use App\Modules\Platform\Events\ComplianceSubmitted;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Modules\Platform\Events\TenantProvisioningFailed;
 use App\Modules\Platform\Listeners\AdvanceRegistrationOnPayment;
 use App\Modules\Platform\Listeners\AlertProvisioningFailure;
+use App\Modules\Platform\Listeners\NotifyAdminsOfComplianceSubmission;
 use App\Modules\Platform\Listeners\NotifyOwnerOfComplianceDecision;
 use App\Modules\Platform\Listeners\WelcomeProvisionedVendor;
 use App\Modules\Platform\Policies\OwnerStorePolicy;
@@ -79,6 +81,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Event::listen(TenantProvisioned::class, WelcomeProvisionedVendor::class);
         Event::listen(TenantProvisioningFailed::class, AlertProvisioningFailure::class);
         Event::listen(ComplianceReviewed::class, NotifyOwnerOfComplianceDecision::class);
+        Event::listen(ComplianceSubmitted::class, NotifyAdminsOfComplianceSubmission::class);
         Event::listen(PaymentCaptured::class, [AdvanceRegistrationOnPayment::class, 'captured']);
         Event::listen(PaymentFailed::class, [AdvanceRegistrationOnPayment::class, 'failed']);
 

@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'nav' => 'مشتركو النشرة البريدية',
+    'title' => 'مشتركو النشرة البريدية',
+    'subtitle' => 'كل من اشترك في النشرة البريدية لمتجرك، من حسابات العملاء ونموذج الاشتراك.',
+    'section' => 'العملاء',
+    'breadcrumb' => 'النشرة البريدية',
+    'export' => 'تصدير CSV',
+    'search' => 'ابحث بالبريد الإلكتروني',
+    'empty_title' => 'لا يوجد مشتركون بعد',
+    'empty_description' => 'يظهر هنا الزوار الذين يشتركون في نشرتك البريدية من المتجر.',
+    'columns' => [
+        'email' => 'البريد الإلكتروني',
+        'language' => 'اللغة',
+        'source' => 'المصدر',
+        'status' => 'الحالة',
+        'subscribed' => 'تاريخ الاشتراك',
+        'actions' => 'الإجراءات',
+    ],
+    'filters' => [
+        'language' => 'اللغة',
+        'status' => 'الحالة',
+        'source' => 'المصدر',
+    ],
+    'statuses' => [
+        'subscribed' => 'مشترك',
+        'unsubscribed' => 'ألغى الاشتراك',
+    ],
+    'sources' => [
+        'account' => 'حساب عميل',
+        'signup_form' => 'نموذج الاشتراك',
+    ],
+    'view_customer' => 'عرض عميل :email',
+    'unsubscribe' => 'إلغاء الاشتراك',
+    'resubscribe' => 'إعادة الاشتراك',
+    'unsubscribe_message' => 'لن يستلم هذا العنوان نشرتك البريدية بعد الآن.',
+    'resubscribe_message' => 'سيستلم هذا العنوان نشرتك البريدية مجددًا.',
+    'unsubscribed' => 'تم إلغاء اشتراك :email.',
+    'resubscribed' => 'تمت إعادة اشتراك :email.',
+    'delete' => 'حذف',
+    'delete_title' => 'حذف :email؟',
+    'delete_message' => 'سيُحذف المشترك من قائمة نشرتك البريدية.',
+    'deleted' => 'تم حذف :email.',
+];

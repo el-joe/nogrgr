@@ -139,7 +139,7 @@
                             <td class="px-3 py-2"><input type="number" data-field="weight_grams" data-label="{{ __('catalog::products.variants.weight') }}" min="0" step="1" dir="ltr" class="ui-control h-9 w-20 px-2" data-validate></td>
                             <td class="px-3 py-2">
                                 <span class="flex items-center gap-2">
-                                    <img data-variant-image alt="" class="hidden size-8 rounded-chip object-cover">
+                                    <img data-variant-image alt="" class="hidden size-8 rounded-chip object-contain bg-media">
                                     <input type="file" data-field="image" data-label="{{ __('catalog::products.variants.image') }}" accept="image/jpeg,image/png,image/webp" class="w-40 text-xs file:me-2 file:rounded-chip file:border-0 file:bg-subtle file:px-2 file:py-1 file:text-xs">
                                     <label data-remove-image-wrap class="hidden items-center gap-1 text-xs text-ink-secondary"><input type="checkbox" data-field="remove_image" data-label="{{ __('catalog::products.variants.remove_image') }}" value="1" class="ui-check">{{ __('catalog::products.variants.remove_image') }}</label>
                                 </span>

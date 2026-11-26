@@ -140,8 +140,11 @@ it('shows ar / en on and buys a paid language through the hosted checkout', func
     $this->actingAsVendor($betaOwner, $beta)->get($this->tenantUrl($beta, 'admin/onboarding/setup/languages/payments/'.$log->id.'/result'))->assertNotFound();
 });
 
-it('says themes come later and launches the store once countries are set', function (): void {
-    ($this->as)()->get(($this->url)('?step=theme'))->assertOk()->assertSee(__('platform::onboarding.steps.theme.available_after'));
+it('links the theme step to the themes page and launches the store once countries are set', function (): void {
+    ($this->as)()->get(($this->url)('?step=theme'))->assertOk()
+        ->assertSee(__('platform::setup.theme.choose'))
+        ->assertSee($this->tenantUrl($this->tenant, 'admin/store/themes'), false)
+        ->assertDontSee(__('platform::onboarding.steps.theme.available_after'));
 
     ($this->as)()->post(($this->url)('/launch'))->assertRedirect(($this->url)('?step=countries'))->assertSessionHas('error');
 

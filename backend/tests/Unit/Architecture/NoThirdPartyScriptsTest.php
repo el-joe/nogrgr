@@ -3,15 +3,21 @@
 use Symfony\Component\Finder\Finder;
 
 /*
-| Decision #78 (b): the client rejected loading Stripe.js — no third-party script is ever
-| loaded on the storefront or any panel. Every script is a Vite input served by the app
-| (CLAUDE.md "no CDN"); payment gateways are hosted redirects (Stripe Checkout, PayPal).
+| Decision #78 (b): every script is a Vite input served by the app (CLAUDE.md "no CDN").
+| The ONE exception (client, 2026-11-26) is Stripe.js `https://js.stripe.com/v3/` for the
+| inline Stripe card, and only from the shared loader resources/js/core/payments/stripe-card.js
+| (loaded on demand when Stripe is chosen). Anything else fails.
 | Scans every Blade view and JS module under resources/ and app/Modules for:
 |   - a known third-party script / SDK host (Stripe.js, PayPal SDK, CDNs, tag managers…);
 |   - a <script> or <link rel=stylesheet|preload|modulepreload> pointing at another host;
 |   - JS that injects a remote script (`.src = 'https://…'`, setAttribute('src', …),
 |     dynamic import() / importScripts() of a remote URL).
 */
+
+/** The only file allowed to reference Stripe.js, and the exact URL it may load. */
+const STRIPE_LOADER_PATH = 'js/core/payments/stripe-card.js';
+
+const STRIPE_JS_LINE = "const STRIPE_JS = 'https://js.stripe.com/v3/';";
 
 /**
  * @return list<string>
@@ -65,6 +71,10 @@ function thirdPartyScriptViolations(string $path, string $source): array
     $violations = [];
 
     foreach (preg_split('/\R/', $source) ?: [] as $index => $line) {
+        if (in_array(str_replace('\\', '/', $path), [STRIPE_LOADER_PATH, 'resources/'.STRIPE_LOADER_PATH], true) && trim($line) === STRIPE_JS_LINE) {
+            continue;
+        }
+
         foreach (thirdPartyScriptHosts() as $host) {
             if (stripos($line, $host) !== false) {
                 $violations[] = $path.':'.($index + 1).' — third-party host '.$host;
@@ -90,6 +100,17 @@ it('loads no third-party script on the storefront or any panel', function (): vo
     }
 
     expect($violations)->toBe([]);
+});
+
+it('allows Stripe.js only through the shared Stripe loader', function (): void {
+    $loader = (string) file_get_contents(dirname(__DIR__, 3).'/resources/'.STRIPE_LOADER_PATH);
+
+    expect($loader)->toContain(STRIPE_JS_LINE)
+        ->and(thirdPartyScriptViolations('resources/'.STRIPE_LOADER_PATH, $loader))->toBe([])
+        // The same line anywhere else, or another Stripe URL in the loader, still fails.
+        ->and(thirdPartyScriptViolations('resources/js/storefront/commerce/payment.js', STRIPE_JS_LINE))->not->toBe([])
+        ->and(thirdPartyScriptViolations('resources/'.STRIPE_LOADER_PATH, "const SDK = 'https://js.stripe.com/v2/';"))->not->toBe([])
+        ->and(thirdPartyScriptViolations('resources/'.STRIPE_LOADER_PATH, "script.src = 'https://cdn.example.com/x.js';"))->not->toBe([]);
 });
 
 it('recognises the remote script loaders it guards against', function (string $source): void {

@@ -91,7 +91,7 @@
                             @forelse ($images as $index => $image)
                                 <div class="swiper-slide">
                                     <div class="swiper-zoom-container">
-                                        <img src="{{ $image }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="1144" height="1390" class="size-full object-cover" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
+                                        <img src="{{ $image }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="1144" height="1390" class="size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
                                     </div>
                                 </div>
                             @empty

@@ -1,15 +1,29 @@
 /**
- * Payment section of the old project (spec 08 §1) for the checkout, the pay page and
+ * Payment section of the old project (spec 08 §1–§2) for the checkout, the pay page and
  * the redirect page:
- *  - nothing pre-selected; every gateway is a hosted redirect (Stripe Checkout, PayPal):
- *    no gateway script or card field is ever loaded on the store (decision #78 b);
- *  - startPayment(): POST /store-api/v1/payments/{order}/start → follow the provider URL;
- *    the provider sends the payer back to `checkout/payment/{gateway}/{order}?status=…`.
+ *  - nothing pre-selected; selecting Stripe shows the inline card panel (Stripe.js Card
+ *    Element through the shared core/payments/stripe-card.js — loaded only then,
+ *    decision #78 b); PayPal is a hosted redirect;
+ *  - startPayment(): POST /store-api/v1/payments/{order}/start → PayPal follows the
+ *    provider URL; Stripe confirms the PaymentIntent with the card (3-D Secure inside
+ *    Stripe's own dialog) and opens `checkout/payment/stripe/{order}?status=success`,
+ *    where the server reads the intent and marks the order paid (no webhook). A declined
+ *    card shows its message in the panel; the next Pay retries the same intent.
  */
 import { storeApi } from './api';
 import { toast } from '../../core/notify';
+import { createStripeCard } from '../../core/payments/stripe-card';
 
 const fill = (template, values) => Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`__${key}__`, encodeURIComponent(value)), template);
+
+export function returnUrl(config, gateway, order, status, reference = '') {
+    const url = fill(config.return, { GATEWAY: gateway, ORDER: order });
+
+    return `${url}?${new URLSearchParams({ status, reference })}`;
+}
+
+/** Rejection of startPayment() when the card was declined (message already in the panel). */
+export class CardDeclined extends Error {}
 
 /**
  * Binds one payment section; returns its API.
@@ -22,11 +36,30 @@ export function initPaymentSection(root, messages = {}) {
     }
 
     const error = section.querySelector('[data-payment-error]');
+    const panel = section.querySelector('[data-inline-card]');
+    const card = panel ? createStripeCard(panel, { key: null, errorText: messages.card_error ?? panel.dataset.cardErrorText }) : null;
     const selected = () => section.querySelector('[data-gateway-radio]:checked');
+    const isInline = (radio) => radio?.dataset.inline === '1' && Boolean(radio.dataset.publishableKey);
+
+    const onSelect = () => {
+        const radio = selected();
+        error.hidden = true;
+
+        if (!panel) {
+            return;
+        }
+
+        panel.hidden = !isInline(radio);
+        card.showError('');
+
+        if (isInline(radio)) {
+            card.mount(radio.dataset.publishableKey).catch(() => {});
+        }
+    };
 
     section.addEventListener('change', (event) => {
         if (event.target.matches('[data-gateway-radio]')) {
-            error.hidden = true;
+            onSelect();
         }
     });
 
@@ -35,38 +68,68 @@ export function initPaymentSection(root, messages = {}) {
 
     if (preset) {
         preset.checked = true;
+        onSelect();
     }
 
     return {
         selected,
-        /** Shows "Please select a payment method."; false when nothing is chosen. */
+        card,
+        /** The started inline payment kept for a retry after a decline: {order, secret, reference}. */
+        pending: null,
+        isInline: () => isInline(selected()),
+        /** Shows "Please select a payment method." / card problems; false when not ready. */
         validate() {
-            if (selected()) {
-                return true;
+            const radio = selected();
+
+            if (!radio) {
+                error.textContent = messages.select_method ?? '';
+                error.hidden = false;
+                section.querySelector('[data-gateway-radio]')?.focus();
+
+                return false;
             }
 
-            error.textContent = messages.select_method ?? '';
-            error.hidden = false;
-            section.querySelector('[data-gateway-radio]')?.focus();
-
-            return false;
+            return isInline(radio) ? card.validate() : true;
         },
     };
 }
 
 /**
- * Starts the payment of a placed order with the selected gateway and follows the
- * provider's hosted page (Stripe Checkout / PayPal); without a URL, the pay page.
- * @returns {Promise<void>} navigates away on success; rejects with a reason otherwise
+ * Starts the payment of a placed order with the selected gateway: a redirect gateway
+ * follows the provider's hosted page; Stripe confirms the card in-page (the intent of a
+ * declined attempt is reused for the retry) and opens the return URL.
+ * @returns {Promise<void>} navigates away on success; rejects with CardDeclined or a reason
  */
-export async function startPayment({ config, order, gateway }) {
-    const url = fill(config.start, { ORDER: order });
-    const response = await storeApi.post(url, { gateway }, {}, { silent: true });
-    const target = response?.data?.redirect_url;
+export async function startPayment({ config, order, gateway, section = null }) {
+    const inline = section?.isInline() && section.card;
+    let pending = inline && section.pending?.order === order && section.pending.gateway === gateway ? section.pending : null;
 
-    if (target) {
-        window.location.assign(target);
-        return;
+    if (!pending) {
+        const url = fill(config.start, { ORDER: order });
+        const response = await storeApi.post(url, { gateway }, {}, { silent: true });
+        const data = response?.data ?? {};
+
+        if (data.redirect_url) {
+            window.location.assign(data.redirect_url);
+            return;
+        }
+
+        if (inline && data.client_secret) {
+            pending = { order, gateway, secret: data.client_secret, reference: data.payment?.reference ?? '' };
+        }
+    }
+
+    if (pending) {
+        const result = await section.card.confirm(pending.secret);
+
+        if (result.ok) {
+            section.pending = null;
+            window.location.assign(returnUrl(config, gateway, order, 'success', pending.reference));
+            return;
+        }
+
+        section.pending = result.retry ? pending : null;
+        throw new CardDeclined(result.message ?? '');
     }
 
     window.location.assign(fill(config.pay, { ORDER: order }) + `?gateway=${encodeURIComponent(gateway)}`);

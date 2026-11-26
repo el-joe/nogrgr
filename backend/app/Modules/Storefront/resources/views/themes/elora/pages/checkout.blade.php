@@ -21,6 +21,7 @@
         'place' => route('store-api.v1.checkout.place'),
         'start' => route('store-api.v1.payments.start', ['order' => '__ORDER__']),
         'pay' => route('storefront.checkout.pay', ['order' => '__ORDER__']),
+        'return' => url('/checkout/payment/__GATEWAY__/__ORDER__'),
         'coupon' => route('store-api.v1.cart.coupon.apply'),
         'cart' => route('storefront.cart'),
         'currency' => app(\App\Modules\Storefront\Services\StorefrontContext::class)->currencyCode(),
@@ -29,6 +30,7 @@
             'pay' => __st('checkout.pay_total', ['total' => '__TOTAL__']),
             'processing' => __st('checkout.processing'),
             'select_method' => __st('checkout.payment.select'),
+            'card_error' => __st('checkout.card.error'),
             'unavailable_items' => __st('checkout.reasons.unavailable_items'),
             'coupon_invalid' => __st('checkout.reasons.coupon_invalid'),
             'empty_cart' => __st('checkout.reasons.empty_cart'),
@@ -59,7 +61,7 @@
                         <div class="lg:hidden" data-checkout-summary-region>
                             <x-sf::elora.inner.checkout.summary :cart="$cart" />
                         </div>
-                        <x-sf::checkout.payment :gateways="$gateways" />
+                        <x-sf::checkout.payment :gateways="$gateways" :charge="$cart['totals']['grand_total']" />
                         @if ($addresses === [])
                             <p class="text-center text-sm font-medium text-red-600" data-no-address-note>{{ __st('checkout.no_address') }}</p>
                         @endif

@@ -63,6 +63,10 @@ it('returns addresses, the summary and the payment methods with nothing selected
         ->assertJsonPath('data.payment_methods.0.code', 'stripe')
         ->assertJsonPath('data.payment_methods.0.source', 'central')
         ->assertJsonPath('data.payment_methods.0.payment_methods', ['card', 'apple_pay', 'google_pay', 'wallets'])
+        // Inline Stripe card (decision #78 b): only the publishable key reaches the app / theme.
+        ->assertJsonPath('data.payment_methods.0.inline', true)
+        ->assertJsonPath('data.payment_methods.0.publishable_key', 'pk_central')
+        ->assertJsonMissingPath('data.payment_methods.0.secret_key')
         ->assertJsonPath('data.selected_payment_method', null)
         ->assertJsonPath('data.can_pay', true);
 });

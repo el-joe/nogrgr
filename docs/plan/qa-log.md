@@ -383,3 +383,79 @@ Scope: commits 55ef85a (finance) and cb8e8e7 (vendor polish). **Setup:** QA DB `
 **Verdict: PASS** for the re-checked scope. No Critical or High issue; QA-P5-019 (Medium, permission sync on deploy) is open.
 
 **Coverage:** 26 rows set to `done`: ADM-050, 050a, 051, 052, 052a, 052b, 053; VEN-017, 017a–c, 018, 018a, 018b, 040, 040a, 041, 041a, 041b, 060, 060a, 060c, 060d, 062, 063, 064. VEN-060b is `partial`: the paid and cancelled result pages are covered only by Pest, because QA has no working subscription gateway. VEN-061/061a are untouched.
+
+## P8 vendor pages (teammate "qa-p8") — 2026-11-26
+
+Scope: the uncommitted P8 vendor pages from "vendorp8": customers + newsletter subscribers (VEN-025, 025a–c, 026), store banners (VEN-035, 035a), invoices list/detail/print (VEN-061, 061a), compliance center (VEN-084), themes per country + home variants + preview (VEN-030, 030a, 030b, 031, VEN-007 theme step), staff & roles (VEN-076, 076a, 077, 077a). **Setup:** QA DB `nogrgr_qa` (tenant suffix `_qa`), `php artisan serve --port=8097 --no-reload`, redis cache with its own prefix, sync queue, log mailer, `TENANT_BASE_DOMAIN=localhost`. Headless Chromium driven by Playwright. Every page was checked at 1440 en/light and at 375 ar/dark for status, JS errors, raw keys, horizontal overflow and placeholders. Figma references: 12:15544 (customers), 90:115176 (staff), 85:104756 (themes). The server was stopped afterwards.
+
+**Flows walked (all PASS after the fixes below)**
+- Customers:
+  - The list KPIs were checked by hand. Avg lifetime $472.90 = (859.44 + 86.36) / 2 buyers. Kasey's $859.44 = ORD-10001 + 10003 + 10901, with the cancelled ORD-10002 left out.
+  - Add modal: 422 errors inline, then create with an intl-tel phone and newsletter on, which redirects to the detail page.
+  - Detail page; address modal (422, then the country is preselected and the city Select2 is fed per country); edit; deactivate/activate; delete (anonymised, then 404). CSV export.
+- Subscribers: list, filters, unsubscribe (the row updates), CSV export.
+- Banners:
+  - Create with desktop + mobile image (422 first: the EN + AR titles and the image are required). Edit and on/off.
+  - Drag a store banner above another store banner (saved, and the order holds after reload). Delete.
+  - Hide one platform banner. Turn "Show platform default banners" off and on.
+- Invoices:
+  - List, side panel (`?invoice=`), status filter, Pay now modal, detail page, print (the dialog opens) and `?save=1`. The legacy `subscription/invoices/{id}/print` route still works.
+  - Another store's invoice id returns 404 for show and print.
+  - Money: 49.00 + 2 × 5.00 = 59.00, VAT 15 % = 8.85, total 67.85. The same figures show in the list, the panel and the print.
+- Compliance:
+  - Empty submit returns 422 with errors per step. Draft save with a national-ID PDF; an invalid IBAN gets 422.
+  - Full submit moves the profile to `needs_review`. Files land on the central private disk with the numbers encrypted. Admins get the `vendors.compliance_submitted` notification. The form becomes read-only.
+- Themes:
+  - Activate Elora as the store default. Use Souqify in Egypt through the modal (VEN-030a). Switch Egypt to home v4 on the Home variants page (VEN-030b) and reset Egypt to the store default.
+  - Preview: the signed link renders Souqify v4 only in that browser, a tampered signature is ignored, and `?theme_preview=off` ends it. The wizard theme step links to Store › Themes.
+- Staff & roles:
+  - Role created with the matrix (422 when empty). The owner role page is read-only, and PUT/DELETE on it return 422. A role assigned to a member returns 422 on delete.
+  - Invite (422 when empty). The invitation link from the mail log sets the password, the member becomes active with a verified e-mail, and the owner gets `system.team_member_joined`.
+  - Owner row: no edit/toggle/delete controls, and the API answers 422.
+  - Deactivating a member logs that member out on the next request; reactivate works.
+  - Resend invitation and the view modal work.
+  - Seat limit (plan 5, owner counted): the 5th invite returns 422, Invite is disabled and the upgrade notice shows. The extra invites were deleted afterwards.
+- Permissions: a member whose role has only `dashboard.view` + `orders.view` gets **403** on every page and data/export/print/preview endpoint in scope, and their sidebar shows only Dashboard, Store setup and Orders.
+
+**Fixed in this pass**
+- QA-P8-001 (Medium): at 375 px in Arabic, the Home variants and Compliance center pages scrolled sideways by about 200 px.
+  - Cause: `sr-only` spans (the table's actions header, the step labels) sat inside an `overflow-x-auto` wrapper that was not positioned. They escaped the clip and widened the document in RTL.
+  - Fix: `relative overflow-x-auto` on both wrappers, and `grid-cols-1` (minmax(0, 1fr)) on the page grids.
+  - Files: `Storefront/resources/views/vendor/themes/home-variants.blade.php`, `Platform/resources/views/vendor/compliance/edit.blade.php`.
+  - Tests: `VendorThemesPageTest` and `VendorComplianceCenterTest` assertions.
+- QA-P8-002 (Low): Activate/Deactivate on the customers **list** sent the user to the customer's detail page, because the toggle JSON always carried a redirect.
+  - Fix: the redirect is sent only with `from_detail=1`, which the detail page now passes.
+  - Files: `Identity/Http/Controllers/Vendor/CustomerController.php`, `customers/show.blade.php`. Test: `VendorCustomersTest`.
+- QA-P8-003 (Low): editing or deleting the locked store **owner** role answered "The super admin role is locked."
+  - Fix: `AdminRuleException::roleLocked($guard)` uses the new key `identity::roles.rules.locked_owner` (en/ar) for the vendor guard.
+  - Test: `VendorStaffRolesTest`.
+- QA-P8-004 (Low): the banners quota read "1 banners · unlimited on your plan".
+  - Fix: `quota_unlimited` is now pluralised with `trans_choice`. Test: `VendorBannersPageTest`.
+
+**Open**
+- QA-P8-005…011 and the 403 message: **fixed by "p8-polish"** (see below).
+- QA-P8-012 (observation, owned by "stripe-inline"):
+  - Stripe.js and its hCaptcha frames load on every Invoices page view, even with no unpaid invoice and the pay modal closed, which keeps the network busy.
+  - The Pay-invoice modal text also mixes "Secure card details" with "You will be redirected to the payment provider's secure page".
+- Env only:
+  - Tenant asset and preview URLs drop the dev port (`qastore1.localhost/...`), so store banner images and the preview redirect break under `artisan serve` on a port. Not a code issue.
+  - ~~The shared 403 page shows the raw "User does not have the right permissions." message.~~ Fixed by "p8-polish" (below).
+
+**Fixed by "p8-polish" (2026-11-26)**
+- QA-P8-005 (Low): stale row badges, banner quota / country-tab counts and the staff "members · active · pending · seats" line.
+  - Fix: the shared `[data-switch-url]` handler (`panels/ui/fields.js`) now emits `switch:changed`, redraws its datatable in place (`datatable:reload` with `quiet` — no skeleton, focus returns to the switch via the new `datatable:drawn` event) and calls `notifyChanged()`. New shared `panels/ui/live.js`: on `panel:changed` / `confirm:done` (and remote-modal saves) it re-fetches the page once (debounced) and swaps every `[data-live="key"]` element. Tab count pills are live regions; banners mark the quota line, limit notice and Add button; staff mark the counts line, limit notice and Invite button.
+  - Tests: `tests/Unit/Architecture/LiveRegionsTest.php`, `VendorBannersPageTest`, `VendorStaffRolesTest`. Checked live on `nogrgr_qa`: the platform banner Hidden badge follows its switch; deactivate / activate updates "N active" without reload.
+- QA-P8-006 (Low): `data-filter-fixed` marks a field that always has a value as a fixed scope (not counted, no chip, kept by "Clear filters"); used on the vendor and admin banner placement selects. Empty Home Promo now shows "No banners in this country yet" + Add banner. Tests: `EmptyStateFixedScopeTest` (old cases unchanged + 3 new).
+- QA-P8-007 (Low): `Ui::roleLabel()` headlines only slug names (`support-agent`); a typed name keeps its casing ("QA Support"). Customer names are not title-cased (checked). Tests: `UiSupportTest`, `VendorStaffRolesTest`.
+- QA-P8-008 (Low): the invitation link is now `{store}/invitation/{token}?email=` (`vendor.invitation.accept`) — own view `identity::vendor.invitation` ("Welcome to <store>", "Set password and join", invalid / expired state asking for a new invitation), en/ar `vendor_auth.invitation.*`. Same broker token; posts to `password.store` with `invitation=1` for the success message. Test: `VendorStaffRolesTest`.
+- QA-P8-009 (Low): `x-sf::preview-bar` in the shared `x-sf::layout` shows "Previewing <theme> · Exit preview" (exit = `?theme_preview=off` on the same page) in all three families, RTL. `StorefrontContext::preview()`; `ResolvedThemeData` gained an optional `name`. Tests: `VendorThemesPageTest` (ecommet / elora-3 / souqify-4 + shopper without preview). Checked live at 1440 en and 375 ar.
+- QA-P8-010 (Low): the compliance header badge uses the banner titles ("Under review"). Read-only intl-tel phone: muted text, no arrow, no hover on the country button (`panels/base.css`). Checked live.
+- QA-P8-011 (Low): every staff row shows the status badge (Active / Invited / Suspended); activate / deactivate only in the row menu. Recorded in decision #86 (d). Test: `VendorStaffRolesTest`.
+- 403: `errors/403.blade.php` replaces framework / spatie messages with `ui.http.forbidden` (en/ar); messages passed to `abort(403, __('…'))` are kept. Test: `VendorStaffRolesTest` (en + ar).
+- Client request "make images fit container not cover" (decision #88): every `object-cover` (57 Blade / JS files) and `object-fit: cover` (9 CSS rules) is now `object-contain` on the neutral `bg-media` / `--color-media` letterbox, centred. Guard: `tests/Unit/Architecture/ImagesContainTest.php`. Checked on `nogrgr_qa` at 1440 and 375: storefront home, product page and vendor product list have 0 cropped images.
+- Tests: `flock … php artisan test --parallel --processes=12 tests --filter='VendorStaffRolesTest|VendorThemesPageTest|VendorBannersPageTest|EmptyStateFixedScopeTest|LiveRegionsTest|UiSupportTest|ImagesContainTest|NoPlaceholderContentTest'`: 80 tests. 78 passed on the first run; the 2 failures were a regex bug in the new EmptyStateFixedScopeTest case, which now passes (6/6).
+- Seen, not fixed (pre-existing, Ecommet home): at 1440 px the `.eco-why` card overflows the page by about 170 px.
+
+**Tests:** `flock … php artisan test --parallel --processes=12 tests/Feature --filter='VendorBannersPageTest|VendorThemesPageTest|VendorComplianceCenterTest|VendorCustomersTest|VendorStaffRolesTest|VendorSubscribersTest|RolesManagementTest'`: **70/70 passed** (697 assertions). `npm run build` passes; Pint passes on the changed files. The full suite was not run, because other agents hold uncommitted payment work in the tree.
+
+**Verdict: PASS** for the P8 vendor pages. No Critical or High issue. QA-P8-001…004 are fixed; QA-P8-005…012 are Low or observations.

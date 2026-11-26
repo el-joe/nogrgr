@@ -111,7 +111,7 @@ class SettlementService extends BaseService
 
         $this->settlements->update($settlement, ['payment_log_id' => $started['log']->id]);
 
-        return ['settlement' => $settlement, 'redirect' => $started['redirect']];
+        return ['settlement' => $settlement] + $started;
     }
 
     /**

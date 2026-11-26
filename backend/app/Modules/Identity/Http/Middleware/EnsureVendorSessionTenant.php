@@ -2,6 +2,8 @@
 
 namespace App\Modules\Identity\Http\Middleware;
 
+use App\Modules\Identity\Enums\AccountStatus;
+use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Identity\Services\VendorImpersonationService;
 use App\Shared\Routing\VendorPanel;
 use Closure;
@@ -35,6 +37,17 @@ class EnsureVendorSessionTenant
 
             if ($tenantKey === null || (string) $boundTenant !== (string) $tenantKey) {
                 abort(404);
+            }
+
+            /* A member deactivated or still invited (VEN-076) loses the session on the next request; auth:vendor then sends them to the login. */
+            $staff = $guard->user();
+
+            if ($staff instanceof VendorStaff && $staff->status !== AccountStatus::Active && ! $request->session()->has(VendorPanel::SESSION_IMPERSONATOR)) {
+                $guard->logoutCurrentDevice();
+                $request->session()->forget(VendorPanel::SESSION_TENANT);
+                $request->session()->regenerateToken();
+
+                return $next($request);
             }
 
             $impersonation = app(VendorImpersonationService::class);

@@ -1,0 +1,17 @@
+/*
+ * Souqify storefront fonts (Figma "Souqify Variants" 1:71119): Outfit 300–800, Noto Sans
+ * Arabic and Inter 600/700 (side-card "-N%" chip, SideProductCard 1:74511; featured deal
+ * HOT chip, 1:72886). Tokens: storefront-souqify.css.
+ */
+@import '@fontsource/outfit/300.css';
+@import '@fontsource/outfit/400.css';
+@import '@fontsource/outfit/500.css';
+@import '@fontsource/outfit/600.css';
+@import '@fontsource/outfit/700.css';
+@import '@fontsource/outfit/800.css';
+@import '@fontsource/noto-sans-arabic/arabic-400.css';
+@import '@fontsource/noto-sans-arabic/arabic-500.css';
+@import '@fontsource/noto-sans-arabic/arabic-600.css';
+@import '@fontsource/noto-sans-arabic/arabic-700.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';

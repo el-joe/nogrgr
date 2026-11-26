@@ -5,7 +5,7 @@
         <picture>
             @if ($avif)<source srcset="{{ $avif }}" type="image/avif">@endif
             @if ($webp)<source srcset="{{ $webp }}" type="image/webp">@endif
-            <img src="{{ $url }}" alt="" class="size-full object-cover" loading="lazy">
+            <img src="{{ $url }}" alt="" class="size-full object-contain bg-media" loading="lazy">
         </picture>
     @endif
 </span>

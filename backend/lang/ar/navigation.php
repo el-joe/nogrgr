@@ -105,6 +105,13 @@ return [
         'ui_kit' => 'مكتبة المكونات',
     ],
     'vendor' => [
+        // P8: store banners, invoices
+        'store_design' => 'متجرك',
+        'banners' => 'البانرات',
+        // P8: store themes
+        'themes' => 'القوالب',
+        'home_variants' => 'تصاميم الرئيسية',
+        'invoices' => 'الفواتير',
         'marketing' => 'الإعلانات والتسويق',
         'coupons' => 'الكوبونات',
         'flash_sales' => 'العروض السريعة',
@@ -134,6 +141,7 @@ return [
         'compliance' => 'مركز الامتثال',
         'language_purchases' => 'مشتريات اللغات',
         'roles' => 'الأدوار والصلاحيات',
+        'staff' => 'فريق العمل',
         'requests' => 'الطلبات',
         'product_requests' => 'طلبات المنتجات',
         'manufacturing' => 'التصنيع',

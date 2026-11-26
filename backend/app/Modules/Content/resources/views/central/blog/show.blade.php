@@ -32,7 +32,7 @@
                 <picture>
                     @if (! empty($cover['avif']))<source srcset="{{ $cover['avif'] }}" type="image/avif">@endif
                     @if (! empty($cover['webp']))<source srcset="{{ $cover['webp'] }}" type="image/webp">@endif
-                    <img src="{{ $cover['src'] ?? $cover['webp'] }}" alt="{{ __('content::site.blog.cover_alt', ['title' => $post->title]) }}" width="1216" height="768" fetchpriority="high" class="aspect-[589/322] w-full object-cover">
+                    <img src="{{ $cover['src'] ?? $cover['webp'] }}" alt="{{ __('content::site.blog.cover_alt', ['title' => $post->title]) }}" width="1216" height="768" fetchpriority="high" class="aspect-[589/322] w-full object-contain bg-media">
                 </picture>
             </figure>
         @endif

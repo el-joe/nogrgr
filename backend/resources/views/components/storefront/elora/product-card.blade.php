@@ -21,7 +21,7 @@
 <article {{ $attributes->class(['elo-card mo-card', 'elo-card-wide' => $wide]) }} data-product="{{ $card->id }}">
     <div class="elo-card-media mo-card-media">
         @if ($card->image)
-            <img src="{{ $card->image }}" alt="{{ $card->name }}" width="210" height="183" class="size-full object-cover" loading="{{ $eager ? 'eager' : 'lazy' }}" @if ($eager) fetchpriority="high" @endif decoding="async" data-fly-image>
+            <img src="{{ $card->image }}" alt="{{ $card->name }}" width="210" height="183" class="size-full object-contain bg-media" loading="{{ $eager ? 'eager' : 'lazy' }}" @if ($eager) fetchpriority="high" @endif decoding="async" data-fly-image>
             @if ($card->image2)
                 <img src="{{ $card->image2 }}" alt="" width="210" height="183" loading="lazy" decoding="async" aria-hidden="true" data-hover-image>
             @endif

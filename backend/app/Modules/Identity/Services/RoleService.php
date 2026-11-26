@@ -74,7 +74,7 @@ class RoleService extends BaseService
         $assigned = $this->roles->usersCount($role);
 
         if ($assigned > 0) {
-            throw AdminRuleException::roleInUse($assigned);
+            throw AdminRuleException::roleInUse($assigned, $role->guard_name);
         }
 
         $before = ['name' => $role->name, 'permissions' => $this->permissionsOf($role)];
@@ -95,7 +95,7 @@ class RoleService extends BaseService
 
     public function isLocked(Role $role): bool
     {
-        return SystemRole::isLocked($role->name);
+        return SystemRole::lockedFor($role->name, $role->guard_name);
     }
 
     public function usersCount(Role $role): int
@@ -140,7 +140,7 @@ class RoleService extends BaseService
     private function guardLocked(Role $role): void
     {
         if ($this->isLocked($role)) {
-            throw AdminRuleException::roleLocked();
+            throw AdminRuleException::roleLocked($role->guard_name);
         }
     }
 

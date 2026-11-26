@@ -2,6 +2,7 @@
 
 namespace App\Modules\Integrations;
 
+use App\Modules\Integrations\Payments\PaymentDriverRegistry;
 use App\Modules\Integrations\Repositories\Contracts\GatewayCheckoutRouteRepositoryContract;
 use App\Modules\Integrations\Repositories\Contracts\PaymentGatewayRepositoryContract;
 use App\Modules\Integrations\Repositories\Contracts\SettingsRepositoryContract;
@@ -33,6 +34,14 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
     public $singletons = [
         SettingsRepositoryContract::class => SettingsRepository::class,
     ];
+
+    public function register(): void
+    {
+        parent::register();
+
+        // Per request / job: the inline Stripe card mode (PaymentDriverRegistry::inline()).
+        $this->app->scoped(PaymentDriverRegistry::class);
+    }
 
     public function boot(): void
     {

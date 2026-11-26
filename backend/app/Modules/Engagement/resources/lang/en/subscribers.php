@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'nav' => 'Newsletter subscribers',
+    'title' => 'Newsletter subscribers',
+    'subtitle' => 'Everyone who signed up for your store newsletter, from customer accounts and the signup form.',
+    'section' => 'Customers',
+    'breadcrumb' => 'Newsletter',
+    'export' => 'Export CSV',
+    'search' => 'Search email',
+    'empty_title' => 'No subscribers yet',
+    'empty_description' => 'Visitors who sign up for your newsletter on the store appear here.',
+    'columns' => [
+        'email' => 'Email',
+        'language' => 'Language',
+        'source' => 'Source',
+        'status' => 'Status',
+        'subscribed' => 'Subscribed',
+        'actions' => 'Actions',
+    ],
+    'filters' => [
+        'language' => 'Language',
+        'status' => 'Status',
+        'source' => 'Source',
+    ],
+    'statuses' => [
+        'subscribed' => 'Subscribed',
+        'unsubscribed' => 'Unsubscribed',
+    ],
+    'sources' => [
+        'account' => 'Customer account',
+        'signup_form' => 'Signup form',
+    ],
+    'view_customer' => 'View the customer of :email',
+    'unsubscribe' => 'Unsubscribe',
+    'resubscribe' => 'Subscribe again',
+    'unsubscribe_message' => 'This address will stop receiving your newsletter.',
+    'resubscribe_message' => 'This address will receive your newsletter again.',
+    'unsubscribed' => ':email was unsubscribed.',
+    'resubscribed' => ':email is subscribed again.',
+    'delete' => 'Delete',
+    'delete_title' => 'Delete :email?',
+    'delete_message' => 'The subscriber is removed from your newsletter list.',
+    'deleted' => ':email was deleted.',
+];

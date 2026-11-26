@@ -113,3 +113,10 @@
     --nog-sidebar-muted: #717171;
     --nog-sidebar-line: #2a2421;
 }
+
+/* Fonts (Figma "Admin Panel" 23:10147 type tokens 40:11992; Arabic frames e.g. 47:15543).
+   Loaded by fonts/panel-admin.css; [dir=rtl] switches --nog-font-sans to the Arabic stack. */
+:root {
+    --nog-font-latin: 'Outfit', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --nog-font-arabic: 'Noto Sans Arabic', 'Outfit', ui-sans-serif, system-ui, sans-serif;
+}

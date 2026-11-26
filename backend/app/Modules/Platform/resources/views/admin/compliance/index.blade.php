@@ -5,7 +5,7 @@
 --}}
 @php
     $tabs = [];
-    foreach (\App\Modules\Platform\Enums\ComplianceStatus::cases() as $case) {
+    foreach (\App\Modules\Platform\Enums\ComplianceStatus::reviewable() as $case) {
         $tabs[$case->value] = ['label' => $case->label(), 'count' => $counts[$case->value] ?? 0, 'href' => route('admin.vendors.compliance.index', ['status' => $case->value])];
     }
 @endphp

@@ -33,10 +33,30 @@ return [
         'done' => 'تم',
     ],
     'compliance_status' => [
+        'draft' => 'مسودة',
         'needs_review' => 'بحاجة إلى مراجعة',
         'needs_action' => 'بحاجة إلى إجراء',
         'verified' => 'موثّق',
         'rejected' => 'مرفوض',
+    ],
+    'compliance_account_type' => [
+        'individual' => 'فرد',
+        'company' => 'شركة',
+    ],
+    'compliance_section' => [
+        'identity' => 'الهوية',
+        'company' => 'المنشأة',
+        'bank' => 'البنك',
+        'documents' => 'المستندات',
+        'terms' => 'الشروط',
+    ],
+    'compliance_section_state' => [
+        'incomplete' => 'غير مكتمل',
+        'complete' => 'مكتمل',
+        'in_review' => 'قيد المراجعة',
+        'needs_action' => 'بحاجة إلى إجراء',
+        'verified' => 'موثّق',
+        'accepted' => 'مقبولة',
     ],
     'compliance_risk' => [
         'low' => 'منخفض',

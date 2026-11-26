@@ -17,4 +17,8 @@ return [
         'title' => 'Your role is now :role',
         'body' => 'Your access in the admin panel changed to the :role role.',
     ],
+    'team_member_joined' => [
+        'title' => ':name joined your team',
+        'body' => ':name accepted the invitation and joined as :role.',
+    ],
 ];

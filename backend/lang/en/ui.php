@@ -171,4 +171,13 @@ return [
         'light' => 'Light mode',
         'dark' => 'Dark mode',
     ],
+    'stripe_card' => [
+        'title' => 'Secure card details',
+        'number' => 'Card details',
+        'secure' => 'Your card is processed securely by Stripe. We never store card numbers.',
+        'error' => 'Please check your card details.',
+    ],
+    'http' => [
+        'forbidden' => 'You do not have access to this page. Ask the account owner for the permission if you need it.',
+    ],
 ];

@@ -27,6 +27,7 @@ return [
         'none' => 'No payment method is available right now. Please try again later.',
         'select' => 'Please select a payment method.',
     ],
+    'charged_usd' => 'You will be charged :amount USD. Prices in other currencies are shown for reference only.',
     'card' => [
         'title' => 'Secure card details',
         'number' => 'Card number',

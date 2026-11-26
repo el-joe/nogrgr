@@ -75,6 +75,7 @@ class CheckoutController extends Controller
             'block' => $data['block'],
             'block_message' => $data['options']['block_message'],
             'pay_total' => StorefrontCart::price($data['cart']['totals']['grand_total']),
+            'usd_charge' => StorefrontCart::usdCharge($data['cart']['totals']['grand_total']),
             'empty' => $data['cart']['lines'] === [],
             'gateways' => count($data['gateways']),
         ]);
@@ -104,8 +105,10 @@ class CheckoutController extends Controller
             }
         }
 
-        // Every gateway is a hosted redirect (decision #78 b): a chosen one goes to the Redirecting page.
-        return StorefrontView::make($selected !== null ? 'pages.payment-redirect' : 'pages.payment-pay', $data + [
+        // Inline gateways (Stripe card, decision #78 b) pay here; a chosen redirect gateway goes to the Redirecting page.
+        $redirecting = $selected !== null && ! $selected['inline'];
+
+        return StorefrontView::make($redirecting ? 'pages.payment-redirect' : 'pages.payment-pay', $data + [
             'gateway' => $selected,
             'seo' => $this->seo->page(__st('checkout.pay_title'), null, index: false),
         ]);

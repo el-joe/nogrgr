@@ -6,6 +6,7 @@
  * Motion character: lively marketplace — snappy timings and a springy overshoot.
  */
 :root {
+    --nog-media: #f5f5f5; /* neutral letterbox behind object-contain images (decision #88) */
     --nog-radius-card: 0.75rem;
     --nog-primary: #0159ed;
     --nog-primary-hover: #014bcc;
@@ -236,4 +237,13 @@
     --sf-footer: #3b3b3b;
     --sf-footer-bar: #5a5a5a;
     --sf-footer-bottom: #2b2b2b;
+}
+
+/* Fonts (Figma "Souqify Variants" 1:71119: Outfit in all six variants; SideProductCard
+   "-N%" chip Inter Semi Bold, 1:74511; featured deal HOT chip Inter Bold, 1:72886;
+   Arabic = Noto Sans Arabic, 97:10147). Loaded by fonts/storefront-souqify.css. */
+:root {
+    --nog-font-latin: 'Outfit', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --nog-font-arabic: 'Noto Sans Arabic', 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --sq-font-chip: 'Inter', var(--nog-font-sans);
 }

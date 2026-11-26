@@ -26,7 +26,7 @@
             <li class="flex items-start gap-3 py-4 first:pt-0 lg:gap-4">
                 <span class="grid size-[72px] shrink-0 place-items-center overflow-hidden rounded-lg bg-sq-soft lg:size-[78px]">
                     @if ($line['image_url'])
-                        <img src="{{ $line['image_url'] }}" alt="" class="size-full object-cover" loading="lazy" decoding="async">
+                        <img src="{{ $line['image_url'] }}" alt="" class="size-full object-contain bg-media" loading="lazy" decoding="async">
                     @else
                         <x-ui::icon name="image" :size="22" class="text-sq-line" />
                     @endif

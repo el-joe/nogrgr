@@ -2,6 +2,7 @@
  * Central › complete registration (WEB-018 / 018a) and provisioning (WEB-020).
  *
  *  - every form: submit spinner + double-submit guard, password show/hide
+ *  - payment step: the shared inline Stripe card (core/payments/stripe-card.js)
  *  - store step: sub-domain / own-domain switch, slug clean-up + suggestion from the
  *    store name, debounced live availability (GET register/availability) and the
  *    "Check DNS" lookup, and the store categories multi-select (Select2, lazy-loaded)
@@ -417,6 +418,12 @@ function initProvisioning(root) {
 
 export default function initRegister(root = document) {
     root.querySelectorAll('[data-register-form]').forEach(bindSubmit);
+
+    // Payment step: inline Stripe card (decision #78 b), Stripe.js only loaded when chosen.
+    if (root.querySelector('form [data-stripe-card]')) {
+        import('../core/payments/stripe-card.js').then(({ bindStripeCardForms }) => bindStripeCardForms(root));
+    }
+
     bindPasswordToggles(root);
     initStoreForm(root);
     initProvisioning(root);

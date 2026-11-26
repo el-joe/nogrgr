@@ -11,8 +11,10 @@ use App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract;
 use App\Modules\Localization\Services\StoreCountries;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Storefront\DTOs\ResolvedThemeData;
+use App\Modules\Storefront\Services\Themes\ThemePreviewService;
 use App\Shared\Money\Money;
 use App\Shared\Support\Locale;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -38,12 +40,18 @@ class StorefrontContext
 
     private bool $currencyResolved = false;
 
+    /** Vendor theme preview of this browser session (VEN-030, decision #85). */
+    private ?ResolvedThemeData $preview = null;
+
+    private ?Request $previewRequest = null;
+
     public function __construct(
         private readonly StoreCountries $countries,
         private readonly StoreThemeService $themes,
         private readonly CurrencyRepositoryContract $currencies,
         private readonly CustomerAddressRepositoryContract $addresses,
         private readonly MoneyPresenter $money,
+        private readonly ThemePreviewService $previews,
     ) {}
 
     public function country(): ?Country
@@ -64,7 +72,28 @@ class StorefrontContext
 
     public function theme(): ResolvedThemeData
     {
-        return $this->themes->resolve($this->countryId());
+        // Memo per request object (the scoped context can outlive one request in tests / workers).
+        if ($this->previewRequest !== request()) {
+            $this->previewRequest = request();
+            $this->preview = $this->previews->current(request());
+
+            // A preview link may carry the shopping country (decision #85).
+            if ($this->preview !== null && request()->query('tp_country') !== null) {
+                $this->countryResolved = false;
+            }
+        }
+
+        return $this->preview ?? $this->themes->resolve($this->countryId());
+    }
+
+    /**
+     * The vendor theme preview of this browser session, if any (VEN-030, QA-P8-009).
+     */
+    public function preview(): ?ResolvedThemeData
+    {
+        $this->theme();
+
+        return $this->preview;
     }
 
     public function family(): string

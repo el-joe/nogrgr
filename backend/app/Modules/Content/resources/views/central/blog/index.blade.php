@@ -63,7 +63,7 @@
                             <picture>
                                 @if (! empty($cover['avif']))<source srcset="{{ $cover['avif'] }}" type="image/avif">@endif
                                 @if (! empty($cover['webp']))<source srcset="{{ $cover['webp'] }}" type="image/webp">@endif
-                                <img src="{{ $cover['src'] ?? $cover['webp'] }}" alt="{{ __('content::site.blog.cover_alt', ['title' => $featured->title]) }}" width="908" height="512" fetchpriority="high" class="site-zoom size-full object-cover">
+                                <img src="{{ $cover['src'] ?? $cover['webp'] }}" alt="{{ __('content::site.blog.cover_alt', ['title' => $featured->title]) }}" width="908" height="512" fetchpriority="high" class="site-zoom size-full object-contain bg-media">
                             </picture>
                         @endif
                     </div>

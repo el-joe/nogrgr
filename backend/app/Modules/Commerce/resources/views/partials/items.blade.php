@@ -3,7 +3,7 @@
     @foreach ($order->items as $item)
         <li class="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
             @if ($item->image_url)
-                <img src="{{ $item->image_url }}" alt="" class="size-12 shrink-0 rounded-control object-cover" loading="lazy">
+                <img src="{{ $item->image_url }}" alt="" class="size-12 shrink-0 rounded-control object-contain bg-media" loading="lazy">
             @else
                 <span class="grid size-12 shrink-0 place-items-center rounded-control bg-subtle text-ink-secondary"><x-ui::icon name="box" :size="20" /></span>
             @endif

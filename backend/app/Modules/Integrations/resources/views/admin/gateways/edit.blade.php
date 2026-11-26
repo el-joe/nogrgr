@@ -52,7 +52,6 @@
                                 'purpose' => $purpose,
                                 'config' => $configs[$purpose->value]['config'],
                                 'credentials' => $configs[$purpose->value]['credentials'],
-                                'currencyOptions' => $currencyOptions,
                                 'canManage' => $canManage,
                             ])
                         @endforeach

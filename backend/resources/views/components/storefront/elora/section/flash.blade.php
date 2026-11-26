@@ -23,7 +23,7 @@
                 <a href="{{ $banner->url ?? $more }}" class="block overflow-hidden" data-reveal="fade">
                     <picture>
                         @if ($banner->mobileImageUrl)<source media="(max-width: 767px)" srcset="{{ $banner->mobileImageUrl }}">@endif
-                        <img src="{{ $banner->imageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? $title }}" width="1440" height="148" loading="lazy" decoding="async" class="mo-kenburns h-[148px] w-full object-cover max-lg:h-[48px]">
+                        <img src="{{ $banner->imageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? $title }}" width="1440" height="148" loading="lazy" decoding="async" class="mo-kenburns h-[148px] w-full object-contain bg-media max-lg:h-[48px]">
                     </picture>
                 </a>
             @endif
@@ -70,7 +70,7 @@
                             <div class="swiper-slide !h-auto !w-[150px] lg:!w-[190px]" data-reveal="fade-up">
                                 <a href="{{ $card->url }}" class="elo-flash-tile group">
                                     <span class="elo-flash-tile-img">
-                                        @if ($card->image)<img src="{{ $card->image }}" alt="{{ $card->name }}" width="190" height="280" loading="lazy" decoding="async" class="size-full object-cover transition duration-700 group-hover:scale-105">@endif
+                                        @if ($card->image)<img src="{{ $card->image }}" alt="{{ $card->name }}" width="190" height="280" loading="lazy" decoding="async" class="size-full object-contain bg-media transition duration-700 group-hover:scale-105">@endif
                                         @if ($card->discount)<span class="elo-flash-chip">-{{ $card->discount }}%</span>@endif
                                     </span>
                                     <span class="grid gap-1 p-2">

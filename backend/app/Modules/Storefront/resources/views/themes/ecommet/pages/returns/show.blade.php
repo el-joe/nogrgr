@@ -48,7 +48,7 @@
                     @if ($photos->isNotEmpty() || $videos->isNotEmpty())
                         <div class="mt-1.5 flex flex-wrap gap-1.5">
                             @foreach ($photos as $photo)
-                                <a href="{{ $photo['url'] }}" target="_blank" rel="noopener" class="block size-10 overflow-hidden rounded-lg bg-white"><img src="{{ $photo['url'] }}" alt="{{ $photo['name'] }}" width="40" height="40" loading="lazy" class="size-full object-cover"></a>
+                                <a href="{{ $photo['url'] }}" target="_blank" rel="noopener" class="block size-10 overflow-hidden rounded-lg bg-white"><img src="{{ $photo['url'] }}" alt="{{ $photo['name'] }}" width="40" height="40" loading="lazy" class="size-full object-contain bg-media"></a>
                             @endforeach
                             @foreach ($videos as $video)
                                 <a href="{{ $video['url'] }}" target="_blank" rel="noopener" class="grid size-10 place-items-center rounded-lg bg-white text-sf-ink" aria-label="{{ $video['name'] }}"><x-ui::icon name="camera" :size="18" /></a>

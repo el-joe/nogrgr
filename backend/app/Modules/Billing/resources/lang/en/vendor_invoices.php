@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'title' => 'Invoices',
+    'subtitle' => 'Every invoice from the platform: subscription, renewals and add-ons.',
+    'crumb' => 'Finance',
+    'search' => 'Search invoice',
+    'columns' => [
+        'invoice' => 'Invoice',
+        'issued' => 'Issued',
+        'amount' => 'Amount',
+        'status' => 'Status',
+    ],
+    'filters' => [
+        'status' => 'Status',
+        'type' => 'Type',
+        'date' => 'Issue date',
+    ],
+    'actions' => [
+        'view' => 'View invoice :number',
+        'print' => 'Print',
+        'pdf' => 'PDF',
+        'print_named' => 'Print invoice :number',
+        'pdf_named' => 'Save invoice :number as PDF',
+        'pay' => 'Pay now',
+        'back' => 'Back to invoices',
+    ],
+    'detail' => [
+        'from_to' => ':seller → :store',
+        'item' => 'Item',
+        'total' => 'Total',
+        'subtotal' => 'Subtotal',
+        'tax' => 'VAT :rate%',
+        'issued' => 'Issued :date',
+        'due' => 'Due :date',
+        'paid' => 'Paid :date',
+        'select_title' => 'Select an invoice',
+        'select_description' => 'Choose an invoice in the list to see its lines, print it or save it as PDF.',
+        'load_error' => 'The invoice could not be loaded.',
+        'retry' => 'Try again',
+        'pdf_hint' => 'Choose “Save as PDF” in the print dialog to download the file.',
+    ],
+    'empty_title' => 'No invoices yet',
+    'empty_description' => 'Invoices for your subscription and add-ons appear here.',
+];

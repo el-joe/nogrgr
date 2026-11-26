@@ -76,7 +76,7 @@
             <div class="flex min-w-0 items-center gap-2">
                 <span class="grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-inverse text-sm font-semibold text-on-inverse">
                     @if ($logoUrl)
-                        <img src="{{ $logoUrl }}" alt="" class="size-full object-cover" loading="lazy" width="48" height="48">
+                        <img src="{{ $logoUrl }}" alt="" class="size-full object-contain bg-media" loading="lazy" width="48" height="48">
                     @else
                         {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr((string) $storeName, 0, 2)) }}
                     @endif

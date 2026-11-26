@@ -12,7 +12,6 @@ use App\Modules\Integrations\Models\PaymentGatewayConfig;
 use App\Modules\Integrations\Repositories\Contracts\PaymentGatewayRepositoryContract;
 use App\Modules\Integrations\Services\Testing\GatewayConnectionTester;
 use App\Modules\Integrations\Support\SecretMask;
-use App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract;
 use App\Modules\Platform\Services\Auditor;
 use App\Shared\Services\BaseService;
 use DomainException;
@@ -30,24 +29,7 @@ class PaymentGatewayService extends BaseService
         private readonly PaymentGatewayRepositoryContract $gateways,
         private readonly GatewayConnectionTester $tester,
         private readonly Auditor $auditor,
-        private readonly CurrencyRepositoryContract $currencies,
     ) {}
-
-    /**
-     * code => "SAR — Saudi Riyal" of the active currencies (settlement currencies select).
-     *
-     * @return array<string, string>
-     */
-    public function currencyOptions(): array
-    {
-        $options = [];
-
-        foreach ($this->currencies->active() as $currency) {
-            $options[$currency->code] = $currency->code.' — '.$currency->name;
-        }
-
-        return $options;
-    }
 
     /**
      * @return Collection<int, PaymentGateway>
@@ -113,7 +95,6 @@ class PaymentGatewayService extends BaseService
                     'is_enabled' => $configData->isEnabled,
                     'mode' => $configData->mode,
                     'credentials' => $credentials,
-                    'currencies' => array_values(array_unique($configData->currencies)),
                 ];
 
                 if ($changed) {

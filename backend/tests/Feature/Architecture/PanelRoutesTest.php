@@ -28,6 +28,7 @@ const PANEL_GUEST_ROUTE_SUFFIXES = [
     'password.email',
     'password.reset',
     'password.store',
+    'invitation.accept',
     'register',
     'register.store',
 ];

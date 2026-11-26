@@ -16,7 +16,7 @@
                         <{{ $tag }} @if ($banner->url) href="{{ $banner->url }}" @endif class="elo-hero-slide">
                             <picture class="block size-full" data-parallax="0.06">
                                 @if ($banner->mobileImageUrl)<source media="(max-width: 767px)" srcset="{{ $banner->mobileImageUrl }}">@endif
-                                <img src="{{ $banner->imageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? '' }}" width="{{ $banner->width ?? 1440 }}" height="{{ $banner->height ?? 543 }}" class="mo-kenburns size-full object-cover" @if ($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif decoding="async">
+                                <img src="{{ $banner->imageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? '' }}" width="{{ $banner->width ?? 1440 }}" height="{{ $banner->height ?? 543 }}" class="mo-kenburns size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif decoding="async">
                             </picture>
                             @if ($style === 'full' && ($banner->title || $banner->ctaLabel))
                                 <span class="elo-hero-copy">

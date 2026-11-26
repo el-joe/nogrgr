@@ -4,10 +4,7 @@
  * top of the design (docs/plan/07-motion-guidelines.md) and disabled under
  * prefers-reduced-motion. Swiper CSS ships with the lazily loaded site/rails.js chunk.
  */
-@import '../shared/fonts.css';
-@import '@fontsource/outfit/700.css';
-@import '@fontsource/outfit/800.css';
-@import '@fontsource/ibm-plex-sans-arabic/arabic-700.css';
+@import '../fonts/central.css';
 
 @theme {
     --color-site-ink: #41251e;
@@ -19,6 +16,7 @@
     --color-site-footer-bar: #5b5453;
     --color-site-chip: rgba(243, 243, 243, 0.47);
     --color-site-chip-ink: #7c6f6f;
+    --font-faq: var(--site-font-faq); /* FAQ's Component 12:41912 (Inter) */
 }
 
 @layer components {

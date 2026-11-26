@@ -63,7 +63,12 @@ final class Ui
         $key = 'ui.roles.'.$role;
         $label = __($key);
 
-        return is_string($label) && $label !== $key ? $label : Str::headline($role);
+        if (is_string($label) && $label !== $key) {
+            return $label;
+        }
+
+        /* Only slug-style system names ("support-agent") are headlined; a name the store typed keeps its casing ("QA Support", QA-P8-007). */
+        return preg_match('/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/', $role) === 1 ? Str::headline($role) : $role;
     }
 
     /**

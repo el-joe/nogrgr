@@ -652,6 +652,7 @@
     }
 
     .elo-hero-copy {
+        font-family: var(--elo-font-accent);
         position: absolute;
         inset-block: 0;
         inset-inline-start: 0;
@@ -1132,6 +1133,7 @@
     }
 
     .elo-flash-tile {
+        font-family: var(--elo-font-inter);
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -1270,6 +1272,7 @@
     }
 
     .elo-portrait-name {
+        font-family: var(--elo-font-inter);
         position: absolute;
         inset-inline: 12px;
         bottom: 14px;

@@ -80,7 +80,7 @@ class PermissionSyncService extends BaseService
      */
     public function tenant(): PermissionSyncResult
     {
-        return $this->sync([['owner', Guard::Vendor->value]], PermissionCatalog::tenant());
+        return $this->sync([[SystemRole::VENDOR_OWNER, Guard::Vendor->value]], PermissionCatalog::tenant());
     }
 
     /**

@@ -1,11 +1,11 @@
 {{--
     One purpose of a gateway (vendor payments / tenant registration): enabled switch,
-    test/live mode, credentials (secrets masked, blank = keep), currencies, test action.
+    test/live mode, credentials (secrets masked, blank = keep), test action. No settlement
+    currencies: every gateway charges USD only (decision #87).
     @param \App\Modules\Integrations\Models\PaymentGateway $gateway
     @param \App\Modules\Integrations\Enums\GatewayPurpose $purpose
     @param \App\Modules\Integrations\Models\PaymentGatewayConfig $config
     @param array $credentials
-    @param array $currencyOptions
     @param bool $canManage
 --}}
 @php
@@ -68,17 +68,6 @@
         @empty
             <p class="rounded-control bg-subtle px-4 py-3 text-[13px] text-ink-secondary">{{ __('integrations::admin.gateways.no_credentials') }}</p>
         @endforelse
-
-        <x-ui::select
-            :name="$prefix.'[currencies]'"
-            :label="__('integrations::admin.gateways.fields.currencies')"
-            :options="$currencyOptions"
-            :selected="$config->currencies ?? []"
-            multiple
-            :helper="__('integrations::admin.gateways.currencies_helper')"
-            :placeholder="__('integrations::admin.gateways.currencies_placeholder')"
-            :disabled="! $canManage"
-        />
     </div>
 
     <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">

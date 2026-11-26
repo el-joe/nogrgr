@@ -32,9 +32,11 @@ use Illuminate\Support\Str;
 /**
  * Storefront payments with the store's gateway (own keys or the central fallback):
  *  - start(): one attempt per call (order_payments = the payment log), charging every
- *    order of the checkout group at once in USD; redirect gateways return a URL, Stripe
- *    (PaymentIntents) the client secret for the inline card panel;
- *  - confirm(): return-URL / polling check with the gateway (captures PayPal);
+ *    order of the checkout group at once in USD; redirect gateways (PayPal) return a URL,
+ *    Stripe (PaymentIntents) the client secret + publishable key for the inline card
+ *    (Stripe.js on the theme / Stripe SDK in the app, decision #78 b);
+ *  - confirm(): return-URL / app check with the gateway (captures PayPal, reads the
+ *    PaymentIntent status — the Stripe card needs no webhook);
  *  - webhook(): signature-checked by the driver, replay-safe (gateway + event id stored once);
  *    checkouts on the platform's keys are also routed from the central endpoint
  *    (gateway_checkout_routes → CentralWebhookRouter → handleNotification());
@@ -109,7 +111,12 @@ class PaymentService extends BaseService
             $member->forceFill(['payment_gateway' => $code->value, 'payment_source' => $gateway->source, 'payment_status' => PaymentStatus::Pending])->save();
         }
 
-        return new StartedPayment($payment, $checkout->redirectUrl !== '' ? $checkout->redirectUrl : null);
+        return new StartedPayment(
+            $payment,
+            $checkout->redirectUrl !== '' ? $checkout->redirectUrl : null,
+            $checkout->clientSecret,
+            $checkout->isInline() ? $gateway->publishableKey() : null,
+        );
     }
 
     /**
@@ -130,7 +137,7 @@ class PaymentService extends BaseService
         $config = $this->gateways->configFor($payment->gateway) ?? throw CommerceException::blocked(CheckoutBlock::GatewayUnavailable);
 
         try {
-            $result = $this->gateways->driver($payment->gateway)->verify($config, $payment->checkout_id);
+            $result = $this->gateways->driverForCheckout($payment->gateway, $payment->checkout_id)->verify($config, $payment->checkout_id);
         } catch (PaymentGatewayException $exception) {
             throw CommerceException::blocked(CheckoutBlock::GatewayUnavailable);
         }
@@ -186,7 +193,7 @@ class PaymentService extends BaseService
         }
 
         $result = $notification->needsConfirmation
-            ? $this->gateways->driver($code)->verify($config, (string) $notification->checkoutId)
+            ? $this->gateways->driverForCheckout($code, $notification->checkoutId)->verify($config, (string) $notification->checkoutId)
             : new PaymentResult($notification->outcome, (string) $notification->checkoutId, $notification->transactionId, $notification->reason);
 
         $this->settle($payment, $result);

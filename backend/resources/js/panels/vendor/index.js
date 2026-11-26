@@ -13,6 +13,12 @@ const pages = {
     'vendor-setup-wizard': () => import('./setup-wizard.js'),
     'vendor-orders': () => import('./orders.js'),
     'vendor-subscription': () => import('./subscription.js'),
+    'vendor-customers': () => import('./customers.js'),
+    'vendor-banners': () => import('./banners.js'),
+    'vendor-invoices': () => import('./invoices.js'),
+    'vendor-compliance': () => import('./compliance.js'),
+    'vendor-themes': () => import('./themes.js'),
+    'vendor-staff': () => import('./staff.js'),
 };
 
 export function initVendor() {

@@ -4,14 +4,18 @@ namespace App\Modules\Catalog\Http\Controllers\Vendor\Requests;
 
 use App\Modules\Billing\Enums\PaymentLogStatus;
 use App\Modules\Billing\Models\PaymentLog;
+use App\Modules\Billing\Support\PaymentStartResponse;
 use App\Modules\Catalog\Enums\RequestKind;
 use App\Modules\Catalog\Http\Requests\Vendor\Requests\RequestPayRequest;
 use App\Modules\Catalog\Services\Requests\RequestCheckoutService;
 use App\Modules\Catalog\Services\Requests\VendorRequestService;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
+use App\Modules\Integrations\Payments\PaymentDriverRegistry;
 use App\Shared\Http\Controller;
+use App\Shared\Http\JsonResponder;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -28,19 +32,24 @@ class RequestPaymentController extends Controller
         private readonly VendorRequestService $requests,
     ) {}
 
-    public function pay(RequestPayRequest $request, int $id, int $payment): RedirectResponse
+    /**
+     * Form post → hosted checkout; the inline Stripe card posts as JSON (decision #78 b).
+     */
+    public function pay(RequestPayRequest $request, int $id, int $payment, PaymentDriverRegistry $drivers): RedirectResponse|JsonResponse
     {
         $kind = RequestKind::fromVendorRouteName($request->route()?->getName()) ?? abort(404);
         $thread = $this->requests->findOwned($kind, $id);
         $row = $this->checkout->findPayment($thread, $payment);
+        $inline = $request->expectsJson();
+        $start = fn (): array => $this->checkout->start($thread, $row, $request->gateway(), $this->staff($request)->email);
 
         try {
-            $started = $this->checkout->start($thread, $row, $request->gateway(), $this->staff($request)->email);
+            $started = $inline ? $drivers->inline($start) : $start();
         } catch (PaymentGatewayException $exception) {
-            return redirect()->to(vendor_route('requests.'.$kind->value.'.show', ['id' => $id]))->with('error', $exception->getMessage());
+            return $inline ? JsonResponder::error($exception->getMessage(), 422) : redirect()->to(vendor_route('requests.'.$kind->value.'.show', ['id' => $id]))->with('error', $exception->getMessage());
         }
 
-        return redirect()->away($started['redirect']);
+        return $inline ? PaymentStartResponse::json($started) : redirect()->away($started['redirect']);
     }
 
     public function result(Request $request, int $payment): View

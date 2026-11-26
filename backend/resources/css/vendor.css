@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './shared/fonts.css';
+@import './fonts/panel-vendor.css';
 @import './tokens/base.css';
 @import './tokens/vendor.css';
 @import './shared/base.css';

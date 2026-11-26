@@ -3,7 +3,8 @@
  * line, "Due today" and Pay button in sync with the chosen plan + billing term (prices
  * come pre-formatted from the server in a JSON island); Pay now buttons (alert and invoice
  * rows rendered later by the table) fill the invoice modal; every checkout submit shows
- * the busy state while the browser leaves for the hosted checkout.
+ * the busy state while the browser leaves for the hosted checkout; Stripe pays in the
+ * modal with the shared inline card (bound by panels/core.js, decision #78 b).
  */
 import { openOverlay } from '../ui/index.js';
 

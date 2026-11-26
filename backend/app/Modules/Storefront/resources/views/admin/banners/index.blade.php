@@ -49,7 +49,7 @@
                     <h2 class="text-base font-semibold text-ink">{{ __('engagement::banners.list_title', ['placement' => $placement->label()]) }}</h2>
                     <x-ui::filters-bar target="banners" :search-placeholder="__('engagement::banners.search')">
                         <input type="hidden" name="country_id" value="{{ $country }}" data-filter>
-                        <x-ui::select name="placement" :label="__('engagement::banners.fields.placement')" label-hidden :options="$placements" :selected="$placement->value" :search="false" data-filter :data-filter-label="__('engagement::banners.fields.placement')" class="w-56" />
+                        <x-ui::select name="placement" :label="__('engagement::banners.fields.placement')" label-hidden :options="$placements" :selected="$placement->value" :search="false" data-filter data-filter-fixed :data-filter-label="__('engagement::banners.fields.placement')" class="w-56" />
                     </x-ui::filters-bar>
                 </div>
             </x-slot:filters>

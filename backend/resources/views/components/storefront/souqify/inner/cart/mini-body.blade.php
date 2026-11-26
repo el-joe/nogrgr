@@ -28,7 +28,7 @@
                     <div class="flex items-center gap-3 bg-white" data-swipe-content>
                         <a href="{{ route('storefront.product', ['product' => $line['store_product_id']]) }}" class="grid size-[54px] shrink-0 place-items-center overflow-hidden rounded bg-sq-soft">
                             @if ($line['image_url'])
-                                <img src="{{ $line['image_url'] }}" alt="" class="size-full object-cover" loading="lazy" decoding="async">
+                                <img src="{{ $line['image_url'] }}" alt="" class="size-full object-contain bg-media" loading="lazy" decoding="async">
                             @else
                                 <x-ui::icon name="image" :size="20" class="text-sq-line" />
                             @endif

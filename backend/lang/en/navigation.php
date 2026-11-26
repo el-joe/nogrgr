@@ -105,6 +105,13 @@ return [
         'ui_kit' => 'Component library',
     ],
     'vendor' => [
+        // P8: store banners, invoices
+        'store_design' => 'Your Store',
+        'banners' => 'Banners',
+        // P8: store themes
+        'themes' => 'Themes',
+        'home_variants' => 'Home variants',
+        'invoices' => 'Invoices',
         'marketing' => 'Ads & Marketing',
         'coupons' => 'Coupons',
         'flash_sales' => 'Flash sales',
@@ -134,6 +141,7 @@ return [
         'compliance' => 'Compliance center',
         'language_purchases' => 'Language purchases',
         'roles' => 'Roles & permissions',
+        'staff' => 'Staff',
         'requests' => 'Requests',
         'product_requests' => 'Product requests',
         'manufacturing' => 'Manufacturing',

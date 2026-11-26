@@ -103,8 +103,7 @@ Neutral (warm): `0 #FFFFFF · 50 #FAF8F7 · 100 #F4F1F0 · 200 #E9E4E2 · 300 #D
 | Button/Lg · Md · Sm | 16/24 · 14/20 · 13/16 | Medium |
 
 **Arabic** (`Admin AR/*`): H1 24/36, H3 16/26, KPI 28/38, Body/Md 14/22, Caption 12/18. Arabic needs about 10–15% more line height.
-- In code, use **IBM Plex Sans Arabic** under `[dir=rtl]`.
-- The Figma file uses **Noto Sans Arabic** as a stand-in, because IBM Plex Sans Arabic is not installed in this Figma account.
+- In code, use **Noto Sans Arabic** under `[dir=rtl]` exactly as in Figma (decision #89; the vendor panel keeps the client's IBM Plex Sans Arabic).
 
 The minimum UI text size is 12px. The old admin used 10–11px; that is fixed here.
 
@@ -360,7 +359,7 @@ With `prefers-reduced-motion`, everything becomes a ≤ 80ms opacity fade, and s
 ---
 
 ## 9. Known gaps / follow-ups
-- **IBM Plex Sans Arabic** is not available in this Figma account. Arabic text styles use Noto Sans Arabic; the code must use IBM Plex Sans Arabic.
+- **IBM Plex Sans Arabic** is not available in this Figma account. Arabic text styles use Noto Sans Arabic, and the code uses the same family (decision #89).
 - The **RTL dashboard** is made of detached layers (a mirrored clone), not live instances. Do not edit components there; edit the LTR source and re-mirror.
 - The **Logo mark** is a placeholder; swap in the official SVG.
 - Gateway logos are colored monograms. Real logos must come from the brand kits.
@@ -432,7 +431,7 @@ Every remaining admin and vendor page has a design. Frames are named with their 
 
 ## Known gaps (batch 2)
 - Product thumbnails, banners and theme previews are gradient placeholders. ComfyUI image generation was not used in this batch.
-- Arabic sample text inside Outfit-styled components renders with Figma's fallback font. Code uses IBM Plex Sans Arabic.
+- Arabic sample text inside Outfit-styled components renders with Figma's fallback font. Code uses IBM Plex Sans Arabic in the vendor panel (decision #89).
 - Wide tables on narrow cards were cut down to the key columns. Responsive behaviour is defined by the three mobile pattern frames.
 
 ## Coverage cross-check vs `05-page-coverage.md`

@@ -885,6 +885,30 @@ html[data-sidebar-mode-ready='false'] :where(.ui-sidebar, .ui-shell-main) {
     margin-inline-start: auto;
 }
 
+/*
+ * Read-only phone (disabled itself or inside a disabled fieldset, e.g. the compliance
+ * center under review, QA-P8-010): muted text like the other disabled controls, no
+ * dropdown arrow and no hover on the country button. intl-tel-input only checks the
+ * input's own [disabled] attribute, not :disabled.
+ */
+:root .ui-phone:has(.iti__tel-input:disabled) .iti {
+    --iti-hover-color: transparent;
+}
+
+:root .ui-phone:has(.iti__tel-input:disabled) .iti__tel-input,
+:root .ui-phone:has(.iti__tel-input:disabled) .iti__selected-dial-code {
+    color: var(--color-ink-muted);
+    cursor: not-allowed;
+}
+
+:root .ui-phone:has(.iti__tel-input:disabled) .iti__selected-country {
+    cursor: not-allowed;
+}
+
+:root .ui-phone:has(.iti__tel-input:disabled) .iti__arrow {
+    display: none;
+}
+
 /* ---------- DataTables skin (Figma Data Table 34:11868) ---------- */
 :root .ui-datatable table.dataTable {
     width: 100% !important;

@@ -23,6 +23,18 @@ return [
         'invalid' => 'This link has expired or was already used.',
         'request_new' => 'Request a new one.',
     ],
+    'invitation' => [
+        'title' => 'Welcome to :store',
+        'intro' => 'You were invited to join the :store team. Set a password to activate your account.',
+        'intro_for' => 'You were invited to join the :store team as :email. Set a password to activate your account.',
+        'password' => 'Password',
+        'confirm_password' => 'Confirm password',
+        'submit' => 'Set password and join',
+        'invalid' => 'This invitation has expired or was already used. Ask the store owner to send a new invitation.',
+        'have_account' => 'Already set your password?',
+        'sign_in' => 'Sign in',
+        'done' => 'Your password is set and your account is active. Sign in to continue.',
+    ],
     'verify' => [
         'verified_title' => 'Email verified',
         'verified_body' => 'Thanks :name — your email is confirmed. Continue to set up your store.',

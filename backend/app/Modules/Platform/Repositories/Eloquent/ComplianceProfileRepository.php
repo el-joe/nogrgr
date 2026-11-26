@@ -42,6 +42,7 @@ class ComplianceProfileRepository extends BaseRepository implements CompliancePr
             ->join('tenants', 'tenants.id', '=', 'compliance_profiles.tenant_id')
             ->with('documents:id,compliance_profile_id,type,status')
             ->when($status !== null, fn (Builder $query) => $query->where('compliance_profiles.status', $status?->value))
+            ->when($status === null, fn (Builder $query) => $query->where('compliance_profiles.status', '!=', ComplianceStatus::Draft->value))
             ->when($document !== null, fn (Builder $query) => $query->whereHas('documents', fn (Builder $query) => $query->where('type', $document?->value)))
             ->when($countryId !== false && $countryId !== null, fn (Builder $query) => $query->where('tenants.default_country_id', $countryId))
             ->when($search !== '', function (Builder $query) use ($search): void {
@@ -67,5 +68,30 @@ class ComplianceProfileRepository extends BaseRepository implements CompliancePr
     {
         ComplianceDocument::query()->withoutGlobalScopes()->where('compliance_profile_id', $profile->id)->get()
             ->each(fn (ComplianceDocument $document) => $document->fill($attributes)->save());
+    }
+
+    public function documentOfType(ComplianceProfile $profile, ComplianceDocumentType $type): ?ComplianceDocument
+    {
+        return ComplianceDocument::query()->withoutGlobalScopes()->where('compliance_profile_id', $profile->id)->where('type', $type->value)->latest('id')->first();
+    }
+
+    public function createDocument(ComplianceProfile $profile, array $attributes): ComplianceDocument
+    {
+        $document = new ComplianceDocument;
+        $document->forceFill(['tenant_id' => $profile->tenant_id, 'compliance_profile_id' => $profile->id])->fill($attributes)->save();
+
+        return $document;
+    }
+
+    public function updateDocument(ComplianceDocument $document, array $attributes): ComplianceDocument
+    {
+        $document->fill($attributes)->save();
+
+        return $document;
+    }
+
+    public function deleteDocument(ComplianceDocument $document): void
+    {
+        $document->delete();
     }
 }

@@ -8,7 +8,6 @@ use App\Modules\Integrations\Enums\GatewayMode;
 use App\Modules\Integrations\Enums\GatewayPurpose;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
 use App\Modules\Integrations\Services\PaymentGatewayService;
-use App\Modules\Localization\Models\Currency;
 use App\Shared\Money\Money;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -17,7 +16,7 @@ use Illuminate\Validation\Validator;
 /**
  * Gateway edit (ADM-100b): fee % (stored as basis points) + fixed USD fee (minor
  * units), and per purpose: enabled, mode, credentials (blank secret = keep) and
- * settlement currencies (active currencies only).
+ * no currencies (USD is the only payment currency, decision #87).
  */
 class UpdatePaymentGatewayRequest extends FormRequest
 {
@@ -51,8 +50,6 @@ class UpdatePaymentGatewayRequest extends FormRequest
 
             $rules[$prefix.'.enabled'] = ['required', 'boolean'];
             $rules[$prefix.'.mode'] = ['required', Rule::enum(GatewayMode::class)];
-            $rules[$prefix.'.currencies'] = [$enabled ? 'required' : 'nullable', 'array', 'max:20'];
-            $rules[$prefix.'.currencies.*'] = ['string', 'size:3', Rule::exists(Currency::class, 'code')->where('is_active', true)];
 
             foreach ($this->code()->credentialFields() as $field) {
                 $presence = $field->required && $enabled && ! $field->isSecret() ? 'required' : 'nullable';
@@ -102,8 +99,6 @@ class UpdatePaymentGatewayRequest extends FormRequest
 
         foreach (GatewayPurpose::cases() as $purpose) {
             $prefix = 'configs.'.$purpose->value;
-            $attributes[$prefix.'.currencies'] = __('integrations::admin.gateways.fields.currencies');
-            $attributes[$prefix.'.currencies.*'] = __('integrations::admin.gateways.fields.currencies');
             $attributes[$prefix.'.mode'] = __('integrations::admin.gateways.fields.mode');
 
             foreach ($this->code()->credentialFields() as $field) {
@@ -135,7 +130,6 @@ class UpdatePaymentGatewayRequest extends FormRequest
                 isEnabled: $this->boolean($prefix.'.enabled'),
                 mode: GatewayMode::from((string) $this->input($prefix.'.mode')),
                 credentials: $credentials,
-                currencies: array_values(array_map(static fn (mixed $code): string => strtoupper((string) $code), (array) $this->input($prefix.'.currencies', []))),
             );
         }
 

@@ -23,6 +23,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $fullTitle ?? ($title ? $title.' · ' : '').config('app.name') }}</title>
+    @php($fontPreload = \App\Shared\Support\FontPreload::url($surface, \App\Shared\Support\Locale::direction() === 'rtl'))
+    @if ($fontPreload)
+        <link rel="preload" href="{{ $fontPreload }}" as="font" type="font/woff2" crossorigin>
+    @endif
     {{ $head ?? '' }}
     <script type="application/json" id="app-i18n">@json(trans('js'))</script>
     @vite($entries)

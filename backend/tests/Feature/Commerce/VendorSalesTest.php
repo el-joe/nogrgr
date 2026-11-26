@@ -168,6 +168,31 @@ it('pays the platform share of a store-collected order through the hosted checko
     $this->get($this->tenantUrl($this->shop->tenant, 'admin/finance/settle/payments/999999/result'))->assertNotFound();
 });
 
+it('pays the platform share with the inline Stripe card and verifies the PaymentIntent on return', function (): void {
+    $intent = ['id' => 'pi_settle_1', 'object' => 'payment_intent', 'client_secret' => 'pi_settle_1_secret', 'amount' => 5420, 'currency' => 'usd'];
+    Http::fake([
+        'https://api.stripe.com/v1/payment_intents' => Http::response($intent + ['status' => 'requires_payment_method']),
+        'https://api.stripe.com/v1/payment_intents/pi_settle_1' => Http::response($intent + ['status' => 'succeeded', 'amount_received' => 5420]),
+    ]);
+    ($this->as)();
+
+    $this->get($this->tenantUrl($this->shop->tenant, "admin/finance/settle/{$this->order->uuid}"))->assertOk()->assertSee('data-stripe-card', false)->assertSee('data-publishable-key="pk_central"', false);
+    $return = (string) $this->postJson($this->tenantUrl($this->shop->tenant, "admin/finance/settle/{$this->order->uuid}"), ['gateway' => 'stripe'])
+        ->assertOk()
+        ->assertJsonPath('data.inline.client_secret', 'pi_settle_1_secret')
+        ->json('data.inline.return_url');
+
+    Http::assertSent(fn (HttpRequest $request): bool => $request->url() === 'https://api.stripe.com/v1/payment_intents' && $request['currency'] === 'usd' && (int) $request['amount'] === 5420);
+    $settlement = OrderSettlement::withoutTenantScope()->sole();
+    $log = PaymentLog::query()->withoutGlobalScopes()->findOrFail($settlement->payment_log_id);
+    expect($log->gateway_reference)->toBe('pi_settle_1')->and($return)->toContain("payments/{$log->id}/result");
+
+    $this->get($return)->assertOk()->assertSee(__('commerce::settlement.result.paid_title'));
+
+    expect($log->refresh()->status)->toBe(PaymentLogStatus::Captured)
+        ->and($settlement->refresh()->status)->toBe(SettlementStatus::Paid);
+});
+
 it('lets the store review returns but not inspect platform-shipped items', function (): void {
     $this->shop->tenant->run(function (): void {
         $order = Order::query()->where('uuid', $this->order->uuid)->sole();

@@ -7,10 +7,11 @@
  * Opening shows the skeleton, fetches the HTML fragment, injects it and wires its
  * fields (Select2, switches…). The fragment's root may carry data-modal-title /
  * data-modal-subtitle (and data-submit-label for [data-remote-submit]). A data-ajax
- * form inside closes the modal on success and reloads the page's table. Failures
+ * form inside closes the modal on success, reloads the page's table and refreshes its
+ * [data-live] regions (counts, quota lines; see ui/live.js). Failures
  * show the error state with Retry.
  */
-import { initUi, openOverlay, closeOverlay } from './ui/index.js';
+import { initUi, openOverlay, closeOverlay, notifyChanged } from './ui/index.js';
 import { initSelect2 } from './select2';
 
 async function load(modal, url) {
@@ -108,6 +109,7 @@ export function bindRemoteModals(root = document) {
             delete event.target.dataset.dirty;
             closeOverlay(modal, { force: true });
             root.querySelectorAll('[data-datatable-card]').forEach((card) => card.dispatchEvent(new CustomEvent('datatable:reload', { detail: { keepPage: true } })));
+            notifyChanged({ source: 'modal' });
         });
     });
 }

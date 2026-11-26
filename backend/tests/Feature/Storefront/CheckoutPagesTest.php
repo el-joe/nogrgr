@@ -2,6 +2,9 @@
 
 use App\Modules\Identity\Models\CustomerAddress;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
+use App\Modules\Localization\Models\Currency;
+use App\Modules\Storefront\Services\Checkout\StorefrontCart;
+use App\Modules\Storefront\Services\StorefrontContext;
 
 require_once __DIR__.'/../Commerce/StoreApiHelpers.php';
 
@@ -48,13 +51,13 @@ it('renders the checkout with addresses, summary, payment methods and the pay to
         ->assertSee('Pay $63.80')
         ->getContent();
 
-    // Nothing pre-selected (spec 08); Stripe is a hosted redirect (decision #78 b): no card
-    // panel, no publishable key and no Stripe.js on the page.
+    // Nothing pre-selected (spec 08); Stripe = inline card panel (decision #78 b), hidden
+    // until chosen; only the publishable key is on the page and Stripe.js is not loaded yet.
     expect($html)->not->toContain('data-gateway-radio checked')
         ->and($html)->toContain('value="stripe"')
-        ->and($html)->not->toContain('inline-card-form')
-        ->and($html)->not->toContain('data-publishable-key')
-        ->and($html)->not->toContain('pk_central')
+        ->and($html)->toContain('id="inline-card-form"')
+        ->and($html)->toContain('data-publishable-key="pk_central"')
+        ->and($html)->not->toContain('sk_central')
         ->and($html)->not->toContain('js.stripe.com');
 });
 
@@ -104,13 +107,13 @@ it('opens the pay page of a placed order and the redirect page for a redirect ga
         ->assertSee('data-payment-redirect', false)
         ->assertSee('Redirecting to secure payment...');
 
-    // Stripe is a redirect gateway as well: Redirecting page → Stripe Checkout → return URL.
+    // Stripe pays on the pay page itself with the inline card, preselected.
     $this->get($this->tenantUrl($shop->tenant, '/checkout/pay/'.$placed['payment_order'].'?gateway=stripe'))
         ->assertOk()
-        ->assertSee('data-payment-redirect', false)
-        ->assertSee('data-gateway="stripe"', false)
-        ->assertSee('/checkout/payment/stripe/'.$placed['payment_order'], false)
-        ->assertDontSee('js.stripe.com', false);
+        ->assertSee('data-payment-page', false)
+        ->assertSee('data-preselect-gateway', false)
+        ->assertSee('id="inline-card-form"', false)
+        ->assertDontSee('data-payment-redirect', false);
 });
 
 it('hides another customer\'s order behind a 404', function (): void {
@@ -121,4 +124,27 @@ it('hides another customer\'s order behind a 404', function (): void {
     $this->actingAsCustomer($other, $shop->tenant)
         ->get($this->tenantUrl($shop->tenant, '/checkout/pay/'.$placed['payment_order']))
         ->assertNotFound();
+});
+
+it('shows the display-currency total for reference and the USD charge line (decision #87)', function (): void {
+    $shop = checkoutShop();
+    Currency::query()->updateOrCreate(['code' => 'SAR'], ['name' => ['en' => 'Saudi Riyal', 'ar' => 'ريال سعودي'], 'symbol' => 'SAR', 'decimals' => 2, 'rate' => '3.750000', 'is_active' => true, 'is_base' => false]);
+    $this->actingAsCustomer($shop->customer, $shop->tenant);
+    $this->postJson($this->tenantUrl($shop->tenant, '/store-api/v1/cart/items'), ['store_product_id' => $shop->catalog->id, 'quantity' => 2])->assertCreated();
+
+    $this->withSession([StorefrontContext::CURRENCY_SESSION_KEY => 'SAR'])
+        ->get($this->tenantUrl($shop->tenant, '/checkout'))
+        ->assertOk()
+        ->assertSee('239.25')
+        ->assertSee('You will be charged $63.80 USD.');
+
+    $placed = shopPlaceOrder($shop, $shop->customer, [$shop->catalog->id => 1]);
+    $this->withSession([StorefrontContext::CURRENCY_SESSION_KEY => 'SAR'])
+        ->get($this->tenantUrl($shop->tenant, '/checkout/pay/'.$placed['payment_order']))
+        ->assertOk()
+        ->assertSee('You will be charged $', false);
+
+    // Shopping in USD (no display conversion): no extra line.
+    expect(StorefrontCart::usdCharge(['amount' => 6380, 'currency' => 'USD', 'formatted' => '$63.80', 'display' => null]))->toBeNull()
+        ->and(StorefrontCart::usdCharge(['amount' => 6380, 'currency' => 'USD', 'formatted' => '$63.80', 'display' => ['currency' => 'SAR', 'amount' => 239.25, 'formatted' => 'SAR 239.25']]))->toContain('$63.80 USD');
 });

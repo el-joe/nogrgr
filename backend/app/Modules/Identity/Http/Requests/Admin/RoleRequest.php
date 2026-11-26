@@ -19,6 +19,14 @@ class RoleRequest extends FormRequest
     }
 
     /**
+     * Guard whose roles and permission catalog this request edits.
+     */
+    protected function guard(): string
+    {
+        return 'admin';
+    }
+
+    /**
      * The form always posts `permissions` (an empty hidden field when nothing is ticked).
      */
     protected function prepareForValidation(): void
@@ -39,11 +47,11 @@ class RoleRequest extends FormRequest
             'name' => [
                 'required', 'string', 'max:60', 'not_regex:/[<>]/',
                 Rule::unique((string) config('permission.table_names.roles'), 'name')
-                    ->where('guard_name', 'admin')
-                    ->ignore($role instanceof Role ? $role->getKey() : null),
+                    ->where('guard_name', $this->guard())
+                    ->ignore($role instanceof Role ? $role->getKey() : (is_numeric($role) ? (int) $role : null)),
             ],
             'permissions' => ['array'],
-            'permissions.*' => ['string', 'distinct', Rule::in(PermissionCatalog::forGuard('admin'))],
+            'permissions.*' => ['string', 'distinct', Rule::in(PermissionCatalog::forGuard($this->guard()))],
         ];
     }
 

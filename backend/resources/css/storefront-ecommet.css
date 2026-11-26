@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './shared/fonts.css';
+@import './fonts/storefront-ecommet.css';
 @import './tokens/base.css';
 @import './tokens/storefront-ecommet.css';
 @import './shared/base.css';

@@ -6,6 +6,7 @@ use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Identity\Repositories\Contracts\VendorStaffRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -44,5 +45,30 @@ class VendorStaffRepository extends BaseRepository implements VendorStaffReposit
             ->get()
             ->filter(static fn (VendorStaff $staff): bool => $staff->can($permission))
             ->values();
+    }
+
+    public function listQuery(): Builder
+    {
+        return $this->query()->with('roles');
+    }
+
+    public function counts(): array
+    {
+        $rows = $this->query()->toBase()->selectRaw('status, count(*) as aggregate')->groupBy('status')->pluck('aggregate', 'status');
+
+        return [
+            'all' => (int) $rows->sum(),
+            'active' => (int) ($rows[AccountStatus::Active->value] ?? 0),
+            'pending' => (int) ($rows[AccountStatus::Pending->value] ?? 0),
+            'suspended' => (int) ($rows[AccountStatus::Suspended->value] ?? 0),
+        ];
+    }
+
+    public function emailTaken(string $email, ?int $ignoreId = null): bool
+    {
+        return $this->query()
+            ->where('email', mb_strtolower($email))
+            ->when($ignoreId !== null, static fn (Builder $query) => $query->whereKeyNot($ignoreId))
+            ->exists();
     }
 }

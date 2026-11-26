@@ -95,7 +95,7 @@
             <x-ui::file-upload name="image" accept="image/png,image/jpeg,image/webp" :hint="__('catalog::taxonomy.fields.image_formats')" />
             @if ($editing && $category->imageUrl())
                 <div class="flex flex-wrap items-center gap-4">
-                    <img src="{{ $category->imageUrl() }}" alt="{{ $category->name }}" class="size-16 rounded-control object-cover" loading="lazy">
+                    <img src="{{ $category->imageUrl() }}" alt="{{ $category->name }}" class="size-16 rounded-control object-contain bg-media" loading="lazy">
                     <x-ui::checkbox name="remove_image" :label="__('catalog::taxonomy.fields.remove_image')" unchecked-value="0" />
                 </div>
             @endif

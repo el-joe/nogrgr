@@ -24,6 +24,7 @@ use App\Modules\Platform\Enums\StoreSettingKey;
 use App\Modules\Platform\Exceptions\PlatformRuleException;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Repositories\Contracts\TenantRepositoryContract;
+use App\Modules\Storefront\Services\StoreThemeService;
 use App\Shared\Services\BaseService;
 use Illuminate\Support\Collection;
 
@@ -52,6 +53,7 @@ class SetupWizardService extends BaseService
         private readonly AddonPurchaseService $purchases,
         private readonly InvoiceCheckoutService $checkout,
         private readonly StoreSettingsService $settings,
+        private readonly StoreThemeService $themes,
     ) {}
 
     /**
@@ -210,6 +212,11 @@ class SetupWizardService extends BaseService
 
     public function themeFamily(Tenant $tenant): ?string
     {
+        /* The theme saved on Store › Themes (VEN-030) wins over the sign-up pick. */
+        if (tenancy()->initialized && (string) tenant()?->getTenantKey() === (string) $tenant->getKey() && $this->themes->config()['default'] !== null) {
+            return $this->themes->resolve(null)->family->value;
+        }
+
         $family = $tenant->getAttribute('theme_family');
 
         return is_string($family) && $family !== '' ? $family : null;

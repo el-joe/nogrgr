@@ -8,6 +8,6 @@
             :data-invoice-amount="$invoice->total()->format()"
         >{{ __('billing::vendor_subscription.actions.pay_now') }}</x-ui::button>
     @endif
-    <x-ui::icon-button icon="printer" size="sm" :href="vendor_route('finance.subscription.invoices.print', ['invoice' => $invoice->id])" target="_blank" rel="noopener" :label="__('billing::vendor_subscription.actions.print_invoice', ['number' => $invoice->number])" />
-    <x-ui::icon-button icon="download" size="sm" :href="vendor_route('finance.subscription.invoices.print', ['invoice' => $invoice->id, 'save' => 1])" target="_blank" rel="noopener" :label="__('billing::vendor_subscription.actions.download_invoice', ['number' => $invoice->number])" />
+    <x-ui::icon-button icon="printer" size="sm" :href="vendor_route('finance.invoices.print', ['invoice' => $invoice->id])" target="_blank" rel="noopener" :label="__('billing::vendor_subscription.actions.print_invoice', ['number' => $invoice->number])" />
+    <x-ui::icon-button icon="download" size="sm" :href="vendor_route('finance.invoices.print', ['invoice' => $invoice->id, 'save' => 1])" target="_blank" rel="noopener" :label="__('billing::vendor_subscription.actions.download_invoice', ['number' => $invoice->number])" />
 </div>

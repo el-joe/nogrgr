@@ -15,7 +15,7 @@
         <div class="flex flex-wrap gap-3" data-image-grid>
             @foreach ($images as $index => $image)
                 <div data-image-tile class="group/tile relative size-24 cursor-grab overflow-hidden rounded-control bg-subtle">
-                    <img src="{{ $image['url'] }}" alt="{{ $image['alt'] ?? '' }}" class="size-full object-cover" loading="lazy">
+                    <img src="{{ $image['url'] }}" alt="{{ $image['alt'] ?? '' }}" class="size-full object-contain bg-media" loading="lazy">
                     <input type="hidden" name="{{ $base }}_keep[]" value="{{ $image['id'] }}">
                     <span data-main-badge class="absolute bottom-1.5 start-1.5 rounded-chip bg-inverse px-1.5 text-xs font-medium text-on-inverse" @if ($index !== 0) hidden @endif>{{ __('ui.upload.main') }}</span>
                     <button type="button" data-image-remove class="absolute end-1.5 top-1.5 grid size-7 place-items-center rounded-chip bg-surface/90 text-ink opacity-0 shadow-card transition-opacity group-hover/tile:opacity-100 hover:text-danger focus-visible:opacity-100" aria-label="{{ __('ui.upload.remove_image') }}" title="{{ __('ui.upload.remove_image') }}">
@@ -31,7 +31,7 @@
         </div>
         <template data-image-tile-template>
             <div data-image-tile class="group/tile relative size-24 cursor-grab overflow-hidden rounded-control bg-subtle">
-                <img src="" alt="" class="size-full object-cover">
+                <img src="" alt="" class="size-full object-contain bg-media">
                 <span data-main-badge class="absolute bottom-1.5 start-1.5 rounded-chip bg-inverse px-1.5 text-xs font-medium text-on-inverse" hidden>{{ __('ui.upload.main') }}</span>
                 <button type="button" data-image-remove class="absolute end-1.5 top-1.5 grid size-7 place-items-center rounded-chip bg-surface/90 text-ink opacity-0 shadow-card transition-opacity group-hover/tile:opacity-100 hover:text-danger focus-visible:opacity-100" aria-label="{{ __('ui.upload.remove_image') }}" title="{{ __('ui.upload.remove_image') }}">
                     <x-ui::icon name="trash" :size="16" />

@@ -15,7 +15,7 @@
                 @if (! empty($cover['avif']))<source srcset="{{ $cover['avif'] }}" type="image/avif">@endif
                 @if (! empty($cover['webp']))<source srcset="{{ $cover['webp'] }}" type="image/webp">@endif
                 <img src="{{ $cover['src'] ?? $cover['webp'] }}" alt="{{ __('content::site.blog.cover_alt', ['title' => $post->title]) }}" width="794" height="502"
-                    class="site-zoom size-full object-cover" @if ($eager) fetchpriority="high" @else loading="lazy" @endif decoding="async">
+                    class="site-zoom size-full object-contain bg-media" @if ($eager) fetchpriority="high" @else loading="lazy" @endif decoding="async">
             </picture>
         @else
             <div class="grid size-full place-items-center text-primary"><x-ui::icon name="file" :size="40" /></div>

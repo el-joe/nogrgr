@@ -86,7 +86,7 @@
                             <button type="button" class="cursor-grab text-ink-muted" data-drag-handle aria-label="{{ __('catalog::vendor.sort.drag', ['name' => $view->name]) }}" @disabled(! $canManage)><x-ui::icon name="menu" :size="18" /></button>
                             <span class="w-6 text-xs text-ink-muted" data-sort-position dir="ltr">{{ $index + 1 }}</span>
                             @if ($view->primaryImageUrl())
-                                <img src="{{ $view->primaryImageUrl() }}" alt="" class="size-9 rounded-chip object-cover" loading="lazy">
+                                <img src="{{ $view->primaryImageUrl() }}" alt="" class="size-9 rounded-chip object-contain bg-media" loading="lazy">
                             @else
                                 <span class="grid size-9 place-items-center rounded-chip bg-primary-subtle text-ink-brand"><x-ui::icon name="box" :size="16" /></span>
                             @endif

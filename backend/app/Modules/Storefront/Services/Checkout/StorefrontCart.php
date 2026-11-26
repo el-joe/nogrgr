@@ -80,6 +80,23 @@ class StorefrontCart
     }
 
     /**
+     * "You will be charged $X USD." when the shopper sees another currency: USD is the only
+     * payment currency, other currencies are display-only conversions (decision #87).
+     *
+     * @param  array<string, mixed>|null  $money  MoneyPresenter output
+     */
+    public static function usdCharge(?array $money): ?string
+    {
+        $display = $money['display']['currency'] ?? null;
+
+        if ($money === null || $display === null || $display === ($money['currency'] ?? 'USD')) {
+            return null;
+        }
+
+        return __st('checkout.charged_usd', ['amount' => (string) ($money['formatted'] ?? '')]);
+    }
+
+    /**
      * @param  array<string, mixed>|null  $money
      */
     public static function positive(?array $money): bool

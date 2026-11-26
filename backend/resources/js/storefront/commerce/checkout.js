@@ -11,7 +11,7 @@
  */
 import { bindCartLines } from './lines';
 import { fragmentLoader, readJson, storeApi } from './api';
-import { initPaymentSection, paymentFailed, startPayment } from './payment';
+import { CardDeclined, initPaymentSection, paymentFailed, startPayment } from './payment';
 
 const EXTRA_BLOCKS = ['unavailable_items', 'coupon_invalid', 'empty_cart'];
 
@@ -100,6 +100,14 @@ export function initCheckout(page) {
                 pay.textContent = messages.pay.replace('__TOTAL__', data.pay_total ?? '');
             }
 
+            /* USD is the only payment currency: keep "You will be charged $X USD." current. */
+            const charge = page.querySelector('[data-usd-charge]');
+
+            if (charge) {
+                charge.hidden = !data.usd_charge;
+                charge.querySelector('[data-usd-charge-text]').textContent = data.usd_charge ?? '';
+            }
+
             step?.dispatchEvent(new CustomEvent('checkout:shipping', { detail: data.shipping }));
             step?.dispatchEvent(new CustomEvent('checkout:gateway', { detail: { available: data.gateways > 0 } }));
             applyExtraBlock();
@@ -157,8 +165,15 @@ export function initCheckout(page) {
         }
 
         try {
-            await startPayment({ config, order, gateway });
+            await startPayment({ config, order, gateway, section: payment });
         } catch (failure) {
+            if (failure instanceof CardDeclined) {
+                /* Declined card: the message is in the card panel; Pay again retries the same intent. */
+                overlay.hidden = true;
+                restore();
+                return;
+            }
+
             /* The order exists: blocked gateway / provider error → toast, then its pay page. */
             paymentFailed(config, failure);
             setTimeout(() => window.location.assign(config.pay.replace('__ORDER__', order)), 1800);
@@ -193,11 +208,14 @@ export function initPayPage(page) {
         overlay.hidden = false;
 
         try {
-            await startPayment({ config, order: config.order, gateway });
+            await startPayment({ config, order: config.order, gateway, section: payment });
         } catch (failure) {
             overlay.hidden = true;
             restore();
-            paymentFailed(config, failure);
+
+            if (!(failure instanceof CardDeclined)) {
+                paymentFailed(config, failure);
+            }
         }
     });
 }

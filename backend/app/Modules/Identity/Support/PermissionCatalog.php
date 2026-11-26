@@ -134,6 +134,17 @@ final class PermissionCatalog
                 'finance.purchases.view',
                 'finance.settlements.view',
                 'finance.payouts.view',
+                // P8: customers
+                'customers.view', 'customers.manage', 'customers.export',
+                'subscribers.view', 'subscribers.manage', 'subscribers.export',
+                // P8: store banners, invoices
+                'store.banners.view', 'store.banners.manage',
+                'finance.invoices.view',
+                // P8: store themes
+                'store.themes.view', 'store.themes.manage',
+                // P8: staff & roles (VEN-076 / 077)
+                'settings.staff.view', 'settings.staff.manage',
+                'settings.roles.view', 'settings.roles.manage',
             ],
         ];
     }

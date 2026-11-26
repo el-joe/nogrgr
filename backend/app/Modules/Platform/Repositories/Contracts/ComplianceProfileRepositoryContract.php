@@ -2,6 +2,7 @@
 
 namespace App\Modules\Platform\Repositories\Contracts;
 
+use App\Modules\Platform\Enums\ComplianceDocumentType;
 use App\Modules\Platform\Models\ComplianceDocument;
 use App\Modules\Platform\Models\ComplianceProfile;
 use App\Shared\Repositories\Contracts\RepositoryContract;
@@ -35,4 +36,21 @@ interface ComplianceProfileRepositoryContract extends RepositoryContract
      * @param  array<string, mixed>  $attributes
      */
     public function updateDocuments(ComplianceProfile $profile, array $attributes): void;
+
+    /**
+     * The profile's latest document of one type (the vendor keeps one per type).
+     */
+    public function documentOfType(ComplianceProfile $profile, ComplianceDocumentType $type): ?ComplianceDocument;
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function createDocument(ComplianceProfile $profile, array $attributes): ComplianceDocument;
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function updateDocument(ComplianceDocument $document, array $attributes): ComplianceDocument;
+
+    public function deleteDocument(ComplianceDocument $document): void;
 }

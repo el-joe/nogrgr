@@ -41,6 +41,7 @@ class OnboardingService extends BaseService
         private readonly StoreSettingsService $settings,
         private readonly TenantLanguageRepositoryContract $languages,
         private readonly StoreProductRepositoryContract $storeProducts,
+        private readonly SetupWizardService $wizard,
     ) {}
 
     public function progress(Tenant $tenant): SetupProgressData
@@ -90,7 +91,7 @@ class OnboardingService extends BaseService
         $done = [
             SetupStep::StoreDetails->value => filled($tenant->name) && filled($tenant->owner_email) && filled($tenant->owner_phone),
             SetupStep::CountriesLanguages->value => ($tenant->selling_country_ids ?? []) !== [],
-            SetupStep::Theme->value => is_string($tenant->getAttribute('theme_family')) && $tenant->getAttribute('theme_family') !== '',
+            SetupStep::Theme->value => $this->wizard->themeFamily($tenant) !== null,
             SetupStep::ImportProducts->value => $this->storeProducts->hasAny(),
             SetupStep::Logo->value => $this->settings->logoPath() !== null,
             SetupStep::PaymentReadiness->value => false,
@@ -142,7 +143,7 @@ class OnboardingService extends BaseService
                 ])
                 : (string) __($key),
             SetupStep::Theme => $state === SetupStepState::Done
-                ? ucfirst((string) $tenant->getAttribute('theme_family'))
+                ? (string) $this->wizard->themeLabel($tenant)
                 : (string) __($key),
             default => (string) __($key),
         };

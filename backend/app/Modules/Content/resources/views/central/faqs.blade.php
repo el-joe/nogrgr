@@ -28,7 +28,7 @@
                                     <h3>
                                         <button type="button" id="faq-q-{{ $key }}" aria-controls="faq-a-{{ $key }}" :aria-expanded="(open === {{ $loop->index }}).toString()"
                                             @click="open = open === {{ $loop->index }} ? -1 : {{ $loop->index }}"
-                                            class="flex w-full items-center justify-between gap-4 py-3 text-start text-sm font-medium text-site-ink transition-colors hover:text-primary">
+                                            class="flex w-full items-center justify-between gap-4 py-3 text-start font-faq text-sm font-semibold text-site-ink transition-colors hover:text-primary">
                                             <span>{{ $faq->question }}</span>
                                             <span class="grid size-6 shrink-0 place-items-center">
                                                 @php $initiallyOpen = $groupIndex === 0 && $loop->first; @endphp
@@ -44,7 +44,7 @@
                                     </h3>
                                     <div id="faq-a-{{ $key }}" role="region" aria-labelledby="faq-q-{{ $key }}" @class(['site-accordion__panel', 'is-open' => $groupIndex === 0 && $loop->first]) :class="open === {{ $loop->index }} && 'is-open'">
                                         <div>
-                                            <div class="site-prose pb-3 text-xs leading-6 lg:text-[13px]">{!! $faq->answer !!}</div>
+                                            <div class="site-prose pb-3 font-faq text-xs font-light leading-6 lg:text-[13px]">{!! $faq->answer !!}</div>
                                         </div>
                                     </div>
                                 </li>

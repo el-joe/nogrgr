@@ -38,6 +38,9 @@ class PaymentController extends Controller
         return JsonResponder::success('', [
             'payment' => (new PaymentResource($started->payment))->toArray($request),
             'redirect_url' => $started->redirectUrl,
+            // Inline Stripe card (decision #78 b): confirm with Stripe.js / the Stripe SDK, then POST confirm.
+            'client_secret' => $started->clientSecret,
+            'publishable_key' => $started->publishableKey,
         ], status: 201);
     }
 

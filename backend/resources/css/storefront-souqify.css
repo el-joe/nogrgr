@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './shared/fonts.css';
+@import './fonts/storefront-souqify.css';
 @import './tokens/base.css';
 @import './tokens/storefront-souqify.css';
 @import './shared/base.css';

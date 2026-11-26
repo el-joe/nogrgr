@@ -1,0 +1,18 @@
+/*
+ * Ecommet storefront fonts (Figma "Ecommet" 0:1, Arabic frames on "Storefront additions"
+ * 97:10147): Outfit 300–900, Noto Sans Arabic, Tajawal 500 (filter facet headings, 1:1796
+ * e.g. 1:1802) and Inter 600 (mobile tab bar labels, 1:2823). Tokens: storefront-ecommet.css.
+ */
+@import '@fontsource/outfit/300.css';
+@import '@fontsource/outfit/400.css';
+@import '@fontsource/outfit/500.css';
+@import '@fontsource/outfit/600.css';
+@import '@fontsource/outfit/700.css';
+@import '@fontsource/outfit/800.css';
+@import '@fontsource/outfit/900.css';
+@import '@fontsource/noto-sans-arabic/arabic-400.css';
+@import '@fontsource/noto-sans-arabic/arabic-500.css';
+@import '@fontsource/noto-sans-arabic/arabic-600.css';
+@import '@fontsource/noto-sans-arabic/arabic-700.css';
+@import '@fontsource/tajawal/latin-500.css';
+@import '@fontsource/inter/latin-600.css';

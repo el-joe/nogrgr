@@ -26,10 +26,11 @@ use Illuminate\Support\Facades\Notification;
 require_once __DIR__.'/StoreApiHelpers.php';
 
 /*
-| Store API payments (P5 batch 2, decision #78 b): Stripe through the hosted Stripe
-| Checkout redirect (never PaymentIntents / Stripe.js) and PayPal (redirect) with the
-| store's own keys or the central fallback, signature-checked replay-safe webhooks,
-| payment log per attempt, settlement on capture, COD.
+| Store API payments (P5 batch 2, decision #78 b): Stripe as the inline card (PaymentIntent
+| client secret + publishable key for Stripe.js / the Stripe SDK, verified server side on
+| confirm — no webhook needed) and PayPal (redirect) with the store's own keys or the
+| central fallback, signature-checked replay-safe webhooks, payment log per attempt,
+| settlement on capture, COD.
 */
 
 beforeEach(function (): void {
@@ -39,65 +40,131 @@ beforeEach(function (): void {
     $this->customer = shopCustomer($this->shop);
 });
 
+function shopStripeIntent(string $status = 'requires_payment_method', int $amount = 6380, ?string $error = null): array
+{
+    return array_filter([
+        'id' => 'pi_123', 'object' => 'payment_intent', 'client_secret' => 'pi_123_secret_abc', 'status' => $status,
+        'amount' => $amount, 'amount_received' => $status === 'succeeded' ? $amount : 0, 'currency' => 'usd',
+        'latest_charge' => $status === 'succeeded' ? 'ch_1' : null,
+        'last_payment_error' => $error !== null ? ['code' => 'card_declined', 'message' => $error] : null,
+    ], static fn (mixed $value): bool => $value !== null);
+}
+
 function shopStripeSession(bool $paid = false, int $amount = 6380): array
 {
     return [
         'id' => 'cs_123', 'object' => 'checkout.session', 'url' => 'https://checkout.stripe.com/c/pay/cs_123',
         'status' => $paid ? 'complete' : 'open', 'payment_status' => $paid ? 'paid' : 'unpaid',
-        'payment_intent' => $paid ? 'pi_123' : null, 'amount_total' => $amount, 'currency' => 'usd',
+        'payment_intent' => $paid ? 'pi_old' : null, 'amount_total' => $amount, 'currency' => 'usd',
     ];
 }
 
-it('starts a hosted Stripe Checkout session with the central keys and logs the attempt', function (): void {
-    Http::fake(['api.stripe.com/v1/checkout/sessions' => Http::response(shopStripeSession())]);
+it('starts an inline Stripe PaymentIntent with the central keys and logs the attempt', function (): void {
+    Http::fake(['api.stripe.com/v1/payment_intents' => Http::response(shopStripeIntent())]);
     $data = shopPlaceOrder($this->shop, $this->customer, [$this->shop->catalog->id => 2]);
 
-    $response = $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))
+    $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))
         ->assertCreated()
-        ->assertJsonPath('data.redirect_url', 'https://checkout.stripe.com/c/pay/cs_123')
+        ->assertJsonPath('data.client_secret', 'pi_123_secret_abc')
+        ->assertJsonPath('data.publishable_key', 'pk_central')
+        ->assertJsonPath('data.redirect_url', null)
         ->assertJsonPath('data.payment.status', 'pending')
         ->assertJsonPath('data.payment.source', 'central')
         ->assertJsonPath('data.payment.amount.amount', 6380);
 
-    // No client secret / publishable key ever reaches the store or the app.
-    expect($response->json('data'))->not->toHaveKey('client_secret');
-
-    Http::assertSent(fn (HttpRequest $request): bool => $request->url() === 'https://api.stripe.com/v1/checkout/sessions'
+    Http::assertSent(fn (HttpRequest $request): bool => $request->url() === 'https://api.stripe.com/v1/payment_intents'
         && $request->hasHeader('Authorization', 'Bearer sk_central')
-        && $request['mode'] === 'payment'
-        && str_contains(urldecode($request->body()), 'line_items[0][price_data][unit_amount]=6380')
-        && str_contains(urldecode($request->body()), 'line_items[0][price_data][currency]=usd')
-        && str_contains((string) $request['success_url'], '/checkout/payment/stripe/'.$data['payment_order'].'?status=success'));
-    Http::assertNotSent(fn (HttpRequest $request): bool => str_contains($request->url(), '/v1/payment_intents'));
+        && (int) $request['amount'] === 6380
+        && $request['currency'] === 'usd'
+        && $request['payment_method_types[0]'] === 'card');
+    Http::assertNotSent(fn (HttpRequest $request): bool => str_contains($request->url(), '/v1/checkout/sessions'));
 
     $order = $this->shop->tenant->run(fn () => Order::query()->sole());
     expect($order->payment_status)->toBe(PaymentStatus::Pending)
-        ->and($order->payment_gateway)->toBe('stripe');
+        ->and($order->payment_gateway)->toBe('stripe')
+        ->and($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->checkout_id))->toBe('pi_123');
 });
+
+it('charges USD even when the shopper sees SAR or EGP (decision #87)', function (string $display): void {
+    Http::fake(['api.stripe.com/v1/payment_intents' => Http::response(shopStripeIntent())]);
+    $data = shopPlaceOrder($this->shop, $this->customer, [$this->shop->catalog->id => 2]);
+
+    $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant) + ['X-Currency' => $display])
+        ->assertCreated()
+        ->assertJsonPath('data.payment.amount.currency', 'USD');
+
+    Http::assertSent(fn (HttpRequest $request): bool => $request['currency'] === 'usd' && (int) $request['amount'] === 6380);
+    expect($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->currency))->toBe('USD');
+})->with(['SAR', 'EGP']);
 
 it('uses the store own keys when the store connected its own account', function (): void {
     $this->shop->tenant->run(fn () => StorePaymentGateway::query()->where('code', 'stripe')->firstOrFail()->update([
         'use_own' => true, 'credentials' => ['publishable_key' => 'pk_own', 'secret_key' => 'sk_own', 'webhook_secret' => 'whsec_own'], 'connection_status' => GatewayConnection::Connected,
     ]));
-    Http::fake(['api.stripe.com/v1/checkout/sessions' => Http::response(shopStripeSession())]);
+    Http::fake(['api.stripe.com/v1/payment_intents' => Http::response(shopStripeIntent())]);
     $data = shopPlaceOrder($this->shop, $this->customer, [$this->shop->catalog->id => 2]);
 
-    $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))
+    $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant) + ['X-Currency' => 'EGP'])
         ->assertCreated()
         ->assertJsonPath('data.payment.source', 'tenant')
-        ->assertJsonPath('data.redirect_url', 'https://checkout.stripe.com/c/pay/cs_123');
+        ->assertJsonPath('data.publishable_key', 'pk_own');
 
-    Http::assertSent(fn (HttpRequest $request): bool => $request->hasHeader('Authorization', 'Bearer sk_own'));
+    // Store-own gateway: still charged in USD.
+    Http::assertSent(fn (HttpRequest $request): bool => $request->hasHeader('Authorization', 'Bearer sk_own') && $request['currency'] === 'usd');
 });
 
-it('settles the order once from a signed Stripe Checkout webhook and ignores replays', function (): void {
+it('confirms a succeeded PaymentIntent on return without any webhook and keeps the intent for refunds', function (): void {
     Notification::fake();
-    Http::fake(['api.stripe.com/v1/checkout/sessions' => Http::response(shopStripeSession())]);
+    Http::fake([
+        'api.stripe.com/v1/payment_intents' => Http::response(shopStripeIntent()),
+        'api.stripe.com/v1/payment_intents/pi_123' => Http::response(shopStripeIntent('succeeded', 7880)),
+    ]);
     $data = shopPlaceOrder($this->shop, $this->customer, [$this->shop->catalog->id => 2, $this->shop->own->id => 1]);
-    $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))->assertCreated();
+    $reference = $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))->json('data.payment.reference');
     Event::fake([OrderPaid::class]);
 
-    $payload = json_encode(['id' => 'evt_1', 'type' => 'checkout.session.completed', 'data' => ['object' => shopStripeSession(true, 7880)]]);
+    $this->postJson(storeApi('payments/'.$data['payment_order'].'/confirm'), ['reference' => $reference], shopHeaders($this->shop->tenant))
+        ->assertOk()
+        ->assertJsonPath('data.payment.status', 'paid')
+        ->assertJsonPath('data.order.status', 'paid');
+
+    // A second confirm (reload of the return page) changes nothing.
+    $this->postJson(storeApi('payments/'.$data['payment_order'].'/confirm'), ['reference' => $reference], shopHeaders($this->shop->tenant))->assertOk();
+
+    $orders = $this->shop->tenant->run(fn () => Order::query()->orderBy('id')->get());
+
+    expect($orders->pluck('status')->unique()->all())->toBe([OrderStatus::Paid])
+        ->and($orders->pluck('payment_status')->unique()->all())->toBe([PaymentStatus::Paid])
+        ->and($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->transaction_id))->toBe('pi_123')
+        ->and($this->shop->tenant->run(fn () => $this->shop->own->fresh()?->stock))->toBe(4)
+        ->and(StockReservation::withoutTenantScope()->orderBy('id')->pluck('status')->map->value->all())->toBe(['committed', 'deducted'])
+        ->and(OrderFact::withoutTenantScope()->pluck('status')->unique()->all())->toBe(['paid']);
+
+    Event::assertDispatchedTimes(OrderPaid::class, 2);
+});
+
+it('leaves the order payable when the card was declined', function (): void {
+    Http::fake([
+        'api.stripe.com/v1/payment_intents' => Http::response(shopStripeIntent()),
+        'api.stripe.com/v1/payment_intents/pi_123' => Http::response(shopStripeIntent(error: 'Your card was declined.')),
+    ]);
+    $data = shopPlaceOrder($this->shop, $this->customer, [$this->shop->catalog->id => 2]);
+    $reference = $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))->json('data.payment.reference');
+
+    $this->postJson(storeApi('payments/'.$data['payment_order'].'/confirm'), ['reference' => $reference], shopHeaders($this->shop->tenant))
+        ->assertOk()
+        ->assertJsonPath('data.payment.status', 'failed')
+        ->assertJsonPath('data.payment.failure_reason', 'Your card was declined.')
+        ->assertJsonPath('data.order.status', 'pending_payment');
+});
+
+it('settles the order once from a signed PaymentIntent webhook and ignores replays', function (): void {
+    Notification::fake();
+    Http::fake(['api.stripe.com/v1/payment_intents' => Http::response(shopStripeIntent())]);
+    $data = shopPlaceOrder($this->shop, $this->customer, [$this->shop->catalog->id => 2]);
+    $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))->assertCreated();
+
+    $payload = json_encode(['id' => 'evt_1', 'type' => 'payment_intent.succeeded', 'data' => ['object' => shopStripeIntent('succeeded')]]);
     $headers = ['X-Tenant' => (string) $this->shop->tenant->id, 'Stripe-Signature' => shopStripeSignature($payload, 'whsec_central'), 'Content-Type' => 'application/json'];
 
     $this->call('POST', storeApi('payments/webhooks/stripe'), [], [], [], $this->transformHeadersToServerVars($headers), $payload)
@@ -108,22 +175,12 @@ it('settles the order once from a signed Stripe Checkout webhook and ignores rep
         ->assertOk()
         ->assertJsonPath('message', 'duplicate');
 
-    $orders = $this->shop->tenant->run(fn () => Order::query()->orderBy('id')->get());
-
-    expect($orders->pluck('status')->unique()->all())->toBe([OrderStatus::Paid])
-        ->and($orders->pluck('payment_status')->unique()->all())->toBe([PaymentStatus::Paid])
-        ->and($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->status))->toBe(PaymentAttemptStatus::Paid)
-        // The session's payment intent is kept: gateway refunds of webhook-settled payments need it.
-        ->and($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->transaction_id))->toBe('pi_123')
-        ->and($this->shop->tenant->run(fn () => $this->shop->own->fresh()?->stock))->toBe(4)
-        ->and(StockReservation::withoutTenantScope()->orderBy('id')->pluck('status')->map->value->all())->toBe(['committed', 'deducted'])
-        ->and(OrderFact::withoutTenantScope()->pluck('status')->unique()->all())->toBe(['paid']);
-
-    Event::assertDispatchedTimes(OrderPaid::class, 2);
+    expect($this->shop->tenant->run(fn () => Order::query()->sole()->status))->toBe(OrderStatus::Paid)
+        ->and($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->transaction_id))->toBe('pi_123');
 });
 
 it('rejects webhooks with a bad signature', function (): void {
-    $payload = json_encode(['id' => 'evt_bad', 'type' => 'checkout.session.completed', 'data' => ['object' => shopStripeSession(true)]]);
+    $payload = json_encode(['id' => 'evt_bad', 'type' => 'payment_intent.succeeded', 'data' => ['object' => shopStripeIntent('succeeded')]]);
     $headers = ['X-Tenant' => (string) $this->shop->tenant->id, 'Stripe-Signature' => shopStripeSignature($payload, 'whsec_wrong'), 'Content-Type' => 'application/json'];
 
     $this->call('POST', storeApi('payments/webhooks/stripe'), [], [], [], $this->transformHeadersToServerVars($headers), $payload)
@@ -132,26 +189,30 @@ it('rejects webhooks with a bad signature', function (): void {
     $this->postJson(storeApi('payments/webhooks/bitcoin'), [], shopHeaders($this->shop->tenant))->assertNotFound();
 });
 
-it('confirms a paid Stripe Checkout session on return and keeps its payment intent', function (): void {
-    Http::fake([
-        'api.stripe.com/v1/checkout/sessions' => Http::response(shopStripeSession()),
-        'api.stripe.com/v1/checkout/sessions/cs_123' => Http::response(shopStripeSession(true)),
-    ]);
+it('still confirms a Stripe Checkout session started before the inline card', function (): void {
+    Http::fake(['api.stripe.com/v1/checkout/sessions/cs_123' => Http::response(shopStripeSession(true))]);
     $data = shopPlaceOrder($this->shop, $this->customer, [$this->shop->catalog->id => 2]);
-    $reference = $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))->json('data.payment.reference');
+    $payment = $this->shop->tenant->run(function () use ($data): OrderPayment {
+        $order = Order::query()->where('uuid', $data['payment_order'])->sole();
+        $order->forceFill(['payment_gateway' => 'stripe', 'payment_status' => PaymentStatus::Pending])->save();
 
-    $this->postJson(storeApi('payments/'.$data['payment_order'].'/confirm'), ['reference' => $reference], shopHeaders($this->shop->tenant))
+        return OrderPayment::query()->create([
+            'reference' => 'pay_legacy', 'checkout_group' => $order->checkout_group, 'gateway' => PaymentGatewayCode::Stripe,
+            'source' => 'central', 'mode' => 'test', 'status' => PaymentAttemptStatus::Pending, 'amount' => 6380, 'currency' => 'USD', 'checkout_id' => 'cs_123',
+        ]);
+    });
+
+    $this->postJson(storeApi('payments/'.$data['payment_order'].'/confirm'), ['reference' => $payment->reference], shopHeaders($this->shop->tenant))
         ->assertOk()
-        ->assertJsonPath('data.payment.status', 'paid')
-        ->assertJsonPath('data.order.status', 'paid');
+        ->assertJsonPath('data.payment.status', 'paid');
 
-    expect($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->transaction_id))->toBe('pi_123');
+    expect($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->transaction_id))->toBe('pi_old');
 });
 
 it('marks a capture with the wrong amount as failed', function (): void {
     Http::fake([
-        'api.stripe.com/v1/checkout/sessions' => Http::response(shopStripeSession()),
-        'api.stripe.com/v1/checkout/sessions/cs_123' => Http::response(shopStripeSession(true, 100)),
+        'api.stripe.com/v1/payment_intents' => Http::response(shopStripeIntent()),
+        'api.stripe.com/v1/payment_intents/pi_123' => Http::response(shopStripeIntent('succeeded', 100)),
     ]);
     $data = shopPlaceOrder($this->shop, $this->customer, [$this->shop->catalog->id => 2]);
     $reference = $this->postJson(storeApi('payments/'.$data['payment_order'].'/start'), ['gateway' => 'stripe'], shopHeaders($this->shop->tenant))->json('data.payment.reference');

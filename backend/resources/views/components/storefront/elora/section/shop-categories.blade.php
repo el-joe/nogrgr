@@ -22,7 +22,7 @@
                         @foreach ($items as $category)
                             <div class="swiper-slide !h-auto !w-[140px] lg:!w-[177px]" data-reveal="fade-up">
                                 <a href="{{ route('storefront.category', $category->slug) }}" class="elo-shop-card group">
-                                    <span class="elo-shop-card-img"><x-sf::category-image :category="$category" :size="177" class="size-full object-cover transition duration-700 group-hover:scale-105" /></span>
+                                    <span class="elo-shop-card-img"><x-sf::category-image :category="$category" :size="177" class="size-full object-contain bg-media transition duration-700 group-hover:scale-105" /></span>
                                     <span class="elo-shop-card-name">{{ $category->name }}</span>
                                 </a>
                             </div>
@@ -49,7 +49,7 @@
                                         <div @class(['grid h-[260px] gap-3 lg:h-[326px]', 'grid-rows-2' => count($group) === 2])>
                                             @foreach ($group as $category)
                                                 <a href="{{ route('storefront.category', $category->slug) }}" class="elo-mosaic-tile group">
-                                                    <x-sf::category-image :category="$category" :size="323" class="size-full object-cover transition duration-700 group-hover:scale-105" />
+                                                    <x-sf::category-image :category="$category" :size="323" class="size-full object-contain bg-media transition duration-700 group-hover:scale-105" />
                                                     <span class="elo-mosaic-name">{{ $category->name }}</span>
                                                 </a>
                                             @endforeach
@@ -60,7 +60,7 @@
                                 @foreach ($items as $category)
                                     <div @class(['swiper-slide !h-auto', '!w-[160px] lg:!w-[210px]' => $style === 'portrait', '!w-[110px] lg:!w-[134px]' => $style === 'small']) data-reveal="fade-up">
                                         <a href="{{ route('storefront.category', $category->slug) }}" class="elo-{{ $style }}-tile group">
-                                            <x-sf::category-image :category="$category" :size="210" class="size-full object-cover transition duration-700 group-hover:scale-105" />
+                                            <x-sf::category-image :category="$category" :size="210" class="size-full object-contain bg-media transition duration-700 group-hover:scale-105" />
                                             <span class="elo-{{ $style }}-name">{{ $category->name }}@if ($style === 'portrait')<span class="elo-portrait-shop">{{ __st('elora.home.shop') }}<x-ui::icon name="chevron-right" :size="14" class="rtl:-scale-x-100" /></span>@endif</span>
                                         </a>
                                     </div>

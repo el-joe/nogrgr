@@ -4,13 +4,17 @@ namespace App\Modules\Commerce\Http\Controllers\Vendor;
 
 use App\Modules\Billing\Enums\PaymentLogStatus;
 use App\Modules\Billing\Models\PaymentLog;
+use App\Modules\Billing\Support\PaymentStartResponse;
 use App\Modules\Commerce\Http\Requests\Vendor\SettlePayRequest;
 use App\Modules\Commerce\Services\Orders\VendorOrderService;
 use App\Modules\Commerce\Services\Settlement\SettlementService;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
+use App\Modules\Integrations\Payments\PaymentDriverRegistry;
 use App\Shared\Http\Controller;
+use App\Shared\Http\JsonResponder;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -36,21 +40,26 @@ class SettlementController extends Controller
         ] + $this->settlements->breakdown($row, $this->orders->tenantId()));
     }
 
-    public function pay(SettlePayRequest $request, string $order): RedirectResponse
+    /**
+     * Form post → hosted checkout; the inline Stripe card posts as JSON (decision #78 b).
+     */
+    public function pay(SettlePayRequest $request, string $order, PaymentDriverRegistry $drivers): RedirectResponse|JsonResponse
     {
         $row = $this->orders->find($order);
         $staff = $this->staff($request);
+        $inline = $request->expectsJson();
+        $start = fn (): array => $this->settlements->start($row, $this->orders->tenantId(), $request->gateway(), static fn (PaymentLog $log): array => [
+            'success' => vendor_route('finance.settle.result', ['payment' => $log->id]),
+            'cancel' => vendor_route('finance.settle.cancel', ['payment' => $log->id]),
+        ], $staff->id, $staff->email, app()->getLocale());
 
         try {
-            $started = $this->settlements->start($row, $this->orders->tenantId(), $request->gateway(), static fn (PaymentLog $log): array => [
-                'success' => vendor_route('finance.settle.result', ['payment' => $log->id]),
-                'cancel' => vendor_route('finance.settle.cancel', ['payment' => $log->id]),
-            ], $staff->id, $staff->email, app()->getLocale());
+            $started = $inline ? $drivers->inline($start) : $start();
         } catch (PaymentGatewayException $exception) {
-            return redirect()->to(vendor_route('finance.settle.show', ['order' => $row->uuid]))->with('error', $exception->getMessage());
+            return $inline ? JsonResponder::error($exception->getMessage(), 422) : redirect()->to(vendor_route('finance.settle.show', ['order' => $row->uuid]))->with('error', $exception->getMessage());
         }
 
-        return redirect()->away($started['redirect']);
+        return $inline ? PaymentStartResponse::json($started) : redirect()->away($started['redirect']);
     }
 
     public function result(int $payment): View

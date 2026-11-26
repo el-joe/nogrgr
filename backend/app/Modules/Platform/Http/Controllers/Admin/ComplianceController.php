@@ -30,7 +30,8 @@ class ComplianceController extends Controller
 
     public function index(Request $request): View
     {
-        $status = ComplianceStatus::tryFrom((string) $request->query('status')) ?? ComplianceStatus::NeedsReview;
+        $status = ComplianceStatus::tryFrom((string) $request->query('status'));
+        $status = in_array($status, ComplianceStatus::reviewable(), true) ? $status : ComplianceStatus::NeedsReview;
 
         return view('platform::admin.compliance.index', [
             'status' => $status,

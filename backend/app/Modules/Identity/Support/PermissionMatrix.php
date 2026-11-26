@@ -2,6 +2,7 @@
 
 namespace App\Modules\Identity\Support;
 
+use App\Modules\Identity\Enums\Guard;
 use Illuminate\Support\Str;
 
 /**
@@ -30,6 +31,23 @@ final class PermissionMatrix
     ];
 
     /**
+     * Vendor (store) panel grouping (VEN-077a, Figma 90:115822), in sidebar order.
+     *
+     * @var array<string, list<string>>
+     */
+    private const VENDOR_MODULES = [
+        'overview' => ['dashboard', 'onboarding', 'notifications'],
+        'catalog' => ['catalog'],
+        'sales' => ['orders', 'returns', 'refunds'],
+        'customers' => ['customers', 'subscribers'],
+        'store' => ['store'],
+        'marketing' => ['coupons', 'flash-sales'],
+        'requests' => ['requests'],
+        'billing' => ['finance'],
+        'settings' => ['settings'],
+    ];
+
+    /**
      * Ability column order; abilities not listed follow alphabetically.
      *
      * @var list<string>
@@ -43,13 +61,14 @@ final class PermissionMatrix
      */
     public static function for(string $guard): array
     {
-        $modules = array_fill_keys([...array_keys(self::MODULES), 'other'], []);
+        $map = self::modulesFor($guard);
+        $modules = array_fill_keys([...array_keys($map), 'other'], []);
         $abilities = [];
 
         foreach (PermissionCatalog::forGuard($guard) as $permission) {
             $resource = Str::beforeLast($permission, '.');
             $ability = Str::afterLast($permission, '.');
-            $modules[self::moduleOf($resource)][$resource][$ability] = $permission;
+            $modules[self::moduleOf($resource, $guard)][$resource][$ability] = $permission;
             $abilities[$ability] = true;
         }
 
@@ -63,12 +82,12 @@ final class PermissionMatrix
         ];
     }
 
-    public static function moduleOf(string $resource): string
+    public static function moduleOf(string $resource, string $guard = 'admin'): string
     {
         $best = 'other';
         $length = 0;
 
-        foreach (self::MODULES as $module => $prefixes) {
+        foreach (self::modulesFor($guard) as $module => $prefixes) {
             foreach ($prefixes as $prefix) {
                 if (($resource === $prefix || Str::startsWith($resource, $prefix.'.')) && strlen($prefix) > $length) {
                     $best = $module;
@@ -78,6 +97,14 @@ final class PermissionMatrix
         }
 
         return $best;
+    }
+
+    /**
+     * @return array<string, list<string>>
+     */
+    private static function modulesFor(string $guard): array
+    {
+        return $guard === Guard::Vendor->value ? self::VENDOR_MODULES : self::MODULES;
     }
 
     /**

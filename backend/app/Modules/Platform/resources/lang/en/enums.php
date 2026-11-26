@@ -33,10 +33,30 @@ return [
         'done' => 'Done',
     ],
     'compliance_status' => [
+        'draft' => 'Draft',
         'needs_review' => 'Needs review',
         'needs_action' => 'Needs action',
         'verified' => 'Verified',
         'rejected' => 'Rejected',
+    ],
+    'compliance_account_type' => [
+        'individual' => 'Individual',
+        'company' => 'Company',
+    ],
+    'compliance_section' => [
+        'identity' => 'Identity',
+        'company' => 'Company',
+        'bank' => 'Bank',
+        'documents' => 'Documents',
+        'terms' => 'Terms',
+    ],
+    'compliance_section_state' => [
+        'incomplete' => 'Incomplete',
+        'complete' => 'Complete',
+        'in_review' => 'In review',
+        'needs_action' => 'Needs action',
+        'verified' => 'Verified',
+        'accepted' => 'Accepted',
     ],
     'compliance_risk' => [
         'low' => 'Low',

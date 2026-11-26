@@ -33,7 +33,7 @@
                 {{-- Device composition (Right Side 12:41429) --}}
                 <figure class="site-hero-figure relative aspect-[730/600] w-full max-w-[560px] max-xl:order-2 xl:absolute xl:start-[622px] xl:top-[83px] xl:w-[730px] xl:max-w-none" data-parallax>
                     <img src="{{ $img('home/hero-screen.webp') }}" alt="" width="740" height="608" fetchpriority="high"
-                        class="site-hero-screen absolute start-[26.44%] top-0 h-[73.17%] w-[73.56%] rounded-lg border border-[rgba(22,70,137,0.78)] object-cover object-top">
+                        class="site-hero-screen absolute start-[26.44%] top-0 h-[73.17%] w-[73.56%] rounded-lg border border-[rgba(22,70,137,0.78)] bg-media object-contain">
                     <img src="{{ $img('home/hero-laptop.webp') }}" alt="{{ __('content::site.home.hero_image_alt', ['app' => $appName]) }}" width="1500" height="1125"
                         class="site-hero-laptop absolute start-[-10.3%] top-[10.35%] w-[95.7%] max-w-none -rotate-[12.66deg]">
                 </figure>
@@ -69,7 +69,7 @@
         </x-central::section-title>
         <span class="site-glow site-glow--features max-lg:hidden" aria-hidden="true"></span>
         <img src="{{ $img('home/features-person.webp') }}" alt="{{ __('content::site.home.features_image_alt') }}" width="828" height="552" loading="lazy"
-            class="absolute bottom-0 left-1/2 hidden h-[501px] w-[574px] -translate-x-1/2 object-cover lg:block" data-reveal="fade-up">
+            class="absolute bottom-0 left-1/2 hidden h-[501px] w-[574px] -translate-x-1/2 object-contain lg:block" data-reveal="fade-up">
         <span class="absolute inset-x-0 bottom-0 hidden h-[182px] bg-gradient-to-b from-white/0 to-white lg:block" aria-hidden="true"></span>
         @php
             $featureCards = [
@@ -145,7 +145,7 @@
     <section class="site-services relative overflow-hidden bg-white px-4 pt-8 pb-10 lg:flex lg:h-[697px] lg:items-center lg:px-[88px] lg:py-0" aria-labelledby="home-services-title">
         <hr class="site-divider mx-auto mb-8 max-w-[343px] lg:hidden">
         <img src="{{ $img('home/services-person.webp') }}" alt="{{ __('content::site.home.services_image_alt') }}" width="864" height="1184" loading="lazy"
-            class="absolute inset-y-0 end-0 hidden h-full w-[63%] object-cover object-[50%_35%] lg:block" data-parallax>
+            class="absolute inset-y-0 end-0 hidden h-full w-[63%] object-contain lg:block" data-parallax>
         <span class="site-services__fade absolute inset-y-0 start-0 hidden w-[71%] lg:block" aria-hidden="true"></span>
         <div class="relative">
             <h2 id="home-services-title" class="mb-4 text-center text-2xl font-medium text-site-ink lg:sr-only" data-reveal="fade-up">{{ __('content::site.home.services_title') }}</h2>

@@ -59,7 +59,7 @@
                     @foreach ($heroes as $hero)
                         <div class="swiper-slide relative aspect-[4/5] overflow-hidden sm:aspect-[12/5]">
                             <div class="mo-media absolute inset-0" style="--placeholder: url('{{ $hero['image']['placeholder'] }}')">
-                                <img src="{{ $hero['image']['src'] }}" width="{{ $hero['image']['width'] }}" height="{{ $hero['image']['height'] }}" alt="" @if (! $loop->first) loading="lazy" @endif decoding="async" draggable="false" data-blur-up class="mo-kenburns h-full w-full object-cover">
+                                <img src="{{ $hero['image']['src'] }}" width="{{ $hero['image']['width'] }}" height="{{ $hero['image']['height'] }}" alt="" @if (! $loop->first) loading="lazy" @endif decoding="async" draggable="false" data-blur-up class="mo-kenburns h-full w-full object-contain bg-media">
                             </div>
                             <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent sm:bg-gradient-to-r sm:rtl:bg-gradient-to-l"></div>
                             <div data-hero-copy class="absolute inset-x-6 bottom-20 grid grid-cols-1 max-w-md gap-3 text-white sm:inset-x-12 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
@@ -142,7 +142,7 @@
                                     <div class="swiper-slide">
                                         <div class="relative overflow-hidden rounded-card bg-surface">
                                             <div class="mo-media aspect-[4/5]" style="--placeholder: url('{{ $item['image']['placeholder'] }}')">
-                                                <img src="{{ $item['image']['src'] }}" width="{{ $item['image']['width'] }}" height="{{ $item['image']['height'] }}" alt="{{ $item['name'] }}" loading="lazy" decoding="async" draggable="false" data-blur-up class="h-full w-full object-cover">
+                                                <img src="{{ $item['image']['src'] }}" width="{{ $item['image']['width'] }}" height="{{ $item['image']['height'] }}" alt="{{ $item['name'] }}" loading="lazy" decoding="async" draggable="false" data-blur-up class="h-full w-full object-contain bg-media">
                                             </div>
                                             <div class="absolute inset-x-0 bottom-0 grid grid-cols-1 gap-0.5 bg-gradient-to-t from-black/60 to-transparent p-4 pt-10 text-white">
                                                 <p class="text-sm font-medium">{{ $item['name'] }}</p>
@@ -210,7 +210,7 @@
                         @foreach ($gallery as $image)
                             <div class="swiper-slide">
                                 <div class="swiper-zoom-container aspect-[4/5]">
-                                    <img src="{{ $image['src'] }}" width="{{ $image['width'] }}" height="{{ $image['height'] }}" alt="{{ $product['name'] }}" @if (! $loop->first) loading="lazy" @else data-vt-name="product-{{ $product['slug'] }}" @endif decoding="async" draggable="false" class="h-full w-full object-cover">
+                                    <img src="{{ $image['src'] }}" width="{{ $image['width'] }}" height="{{ $image['height'] }}" alt="{{ $product['name'] }}" @if (! $loop->first) loading="lazy" @else data-vt-name="product-{{ $product['slug'] }}" @endif decoding="async" draggable="false" class="h-full w-full object-contain bg-media">
                                 </div>
                             </div>
                         @endforeach
@@ -222,7 +222,7 @@
                     <div class="swiper-wrapper">
                         @foreach ($gallery as $image)
                             <div class="swiper-slide !w-20 cursor-pointer overflow-hidden rounded-control border-2 border-transparent opacity-60 transition-opacity [&.is-active]:border-primary [&.is-active]:opacity-100">
-                                <img src="{{ $image['thumb'] ?? $image['src'] }}" width="128" height="160" alt="" loading="lazy" draggable="false" class="aspect-[4/5] w-full object-cover">
+                                <img src="{{ $image['thumb'] ?? $image['src'] }}" width="128" height="160" alt="" loading="lazy" draggable="false" class="aspect-[4/5] w-full object-contain bg-media">
                             </div>
                         @endforeach
                     </div>
@@ -251,7 +251,7 @@
         {{-- Parallax banner + count-up stats --}}
         <section class="relative overflow-hidden rounded-card" aria-labelledby="stats-title">
             <div class="mo-media absolute inset-0" style="--placeholder: url('{{ $heroes[1]['image']['placeholder'] }}')">
-                <img src="{{ $heroes[1]['image']['src'] }}" width="{{ $heroes[1]['image']['width'] }}" height="{{ $heroes[1]['image']['height'] }}" alt="" loading="lazy" decoding="async" data-blur-up data-parallax="0.08" class="h-full w-full object-cover">
+                <img src="{{ $heroes[1]['image']['src'] }}" width="{{ $heroes[1]['image']['width'] }}" height="{{ $heroes[1]['image']['height'] }}" alt="" loading="lazy" decoding="async" data-blur-up data-parallax="0.08" class="h-full w-full object-contain bg-media">
             </div>
             <div class="relative grid grid-cols-1 gap-6 bg-black/45 p-8 text-white sm:p-14">
                 <h2 id="stats-title" class="text-3xl font-semibold">{{ $t('stats.title') }}</h2>
@@ -277,7 +277,7 @@
                         <li data-swipe-remove data-remove-label="{{ $item['name'] }}" class="rounded-card border border-line">
                             <div class="mo-swipe-bg" aria-hidden="true"><x-ui::icon name="trash" :size="20" /></div>
                             <div data-swipe-content class="flex items-center gap-4 bg-surface p-3">
-                                <img src="{{ $item['image']['thumb'] ?? $item['image']['src'] }}" width="64" height="80" alt="" loading="lazy" draggable="false" class="h-20 w-16 rounded-control object-cover">
+                                <img src="{{ $item['image']['thumb'] ?? $item['image']['src'] }}" width="64" height="80" alt="" loading="lazy" draggable="false" class="h-20 w-16 rounded-control object-contain bg-media">
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-sm font-medium text-ink">{{ $item['name'] }}</p>
                                     <p class="text-xs text-ink-muted">{{ $t('cart_section.quantity', ['count' => 1]) }}</p>

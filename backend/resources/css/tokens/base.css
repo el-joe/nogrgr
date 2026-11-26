@@ -31,6 +31,8 @@
     --color-field-disabled: var(--nog-field-disabled);
     --color-overlay: var(--nog-overlay);
     --color-inverse: var(--nog-inverse);
+    /* letterbox behind content images shown with object-contain (decision #88) */
+    --color-media: var(--nog-media);
 
     /* text */
     --color-ink: var(--nog-ink);
@@ -99,6 +101,7 @@
     --nog-field-disabled: #f4f1f0;
     --nog-overlay: #110d0c;
     --nog-inverse: #41251e;
+    --nog-media: var(--nog-subtle);
 
     --nog-ink: #41251e;
     --nog-ink-secondary: #717171;
@@ -128,8 +131,9 @@
     --nog-sidebar-muted: #ffa189;
     --nog-sidebar-line: #7a2a17;
 
+    /* Defaults only; every surface token file sets its Figma families (decision #89). */
     --nog-font-latin: 'Outfit', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --nog-font-arabic: 'IBM Plex Sans Arabic', 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --nog-font-arabic: 'Noto Sans Arabic', 'Outfit', ui-sans-serif, system-ui, sans-serif;
     --nog-font-sans: var(--nog-font-latin);
     --nog-font-display: var(--nog-font-sans);
 

@@ -266,7 +266,6 @@ return [
         ],
         'fields' => [
             'mode' => 'Mode',
-            'currencies' => 'Currencies',
             'fee_percent' => 'Percentage fee (%)',
             'fee_fixed' => 'Fixed fee (USD)',
         ],
@@ -288,8 +287,6 @@ return [
         ],
         'secret_helper' => 'Encrypted at rest; only the last 4 characters are shown after saving. Leave blank to keep the saved value.',
         'no_credentials' => 'Cash on delivery needs no credentials.',
-        'currencies_helper' => 'Other currencies convert at the daily rate.',
-        'currencies_placeholder' => 'Select currencies',
         'fees_title' => 'Platform fee',
         'fees_help' => 'Charged on each payment through this gateway: percentage of the amount plus a fixed USD amount.',
         'fee_example' => 'On a $100.00 payment the fee is :fee.',

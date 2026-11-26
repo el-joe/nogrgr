@@ -270,6 +270,30 @@ it('authorizes the live request channel for the store\'s own staff only', functi
     $this->postJson(($this->url)('/broadcasting/auth'), ['socket_id' => '1.1', 'channel_name' => 'private-requests.product.'.$own->id])->assertUnauthorized();
 });
 
+it('pays a payment request with the inline Stripe card in USD (decisions #78 b, #87)', function (): void {
+    vendorPaymentsGateway();
+    $intent = ['id' => 'pi_request_1', 'object' => 'payment_intent', 'client_secret' => 'pi_request_1_secret', 'amount' => 170000, 'currency' => 'usd'];
+    Http::fake([
+        'https://api.stripe.com/v1/payment_intents' => Http::response($intent + ['status' => 'requires_payment_method']),
+        'https://api.stripe.com/v1/payment_intents/pi_request_1' => Http::response($intent + ['status' => 'succeeded', 'amount_received' => 170000]),
+    ]);
+    $request = ManufacturingRequest::factory()->create(['tenant_id' => $this->tenant->id, 'status' => ManufacturingRequestStatus::AwaitingPayment]);
+    $payment = app(RequestPaymentService::class)->create($request, new PaymentRequestData('Deposit 50%', 170000, now()->addDays(4)), null);
+
+    ($this->as)()->get(($this->url)('/manufacturing/'.$request->id))->assertOk()->assertSee('data-stripe-card', false);
+    $return = (string) ($this->as)()->postJson(($this->url)('/manufacturing/'.$request->id.'/payments/'.$payment->id.'/pay'), ['gateway' => 'stripe'])
+        ->assertOk()
+        ->assertJsonPath('data.inline.client_secret', 'pi_request_1_secret')
+        ->json('data.inline.return_url');
+
+    Http::assertSent(fn (HttpRequest $request): bool => $request->url() === 'https://api.stripe.com/v1/payment_intents' && $request['currency'] === 'usd' && (int) $request['amount'] === 170000);
+
+    ($this->as)()->get($return)->assertOk();
+
+    expect($payment->fresh()->status)->toBe(PaymentRequestStatus::Paid)
+        ->and(PaymentLog::query()->withoutGlobalScopes()->sole()->status)->toBe(PaymentLogStatus::Captured);
+});
+
 it('pays a payment request through the hosted checkout once, even with webhook replays', function (): void {
     vendorPaymentsGateway();
     fakeRequestStripe();

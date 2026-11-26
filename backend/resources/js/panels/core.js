@@ -16,6 +16,16 @@ export { initUi, openOverlay, closeOverlay, confirmDialog, activateTab } from '.
 export const loadChart = () => import('chart.js/auto').then((module) => module.default);
 export const loadSortable = () => import('sortablejs').then((module) => module.default);
 
+/**
+ * Inline Stripe card (<x-ui::stripe-card>, decision #78 b) on any panel payment form:
+ * the shared module is only fetched when such a form is on the page.
+ */
+export function initStripeCards(root = document) {
+    if (root.querySelector('form [data-stripe-card]')) {
+        import('../core/payments/stripe-card.js').then(({ bindStripeCardForms }) => bindStripeCardForms(root));
+    }
+}
+
 export function bootPanel(callback) {
     window.Alpine = Alpine;
     Alpine.start();
@@ -26,6 +36,7 @@ export function bootPanel(callback) {
         initSelect2(document);
         initDataTables(document);
         initReveal(document);
+        initStripeCards(document);
         callback?.();
     });
 }

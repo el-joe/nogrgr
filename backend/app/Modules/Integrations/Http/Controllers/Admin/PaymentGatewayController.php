@@ -45,7 +45,6 @@ class PaymentGatewayController extends Controller
             'gateways' => $this->gateways->all(),
             'current' => $model,
             'configs' => $configs,
-            'currencyOptions' => $this->gateways->currencyOptions(),
         ]);
     }
 

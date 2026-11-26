@@ -14,9 +14,12 @@ use App\Modules\Billing\Models\PaymentLog;
 use App\Modules\Billing\Services\InvoiceCheckoutService;
 use App\Modules\Billing\Services\SubscriptionRenewalService;
 use App\Modules\Billing\Services\VendorSubscriptionService;
+use App\Modules\Billing\Support\PaymentStartResponse;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
+use App\Modules\Integrations\Payments\PaymentDriverRegistry;
 use App\Shared\Http\Controller;
+use App\Shared\Http\JsonResponder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -75,27 +78,39 @@ class SubscriptionController extends Controller
             ->toJsonFromRequest($request, array_values(array_diff(TransactionsDataTable::FILTERS, ['tenant_id'])));
     }
 
+    /**
+     * Legacy print URL (VEN-060c before VEN-061a): renders the VEN-061a print sheet.
+     */
     public function printInvoice(int $invoice): View
     {
-        return view('billing::vendor.subscription.invoice-print', ['invoice' => $this->service->invoice($this->tenantId(), $invoice)]);
+        return view('billing::vendor.invoices.print', ['invoice' => $this->service->invoice($this->tenantId(), $invoice)]);
     }
 
-    public function checkout(SubscriptionCheckoutRequest $request): RedirectResponse
+    /**
+     * Form post → hosted checkout; the shared inline Stripe card posts as JSON and gets
+     * the PaymentIntent client secret + return URL instead (decision #78 b).
+     */
+    public function checkout(SubscriptionCheckoutRequest $request, PaymentDriverRegistry $drivers): RedirectResponse|JsonResponse
     {
+        $inline = $request->expectsJson();
+        $start = fn (): array => $this->service->checkout($this->tenantId(), $request->toData(), $this->staff($request), static fn (PaymentLog $log): array => [
+            'success' => vendor_route('finance.subscription.result', ['payment' => $log->id]),
+            'cancel' => vendor_route('finance.subscription.cancel', ['payment' => $log->id]),
+        ]);
+
         try {
-            $checkout = $this->service->checkout($this->tenantId(), $request->toData(), $this->staff($request), static fn (PaymentLog $log): array => [
-                'success' => vendor_route('finance.subscription.result', ['payment' => $log->id]),
-                'cancel' => vendor_route('finance.subscription.cancel', ['payment' => $log->id]),
-            ]);
+            $checkout = $inline ? $drivers->inline($start) : $start();
         } catch (BillingRuleException $exception) {
-            return redirect()->to(vendor_route('finance.subscription'))->with('error', $exception->getMessage());
+            return $inline ? JsonResponder::error($exception->getMessage(), 422) : redirect()->to(vendor_route('finance.subscription'))->with('error', $exception->getMessage());
         } catch (PaymentGatewayException $exception) {
             report($exception);
 
-            return redirect()->to(vendor_route('finance.subscription'))->with('error', __('billing::vendor_subscription.errors.gateway'));
+            return $inline
+                ? JsonResponder::error(__('billing::vendor_subscription.errors.gateway'), 422)
+                : redirect()->to(vendor_route('finance.subscription'))->with('error', __('billing::vendor_subscription.errors.gateway'));
         }
 
-        return redirect()->away($checkout['redirect']);
+        return $inline ? PaymentStartResponse::json($checkout) : redirect()->away($checkout['redirect']);
     }
 
     /**

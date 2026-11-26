@@ -47,6 +47,7 @@
                             @endforeach
                         </fieldset>
                         @error('gateway')<p class="text-sm text-danger">{{ $message }}</p>@enderror
+                        <x-ui::stripe-card :gateways="$gateways" :purpose="\App\Modules\Integrations\Enums\GatewayPurpose::VendorPayments" />
                         <x-ui::button type="submit" block icon="credit-card">{{ __('commerce::settlement.pay', ['amount' => $due->format()]) }}</x-ui::button>
                     </form>
                 @endif

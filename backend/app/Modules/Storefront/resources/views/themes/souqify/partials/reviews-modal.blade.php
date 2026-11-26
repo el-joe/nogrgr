@@ -56,7 +56,7 @@
 <x-sf::modal id="sf-review-write" :title="__st('product.reviews.write')" size="md">
     <form class="grid gap-5" data-review-form novalidate data-guest-text="{{ __st('product.reviews.sign_in_needed') }}" data-login-url="{{ Route::has('storefront.account.login') ? route('storefront.account.login', ['redirect' => '/'.request()->path()]) : '' }}">
         <div class="flex items-center gap-3">
-            @if ($page->images)<img src="{{ $page->images[0] }}" alt="" width="48" height="48" class="size-12 rounded-md bg-sq-soft object-cover">@endif
+            @if ($page->images)<img src="{{ $page->images[0] }}" alt="" width="48" height="48" class="size-12 rounded-md bg-sq-soft object-contain">@endif
             <p class="line-clamp-2 text-sm font-medium text-sq-ink">{{ $page->name }}</p>
         </div>
         <fieldset class="grid gap-2">

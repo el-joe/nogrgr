@@ -29,13 +29,13 @@ final class AdminRuleException extends DomainException
         return new self(__('identity::admins.rules.super_admin_only'));
     }
 
-    public static function roleLocked(): self
+    public static function roleLocked(string $guard = 'admin'): self
     {
-        return new self(__('identity::roles.rules.locked'));
+        return new self(__($guard === 'vendor' ? 'identity::roles.rules.locked_owner' : 'identity::roles.rules.locked'));
     }
 
-    public static function roleInUse(int $count): self
+    public static function roleInUse(int $count, string $guard = 'admin'): self
     {
-        return new self(trans_choice('identity::roles.rules.in_use', $count, ['count' => $count]));
+        return new self(trans_choice($guard === 'vendor' ? 'identity::roles.rules.in_use_staff' : 'identity::roles.rules.in_use', $count, ['count' => $count]));
     }
 }

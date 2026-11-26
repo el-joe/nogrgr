@@ -85,7 +85,7 @@
                                 <li>
                                     <a href="{{ $mediaUrl($media) }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-control border border-line">
                                         @if ($media->isImage())
-                                            <img src="{{ $mediaUrl($media) }}" alt="{{ $media->original_name }}" class="aspect-square w-full object-cover" loading="lazy">
+                                            <img src="{{ $mediaUrl($media) }}" alt="{{ $media->original_name }}" class="aspect-square w-full object-contain bg-media" loading="lazy">
                                         @else
                                             <span class="grid aspect-square place-items-center bg-subtle text-xs text-ink-secondary"><x-ui::icon name="file" :size="20" />{{ $media->kind->label() }}</span>
                                         @endif

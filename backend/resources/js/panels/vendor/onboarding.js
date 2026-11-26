@@ -99,7 +99,7 @@ function initLogoPreview(page) {
         const image = document.createElement('img');
         image.src = url;
         image.alt = '';
-        image.className = 'size-full object-cover';
+        image.className = 'size-full object-contain bg-media';
         preview.replaceChildren(image);
     });
 }

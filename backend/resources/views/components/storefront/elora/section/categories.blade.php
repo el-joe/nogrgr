@@ -18,7 +18,7 @@
                 @foreach (array_slice($categories, 0, 22) as $index => $category)
                     <li data-reveal="zoom" @class(['max-lg:hidden' => $index >= 12])>
                         <a href="{{ route('storefront.category', $category->slug) }}" class="elo-cat-circle group">
-                            <span class="elo-cat-circle-img"><x-sf::category-image :category="$category" :size="82" class="size-full object-cover transition duration-500 group-hover:scale-110" /></span>
+                            <span class="elo-cat-circle-img"><x-sf::category-image :category="$category" :size="82" class="size-full object-contain bg-media transition duration-500 group-hover:scale-110" /></span>
                             <span class="line-clamp-2 text-center text-sm leading-tight max-lg:text-[10px]">{{ $category->name }}</span>
                         </a>
                     </li>

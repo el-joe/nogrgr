@@ -125,6 +125,7 @@
                                                     @endforeach
                                                 </select>
                                             @endif
+                                            <x-ui::stripe-card class="basis-full" :gateways="$gateways" :purpose="\App\Modules\Integrations\Enums\GatewayPurpose::VendorPayments" />
                                             <x-ui::button type="submit" size="sm" icon="credit-card">{{ __($row['purchase'] ? 'platform::setup.languages.pay' : 'platform::setup.languages.buy', ['price' => $language->price()->format()]) }}</x-ui::button>
                                         </form>
                                     @endif

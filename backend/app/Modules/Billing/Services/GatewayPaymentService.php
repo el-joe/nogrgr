@@ -25,7 +25,11 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Hosted-checkout payments recorded in the payment log:
  *
- *   start()          pending log → driver checkout → gateway_reference = checkout id
+ *   start()          pending log → driver checkout → gateway_reference = checkout id;
+ *                    inside PaymentDriverRegistry::inline() Stripe is a PaymentIntent
+ *                    (client secret + publishable key for the page's Stripe card, no
+ *                    redirect; payload `inline`), confirmed on the success URL — no
+ *                    webhook needed (decision #78 b)
  *   confirm()        return URL: ask the gateway (captures PayPal) and apply the outcome
  *   cancel()         cancel URL: re-check (a paid checkout is still captured), else failed
  *   handleWebhook()  signature-checked by the driver; replays are dropped (event id) and
@@ -55,7 +59,7 @@ class GatewayPaymentService extends BaseService
 
     /**
      * @param  Closure(PaymentLog): array{success: string, cancel: string}  $returnUrls
-     * @return array{log: PaymentLog, redirect: string}
+     * @return array{log: PaymentLog, redirect: string, client_secret: ?string, publishable_key: ?string, success: string, cancel: string}
      *
      * @throws PaymentGatewayException
      */
@@ -70,15 +74,17 @@ class GatewayPaymentService extends BaseService
         }
 
         $config = $this->drivers->config($data->gateway, $purpose);
-        $log = $this->paymentLogs->record($data->tenantId, $logGateway, $data->purpose, $data->amount, invoice: $data->invoice, payload: [
+        $inline = $this->drivers->startsInline($data->gateway);
+        $log = $this->paymentLogs->record($data->tenantId, $logGateway, $data->purpose, $data->amount, invoice: $data->invoice, payload: array_filter([
             ...$data->meta,
             'mode' => $config->mode->value,
             'fee_minor' => $gateway->feeFor($data->amount)->minor,
-        ]);
+            'inline' => $inline ?: null,
+        ], static fn (mixed $value): bool => $value !== null));
         $urls = $returnUrls($log);
 
         try {
-            $checkout = $this->drivers->driver($data->gateway)->createCheckout($config, new CheckoutRequestData(
+            $checkout = $this->drivers->driver($data->gateway, $inline)->createCheckout($config, new CheckoutRequestData(
                 amount: $data->amount,
                 reference: $log->reference(),
                 description: $data->description,
@@ -95,10 +101,17 @@ class GatewayPaymentService extends BaseService
 
         $this->logs->update($log, [
             'gateway_reference' => $checkout->id,
-            'payload' => [...($log->payload ?? []), 'checkout_url' => $checkout->redirectUrl],
+            'payload' => [...($log->payload ?? []), ...($checkout->isInline() ? [] : ['checkout_url' => $checkout->redirectUrl])],
         ]);
 
-        return ['log' => $log, 'redirect' => $checkout->redirectUrl];
+        return [
+            'log' => $log,
+            'redirect' => $checkout->redirectUrl,
+            'client_secret' => $checkout->clientSecret,
+            'publishable_key' => $checkout->isInline() ? $config->credential('publishable_key') : null,
+            'success' => $urls['success'],
+            'cancel' => $urls['cancel'],
+        ];
     }
 
     /**
@@ -111,7 +124,7 @@ class GatewayPaymentService extends BaseService
         }
 
         $code = $this->codeOf($log);
-        $result = $this->drivers->driver($code)->verify($this->drivers->config($code, self::gatewayPurpose($log->purpose)), $log->gateway_reference);
+        $result = $this->drivers->driver($code, (bool) (($log->payload ?? [])['inline'] ?? false))->verify($this->drivers->config($code, self::gatewayPurpose($log->purpose)), $log->gateway_reference);
 
         return $this->apply($log, $result->outcome, $result->reason, array_filter([
             'transaction_id' => $result->transactionId,

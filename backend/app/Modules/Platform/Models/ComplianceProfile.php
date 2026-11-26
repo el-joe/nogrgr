@@ -3,8 +3,11 @@
 namespace App\Modules\Platform\Models;
 
 use App\Modules\Identity\Models\Admin;
+use App\Modules\Localization\Models\City;
+use App\Modules\Localization\Models\Country;
 use App\Modules\Platform\Concerns\Auditable;
 use App\Modules\Platform\Database\Factories\ComplianceProfileFactory;
+use App\Modules\Platform\Enums\ComplianceAccountType;
 use App\Modules\Platform\Enums\ComplianceRisk;
 use App\Modules\Platform\Enums\ComplianceStatus;
 use App\Shared\Tenancy\Concerns\BelongsToCurrentTenant;
@@ -24,7 +27,21 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int $tenant_id
  * @property ComplianceStatus $status
  * @property ComplianceRisk $risk
+ * @property ComplianceAccountType|null $account_type
+ * @property string|null $owner_name
+ * @property string|null $owner_id_number
+ * @property Carbon|null $owner_id_expires_at
+ * @property Carbon|null $owner_birth_date
+ * @property string|null $owner_phone
  * @property string|null $legal_name
+ * @property string|null $registration_number
+ * @property Carbon|null $registration_expires_at
+ * @property string|null $vat_number
+ * @property int|null $country_id
+ * @property int|null $city_id
+ * @property string|null $address
+ * @property string|null $company_phone
+ * @property string|null $company_email
  * @property string|null $bank_name
  * @property string|null $iban
  * @property string|null $account_name
@@ -55,14 +72,16 @@ class ComplianceProfile extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'tenant_id', 'status', 'risk', 'legal_name', 'bank_name', 'iban', 'account_name', 'terms_version',
+        'tenant_id', 'status', 'risk', 'account_type', 'owner_name', 'owner_id_number', 'owner_id_expires_at', 'owner_birth_date',
+        'owner_phone', 'legal_name', 'registration_number', 'registration_expires_at', 'vat_number', 'country_id', 'city_id',
+        'address', 'company_phone', 'company_email', 'bank_name', 'iban', 'account_name', 'terms_version',
         'terms_accepted_at', 'terms_accepted_ip', 'decision_note', 'reviewed_by_admin_id', 'reviewed_at', 'submitted_at',
     ];
 
     /**
      * @var list<string>
      */
-    protected $hidden = ['iban'];
+    protected $hidden = ['iban', 'owner_id_number'];
 
     protected static function newFactory(): ComplianceProfileFactory
     {
@@ -77,6 +96,11 @@ class ComplianceProfile extends Model
         return [
             'status' => ComplianceStatus::class,
             'risk' => ComplianceRisk::class,
+            'account_type' => ComplianceAccountType::class,
+            'owner_id_number' => 'encrypted',
+            'owner_id_expires_at' => 'date',
+            'owner_birth_date' => 'date',
+            'registration_expires_at' => 'date',
             'iban' => 'encrypted',
             'terms_accepted_at' => 'datetime',
             'reviewed_at' => 'datetime',
@@ -90,6 +114,22 @@ class ComplianceProfile extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(ComplianceDocument::class)->withoutGlobalScopes()->orderBy('id');
+    }
+
+    /**
+     * @return BelongsTo<Country, $this>
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    /**
+     * @return BelongsTo<City, $this>
+     */
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
     }
 
     /**

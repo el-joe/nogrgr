@@ -7,6 +7,7 @@
  * Motion character: crisp and utilitarian — short durations, standard ease, small lift.
  */
 :root {
+    --nog-media: #f5f5f5; /* neutral letterbox behind object-contain images (decision #88) */
     --nog-radius-card: 0.75rem;
     --nog-primary: #ff4d00;
     --nog-primary-hover: #e64500;
@@ -69,4 +70,15 @@
     --eco-flash-bg: rgb(255 215 208 / 0.59);
     --eco-fab: #fdf9a8;
     --eco-container: 1280px;
+}
+
+/* Fonts (Figma "Ecommet" 0:1: Outfit; filter facet headings Tajawal Medium, 1:1802; mobile
+   tab bar labels Inter Semi Bold, 1:2823; Arabic = Noto Sans Arabic, "Storefront additions"
+   97:10147). Loaded by fonts/storefront-ecommet.css. Latin-only accents fall back to the
+   surface stack for Arabic glyphs. */
+:root {
+    --nog-font-latin: 'Outfit', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --nog-font-arabic: 'Noto Sans Arabic', 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --eco-font-facet: 'Tajawal', var(--nog-font-sans);
+    --eco-font-tabbar: 'Inter', var(--nog-font-sans);
 }

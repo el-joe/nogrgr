@@ -9,7 +9,7 @@
 <article class="mo-card group relative rounded-card bg-surface" data-product="{{ $product['slug'] }}" @if ($product['alt']) data-hover-swap @endif>
     <a href="{{ request()->fullUrlWithQuery(['product' => $product['slug']]) }}#gallery" class="block rounded-card" data-vt-image="product-{{ $product['slug'] }}">
         <div class="mo-card-media mo-media aspect-[4/5] rounded-card" style="--placeholder: url('{{ $product['image']['placeholder'] }}')">
-            <img src="{{ $product['image']['src'] }}" width="{{ $product['image']['width'] }}" height="{{ $product['image']['height'] }}" alt="{{ $product['name'] }}" loading="lazy" decoding="async" draggable="false" data-blur-up data-fly-image class="h-full w-full object-cover">
+            <img src="{{ $product['image']['src'] }}" width="{{ $product['image']['width'] }}" height="{{ $product['image']['height'] }}" alt="{{ $product['name'] }}" loading="lazy" decoding="async" draggable="false" data-blur-up data-fly-image class="h-full w-full object-contain bg-media">
             @if ($product['alt'])
                 <img data-hover-image data-src="{{ $product['alt']['src'] }}" width="{{ $product['alt']['width'] }}" height="{{ $product['alt']['height'] }}" alt="" aria-hidden="true" loading="lazy" draggable="false">
             @endif

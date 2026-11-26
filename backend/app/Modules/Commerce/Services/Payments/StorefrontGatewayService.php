@@ -16,6 +16,7 @@ use App\Modules\Integrations\Models\PaymentGateway;
 use App\Modules\Integrations\Models\PaymentGatewayConfig;
 use App\Modules\Integrations\Payments\PaypalCheckoutDriver;
 use App\Modules\Integrations\Payments\StripeCheckoutDriver;
+use App\Modules\Integrations\Payments\StripePaymentIntentDriver;
 use App\Modules\Integrations\Repositories\Contracts\PaymentGatewayRepositoryContract;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
@@ -34,15 +35,22 @@ use Illuminate\Support\Collection;
 class StorefrontGatewayService
 {
     /**
-     * Hosted-redirect drivers only: Stripe goes through Stripe Checkout, never an in-page
-     * card / Stripe.js (decision #78 b) — storefront, Store API and the mobile app alike.
+     * Stripe = inline card through PaymentIntents (Stripe.js Card Element on the theme,
+     * Stripe SDK in the mobile app; decision #78 b), PayPal = hosted redirect.
      *
      * @var array<string, class-string<PaymentGatewayDriver>>
      */
     public const DRIVERS = [
-        'stripe' => StripeCheckoutDriver::class,
+        'stripe' => StripePaymentIntentDriver::class,
         'paypal' => PaypalCheckoutDriver::class,
     ];
+
+    /**
+     * Inline card panel gateways (spec 08 §2): the option carries the publishable key.
+     *
+     * @var list<string>
+     */
+    public const INLINE = ['stripe'];
 
     /**
      * Driver payment methods (old driver meta()['payment_methods']).
@@ -106,6 +114,7 @@ class StorefrontGatewayService
             mode: $config->mode,
             logoUrl: null,
             paymentMethods: self::PAYMENT_METHODS[$row->code->value] ?? [],
+            inline: in_array($row->code->value, self::INLINE, true),
             config: $config,
         );
     }
@@ -156,6 +165,19 @@ class StorefrontGatewayService
         $driver = $this->container->make(self::DRIVERS[$code->value]);
 
         return $driver;
+    }
+
+    /**
+     * The driver that reads back a started checkout: Stripe Checkout sessions (cs_…) made
+     * while Stripe was a hosted redirect (#78 b, superseded) still verify as sessions.
+     */
+    public function driverForCheckout(PaymentGatewayCode $code, ?string $checkoutId): PaymentGatewayDriver
+    {
+        if ($code === PaymentGatewayCode::Stripe && is_string($checkoutId) && str_starts_with($checkoutId, 'cs_')) {
+            return $this->container->make(StripeCheckoutDriver::class);
+        }
+
+        return $this->driver($code);
     }
 
     /**

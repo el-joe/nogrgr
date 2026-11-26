@@ -17,4 +17,8 @@ return [
         'title' => 'دورك الآن :role',
         'body' => 'تغيّرت صلاحياتك في لوحة الإدارة إلى دور :role.',
     ],
+    'team_member_joined' => [
+        'title' => 'انضم :name إلى فريقك',
+        'body' => 'قبل :name الدعوة وانضم بدور :role.',
+    ],
 ];

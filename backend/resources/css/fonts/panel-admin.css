@@ -1,0 +1,13 @@
+/*
+ * Admin / affiliate / owner panel fonts (Figma "Admin Panel" 23:10147, "Affiliate & Owner"
+ * 118:10147): Outfit 400/500/600 (+700 for headings) and Noto Sans Arabic (Arabic subset).
+ * Self-hosted from npm @fontsource (font-display: swap); families come from tokens/admin.css.
+ */
+@import '@fontsource/outfit/400.css';
+@import '@fontsource/outfit/500.css';
+@import '@fontsource/outfit/600.css';
+@import '@fontsource/outfit/700.css';
+@import '@fontsource/noto-sans-arabic/arabic-400.css';
+@import '@fontsource/noto-sans-arabic/arabic-500.css';
+@import '@fontsource/noto-sans-arabic/arabic-600.css';
+@import '@fontsource/noto-sans-arabic/arabic-700.css';

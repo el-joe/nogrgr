@@ -5,6 +5,8 @@
     items: ['general' => 'General', 'logs' => ['label' => 'Logs', 'count' => 3, 'href' => '…', 'disabled' => false]]
     With href items the tabs are links (aria-current); otherwise pair them with
     <x-ui::tab-panel tabs="<id>" key="…"> and the active tab is kept in ?<param>=.
+    Count pills are live regions (data-live, see panels/ui/live.js): they refresh after
+    a change made without a reload.
 --}}
 @props(['id', 'items' => [], 'active' => null, 'variant' => 'underline', 'param' => 'tab', 'label' => null])
 @php
@@ -32,7 +34,7 @@
             @endif
                 {{ $item['label'] }}
                 @if (isset($item['count']))
-                    <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-subtle px-1.5 text-xs font-medium text-ink-secondary group-aria-selected:bg-primary-subtle group-aria-selected:text-ink-brand" dir="ltr">{{ $item['count'] }}</span>
+                    <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-subtle px-1.5 text-xs font-medium text-ink-secondary group-aria-selected:bg-primary-subtle group-aria-selected:text-ink-brand" dir="ltr" data-live="tab-count:{{ $id }}:{{ $key }}">{{ $item['count'] }}</span>
                 @endif
                 <span class="hidden size-1.5 rounded-full bg-danger group-data-error:inline-block" role="img" aria-label="{{ __('ui.has_errors') }}"></span>
             @if ($isLinks)

@@ -208,7 +208,7 @@
         width: 82px;
         height: 82px;
         border-radius: 999px;
-        object-fit: cover;
+        object-fit: contain;
         background: var(--eco-img-bg);
         transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
     }
@@ -731,6 +731,7 @@
     }
 
     .eco-mnav-item {
+        font-family: var(--eco-font-tabbar);
         position: relative;
         display: inline-flex;
         align-items: center;
@@ -796,6 +797,7 @@
     }
 
     .eco-accordion summary {
+        font-family: var(--eco-font-facet);
         list-style: none;
         display: flex;
         align-items: center;

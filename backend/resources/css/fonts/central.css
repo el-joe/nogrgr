@@ -1,0 +1,16 @@
+/*
+ * Central website fonts (Figma "Central Website" 12:41054 + additions 125:10147): Outfit
+ * 400/500/600/700/800, Noto Sans Arabic, and Inter 300/600 for the FAQ accordion
+ * (FAQ's Component, e.g. 12:41912 / 12:41918). Families come from tokens/central.css.
+ */
+@import '@fontsource/outfit/400.css';
+@import '@fontsource/outfit/500.css';
+@import '@fontsource/outfit/600.css';
+@import '@fontsource/outfit/700.css';
+@import '@fontsource/outfit/800.css';
+@import '@fontsource/noto-sans-arabic/arabic-400.css';
+@import '@fontsource/noto-sans-arabic/arabic-500.css';
+@import '@fontsource/noto-sans-arabic/arabic-600.css';
+@import '@fontsource/noto-sans-arabic/arabic-700.css';
+@import '@fontsource/inter/latin-300.css';
+@import '@fontsource/inter/latin-600.css';

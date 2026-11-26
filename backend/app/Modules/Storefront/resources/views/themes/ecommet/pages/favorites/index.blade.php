@@ -18,7 +18,7 @@
             <article class="sf-card group flex flex-col overflow-hidden transition-[opacity,transform] duration-300 data-[removing]:scale-95 data-[removing]:opacity-0" data-reveal="fade-up" data-product="{{ $card->id }}" data-filter-item data-filter-text="{{ \Illuminate\Support\Str::lower($card->name) }}" data-wishlist-card>
                 <a href="{{ $card->url }}" class="relative block aspect-square overflow-hidden bg-[#f6f6f6]">
                     @if ($card->image)
-                        <img src="{{ $card->image }}" alt="{{ $card->name }}" width="300" height="300" loading="lazy" decoding="async" class="size-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none" data-fly-image>
+                        <img src="{{ $card->image }}" alt="{{ $card->name }}" width="300" height="300" loading="lazy" decoding="async" class="size-full object-contain bg-media transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none" data-fly-image>
                     @else
                         <span class="grid size-full place-items-center text-sf-muted"><x-ui::icon name="image" :size="40" /></span>
                     @endif

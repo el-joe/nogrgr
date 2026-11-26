@@ -175,6 +175,8 @@ it('keeps platform badge products read-only and lets the store add, order and re
     $this->postJson(($this->url)("/badges/{$best->id}/products"), ['product_ids' => [$this->own->id, $this->dressRow->id]])->assertOk();
     $members = $this->tenant->run(fn (): array => app(StoreTaxonomyReader::class)->badgeMembers($best));
     expect($members)->toBe(['admin' => [$this->watchRow->id], 'store' => [$this->own->id, $this->dressRow->id]]);
+    // QA-P5: the store group is headed "Your products", not the lower-case row note.
+    $this->get(($this->url)("/badges/{$best->id}"))->assertOk()->assertSee(__('catalog::taxonomy.badges.store_group'));
 
     $this->postJson(($this->url)("/badges/{$best->id}/sort"), ['ids' => [$this->dressRow->id, $this->own->id]])->assertOk();
     expect($this->tenant->run(fn (): array => app(StoreTaxonomyReader::class)->badgeMembers($best)['store']))->toBe([$this->dressRow->id, $this->own->id]);

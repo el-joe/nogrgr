@@ -29,7 +29,7 @@
     <template data-review-item-template>
         <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-transparent p-1 has-[:checked]:border-sf-border">
             <input type="radio" name="review_item" class="sf-radio" data-review-item-input>
-            <span class="grid size-12 shrink-0 place-items-center overflow-hidden rounded-lg bg-[#f5f5f5]"><img alt="" width="48" height="48" class="size-full object-cover" data-review-item-image></span>
+            <span class="grid size-12 shrink-0 place-items-center overflow-hidden rounded-lg bg-[#f5f5f5]"><img alt="" width="48" height="48" class="size-full object-contain bg-media" data-review-item-image></span>
             <span class="grid min-w-0 gap-0.5"><span class="truncate text-sm font-medium text-sf-ink" data-review-item-name></span><span class="text-xs text-sf-muted" data-review-item-variant></span></span>
         </label>
     </template>

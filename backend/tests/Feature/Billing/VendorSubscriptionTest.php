@@ -152,7 +152,7 @@ it('lists only the store\'s subscriptions, invoices and ledger transactions', fu
 
     $invoices = ($this->dt)('invoices/data');
     expect(collect($invoices['data'])->pluck('number')->implode(' '))->toContain('INV-OWN-0001')->not->toContain('INV-FOREIGN-01')
-        ->and($invoices['data'][0]['actions'])->toContain('data-invoice-pay')->toContain(($this->url)("invoices/{$invoice->id}/print"));
+        ->and($invoices['data'][0]['actions'])->toContain('data-invoice-pay')->toContain($this->tenantUrl($this->store, "admin/finance/invoices/{$invoice->id}/print"));
 
     $transactions = ($this->dt)('transactions/data', '&tenant_id='.$this->other->id);
     expect($transactions['recordsTotal'])->toBe(1)

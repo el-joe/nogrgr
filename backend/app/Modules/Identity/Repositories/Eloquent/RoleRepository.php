@@ -5,6 +5,7 @@ namespace App\Modules\Identity\Repositories\Eloquent;
 use App\Modules\Identity\Enums\Guard;
 use App\Modules\Identity\Models\Admin;
 use App\Modules\Identity\Models\Affiliate;
+use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Identity\Repositories\Contracts\RoleRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
 use App\Shared\Support\Ui;
@@ -100,6 +101,7 @@ class RoleRepository extends BaseRepository implements RoleRepositoryContract
     {
         return match ($guard) {
             Guard::Affiliate->value => (new Affiliate)->getMorphClass(),
+            Guard::Vendor->value => (new VendorStaff)->getMorphClass(),
             default => (new Admin)->getMorphClass(),
         };
     }

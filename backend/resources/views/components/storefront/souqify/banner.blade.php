@@ -8,7 +8,7 @@
 <{{ $tag }} @if ($banner->url) href="{{ $banner->url }}" @endif {{ $attributes->class(['sq-banner group', 'sq-banner-'.$size]) }}>
     <picture class="absolute inset-0" data-parallax="0.05">
         @if ($banner->mobileImageUrl)<source media="(max-width: 767px)" srcset="{{ $banner->mobileImageUrl }}">@endif
-        <img src="{{ $banner->imageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? '' }}" width="{{ $size === 'side' ? 466 : 670 }}" height="{{ $size === 'side' ? 288 : 309 }}" class="size-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" decoding="async">
+        <img src="{{ $banner->imageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? '' }}" width="{{ $size === 'side' ? 466 : 670 }}" height="{{ $size === 'side' ? 288 : 309 }}" class="size-full object-contain bg-media transition duration-700 group-hover:scale-105" loading="lazy" decoding="async">
     </picture>
     @if ($banner->title || $banner->ctaLabel)
         <span class="sq-banner-copy">

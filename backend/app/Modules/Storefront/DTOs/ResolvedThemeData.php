@@ -7,6 +7,7 @@ use App\Modules\Storefront\Enums\ThemeFamily;
 /**
  * The theme a storefront request renders with: catalogue slug, family (inner pages are
  * shared per family) and the home variant (1 for Ecommet, 1–6 for Elora / Souqify).
+ * name: the catalogue display name, set for a vendor theme preview (preview bar).
  */
 final readonly class ResolvedThemeData
 {
@@ -14,6 +15,7 @@ final readonly class ResolvedThemeData
         public string $slug,
         public ThemeFamily $family,
         public int $variant,
+        public ?string $name = null,
     ) {}
 
     /**

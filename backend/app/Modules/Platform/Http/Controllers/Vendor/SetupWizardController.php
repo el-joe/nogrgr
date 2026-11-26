@@ -5,9 +5,11 @@ namespace App\Modules\Platform\Http\Controllers\Vendor;
 use App\Modules\Billing\Enums\PaymentLogStatus;
 use App\Modules\Billing\Models\PaymentLog;
 use App\Modules\Billing\Services\InvoiceCheckoutService;
+use App\Modules\Billing\Support\PaymentStartResponse;
 use App\Modules\Catalog\Exceptions\RequestRuleException;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
+use App\Modules\Integrations\Payments\PaymentDriverRegistry;
 use App\Modules\Localization\Services\CountryService;
 use App\Modules\Platform\Enums\SetupWizardStep;
 use App\Modules\Platform\Exceptions\PlatformRuleException;
@@ -17,7 +19,9 @@ use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Services\OnboardingService;
 use App\Modules\Platform\Services\SetupWizardService;
 use App\Shared\Http\Controller;
+use App\Shared\Http\JsonResponder;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -65,17 +69,22 @@ class SetupWizardController extends Controller
             ->with($result === 'requested' ? 'info' : 'success', __('platform::setup.countries.'.$result));
     }
 
-    public function purchaseLanguage(LanguagePurchaseRequest $request, int $language): RedirectResponse
+    /**
+     * Form post → hosted checkout; the inline Stripe card posts as JSON (decision #78 b).
+     */
+    public function purchaseLanguage(LanguagePurchaseRequest $request, int $language, PaymentDriverRegistry $drivers): RedirectResponse|JsonResponse
     {
         $tenant = $this->tenant();
+        $inline = $request->expectsJson();
+        $start = fn (): array => $this->wizard->purchaseLanguage($tenant, $this->wizard->findPurchasableLanguage($tenant, $language), $request->gateway(), $this->staff($request)->email);
 
         try {
-            $started = $this->wizard->purchaseLanguage($tenant, $this->wizard->findPurchasableLanguage($tenant, $language), $request->gateway(), $this->staff($request)->email);
+            $started = $inline ? $drivers->inline($start) : $start();
         } catch (PaymentGatewayException|PlatformRuleException $exception) {
-            return redirect()->to($this->stepUrl(SetupWizardStep::Languages))->with('error', $exception->getMessage());
+            return $inline ? JsonResponder::error($exception->getMessage(), 422) : redirect()->to($this->stepUrl(SetupWizardStep::Languages))->with('error', $exception->getMessage());
         }
 
-        return redirect()->away($started['redirect']);
+        return $inline ? PaymentStartResponse::json($started) : redirect()->away($started['redirect']);
     }
 
     public function languagePaymentResult(int $payment): RedirectResponse
