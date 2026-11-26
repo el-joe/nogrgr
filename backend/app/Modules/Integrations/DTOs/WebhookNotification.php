@@ -11,6 +11,8 @@ use App\Shared\DTOs\BaseDTO;
  * null for events we do not handle; `needsConfirmation` means the payer approved but
  * the payment still has to be captured (PayPal CHECKOUT.ORDER.APPROVED). `refunds` lists
  * the refunds a refund event reports (decision #72); such events have no checkout id.
+ * `transactionId` is the captured payment's id when the event carries it (Stripe Checkout
+ * session → its payment_intent), so refunds work for payments settled by webhook.
  */
 final class WebhookNotification extends BaseDTO
 {
@@ -23,6 +25,7 @@ final class WebhookNotification extends BaseDTO
         public readonly ?string $reason = null,
         /** @var list<RefundNotification> */
         public readonly array $refunds = [],
+        public readonly ?string $transactionId = null,
     ) {}
 
     public function isRefundEvent(): bool

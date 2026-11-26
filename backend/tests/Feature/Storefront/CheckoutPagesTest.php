@@ -48,9 +48,14 @@ it('renders the checkout with addresses, summary, payment methods and the pay to
         ->assertSee('Pay $63.80')
         ->getContent();
 
-    // Nothing pre-selected (spec 08), inline card panel hidden until Stripe is chosen.
+    // Nothing pre-selected (spec 08); Stripe is a hosted redirect (decision #78 b): no card
+    // panel, no publishable key and no Stripe.js on the page.
     expect($html)->not->toContain('data-gateway-radio checked')
-        ->and($html)->toContain('id="inline-card-form"');
+        ->and($html)->toContain('value="stripe"')
+        ->and($html)->not->toContain('inline-card-form')
+        ->and($html)->not->toContain('data-publishable-key')
+        ->and($html)->not->toContain('pk_central')
+        ->and($html)->not->toContain('js.stripe.com');
 });
 
 it('re-prices the summary for the chosen address through the fragment', function (): void {
@@ -98,6 +103,14 @@ it('opens the pay page of a placed order and the redirect page for a redirect ga
         ->assertOk()
         ->assertSee('data-payment-redirect', false)
         ->assertSee('Redirecting to secure payment...');
+
+    // Stripe is a redirect gateway as well: Redirecting page → Stripe Checkout → return URL.
+    $this->get($this->tenantUrl($shop->tenant, '/checkout/pay/'.$placed['payment_order'].'?gateway=stripe'))
+        ->assertOk()
+        ->assertSee('data-payment-redirect', false)
+        ->assertSee('data-gateway="stripe"', false)
+        ->assertSee('/checkout/payment/stripe/'.$placed['payment_order'], false)
+        ->assertDontSee('js.stripe.com', false);
 });
 
 it('hides another customer\'s order behind a 404', function (): void {

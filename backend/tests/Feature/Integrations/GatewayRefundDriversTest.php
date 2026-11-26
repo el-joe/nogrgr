@@ -5,7 +5,7 @@ use App\Modules\Integrations\Enums\GatewayMode;
 use App\Modules\Integrations\Enums\RefundOutcome;
 use App\Modules\Integrations\Models\PaymentGatewayConfig;
 use App\Modules\Integrations\Payments\PaypalCheckoutDriver;
-use App\Modules\Integrations\Payments\StripePaymentIntentDriver;
+use App\Modules\Integrations\Payments\StripeCheckoutDriver;
 use App\Shared\Money\Money;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
@@ -22,7 +22,7 @@ function refundConfig(array $credentials, GatewayMode $mode = GatewayMode::Test)
 
 it('refunds a Stripe payment intent or charge with an idempotency key', function (): void {
     Http::fake(['https://api.stripe.com/v1/refunds' => Http::sequence()->push(['id' => 're_1', 'status' => 'succeeded', 'amount' => 1234])->push(['id' => 're_2', 'status' => 'pending'])->push(['id' => 're_3', 'status' => 'failed', 'failure_reason' => 'lost_or_stolen_card'])]);
-    $driver = app(StripePaymentIntentDriver::class);
+    $driver = app(StripeCheckoutDriver::class);
     $config = refundConfig(['publishable_key' => 'pk_test_1', 'secret_key' => 'sk_test_1']);
 
     $done = $driver->refund($config, new RefundRequestData('pi_123', Money::of('12.34'), 'RF-5001-1'));

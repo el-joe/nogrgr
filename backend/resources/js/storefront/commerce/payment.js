@@ -1,62 +1,15 @@
 /**
- * Payment section of the old project (spec 08 §1–§3) for the checkout, the pay page and
+ * Payment section of the old project (spec 08 §1) for the checkout, the pay page and
  * the redirect page:
- *  - nothing pre-selected; selecting an inline gateway shows the card panel (Stripe Card
- *    Element; Authorize.Net / 2Checkout card number · MM / YY · CVC) — the gateway SDK
- *    is loaded only then;
- *  - startPayment(): POST /store-api/v1/payments/{order}/start → redirect gateways follow
- *    the provider URL, Stripe confirms the PaymentIntent (3-D Secure inside Stripe's own
- *    dialog) and lands on the return URL `checkout/payment/{gateway}/{order}?status=…`.
+ *  - nothing pre-selected; every gateway is a hosted redirect (Stripe Checkout, PayPal):
+ *    no gateway script or card field is ever loaded on the store (decision #78 b);
+ *  - startPayment(): POST /store-api/v1/payments/{order}/start → follow the provider URL;
+ *    the provider sends the payer back to `checkout/payment/{gateway}/{order}?status=…`.
  */
 import { storeApi } from './api';
 import { toast } from '../../core/notify';
 
-const STRIPE_SDK = 'https://js.stripe.com/v3/';
-const MANUAL = ['authorize_net', '2checkout'];
-let stripeLoader = null;
-
-function loadStripe() {
-    stripeLoader ??= new Promise((resolve, reject) => {
-        if (window.Stripe) {
-            resolve(window.Stripe);
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = STRIPE_SDK;
-        script.async = true;
-        script.onload = () => (window.Stripe ? resolve(window.Stripe) : reject(new Error('stripe')));
-        script.onerror = () => {
-            stripeLoader = null;
-            reject(new Error('stripe'));
-        };
-        document.head.append(script);
-    });
-
-    return stripeLoader;
-}
-
 const fill = (template, values) => Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`__${key}__`, encodeURIComponent(value)), template);
-
-export function returnUrl(config, gateway, order, status, reference = '') {
-    const url = fill(config.return, { GATEWAY: gateway, ORDER: order });
-
-    return `${url}?${new URLSearchParams({ status, reference })}`;
-}
-
-function formatCardInputs(panel) {
-    panel.querySelector('[data-card-number]')?.addEventListener('input', (event) => {
-        const digits = event.target.value.replace(/\D/g, '').slice(0, 19);
-        event.target.value = digits.replace(/(.{4})/g, '$1 ').trim();
-    });
-    panel.querySelector('[data-card-expiry]')?.addEventListener('input', (event) => {
-        const digits = event.target.value.replace(/\D/g, '').slice(0, 4);
-        event.target.value = digits.length > 2 ? `${digits.slice(0, 2)} / ${digits.slice(2)}` : digits;
-    });
-    panel.querySelector('[data-card-cvc]')?.addEventListener('input', (event) => {
-        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 4);
-    });
-}
 
 /**
  * Binds one payment section; returns its API.
@@ -69,72 +22,11 @@ export function initPaymentSection(root, messages = {}) {
     }
 
     const error = section.querySelector('[data-payment-error]');
-    const panel = section.querySelector('[data-inline-card]');
-    const stripeBox = panel?.querySelector('[data-card-stripe]');
-    const manualBox = panel?.querySelector('[data-card-manual]');
-    const state = { stripe: null, card: null, complete: false, key: null };
-
-    if (panel) {
-        formatCardInputs(panel);
-    }
-
-    const cardError = (text) => {
-        panel?.querySelectorAll('[data-card-error]').forEach((node) => {
-            node.textContent = text ?? '';
-            node.hidden = !text;
-        });
-    };
-
-    const mountStripe = async (radio) => {
-        const key = radio.dataset.publishableKey;
-
-        if (!key || (state.card && state.key === key)) {
-            return;
-        }
-
-        try {
-            const Stripe = await loadStripe();
-            state.stripe = Stripe(key, { locale: document.documentElement.lang || 'auto' });
-            state.card?.destroy();
-            state.card = state.stripe.elements().create('card', {
-                hidePostalCode: true,
-                style: { base: { fontSize: '14px', color: '#333', '::placeholder': { color: '#aaa' } } },
-            });
-            state.card.mount(stripeBox.querySelector('[data-stripe-element]'));
-            state.card.on('change', (event) => {
-                state.complete = event.complete;
-                cardError(event.error?.message ?? '');
-            });
-            state.key = key;
-        } catch {
-            cardError(messages.card_error);
-        }
-    };
-
     const selected = () => section.querySelector('[data-gateway-radio]:checked');
-
-    const onSelect = () => {
-        const radio = selected();
-        error.hidden = true;
-
-        if (!radio || !panel) {
-            return;
-        }
-
-        const inline = radio.dataset.inline === '1';
-        panel.hidden = !inline;
-        stripeBox.hidden = radio.value !== 'stripe';
-        manualBox.hidden = !MANUAL.includes(radio.value);
-        cardError('');
-
-        if (inline && radio.value === 'stripe') {
-            mountStripe(radio);
-        }
-    };
 
     section.addEventListener('change', (event) => {
         if (event.target.matches('[data-gateway-radio]')) {
-            onSelect();
+            error.hidden = true;
         }
     });
 
@@ -143,67 +35,37 @@ export function initPaymentSection(root, messages = {}) {
 
     if (preset) {
         preset.checked = true;
-        onSelect();
     }
 
     return {
         selected,
-        /** Shows "Please select a payment method." / card problems; false when not ready. */
+        /** Shows "Please select a payment method."; false when nothing is chosen. */
         validate() {
-            const radio = selected();
-
-            if (!radio) {
-                error.textContent = messages.select_method ?? '';
-                error.hidden = false;
-                section.querySelector('[data-gateway-radio]')?.focus();
-                return false;
+            if (selected()) {
+                return true;
             }
 
-            if (radio.dataset.inline === '1' && radio.value === 'stripe' && !state.complete) {
-                cardError(messages.card_error);
-                return false;
-            }
+            error.textContent = messages.select_method ?? '';
+            error.hidden = false;
+            section.querySelector('[data-gateway-radio]')?.focus();
 
-            if (MANUAL.includes(radio.value)) {
-                const filled = ['[data-card-number]', '[data-card-expiry]', '[data-card-cvc]'].every((selector) => manualBox.querySelector(selector)?.value.trim());
-
-                if (!filled) {
-                    cardError(messages.card_error);
-                    return false;
-                }
-            }
-
-            return true;
+            return false;
         },
-        cardError,
-        state,
     };
 }
 
 /**
- * Starts the payment of a placed order with the selected gateway.
+ * Starts the payment of a placed order with the selected gateway and follows the
+ * provider's hosted page (Stripe Checkout / PayPal); without a URL, the pay page.
  * @returns {Promise<void>} navigates away on success; rejects with a reason otherwise
  */
-export async function startPayment({ config, order, gateway, section }) {
+export async function startPayment({ config, order, gateway }) {
     const url = fill(config.start, { ORDER: order });
     const response = await storeApi.post(url, { gateway }, {}, { silent: true });
-    const data = response?.data ?? {};
+    const target = response?.data?.redirect_url;
 
-    if (data.redirect_url) {
-        window.location.assign(data.redirect_url);
-        return;
-    }
-
-    if (data.client_secret && section?.state.stripe && section.state.card) {
-        const result = await section.state.stripe.confirmCardPayment(data.client_secret, { payment_method: { card: section.state.card } });
-
-        if (result.error) {
-            section.cardError(result.error.message ?? config.messages?.card_error);
-            window.location.assign(returnUrl(config, gateway, order, 'failed', data.payment?.reference ?? ''));
-            return;
-        }
-
-        window.location.assign(returnUrl(config, gateway, order, 'success', data.payment?.reference ?? ''));
+    if (target) {
+        window.location.assign(target);
         return;
     }
 

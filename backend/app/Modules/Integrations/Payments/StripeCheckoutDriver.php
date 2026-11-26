@@ -109,6 +109,8 @@ class StripeCheckoutDriver implements PaymentGatewayDriver
         };
 
         $checkoutId = $outcome !== null && is_string($session['id'] ?? null) ? $session['id'] : null;
+        $paymentIntent = $session['payment_intent'] ?? null;
+        $paymentIntent = is_array($paymentIntent) ? ($paymentIntent['id'] ?? null) : $paymentIntent;
 
         return new WebhookNotification(
             eventId: $event['id'],
@@ -116,6 +118,7 @@ class StripeCheckoutDriver implements PaymentGatewayDriver
             checkoutId: $checkoutId,
             outcome: $outcome ?? PaymentOutcome::Pending,
             refunds: $this->refundsFromEvent($type, $session),
+            transactionId: $checkoutId !== null && is_string($paymentIntent) ? $paymentIntent : null,
         );
     }
 

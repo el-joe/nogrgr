@@ -109,7 +109,7 @@ class PaymentService extends BaseService
             $member->forceFill(['payment_gateway' => $code->value, 'payment_source' => $gateway->source, 'payment_status' => PaymentStatus::Pending])->save();
         }
 
-        return new StartedPayment($payment, $checkout->redirectUrl !== '' ? $checkout->redirectUrl : null, $checkout->clientSecret);
+        return new StartedPayment($payment, $checkout->redirectUrl !== '' ? $checkout->redirectUrl : null);
     }
 
     /**
@@ -187,7 +187,7 @@ class PaymentService extends BaseService
 
         $result = $notification->needsConfirmation
             ? $this->gateways->driver($code)->verify($config, (string) $notification->checkoutId)
-            : new PaymentResult($notification->outcome, (string) $notification->checkoutId, reason: $notification->reason);
+            : new PaymentResult($notification->outcome, (string) $notification->checkoutId, $notification->transactionId, $notification->reason);
 
         $this->settle($payment, $result);
 
@@ -263,12 +263,12 @@ class PaymentService extends BaseService
     }
 
     /**
-     * Gateway amount (when reported) equals the attempt amount: Stripe reports minor
-     * units, PayPal a decimal string.
+     * Gateway amount (when reported) equals the attempt amount: Stripe Checkout reports
+     * `amount_total` in minor units, PayPal a decimal string.
      */
     private function amountMatches(OrderPayment $payment, PaymentResult $result): bool
     {
-        $reported = $result->details['amount'] ?? null;
+        $reported = $result->details['amount'] ?? $result->details['amount_total'] ?? null;
 
         return match (true) {
             is_int($reported) => $reported === $payment->amount,

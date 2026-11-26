@@ -38,7 +38,6 @@ class PaymentController extends Controller
         return JsonResponder::success('', [
             'payment' => (new PaymentResource($started->payment))->toArray($request),
             'redirect_url' => $started->redirectUrl,
-            'client_secret' => $started->clientSecret,
         ], status: 201);
     }
 

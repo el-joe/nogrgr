@@ -22,13 +22,14 @@ Pay button: label `Pay {symbol total}` / `ادفع` for every method; disabled (
 
 Mobile: Ecommet `flex-col-reverse md:flex-row` (summary first, inline button); Elora same + fixed bottom buy-bar (offset above bottom nav); Souqify grid 1→5 cols, summary `lg:sticky lg:top-28`, fixed buy-bar on mobile (add the bottom-nav offset the old one missed).
 
-## 2. Inline card panel (Stripe, Authorize.Net, 2Checkout)
+## 2. Inline card panel (Stripe, Authorize.Net, 2Checkout) — REMOVED (decision #78 b)
+**Superseded 2026-11-26: the client rejected loading Stripe.js (or any third-party script). No card panel is rendered; every gateway (Stripe via hosted Stripe Checkout, PayPal) is a redirect: Redirecting page → provider → `checkout/payment/{gateway}/{order}`. Card-entry gateways (Authorize.Net / 2Checkout) only join with a hosted-page driver.** The old-project description below is kept for reference only.
 Shown under the list only when that gateway is selected: `#inline-card-form mt-4 border-[#dcdcdc] rounded-[8px] p-4 bg-[#fafafe]` (Souqify `rounded-2xl border-neutral-200 bg-slate-50 p-5`); heading lock icon (#16a34a) + "Secure card details / تفاصيل البطاقة الآمنة". Stripe: Card Element box (`rounded-[6px] px-4 py-3 min-h-[42px]`), errors under it. Authorize.Net / 2Checkout: Card number (groups of 4), `MM / YY`, `CVC` inputs (numeric, cc autocomplete), errors `#card-errors`. Submit: no method → "Please select a payment method."; tokenise via SDK, then place order.
 Strings: Card number/رقم البطاقة, MM / YY/شهر / سنة, CVC/رمز التحقق, Card error/خطأ في البطاقة.
 
 ## 3. Behaviour that stays identical vs. backend-only fixes (UI unchanged)
 Identical: gateway filtering (tenant rows active, not hidden, type orders, centrally active, ready = connected + required keys), alphabetical order, nothing preselected, label never changes for redirect gateways, guards order in placeOrder (plan limit → validation → empty cart → shipping → country rules → gateways → still listed → live ping) with the same messages, flow `checkout/payment/{gateway}/{orderUuid}` → success / cancel → order status with toasts "Payment completed successfully." / "Payment was cancelled.", gateway-blocked page from limits, charges in USD.
-Backend-only improvements (invisible to the customer; tech-lead approved direction): Stripe via PaymentIntents with 3-D Secure (`handleCardAction` inside the same panel), SDKs loaded on demand when a gateway is selected, webhooks verified and able to mark orders paid idempotently, 2Checkout publishable key bug fixed, Luhn/expiry hints only as SDK errors (no new UI).
+Backend-only improvements (invisible to the customer; tech-lead approved direction): Stripe via the hosted Stripe Checkout redirect (decision #78 b; 3-D Secure handled on Stripe's page, no SDK or card field on the store), webhooks verified and able to mark orders paid idempotently, 2Checkout publishable key bug fixed, Luhn/expiry hints only as SDK errors (no new UI).
 **COD (client confirmed 2026-11-25): hidden at checkout**, exactly like the old UI. Server-side COD support stays (admin/vendor manual orders), no storefront option.
 
 ## 4. Drivers (28)

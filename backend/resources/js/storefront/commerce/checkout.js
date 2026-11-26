@@ -157,7 +157,7 @@ export function initCheckout(page) {
         }
 
         try {
-            await startPayment({ config, order, gateway, section: payment });
+            await startPayment({ config, order, gateway });
         } catch (failure) {
             /* The order exists: blocked gateway / provider error → toast, then its pay page. */
             paymentFailed(config, failure);
@@ -193,7 +193,7 @@ export function initPayPage(page) {
         overlay.hidden = false;
 
         try {
-            await startPayment({ config, order: config.order, gateway, section: payment });
+            await startPayment({ config, order: config.order, gateway });
         } catch (failure) {
             overlay.hidden = true;
             restore();

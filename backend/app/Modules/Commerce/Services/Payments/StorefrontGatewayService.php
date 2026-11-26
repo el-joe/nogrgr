@@ -15,7 +15,7 @@ use App\Modules\Integrations\Exceptions\PaymentGatewayException;
 use App\Modules\Integrations\Models\PaymentGateway;
 use App\Modules\Integrations\Models\PaymentGatewayConfig;
 use App\Modules\Integrations\Payments\PaypalCheckoutDriver;
-use App\Modules\Integrations\Payments\StripePaymentIntentDriver;
+use App\Modules\Integrations\Payments\StripeCheckoutDriver;
 use App\Modules\Integrations\Repositories\Contracts\PaymentGatewayRepositoryContract;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
@@ -34,19 +34,15 @@ use Illuminate\Support\Collection;
 class StorefrontGatewayService
 {
     /**
+     * Hosted-redirect drivers only: Stripe goes through Stripe Checkout, never an in-page
+     * card / Stripe.js (decision #78 b) — storefront, Store API and the mobile app alike.
+     *
      * @var array<string, class-string<PaymentGatewayDriver>>
      */
     public const DRIVERS = [
-        'stripe' => StripePaymentIntentDriver::class,
+        'stripe' => StripeCheckoutDriver::class,
         'paypal' => PaypalCheckoutDriver::class,
     ];
-
-    /**
-     * Inline card panel gateways (spec 08 §2).
-     *
-     * @var list<string>
-     */
-    public const INLINE = ['stripe'];
 
     /**
      * Driver payment methods (old driver meta()['payment_methods']).
@@ -110,7 +106,6 @@ class StorefrontGatewayService
             mode: $config->mode,
             logoUrl: null,
             paymentMethods: self::PAYMENT_METHODS[$row->code->value] ?? [],
-            inline: in_array($row->code->value, self::INLINE, true),
             config: $config,
         );
     }

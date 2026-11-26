@@ -23,13 +23,13 @@ beforeEach(function (): void {
     $this->shop = shopSetup();
     shopGateway($this->shop->tenant);
     $this->customer = shopCustomer($this->shop);
-    Http::fake(['api.stripe.com/v1/payment_intents' => Http::response(['id' => 'pi_central_1', 'object' => 'payment_intent', 'client_secret' => 'pi_central_1_secret', 'status' => 'requires_payment_method', 'amount' => 6380, 'amount_received' => 0, 'currency' => 'usd'])]);
+    Http::fake(['api.stripe.com/v1/checkout/sessions' => Http::response(['id' => 'cs_central_1', 'object' => 'checkout.session', 'url' => 'https://checkout.stripe.com/c/pay/cs_central_1', 'status' => 'open', 'payment_status' => 'unpaid', 'amount_total' => 6380, 'currency' => 'usd'])]);
 });
 
-function centralStripeEvent(string $eventId, string $secret, int $amount = 6380, string $intent = 'pi_central_1'): array
+function centralStripeEvent(string $eventId, string $secret, int $amount = 6380, string $session = 'cs_central_1'): array
 {
-    $payload = json_encode(['id' => $eventId, 'type' => 'payment_intent.succeeded', 'data' => ['object' => [
-        'id' => $intent, 'object' => 'payment_intent', 'status' => 'succeeded', 'amount' => $amount, 'amount_received' => $amount, 'currency' => 'usd', 'latest_charge' => 'ch_1',
+    $payload = json_encode(['id' => $eventId, 'type' => 'checkout.session.completed', 'data' => ['object' => [
+        'id' => $session, 'object' => 'checkout.session', 'status' => 'complete', 'payment_status' => 'paid', 'payment_intent' => 'pi_central_1', 'amount_total' => $amount, 'currency' => 'usd',
     ]]]);
 
     return [$payload, ['Stripe-Signature' => shopStripeSignature((string) $payload, $secret), 'Content-Type' => 'application/json']];
@@ -43,7 +43,7 @@ it('records a central route when a payment starts on the platform keys', functio
     $reference = $this->shop->tenant->run(fn () => OrderPayment::query()->sole()->reference);
 
     expect($route->gateway)->toBe('stripe')
-        ->and($route->checkout_id)->toBe('pi_central_1')
+        ->and($route->checkout_id)->toBe('cs_central_1')
         ->and($route->tenant_id)->toBe((int) $this->shop->tenant->id)
         ->and($route->payment_reference)->toBe($reference);
 });
@@ -62,7 +62,8 @@ it('settles a central-keys storefront payment from the central webhook once', fu
         ->assertJson(['received' => true, 'result' => 'duplicate']);
 
     expect($this->shop->tenant->run(fn () => Order::query()->sole()->status))->toBe(OrderStatus::Paid)
-        ->and($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->status))->toBe(PaymentAttemptStatus::Paid);
+        ->and($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->status))->toBe(PaymentAttemptStatus::Paid)
+        ->and($this->shop->tenant->run(fn () => OrderPayment::query()->sole()->transaction_id))->toBe('pi_central_1');
 });
 
 it('rejects central webhooks not signed with the central secret', function (): void {
@@ -87,14 +88,14 @@ it('does not route payments made with the store own keys or unknown checkouts', 
     expect(GatewayCheckoutRoute::withoutTenantScope()->count())->toBe(0);
 
     // A forged route to an own-keys attempt is refused as well.
-    GatewayCheckoutRoute::withoutTenantScope()->create(['gateway' => 'stripe', 'checkout_id' => 'pi_central_1', 'tenant_id' => $this->shop->tenant->id, 'payment_reference' => 'x']);
+    GatewayCheckoutRoute::withoutTenantScope()->create(['gateway' => 'stripe', 'checkout_id' => 'cs_central_1', 'tenant_id' => $this->shop->tenant->id, 'payment_reference' => 'x']);
     [$payload, $headers] = centralStripeEvent('evt_own', 'whsec_central');
 
     $this->call('POST', $this->centralUrl('/webhooks/payments/stripe'), [], [], [], $this->transformHeadersToServerVars($headers), $payload)
         ->assertOk()
         ->assertJson(['result' => 'ignored']);
 
-    [$payload, $headers] = centralStripeEvent('evt_unknown', 'whsec_central', intent: 'pi_unknown');
+    [$payload, $headers] = centralStripeEvent('evt_unknown', 'whsec_central', session: 'cs_unknown');
 
     $this->call('POST', $this->centralUrl('/webhooks/payments/stripe'), [], [], [], $this->transformHeadersToServerVars($headers), $payload)
         ->assertOk()

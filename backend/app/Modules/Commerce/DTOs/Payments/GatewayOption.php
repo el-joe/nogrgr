@@ -9,7 +9,8 @@ use App\Modules\Integrations\Models\PaymentGatewayConfig;
 
 /**
  * One payment method offered at checkout (spec 08 §1 item: source, id, code, name, mode,
- * logo_url, payment_methods) plus the resolved config (never serialised).
+ * logo_url, payment_methods) plus the resolved config (never serialised). Every gateway is a
+ * hosted redirect (decision #78 b), so no client key is ever exposed.
  */
 final readonly class GatewayOption
 {
@@ -24,7 +25,6 @@ final readonly class GatewayOption
         public GatewayMode $mode,
         public ?string $logoUrl,
         public array $paymentMethods,
-        public bool $inline,
         public PaymentGatewayConfig $config,
     ) {}
 
@@ -41,8 +41,6 @@ final readonly class GatewayOption
             'mode' => $this->mode->value,
             'logo_url' => $this->logoUrl,
             'payment_methods' => $this->paymentMethods,
-            'inline' => $this->inline,
-            'publishable_key' => $this->inline ? $this->config->credential('publishable_key') : null,
         ];
     }
 }

@@ -103,9 +103,9 @@ class CheckoutController extends Controller
                 $selected = $option;
             }
         }
-        $redirecting = $selected !== null && ! $selected['inline'];
 
-        return StorefrontView::make($redirecting ? 'pages.payment-redirect' : 'pages.payment-pay', $data + [
+        // Every gateway is a hosted redirect (decision #78 b): a chosen one goes to the Redirecting page.
+        return StorefrontView::make($selected !== null ? 'pages.payment-redirect' : 'pages.payment-pay', $data + [
             'gateway' => $selected,
             'seo' => $this->seo->page(__st('checkout.pay_title'), null, index: false),
         ]);

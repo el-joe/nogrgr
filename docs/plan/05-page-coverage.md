@@ -336,10 +336,10 @@
 | VEN-074 | Settings: AI translation (full store, progress, history, tokens, cost) | `vendor.settings.ai-translation` | run, poll status, fail state | tenant.settings.ai-translation, tenant.settings.ai-translation.status | designed: Vendor Panel (new screens) 90:113836 | P10 | todo |
 | VEN-074a | ↳ Buy AI-translation add-on → result | `vendor.settings.ai-translation.purchase` | | tenant.ai-translation-purchase.charge, tenant.ai-translation-purchase.cancel, tenant.ai-translation-purchase.success | designed: Vendor Panel (new screens) 90:113836 | P10 | todo |
 | VEN-075 | Settings: Store translations (keys, locked keys, AI translate) | `vendor.settings.translations` | save key, AI one/all | tenant.settings.translations | designed: Vendor Panel (new screens) 90:114518 | P8 | todo |
-| VEN-076 | Settings: Staff | `vendor.settings.staff.index` | Std; activate, delete | tenant.settings.admins | designed: Vendor Panel (new screens) 90:115176 | P8 | todo |
-| VEN-076a | ↳ Staff create / edit | modal | | tenant.settings.admins.show | designed: Vendor Panel (new screens) 90:115176 | P8 | todo |
-| VEN-077 | Settings: Roles & permissions | `vendor.settings.roles.index` | Std | tenant.settings.roles-permissions | designed: Vendor Panel (new screens) 90:115822 | P8 | todo |
-| VEN-077a | ↳ Role create / edit | modal | | tenant.settings.roles-permissions.show | designed: Vendor Panel (new screens) 90:115822 | P8 | todo |
+| VEN-076 | Settings: Staff | `vendor.settings.staff.index` | Std; activate, delete | tenant.settings.admins | designed: Vendor Panel (new screens) 90:115176 | P8 | done |
+| VEN-076a | ↳ Staff create / edit | modal | | tenant.settings.admins.show | designed: Vendor Panel (new screens) 90:115176 | P8 | done |
+| VEN-077 | Settings: Roles & permissions | `vendor.settings.roles.index` | Std | tenant.settings.roles-permissions | designed: Vendor Panel (new screens) 90:115822 | P8 | done |
+| VEN-077a | ↳ Role create / edit | modal | | tenant.settings.roles-permissions.show | designed: Vendor Panel (new screens) 90:115822 | P8 | done |
 | VEN-078 | Settings: Payment gateways | `vendor.settings.payment-gateways.index` | Std; set primary | tenant.settings.payment-gateways | designed: Vendor Panel (new screens) 90:116465 | P5 | done |
 | VEN-078a | ↳ Gateway credentials (own creds, sandbox, check connection) | `vendor.settings.payment-gateways.show` | test result | tenant.settings.payment-gateways.show | designed: Vendor Panel (new screens) 90:116465 | P5 | done |
 | VEN-078b | ↳ Payment readiness checklist | `vendor.settings.payment-readiness` | | tenant.settings.payment-readiness | designed: Vendor Panel (new screens) 90:116465 | P5 | todo |
@@ -501,7 +501,7 @@
 | SF-ECO-022a | ↳ Cart empty | state | | CartPage | 1:1240, m 1:3329 | P7 | todo |
 | SF-ECO-023 | Checkout | `store.checkout` | address, shipping estimate, payment method, coupon, place order, stock/country errors | tenant.storefront.checkout | 1:1520, m 1:3540 · Storefront additions: 98:100243 + states 98:100522, m 98:100610 + m states 98:100707 | P7 | todo |
 | SF-ECO-023a | ↳ Select / add address modal | modal | | CheckoutPage | Storefront additions: address modal 97:100527 (8 states), m sheets 97:102080–97:102871 | P7 | todo |
-| SF-ECO-023b | ↳ Payment redirect / cancelled | `store.payment.charge` / `.cancel` | retry | tenant.payment.charge, tenant.payment.cancel, tenant.payment.success, tenant.payment.webhook | designed: redirect 114:108887 / m 114:109089 · not completed 114:108918 / m 114:109120 · toasts 114:109173 / m 114:109243 | P7 | todo |
+| SF-ECO-023b | ↳ Payment redirect / cancelled | `store.payment.charge` / `.cancel` | retry | tenant.payment.charge, tenant.payment.cancel, tenant.payment.success, tenant.payment.webhook | designed: redirect 114:108887 / m 114:109089 · not completed 114:108918 / m 114:109120 · toasts 114:109173 / m 114:109243 · Stripe = hosted Stripe Checkout redirect like PayPal, no Stripe.js (decision #78 b) | P7 | todo |
 | SF-ECO-024 | Order success / status | `store.orders.status` | invoice link, reorder | tenant.storefront.order-status | designed: Storefront additions 137:112775 · m 137:112987 | P7 | todo |
 | SF-ECO-025 | Login / register | `store.auth.login` | tabs, Google / Apple | tenant.storefront.login, tenant.storefront.social.google, tenant.storefront.social.google.callback, tenant.storefront.social.apple, tenant.storefront.social.apple.callback | Storefront additions: 99:100863, m 99:101342 / 99:101406 | P7 | todo |
 | SF-ECO-025a | ↳ Forgot password | `store.auth.password.request` | | — (new) | Storefront additions: 99:101145, m 99:101485 | P7 | todo |
