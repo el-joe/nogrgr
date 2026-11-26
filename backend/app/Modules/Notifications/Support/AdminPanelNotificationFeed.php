@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\Route;
  */
 final class AdminPanelNotificationFeed implements PanelNotificationFeed
 {
+    /**
+     * Gate of the inbox per surface (default: the `notifications.view` permission).
+     */
+    private const ABILITIES = ['owner' => 'owner.portal'];
+
     public function __construct(private readonly NotificationInboxService $inbox) {}
 
     public function for(string $surface, ?Authenticatable $user): array
@@ -26,7 +31,7 @@ final class AdminPanelNotificationFeed implements PanelNotificationFeed
         $empty = ['items' => [], 'unread' => 0, 'markAllUrl' => null, 'viewAllUrl' => null, 'latestUrl' => null, 'realtime' => null];
 
         if (! $user instanceof Model || ! $user instanceof HasPanelInbox || $user->panelSurface() !== $surface
-            || ! Route::has($surface.'.notifications.index') || ! Gate::forUser($user)->allows('notifications.view')) {
+            || ! Route::has($surface.'.notifications.index') || ! Gate::forUser($user)->allows(self::ABILITIES[$surface] ?? 'notifications.view')) {
             return $empty;
         }
 

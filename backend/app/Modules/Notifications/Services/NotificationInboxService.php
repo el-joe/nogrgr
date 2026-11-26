@@ -32,6 +32,11 @@ class NotificationInboxService extends BaseService
         return $this->notifications->unreadCount($notifiable);
     }
 
+    public function totalCount(Model $notifiable): int
+    {
+        return $this->notifications->queryFor($notifiable)->count();
+    }
+
     /**
      * @return array<string, int> category => unread
      */

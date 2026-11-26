@@ -36,6 +36,18 @@ return [
         'live' => 'New notification',
     ],
     'preferences' => [
+        'vendor_title' => 'Notification preferences',
+        'vendor_subtitle' => 'Choose how each store event reaches you. These switches only affect your own account.',
+        'save_short' => 'Save',
+        'topics_help' => [
+            'new_order' => 'New and cancelled orders.',
+            'return_requested' => 'Returns, return messages and refunds.',
+            'payout_sent' => 'Payouts from the platform to your store.',
+            'low_stock' => 'Products running low or out of stock.',
+            'request_replies' => 'Replies on product, manufacturing and support requests, and shopper messages.',
+            'settlement_due' => 'Settlements, amounts owed and other payment updates.',
+            'store_updates' => 'Team members joining and other store updates.',
+        ],
         'title' => 'Preferences',
         'subtitle' => 'Choose how each event reaches you.',
         'event' => 'Event',
@@ -50,5 +62,17 @@ return [
     ],
     'mail' => [
         'open' => 'Open in the panel',
+    ],
+    'owner' => [
+        'title' => 'Notifications',
+        'subtitle' => 'Updates about your stores, subscriptions, domains and invoices.',
+        'all' => 'All',
+        'unread' => 'Unread',
+        'mark_all' => 'Mark all as read',
+        'empty_title' => 'No notifications yet',
+        'empty_description' => 'Store, subscription, domain and invoice updates will show up here.',
+        'empty_unread_title' => 'You are all caught up',
+        'empty_unread_description' => 'There are no unread notifications.',
+        'action_needed' => 'Action needed',
     ],
 ];

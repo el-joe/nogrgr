@@ -5,17 +5,20 @@ namespace App\Modules\Notifications;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Notifications\Contracts\HasPanelInbox;
 use App\Modules\Notifications\Events\EmailTemplatesSynced;
+use App\Modules\Notifications\Listeners\EnforceVendorNotificationPreferences;
 use App\Modules\Notifications\Listeners\SyncStoreEmailTemplates;
 use App\Modules\Notifications\Repositories\Contracts\EmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\NotificationPreferenceRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\PanelNotificationRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\StoreEmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\TenantNotificationRepositoryContract;
+use App\Modules\Notifications\Repositories\Contracts\VendorNotificationPreferenceRepositoryContract;
 use App\Modules\Notifications\Repositories\Eloquent\EmailTemplateRepository;
 use App\Modules\Notifications\Repositories\Eloquent\NotificationPreferenceRepository;
 use App\Modules\Notifications\Repositories\Eloquent\PanelNotificationRepository;
 use App\Modules\Notifications\Repositories\Eloquent\StoreEmailTemplateRepository;
 use App\Modules\Notifications\Repositories\Eloquent\TenantNotificationRepository;
+use App\Modules\Notifications\Repositories\Eloquent\VendorNotificationPreferenceRepository;
 use App\Modules\Notifications\Support\StoreAwareMailManager;
 use App\Modules\Notifications\Support\StoreMailerResolver;
 use App\Modules\Notifications\Support\SurfacePanelNotificationFeed;
@@ -24,6 +27,7 @@ use App\Shared\Navigation\Contracts\PanelNotificationFeed;
 use App\Shared\Routing\ModuleRouteRegistry;
 use App\Shared\Routing\Surface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Events\NotificationSending;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
 
@@ -41,6 +45,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         TenantNotificationRepositoryContract::class => TenantNotificationRepository::class,
         EmailTemplateRepositoryContract::class => EmailTemplateRepository::class,
         StoreEmailTemplateRepositoryContract::class => StoreEmailTemplateRepository::class,
+        VendorNotificationPreferenceRepositoryContract::class => VendorNotificationPreferenceRepository::class,
     ];
 
     public function register(): void
@@ -62,6 +67,9 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         // Platform "Sync to tenants" → every store's copy of the shopper templates.
         Event::listen(EmailTemplatesSynced::class, SyncStoreEmailTemplates::class);
 
+        // Store members' topic × channel switches (VEN-087) on every panel notification.
+        Event::listen(NotificationSending::class, EnforceVendorNotificationPreferences::class);
+
         $this->bootChannels();
     }
 
@@ -74,6 +82,12 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
             && $user instanceof Model
             && $user->panelSurface() === 'admin'
             && (string) $user->getKey() === $id, ['guards' => ['admin']]);
+
+        // Store owners (owner portal, OWN-008).
+        Broadcast::channel('owner.{id}', static fn (mixed $user, string $id): bool => $user instanceof HasPanelInbox
+            && $user instanceof Model
+            && $user->panelSurface() === 'owner'
+            && (string) $user->getKey() === $id, ['guards' => ['owner']]);
 
         // Vendor staff: one private channel per store and member (ids repeat across tenant DBs).
         Broadcast::channel('tenant.{tenant}.vendor.{id}', static fn (mixed $user, string $tenant, string $id): bool => $user instanceof VendorStaff

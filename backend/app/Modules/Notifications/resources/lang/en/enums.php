@@ -9,6 +9,15 @@ return [
         'system' => 'System',
         'support' => 'Support',
     ],
+    'vendor_notification_topic' => [
+        'new_order' => 'New order',
+        'return_requested' => 'Return requested',
+        'payout_sent' => 'Payout sent',
+        'low_stock' => 'Low stock',
+        'request_replies' => 'Request replies',
+        'settlement_due' => 'Settlement due',
+        'store_updates' => 'Store & team updates',
+    ],
     'notification_channel' => [
         'in_app' => 'In-app',
         'email' => 'Email',

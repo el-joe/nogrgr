@@ -2,6 +2,7 @@
 
 namespace App\Modules\Notifications\Notifications;
 
+use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Notifications\Contracts\HasPanelInbox;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Models\PanelNotificationRecord;
@@ -62,7 +63,11 @@ abstract class PanelNotification extends Notification implements ShouldQueue
             return ['database'];
         }
 
-        $channels = app(NotificationPreferenceService::class)->channelsFor($notifiable, $this->category());
+        // Store members keep their switches in the store database (VEN-087), applied per
+        // channel by EnforceVendorNotificationPreferences; central users use this matrix.
+        $channels = $notifiable instanceof VendorStaff
+            ? ['database', 'mail', 'broadcast']
+            : app(NotificationPreferenceService::class)->channelsFor($notifiable, $this->category());
 
         if (! $notifiable instanceof HasPanelInbox) {
             $channels = array_values(array_diff($channels, ['broadcast']));

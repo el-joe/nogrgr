@@ -4,6 +4,8 @@ namespace App\Modules\Identity\Models;
 
 use App\Modules\Identity\Database\Factories\OwnerFactory;
 use App\Modules\Identity\Enums\AccountStatus;
+use App\Modules\Notifications\Concerns\ReceivesPanelNotifications;
+use App\Modules\Notifications\Contracts\HasPanelInbox;
 use App\Modules\Platform\Models\Tenant;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Collection;
@@ -34,14 +36,16 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Tenant> $tenants
  */
-class Owner extends Authenticatable implements HasLocalePreference
+class Owner extends Authenticatable implements HasLocalePreference, HasPanelInbox
 {
     use CentralConnection;
 
     /** @use HasFactory<OwnerFactory> */
     use HasFactory;
 
-    use Notifiable;
+    use Notifiable, ReceivesPanelNotifications {
+        ReceivesPanelNotifications::notifications insteadof Notifiable;
+    }
 
     protected $table = 'owners';
 
@@ -54,6 +58,14 @@ class Owner extends Authenticatable implements HasLocalePreference
      * @var list<string>
      */
     protected $hidden = ['password', 'remember_token', 'google_id', 'apple_id'];
+
+    /**
+     * Owner portal inbox (OWN-008) and the private channel "owner.{id}".
+     */
+    public function panelSurface(): string
+    {
+        return 'owner';
+    }
 
     protected static function newFactory(): OwnerFactory
     {

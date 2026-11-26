@@ -2,6 +2,7 @@
 
 use App\Modules\Notifications\Http\Controllers\Vendor\EmailTemplateController;
 use App\Modules\Notifications\Http\Controllers\Vendor\MailSettingsController;
+use App\Modules\Notifications\Http\Controllers\Vendor\NotificationPreferenceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,4 +33,12 @@ Route::middleware('auth:vendor')->prefix('settings/mail')->controller(MailSettin
         Route::delete('/', 'destroy')->name('destroy');
         Route::post('test', 'test')->middleware('throttle:10,1')->name('test');
     });
+});
+
+/*
+| vendor.settings.notifications*   the member's own notification preferences (VEN-087); notifications.view
+*/
+Route::middleware(['auth:vendor', 'permission:notifications.view,vendor'])->prefix('settings/notifications')->controller(NotificationPreferenceController::class)->group(function (): void {
+    Route::get('/', 'edit')->name('settings.notifications');
+    Route::put('/', 'update')->name('settings.notifications.update');
 });

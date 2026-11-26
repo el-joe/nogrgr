@@ -9,6 +9,7 @@ const pages = {
     'owner-domains': () => import('./domains.js'),
     'owner-profile': () => import('./profile.js'),
     'owner-support': () => import('./support.js'),
+    'owner-notifications': () => import('./notifications.js'),
 };
 
 export function initOwner() {

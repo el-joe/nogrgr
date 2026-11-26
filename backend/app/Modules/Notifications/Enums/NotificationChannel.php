@@ -27,4 +27,15 @@ enum NotificationChannel: string
             self::Push => 'broadcast',
         };
     }
+
+    public static function fromDriver(string $driver): ?self
+    {
+        foreach (self::cases() as $channel) {
+            if ($channel->driver() === $driver) {
+                return $channel;
+            }
+        }
+
+        return null;
+    }
 }

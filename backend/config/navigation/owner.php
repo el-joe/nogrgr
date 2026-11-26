@@ -2,7 +2,6 @@
 
 /*
 | Store-owner portal sidebar ({central}/my-account) — same shape as config/navigation/admin.php.
-| OWN-008 Notifications joins in P9.
 */
 
 return [
@@ -20,6 +19,7 @@ return [
         'key' => 'account',
         'label' => 'navigation.sections.account',
         'items' => [
+            ['key' => 'notifications', 'label' => 'navigation.owner.notifications', 'icon' => 'bell', 'route' => 'owner.notifications.index', 'permission' => 'owner.portal', 'active' => 'owner.notifications.*'],
             ['key' => 'profile', 'label' => 'navigation.owner.profile', 'icon' => 'users', 'route' => 'owner.profile.edit', 'permission' => 'owner.portal', 'active' => 'owner.profile.*'],
             ['key' => 'add_store', 'label' => 'navigation.owner.add_store', 'icon' => 'plus', 'route' => 'owner.stores.create', 'permission' => 'owner.stores.create', 'active' => ['owner.stores.create', 'owner.stores.store']],
             ['key' => 'support', 'label' => 'navigation.owner.support', 'icon' => 'lifebuoy', 'route' => 'owner.support', 'permission' => 'owner.portal', 'active' => 'owner.support'],

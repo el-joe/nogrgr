@@ -9,6 +9,15 @@ return [
         'system' => 'النظام',
         'support' => 'الدعم الفني',
     ],
+    'vendor_notification_topic' => [
+        'new_order' => 'طلب جديد',
+        'return_requested' => 'طلب إرجاع',
+        'payout_sent' => 'تم إرسال الدفعة',
+        'low_stock' => 'مخزون منخفض',
+        'request_replies' => 'ردود الطلبات',
+        'settlement_due' => 'تسوية مستحقة',
+        'store_updates' => 'تحديثات المتجر والفريق',
+    ],
     'notification_channel' => [
         'in_app' => 'داخل اللوحة',
         'email' => 'البريد الإلكتروني',
