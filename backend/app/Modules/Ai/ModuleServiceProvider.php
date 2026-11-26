@@ -2,23 +2,36 @@
 
 namespace App\Modules\Ai;
 
+use App\Modules\Ai\Console\IndexProductImagesCommand;
 use App\Modules\Ai\Console\TranslateDeltasCommand;
 use App\Modules\Ai\Contracts\TranslationClient;
 use App\Modules\Ai\Enums\AdminTranslationKind;
+use App\Modules\Ai\Enums\LogoColor;
+use App\Modules\Ai\Enums\LogoStyle;
 use App\Modules\Ai\Enums\TranslationPurpose;
 use App\Modules\Ai\Events\AdminTranslationRunUpdated;
+use App\Modules\Ai\Http\Controllers\Vendor\AiLogoController;
+use App\Modules\Ai\Listeners\IndexChangedProductImages;
 use App\Modules\Ai\Listeners\StartStoreTranslation;
 use App\Modules\Ai\Models\AdminTranslationRun;
 use App\Modules\Ai\Policies\AdminTranslationRunPolicy;
 use App\Modules\Ai\Repositories\Contracts\AdminTranslationRunRepositoryContract;
 use App\Modules\Ai\Repositories\Contracts\AiUsageLogRepositoryContract;
+use App\Modules\Ai\Repositories\Contracts\ImageEmbeddingRepositoryContract;
 use App\Modules\Ai\Repositories\Contracts\StoreTranslationItemRepositoryContract;
 use App\Modules\Ai\Repositories\Eloquent\AdminTranslationRunRepository;
 use App\Modules\Ai\Repositories\Eloquent\AiUsageLogRepository;
+use App\Modules\Ai\Repositories\Eloquent\ImageEmbeddingRepository;
 use App\Modules\Ai\Repositories\Eloquent\StoreTranslationItemRepository;
 use App\Modules\Ai\Services\AdminTranslation\AdminTranslationRunService;
+use App\Modules\Ai\Services\Logo\LogoGeneratorService;
 use App\Modules\Ai\Services\Product\ProductAiTranslationService;
+use App\Modules\Ai\Services\Tools\OpenAiTools;
 use App\Modules\Ai\Services\Translation\TranslationClientFactory;
+use App\Modules\Ai\Support\ProductAiToolsPresenter;
+use App\Modules\Catalog\Events\ProductCreated;
+use App\Modules\Catalog\Events\ProductUpdated;
+use App\Modules\Catalog\Events\Store\OwnProductSaved;
 use App\Modules\Catalog\Models\StoreProduct;
 use App\Modules\Identity\Models\Admin;
 use App\Modules\Identity\Models\VendorStaff;
@@ -42,6 +55,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         StoreTranslationItemRepositoryContract::class => StoreTranslationItemRepository::class,
         AiUsageLogRepositoryContract::class => AiUsageLogRepository::class,
         AdminTranslationRunRepositoryContract::class => AdminTranslationRunRepository::class,
+        ImageEmbeddingRepositoryContract::class => ImageEmbeddingRepository::class,
     ];
 
     public function register(): void
@@ -59,6 +73,9 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         // Paid full-store translation (decision #44): queued run → batch of chunk jobs.
         Event::listen(StoreTranslationRunQueued::class, StartStoreTranslation::class);
 
+        // Image search index (P10): on-save embedding of central + store-own product images.
+        Event::listen([ProductCreated::class, ProductUpdated::class, OwnProductSaved::class], IndexChangedProductImages::class);
+
         // VEN-012b Content & translations tab + "Translate with AI" modal of a product page.
         View::composer(['ai::vendor.product-translation.tab', 'ai::vendor.product-translation.modal', 'ai::vendor.product-translation.button'], static function (ViewInstance $view): void {
             $product = $view->getData()['product'] ?? null;
@@ -73,6 +90,34 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
                 'aiLanguages' => $service->storeLanguages(),
                 'aiContent' => $service->content($product),
                 'aiCanManage' => $staff !== null && $staff->can('update', $product),
+            ]);
+        });
+
+        // VEN-010b / VEN-010c product AI tools (OpenAI only): buttons + modals of a product page.
+        View::composer(['ai::vendor.product-tools.buttons', 'ai::vendor.product-tools.modals'], static function (ViewInstance $view): void {
+            if (array_key_exists('aiTools', $view->getData())) {
+                return;
+            }
+
+            $product = $view->getData()['product'] ?? null;
+            $view->with('aiTools', $product instanceof StoreProduct ? app(ProductAiToolsPresenter::class)->present($product) : null);
+        });
+
+        // VEN-034a AI logo generator card of Appearance › Logo (OpenAI images only).
+        View::composer('ai::vendor.ai-logo.card', static function (ViewInstance $view): void {
+            if (array_key_exists('aiLogo', $view->getData())) {
+                return;
+            }
+
+            $staff = auth('vendor')->user();
+            $available = OpenAiTools::configured() && tenancy()->initialized && $staff !== null && $staff->can('store.appearance.manage');
+            $quota = $available ? app(LogoGeneratorService::class)->quota((int) tenant()?->getTenantKey()) : null;
+            $view->with('aiLogo', $quota === null ? null : [
+                'used_label' => AiLogoController::usedLabel($quota->used, $quota->max),
+                'store_name' => (string) (tenant()?->name ?? ''),
+                'styles' => LogoStyle::options(),
+                'colors' => LogoColor::options(),
+                'urls' => ['generate' => vendor_route('store.appearance.ai-logo.generate'), 'apply' => vendor_route('store.appearance.ai-logo.apply')],
             ]);
         });
 
@@ -92,7 +137,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         // Weekly delta auto-translation of every bought store language (decision #44).
         if ($this->app->runningInConsole()) {
-            $this->commands([TranslateDeltasCommand::class]);
+            $this->commands([TranslateDeltasCommand::class, IndexProductImagesCommand::class]);
         }
 
         $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {

@@ -52,7 +52,7 @@
                                         $tenantRow = $row['row'];
                                         $active = $tenantRow !== null;
                                     @endphp
-                                    <li @class(['grid gap-2 rounded-control border border-line bg-surface px-3 py-2.5', 'cursor-grab' => $active && $canManage]) data-language-row="{{ $row['code'] }}" @if ($active && $canManage) draggable="true" @endif>
+                                    <li @class(['grid gap-2 rounded-control bg-surface px-3 py-2.5 transition-colors hover:bg-subtle', 'cursor-grab' => $active && $canManage]) data-language-row="{{ $row['code'] }}" @if ($active && $canManage) draggable="true" @endif>
                                         <div class="flex flex-wrap items-center gap-3">
                                             @if ($active)
                                                 <input type="hidden" name="order[]" value="{{ $row['code'] }}">
@@ -63,7 +63,7 @@
                                                 @endif
                                                 <span class="w-4 text-xs tabular-nums text-ink-muted" data-language-position>{{ $loop->iteration }}</span>
                                             @endif
-                                            <span class="grid min-w-0 flex-1">
+                                            <span class="grid min-w-32 flex-1">
                                                 <span class="truncate text-sm font-medium text-ink">{{ $nameOf($row) }}@if ($row['language']?->native_name && $row['language']->native_name !== $nameOf($row)) <span class="text-ink-secondary">· {{ $row['language']->native_name }}</span>@endif</span>
                                                 <span class="text-xs text-ink-secondary">
                                                     {{ $row['core'] ? __('localization::vendor_languages.free') : __('localization::vendor_languages.paid') }}
@@ -108,7 +108,7 @@
                             </div>
                         @else
                             <div class="overflow-x-auto">
-                                <table class="ui-table w-full min-w-[420px] text-sm">
+                                <table data-lead class="ui-table vnd-table w-full min-w-[420px] text-sm">
                                     <thead>
                                         <tr class="border-y border-line bg-subtle text-xs font-medium text-ink-secondary">
                                             <th scope="col" class="px-5 py-3 text-start">{{ __('localization::vendor_languages.columns.language') }}</th>

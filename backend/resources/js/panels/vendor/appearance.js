@@ -11,6 +11,7 @@
 import { http } from '../../core/http.js';
 import { loadSortable } from '../core.js';
 import { bindRemoteModals } from '../remote-modal.js';
+import initAiLogo from './ai-logo.js';
 
 const FONT_FAMILIES = {
     outfit: 'Outfit',
@@ -159,4 +160,5 @@ export default function initAppearance(root) {
     bindColors(scope);
     bindPromo(scope);
     bindLinkSorting(scope);
+    initAiLogo(scope);
 }

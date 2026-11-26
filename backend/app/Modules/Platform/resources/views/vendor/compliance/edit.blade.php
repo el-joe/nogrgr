@@ -165,7 +165,7 @@
                             <header class="mb-5 flex flex-wrap items-start justify-between gap-3">
                                 <div class="min-w-0">
                                     <p class="text-xs text-ink-secondary">{{ __('platform::vendor_compliance.step_of', ['current' => $index + 1, 'total' => $total]) }}</p>
-                                    <h2 class="text-base font-semibold text-ink">{{ __('platform::vendor_compliance.sections.'.$section->value.'.title') }}</h2>
+                                    <h2 class="ui-card-title text-base font-semibold text-ink">{{ __('platform::vendor_compliance.sections.'.$section->value.'.title') }}</h2>
                                     <p class="mt-1 text-sm text-ink-secondary">{{ __('platform::vendor_compliance.sections.'.$section->value.'.description') }}</p>
                                 </div>
                                 <x-ui::badge :tone="$state->tone()">{{ $state->label() }}</x-ui::badge>

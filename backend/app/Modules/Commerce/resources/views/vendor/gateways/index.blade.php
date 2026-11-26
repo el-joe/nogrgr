@@ -19,14 +19,14 @@
                 <x-ui::empty-state icon="credit-card" :title="__('commerce::gateways.none_title')" :description="__('commerce::gateways.none_description')" />
             </x-ui::card>
         @else
-            <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
                 <div class="grid content-start gap-6">
                     <x-ui::card>
                         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-center gap-3">
                                 <span class="ui-gateway-tile grid size-10 shrink-0 place-items-center rounded-control text-sm font-semibold" data-gateway="{{ $current->code->value }}" aria-hidden="true">{{ $current->code->initials() }}</span>
                                 <div>
-                                    <h2 class="font-semibold text-ink">{{ $current->code->brand() }}</h2>
+                                    <h2 class="ui-card-title font-semibold text-ink">{{ $current->code->brand() }}</h2>
                                     <p class="text-xs text-ink-secondary">{{ $current->code->methods() }}</p>
                                 </div>
                             </div>
@@ -84,9 +84,9 @@
                     </x-ui::card>
 
                     <x-ui::card :padding="false">
-                        <h2 class="px-5 pt-5 font-semibold text-ink">{{ __('commerce::gateways.list') }}</h2>
+                        <h2 class="ui-card-title px-5 pt-5 font-semibold text-ink">{{ __('commerce::gateways.list') }}</h2>
                         <div class="mt-3 overflow-x-auto">
-                            <table class="w-full text-sm">
+                            <table data-lead class="vnd-table w-full text-sm">
                                 <thead class="bg-subtle text-start text-xs text-ink-secondary">
                                     <tr><th class="px-5 py-2.5 text-start font-medium">{{ __('commerce::gateways.columns.gateway') }}</th><th class="px-5 py-2.5 text-start font-medium">{{ __('commerce::gateways.columns.mode') }}</th><th class="px-5 py-2.5 text-start font-medium">{{ __('commerce::gateways.columns.status') }}</th></tr>
                                 </thead>
@@ -108,7 +108,7 @@
                 </div>
 
                 <x-ui::card class="content-start">
-                    <h2 class="mb-4 font-semibold text-ink">{{ __('commerce::gateways.readiness.title') }}</h2>
+                    <h2 class="ui-card-title mb-4 font-semibold text-ink">{{ __('commerce::gateways.readiness.title') }}</h2>
                     <ul class="divide-y divide-line">
                         @foreach ($readiness as $check)
                             <li class="flex items-center gap-3 py-3">

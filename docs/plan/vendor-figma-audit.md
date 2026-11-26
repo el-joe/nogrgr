@@ -281,7 +281,32 @@ Mobile 375 frames reuse the 182:29054 shell: black header with r24 bottom, #FFF5
 | 061 | 199:34398 | kit |
 | 091 / 092 | 206:38046 / 206:38560 | kit; TP/Empty state |
 
-Not yet compared one by one: Your Store 200:*, Settings 1 201:*, Settings 2 202:*, modal boards 206:39026 / 39513 / 39923 / 40420 (they pick up the kit automatically, but layout-level differences were not checked).
+**Batch 3b (align-code2, 2026-11-26): Your Store 200:*, Settings 1 201:*, Settings 2 202:*, modal boards 206:*** compared frame by frame (1440 en/light, 1440 ar/dark, 375 en/light; no overflow, no JS errors; `figma-audit/code-after-vendor-*`).
+
+Shell-level (every vendor page):
+- Title row (200:32873): content starts 16 px under the top bar (`.vnd-main` pt 16 from 640 px), title Bold 32 line-height 1.25, page actions centred on the title block instead of its baseline.
+- Sidebar sub-pages (200:33385): 172 px wide from x 56 (was 44).
+- Mobile < 640: every row of `x-ui::kpi-card`s is one horizontally swipeable strip (271 px cards, 12 gap, snap, native touch, edge to edge in the 16 px gutter), found by `:has()` so no view needs a class; rows that already scroll (`.snap-x`) keep their own layout.
+- TP/Table cell for hand-built tables: `.vnd-table` now also styles body cells (14 #A3A3A3, 48 px, 1 px #F0F0F0 lines, header band whatever utilities the view set); `[data-lead]` makes the first cell the dark Medium lead with a 12 grey sub line. Datatable body `.text-ink` text is grey too (lead column stays dark; mobile cards keep dark values).
+- TP/Card header normalised: hand-built card titles now carry `.ui-card-title` (SemiBold 24 #111111) — banners list, payment gateways (3), email template preview, domain detail, compliance sections, order detail (4), settlement (2). Item cards (theme / variant cards, pixel cards) keep their small titles as in the frames.
+
+| VEN row | Aligned frame | Code change |
+|---|---|---|
+| 030 / 031 | 200:32864 | shell title row |
+| 031 (home variants page) | 200:32864 "Home variant" | static table → TP/Table cell (`vnd-table[data-lead]`, grey body, header band) |
+| 033 / 034 / 035 / 036 / 037 / 030a–b modals | 200:34128 … 200:38274 | kit + shell; banners list title → card header; variant modal checked as TP/Modal / bottom sheet |
+| 070 / 071 | 201:34510 / 201:35177 | shell only |
+| 072 currencies | 201:35816 | table → TP/Table cell with lead |
+| 073 languages | 201:36468 | rows borderless (hover #F5F5F5), name keeps 128 px so the controls wrap on 375 instead of truncating; purchasable table → TP/Table cell |
+| 075 store translations | 201:37173 | English / translation values grey per TP/Table cell |
+| 077 roles form | 201:37881 | permission matrix → TP/Table cell |
+| 078 payment gateways | 201:38547 | 3 card titles → TP/Card header; gateways table → TP/Table cell; readiness card no longer stretches to the row height |
+| 079 return policy | 201:39338 | shell only |
+| 080–087 | 202:36036 … 202:39204 | email template preview title, domain detail title, compliance section titles → TP/Card header; domains + notification preferences tables → TP/Table cell |
+| 010a price list modal | 206:39026 | table → TP/Table cell, no outer border |
+| 206:39513 / 39923 / 40420 | — | forms only; the kit (TP/Modal, TP/Field) already covers them |
+
+Intentional differences kept: the modal boards 206:* still draw the older modal layout (header divider, auto-width buttons with primary last); code follows TP/Modal 193:30334 (no divider, equal buttons, primary first), which is the client popup language. Frames that show pages our routes don't have (Page builder 200:33486, API keys 202:38264) or split list + editor on one page (Pages 200:34128, Email templates 202:36036) keep the existing routes and behaviour. Card grid gaps stay 24 (frames 16 / 20).
 
 **Superseded**, kept untouched as history: every "old frame" in the table above, plus 88:112846 (Notifications inbox, replaced by client 12:17282).
 

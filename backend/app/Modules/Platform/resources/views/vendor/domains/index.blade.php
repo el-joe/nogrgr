@@ -45,7 +45,7 @@
                 @else
                     <header class="flex flex-wrap items-center justify-between gap-3 px-5 pt-5">
                         <div class="min-w-0">
-                            <h2 class="truncate text-base font-semibold text-ink"><bdi dir="ltr">{{ $selected->host }}</bdi></h2>
+                            <h2 class="ui-card-title truncate text-base font-semibold text-ink"><bdi dir="ltr">{{ $selected->host }}</bdi></h2>
                             <p class="mt-0.5 text-xs text-ink-secondary">{{ $checked ? __('platform::vendor_domains.last_checked', ['time' => $checked->diffForHumans()]) : __('platform::vendor_domains.not_checked') }}</p>
                         </div>
                         @if ($canManage && $selected->status !== DomainRequestStatus::Removed)
@@ -63,7 +63,7 @@
                     @endif
 
                     <div class="m-5 overflow-x-auto rounded-control border border-line">
-                        <table class="ui-table w-full min-w-[420px] text-sm">
+                        <table data-lead class="ui-table vnd-table w-full min-w-[420px] text-sm">
                             <thead>
                                 <tr class="border-b border-line bg-subtle text-xs font-medium text-ink-secondary">
                                     <th scope="col" class="px-4 py-3 text-start">{{ __('platform::vendor_domains.dns.type') }}</th>

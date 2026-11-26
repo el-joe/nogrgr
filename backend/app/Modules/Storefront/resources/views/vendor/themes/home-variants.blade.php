@@ -21,13 +21,13 @@
                 <x-ui::empty-state icon="palette" :title="__('content::vendor_themes.empty.title')" :description="__('content::vendor_themes.empty.description')" />
             @else
                 <div class="relative overflow-x-auto">
-                    <table class="w-full min-w-[640px] text-sm">
+                    <table data-lead class="vnd-table w-full min-w-[640px] text-sm">
                         <thead>
-                            <tr class="border-b border-line text-start text-xs font-medium text-ink-secondary">
-                                <th scope="col" class="px-5 py-3 text-start font-medium">{{ __('content::vendor_themes.columns.scope') }}</th>
-                                <th scope="col" class="px-5 py-3 text-start font-medium">{{ __('content::vendor_themes.columns.theme') }}</th>
-                                <th scope="col" class="px-5 py-3 text-start font-medium">{{ __('content::vendor_themes.columns.variant') }}</th>
-                                <th scope="col" class="px-5 py-3 text-start font-medium">{{ __('content::vendor_themes.columns.source') }}</th>
+                            <tr class="text-start text-sm text-ink-secondary">
+                                <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('content::vendor_themes.columns.scope') }}</th>
+                                <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('content::vendor_themes.columns.theme') }}</th>
+                                <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('content::vendor_themes.columns.variant') }}</th>
+                                <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('content::vendor_themes.columns.source') }}</th>
                                 <th scope="col" class="px-5 py-3"><span class="sr-only">{{ __('ui.table.actions') }}</span></th>
                             </tr>
                         </thead>
@@ -42,13 +42,13 @@
                                                 @if ($theme->preview_url)
                                                     <img src="{{ $theme->preview_url }}" alt="" loading="lazy" class="h-10 w-16 shrink-0 rounded-chip border border-line object-contain bg-media">
                                                 @endif
-                                                <span class="text-ink">{{ $theme->family->label() }}</span>
+                                                <span class="text-ink-muted">{{ $theme->family->label() }}</span>
                                             </span>
                                         @else
                                             <span class="text-ink-secondary">{{ __('content::vendor_themes.no_theme') }}</span>
                                         @endif
                                     </td>
-                                    <td class="px-5 py-3 text-ink">{{ $theme ? __('content::vendor_themes.home_variant', ['number' => $theme->variant]) : '—' }}</td>
+                                    <td class="px-5 py-3 text-ink-muted">{{ $theme ? __('content::vendor_themes.home_variant', ['number' => $theme->variant]) : '—' }}</td>
                                     <td class="px-5 py-3">
                                         @if ($row->countryId === null)
                                             <x-ui::badge tone="brand">{{ __('content::vendor_themes.store_default') }}</x-ui::badge>

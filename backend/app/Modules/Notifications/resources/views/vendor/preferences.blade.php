@@ -19,7 +19,7 @@
 
         <x-ui::card :padding="false" class="overflow-hidden">
             <div class="relative overflow-x-auto">
-                <table class="w-full text-[13px]">
+                <table data-lead class="vnd-table w-full text-[13px]">
                     <thead class="bg-subtle text-xs text-ink-secondary">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-start font-medium">{{ __('notifications::panel.preferences.event') }}</th>

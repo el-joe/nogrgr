@@ -18,7 +18,7 @@
 
         <x-ui::card :padding="false" class="overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full min-w-[640px] text-start text-sm">
+                <table data-lead class="vnd-table w-full min-w-[640px] text-start text-sm">
                     <thead class="bg-subtle text-xs text-ink-secondary">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-start font-medium">{{ __('localization::vendor_currencies.columns.currency') }}</th>

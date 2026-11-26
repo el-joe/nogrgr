@@ -1,6 +1,8 @@
 <?php
 
+use App\Modules\Ai\Http\Controllers\Vendor\AiLogoController;
 use App\Modules\Ai\Http\Controllers\Vendor\AiTranslationController;
+use App\Modules\Ai\Http\Controllers\Vendor\ProductAiToolsController;
 use App\Modules\Ai\Http\Controllers\Vendor\ProductAiTranslationController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +15,17 @@ use Illuminate\Support\Facades\Route;
 | VEN-074 / 074a "AI translation" settings page: vendor.settings.ai-translation*
 | (settings.languages.view: page, status, history | settings.languages.manage: buy a
 | language, payment result / cancel, run again, retry).
+| VEN-010b AI price finder + VEN-010c AI social posts of one product (OpenAI only,
+| plan `ai_calls`): vendor.catalog.products.ai-price|ai-social (catalog.products.manage)
+| and vendor.catalog.own-products.ai-price|ai-social (catalog.own-products.manage).
+| VEN-034a AI logo generator: vendor.store.appearance.ai-logo.generate|apply
+| (store.appearance.manage, plan `ai_logos`).
 */
+
+Route::middleware(['auth:vendor', 'permission:store.appearance.manage,vendor'])->prefix('store/appearance/ai-logo')->name('store.appearance.ai-logo.')->controller(AiLogoController::class)->group(function (): void {
+    Route::post('generate', 'generate')->middleware('throttle:5,1')->name('generate');
+    Route::post('apply', 'apply')->name('apply');
+});
 
 Route::middleware('auth:vendor')->prefix('settings/ai-translation')->controller(AiTranslationController::class)->group(function (): void {
     Route::middleware('permission:settings.languages.view,vendor')->group(function (): void {
@@ -40,6 +52,18 @@ Route::middleware('auth:vendor')->prefix('catalog')->name('catalog.')->group(fun
         Route::middleware('permission:catalog.own-products.manage,vendor')->prefix('own-products/{product}/ai-translate')->name('own-products.ai-translate.')->whereNumber('product')->group(function (): void {
             Route::post('preview', 'preview')->middleware('throttle:20,1')->name('preview');
             Route::post('apply', 'apply')->name('apply');
+        });
+    });
+
+    Route::controller(ProductAiToolsController::class)->group(function (): void {
+        Route::middleware('permission:catalog.products.manage,vendor')->prefix('products/{product}')->name('products.')->whereNumber('product')->group(function (): void {
+            Route::post('ai-price', 'priceFinder')->middleware('throttle:10,1')->name('ai-price');
+            Route::post('ai-social', 'socialPost')->middleware('throttle:20,1')->name('ai-social');
+        });
+
+        Route::middleware('permission:catalog.own-products.manage,vendor')->prefix('own-products/{product}')->name('own-products.')->whereNumber('product')->group(function (): void {
+            Route::post('ai-price', 'priceFinder')->middleware('throttle:10,1')->name('ai-price');
+            Route::post('ai-social', 'socialPost')->middleware('throttle:20,1')->name('ai-social');
         });
     });
 });

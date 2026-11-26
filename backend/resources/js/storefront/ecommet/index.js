@@ -5,6 +5,7 @@
 import { initCart } from '../catalog/cart';
 import { initFavorites } from '../catalog/favorites';
 import { initSearch } from '../catalog/search';
+import { initImageSearch } from '../catalog/image-search';
 import { initListing } from '../catalog/listing';
 import { initUi } from '../catalog/ui';
 import { initCommerce } from '../commerce/index.js';
@@ -13,6 +14,7 @@ export function initEcommet() {
     initCart();
     initFavorites();
     initSearch(document);
+    initImageSearch(document);
     initListing(document);
     initUi(document);
     initCommerce(document);

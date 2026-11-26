@@ -53,7 +53,7 @@
                             @include('integrations::admin.integrations._status', ['key' => $provider->value, 'status' => $statuses[$provider->value]['status']])
                         </div>
                         <div class="grid gap-5">
-                            @foreach (['base_url', 'api_key', 'model'] as $suffix)
+                            @foreach ($provider === TranslationProvider::OpenAi ? ['base_url', 'api_key', 'model', 'embedding_model', 'image_model'] : ['base_url', 'api_key', 'model'] as $suffix)
                                 @include('integrations::admin.integrations._field', ['field' => $fields[$provider->value.'_'.$suffix], 'state' => $form[$provider->value.'_'.$suffix], 'editable' => $canManage])
                             @endforeach
                         </div>

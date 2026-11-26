@@ -36,14 +36,14 @@
         <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
             <div class="grid content-start gap-6">
                 <x-ui::card>
-                    <h2 class="mb-3 font-semibold text-ink">{{ __('commerce::orders_admin.items', ['count' => $order->items->count()]) }}</h2>
+                    <h2 class="ui-card-title mb-3 font-semibold text-ink">{{ __('commerce::orders_admin.items', ['count' => $order->items->count()]) }}</h2>
                     @include('commerce::partials.items', ['order' => $order])
                     <div class="mt-4 border-t border-line pt-4">@include('commerce::partials.totals', ['order' => $order])</div>
                 </x-ui::card>
 
                 <x-ui::card>
                     <div class="mb-4 flex items-center justify-between gap-3">
-                        <h2 class="font-semibold text-ink">{{ __('commerce::vendor_orders.shipping') }}</h2>
+                        <h2 class="ui-card-title font-semibold text-ink">{{ __('commerce::vendor_orders.shipping') }}</h2>
                         @if ($own && $staff?->can('orders.manage') && $order->fulfilment_status->transitions() !== [] && in_array($order->status->value, ['paid', 'processing', 'shipped'], true))
                             <x-ui::button variant="secondary" size="sm" icon="truck" data-remote-modal="vendor-order-modal" :data-url="vendor_route('sales.orders.shipping.form', ['order' => $order->uuid])">{{ __('commerce::fulfilment.update_status') }}</x-ui::button>
                         @endif
@@ -67,7 +67,7 @@
 
             <div class="grid content-start gap-6">
                 <x-ui::card>
-                    <h2 class="font-semibold text-ink">{{ __('commerce::settlement.title') }}</h2>
+                    <h2 class="ui-card-title font-semibold text-ink">{{ __('commerce::settlement.title') }}</h2>
                     <p class="mb-4 text-xs text-ink-secondary">{{ __('commerce::settlement.subtitle') }}</p>
                     @include('commerce::partials.settlement', ['figures' => $figures, 'order' => $order])
                     @if ($figures->owedToPlatform->isPositive() && $staff?->can('orders.manage'))
@@ -86,7 +86,7 @@
                 </x-ui::card>
 
                 <x-ui::card>
-                    <h2 class="mb-3 font-semibold text-ink">{{ __('commerce::orders_admin.customer') }}</h2>
+                    <h2 class="ui-card-title mb-3 font-semibold text-ink">{{ __('commerce::orders_admin.customer') }}</h2>
                     <div class="flex items-center gap-3">
                         <x-ui::avatar :name="(string) $order->customer_name" :size="40" />
                         <div class="min-w-0">

@@ -7,6 +7,7 @@ use App\Modules\Ai\Models\AiUsageLog;
 use App\Modules\Ai\Repositories\Contracts\AiUsageLogRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -39,6 +40,19 @@ class AiUsageLogRepository extends BaseRepository implements AiUsageLogRepositor
             ->first();
 
         return ['calls' => (int) ($row->calls ?? 0), 'this_month' => (int) ($row->this_month ?? 0), 'tokens' => (int) ($row->tokens ?? 0)];
+    }
+
+    public function countCalls(int $tenantId, array $features, Carbon $since): int
+    {
+        if ($features === []) {
+            return 0;
+        }
+
+        return $this->query()->withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->whereIn('feature', array_map(static fn (AiFeature $feature): string => $feature->value, $features))
+            ->where('created_at', '>=', $since)
+            ->count();
     }
 
     private function productTranslations(int $tenantId): QueryBuilder

@@ -19,6 +19,14 @@ enum AiErrorType: string
     case Unavailable = 'unavailable';
     case InvalidResponse = 'invalid_response';
 
+    /**
+     * Retrying cannot help (configuration / key / provider account problem).
+     */
+    public function isFatal(): bool
+    {
+        return in_array($this, [self::NotConfigured, self::AuthFailed, self::QuotaExhausted], true);
+    }
+
     public function httpStatus(): int
     {
         return match ($this) {

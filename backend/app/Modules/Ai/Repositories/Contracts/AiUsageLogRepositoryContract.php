@@ -2,9 +2,11 @@
 
 namespace App\Modules\Ai\Repositories\Contracts;
 
+use App\Modules\Ai\Enums\AiFeature;
 use App\Modules\Ai\Models\AiUsageLog;
 use App\Shared\Repositories\Contracts\RepositoryContract;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Carbon;
 
 /**
  * Central DB.
@@ -25,4 +27,11 @@ interface AiUsageLogRepositoryContract extends RepositoryContract
      * @return array{calls: int, this_month: int, tokens: int}
      */
     public function productTranslationStats(int $tenantId): array;
+
+    /**
+     * Calls of the given features a store made since $since (monthly plan quotas).
+     *
+     * @param  list<AiFeature>  $features
+     */
+    public function countCalls(int $tenantId, array $features, Carbon $since): int;
 }

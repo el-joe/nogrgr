@@ -51,7 +51,7 @@
 
             <input type="hidden" name="permissions" value="">
             <div class="relative overflow-x-auto rounded-card border border-line bg-surface shadow-card" data-error-key="permissions">
-                <table class="w-full min-w-[640px] text-[13px]">
+                <table data-lead class="vnd-table w-full min-w-[640px] text-[13px]">
                     <thead class="bg-subtle text-xs text-ink-secondary">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-start font-medium">{{ __('identity::roles.module') }}</th>

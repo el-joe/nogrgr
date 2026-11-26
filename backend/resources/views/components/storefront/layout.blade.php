@@ -47,6 +47,9 @@
         <main id="main" {{ $attributes->class(['flex-1']) }}>
             {{ $slot }}
         </main>
+        @if (\App\Modules\Ai\Services\Tools\OpenAiTools::storefrontImageSearch())
+            <x-sf::image-search :action="route('storefront.search.image')" />
+        @endif
         <x-sf::footer :family="$family" />
         <x-sf::mobile-nav :family="$family" :active="$nav" />
     </div>

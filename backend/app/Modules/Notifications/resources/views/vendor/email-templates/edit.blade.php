@@ -85,7 +85,7 @@
 
             <x-ui::card class="xl:sticky xl:top-20">
                 <div class="mb-3 flex items-center justify-between gap-3">
-                    <h2 class="text-base font-semibold text-ink">{{ __('notifications::templates.preview') }}</h2>
+                    <h2 class="ui-card-title text-base font-semibold text-ink">{{ __('notifications::templates.preview') }}</h2>
                     <div class="inline-flex gap-1 rounded-control bg-subtle p-1" role="group" aria-label="{{ __('notifications::templates.preview_width') }}">
                         @foreach (['desktop', 'mobile'] as $width)
                             <button type="button" data-preview-width="{{ $width }}" aria-pressed="{{ $width === 'desktop' ? 'true' : 'false' }}" class="inline-flex h-7 items-center rounded-chip px-2.5 text-xs text-ink-secondary aria-pressed:bg-surface aria-pressed:font-medium aria-pressed:text-ink-brand aria-pressed:shadow-card">{{ __('notifications::templates.widths.'.$width) }}</button>

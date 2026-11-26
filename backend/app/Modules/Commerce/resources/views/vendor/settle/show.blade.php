@@ -15,7 +15,7 @@
 
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
             <x-ui::card>
-                <h2 class="mb-4 font-semibold text-ink">{{ __('commerce::settlement.breakdown') }}</h2>
+                <h2 class="ui-card-title mb-4 font-semibold text-ink">{{ __('commerce::settlement.breakdown') }}</h2>
                 <dl class="grid gap-2.5 text-sm">
                     <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::settlement.shipping_cost') }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $shipping->format() }}</dd></div>
                     <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::settlement.product_cost') }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $product->format() }}</dd></div>
@@ -28,7 +28,7 @@
             </x-ui::card>
 
             <x-ui::card>
-                <h2 class="mb-4 font-semibold text-ink">{{ __('commerce::settlement.gateway') }}</h2>
+                <h2 class="ui-card-title mb-4 font-semibold text-ink">{{ __('commerce::settlement.gateway') }}</h2>
                 @if (! $due->isPositive())
                     <x-ui::empty-state compact icon="check-circle" :title="__('commerce::settlement.nothing_due')" :description="__('commerce::settlement.nothing_due_hint')" />
                 @elseif ($gateways->isEmpty())

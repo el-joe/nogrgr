@@ -30,8 +30,8 @@
                 <x-ui::select name="variant_id" :label="__('catalog::vendor.price_list.variant')" :options="$variants" :placeholder="__('catalog::vendor.price_list.all_variants')" allow-clear :disabled="! $canManage" data-preview-field />
             @endif
         </div>
-        <div class="max-h-[50vh] overflow-auto rounded-card border border-line">
-            <table class="w-full text-sm">
+        <div class="max-h-[50vh] overflow-auto rounded-card">
+            <table class="vnd-table w-full text-sm">
                 <thead class="sticky top-0 bg-subtle text-[13px] text-ink-secondary">
                     <tr>
                         <th scope="col" class="px-4 py-3 text-start font-medium">{{ __('catalog::vendor.price_list.country') }}</th>

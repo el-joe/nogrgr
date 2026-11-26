@@ -227,7 +227,7 @@
 | VEN-009f | ↳ Live store preview by country | widget | country switch | dashboard `_storefront` | 12:11267 | P8 | done — `_storefront`: scaled live iframe through the signed theme preview (VEN-030 route, #85) per scope with country switcher (Select2), loading / error / no-theme states, permission-gated "Edit your storefront" links |
 | VEN-010 | Products (central, with markup) | `vendor.catalog.products.index` | Std; toggle active/featured, delete, export | tenant.products.index | 12:12968, m 12:21178 | P3 | done |
 | VEN-010a | ↳ Price list modal (markup per country / variant, preview) | modal | apply job progress | tenant.products.price-list | designed: Vendor Panel (new screens) 206:39026 aligned to Tenant Panel (old 83:104181 superseded) | P3 | done |
-| VEN-010b | ↳ AI price finder modal | modal | avg/median/min/max, hits, quota error | tenant.products.ai-price | designed: Vendor Panel (new screens) 206:39026 aligned to Tenant Panel (old 83:104181 superseded) | P10 | todo |
+| VEN-010b | ↳ AI price finder modal | modal (`vendor.catalog.(own-)products.ai-price`, #103) | avg/median/min/max, hits, quota error | tenant.products.ai-price | designed: Vendor Panel (new screens) 206:39026 aligned to Tenant Panel (old 83:104181 superseded) | P10 | done |
 | VEN-010c | ↳ AI Advertising Studio / social posts modal (4 steps) | modal | platform, language, image, copy/download | tenant.products.social | 12:15119 | P10 | todo |
 | VEN-010d | ↳ Share modal | modal | copy, share links | tenant.products.share | designed: Vendor Panel (new screens) 206:39026 aligned to Tenant Panel (old 83:104181 superseded) | P8 | todo |
 | VEN-010e | ↳ Shipping details modal (per destination fee) | modal | country select | — (Figma) | 12:16200 | P4 | done |
@@ -279,7 +279,7 @@
 | VEN-033 | Pages | `vendor.store.pages.index` | Std; delete | tenant.store.pages | designed: Vendor Panel (new screens) 200:34128 aligned to Tenant Panel (old 85:106165 superseded) | P8 | done |
 | VEN-033a | ↳ Page create / edit | `vendor.store.pages.create` / `.edit` | translations | tenant.store.pages.create, tenant.store.pages.edit | designed: Vendor Panel (new screens) 200:34128 aligned to Tenant Panel (old 85:106165 superseded) | P8 | done |
 | VEN-034 | Appearance | `vendor.store.appearance` | save per tab | tenant.store.appearance | designed: Vendor Panel (new screens) 200:34905 aligned to Tenant Panel (old 85:106903 superseded) | P8 | done |
-| VEN-034a | ↳ Tab: Logo (builder + AI logo generator) | tab | generate, limit reached | AppearanceController, LogoGeneratorService | designed: Vendor Panel (new screens) 200:34905 aligned to Tenant Panel (old 85:106903 superseded) | P10 | todo |
+| VEN-034a | ↳ Tab: Logo (builder + AI logo generator) | tab (`vendor.store.appearance.ai-logo.generate|apply`, #103) | generate, limit reached | AppearanceController, LogoGeneratorService | designed: Vendor Panel (new screens) 200:34905 aligned to Tenant Panel (old 85:106903 superseded) | P10 | done |
 | VEN-034b | ↳ Tab: Colors & fonts (LTR/RTL, reset) | tab | | AppearanceController | designed: Vendor Panel (new screens) 200:35591 aligned to Tenant Panel (old 85:107559 superseded) | P8 | done |
 | VEN-034c | ↳ Tab: Promo banner | tab | | AppearanceController | designed: Vendor Panel (new screens) 200:35591 aligned to Tenant Panel (old 85:107559 superseded) | P8 | done |
 | VEN-034d | ↳ Tab: Top header links | tab | | AppearanceController | designed: Vendor Panel (new screens) 200:35591 aligned to Tenant Panel (old 85:107559 superseded) | P8 | done |
@@ -483,7 +483,7 @@
 |---|---|---|---|---|---|---|---|
 | SF-ECO-010 | Layout: header, nav, locale switcher (lang/currency/country), mobile menu, footer, cards | layout | | themes.ecommet.layout | 1:348, m 1:2764, boards 1:4259, 1:4261, 1:4263, 1:4265 | P7 | todo |
 | SF-ECO-011 | Search autocomplete dropdown (recent searches) | `store.search.autocomplete` | no results | tenant.storefront.search.autocomplete, preview.search.autocomplete | 1:1163 | P7 | todo |
-| SF-ECO-012 | Image search modal | `store.search.image` | upload, quota error | tenant.storefront.search.image | designed: Storefront additions 135:111164 · results 135:111194 · m 135:111252 | P10 | todo |
+| SF-ECO-012 | Image search modal | `storefront.search.image` (+ `store-api.v1.search.image`) | upload, quota error | tenant.storefront.search.image | designed: Storefront additions 135:111164 · results 135:111194 · m 135:111252 | P10 | done |
 | SF-ECO-013 | Search results | `store.search` | empty | tenant.storefront.search | reuse 1:1191, unchanged · variant notes 137:113051 | P7 | todo |
 | SF-ECO-014 | Best selling (period tabs) | `store.best-selling` | load more | tenant.storefront.best-selling | 1:1191 | P7 | todo |
 | SF-ECO-015 | New in | `store.new-in` | | tenant.storefront.new-in | reuse 1:1191, unchanged · variant notes 137:113051 | P7 | todo |
@@ -537,7 +537,7 @@
 | SF-ELO-010 | Layout: navbar (6 header variants), footer, locale switcher, mobile nav | layout | | themes.elora.layout, partials/header-v* | 1:20866 | P7 | done |
 | SF-ELO-011 | Components: cards, inputs, sale tags, marquee, card-fan, swatches (36) | components | | themes.elora | 1:18492, 1:20559, 1:20567, 1:20600, 1:20631, 1:20764, 1:20802, 1:22460, 1:22593, 1:22714, 1:22747, 1:22760, 1:23902, 1:23921, 1:23938, 1:23953, 1:24018, 1:24039, 1:24104, 1:25363, 1:25364, 1:25458, 1:25459, 1:25465, 1:25466, 1:29865, 1:30232, 1:26485–1:26557 | P7 | done |
 | SF-ELO-012 | Search autocomplete | `store.search.autocomplete` | | tenant.storefront.search.autocomplete | designed: Storefront additions 135:111544 · m 135:111756 | P7 | done |
-| SF-ELO-013 | Image search modal | `store.search.image` | | tenant.storefront.search.image | designed: Storefront additions 135:111805 · results 135:111835 · m 135:111893 | P10 | todo |
+| SF-ELO-013 | Image search modal | `storefront.search.image` (+ `store-api.v1.search.image`) | | tenant.storefront.search.image | designed: Storefront additions 135:111805 · results 135:111835 · m 135:111893 | P10 | done |
 | SF-ELO-014 | Search results | `store.search` | empty | tenant.storefront.search | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | done |
 | SF-ELO-015 | Best selling | `store.best-selling` | | tenant.storefront.best-selling | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | done |
 | SF-ELO-016 | New in | `store.new-in` | | tenant.storefront.new-in | reuse 1:17172 (m 1:21453), unchanged · variant notes 137:113975 | P7 | done |
@@ -589,7 +589,7 @@
 | SF-SQF-010 | Layout: navbar, footer (fix Elora logo), mobile nav bar | layout | | themes.souqify.layout | 1:81293, 1:81428, m 1:80539 | P7 | done |
 | SF-SQF-011 | Components: buttons, product cards, side cards, deal card, labels, discount, swatches (36) | components | | themes.souqify | 1:74471, 1:74473, 1:74476, 1:74550, 1:76154, 1:76210, 1:76304, 1:80047, 1:80075, 1:80140, 1:80147, 1:80975, 1:81011, 1:81148, 1:82791, 1:81511–1:81583 | P7 | done |
 | SF-SQF-012 | Search autocomplete | `store.search.autocomplete` | | tenant.storefront.search.autocomplete | designed: Storefront additions 135:112185 · m(ar) 135:112339 | P7 | done |
-| SF-SQF-013 | Image search modal | `store.search.image` | | tenant.storefront.search.image | designed: Storefront additions 135:112388 · results 135:112418 · m(ar) 135:112476 | P10 | todo |
+| SF-SQF-013 | Image search modal | `storefront.search.image` (+ `store-api.v1.search.image`) | | tenant.storefront.search.image | designed: Storefront additions 135:112388 · results 135:112418 · m(ar) 135:112476 | P10 | done |
 | SF-SQF-014 | Search results | `store.search` | | tenant.storefront.search | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | done |
 | SF-SQF-015 | Best selling | `store.best-selling` | | tenant.storefront.best-selling | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | done |
 | SF-SQF-016 | New in | `store.new-in` | | tenant.storefront.new-in | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | done |

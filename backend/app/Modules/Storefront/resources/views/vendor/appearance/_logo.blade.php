@@ -1,5 +1,6 @@
-{{-- Appearance › Logo (Figma 85:106903 "Current logo"): the store logo, replaced by upload. --}}
+{{-- Appearance › Logo (Figma 85:106903 "Current logo"): the store logo, replaced by upload or by the AI logo generator (VEN-034a, ai::vendor.ai-logo.card). --}}
 <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    @include('ai::vendor.ai-logo.card')
     <x-ui::card :title="__('content::store_appearance.logo.title')" :subtitle="__('content::store_appearance.logo.help')">
         @if ($logoUrl)
             <div class="grid h-40 place-items-center rounded-control bg-media p-4">

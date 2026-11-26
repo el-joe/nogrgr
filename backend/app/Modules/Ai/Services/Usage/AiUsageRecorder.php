@@ -61,6 +61,28 @@ class AiUsageRecorder
     }
 
     /**
+     * One row per OpenAI tool action (price finder, social posts, logo, image search /
+     * indexing), written even without reported tokens: these rows are what the monthly
+     * plan quotas count (AiQuotaService).
+     */
+    public function recordCall(AiUsageContext $context, string $provider, string $model, int $prompt, int $completion): void
+    {
+        try {
+            $this->logs->query()->withoutGlobalScopes()->create([
+                'tenant_id' => $context->tenantId ?? (tenancy()->initialized ? (int) tenant()?->getTenantKey() : null),
+                'feature' => $context->feature,
+                'provider' => $provider,
+                'model' => mb_substr($model, 0, 120),
+                'prompt_tokens' => max(0, $prompt),
+                'completion_tokens' => max(0, $completion),
+                'subject' => $context->subject !== null ? mb_substr($context->subject, 0, 120) : null,
+            ]);
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
+    /**
      * @return array{prompt: int, completion: int}
      */
     public static function usage(TranslationClient $client): array

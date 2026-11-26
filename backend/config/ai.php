@@ -28,6 +28,9 @@ return [
             'base_url' => 'https://api.openai.com/v1',
             'api_key' => null,
             'model' => 'gpt-4.1-mini',
+            // OpenAI-only tools (decision #43): image search embeddings, AI logo images.
+            'embedding_model' => 'text-embedding-3-small',
+            'image_model' => 'gpt-image-1',
         ],
         'freellmapi' => [
             'base_url' => 'http://localhost:3001/v1',

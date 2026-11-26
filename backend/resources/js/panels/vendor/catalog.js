@@ -19,6 +19,7 @@ import { notify } from '../../core/notify';
 import { loadSortable, closeOverlay, confirmDialog } from '../core.js';
 import { bindRemoteModals } from '../remote-modal.js';
 import initProductAiTranslate from './product-ai-translate.js';
+import initAiTools from './ai-tools.js';
 
 const debounce = (callback, wait = 300) => {
     let timer;
@@ -376,6 +377,7 @@ function initOwnForm(form) {
 
 export default function initCatalog(page) {
     initProductAiTranslate();
+    initAiTools();
     if (document.querySelector('[data-remote-body]')) {
         bindRemoteModals(page);
     }

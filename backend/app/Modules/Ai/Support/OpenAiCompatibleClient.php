@@ -49,7 +49,7 @@ final class OpenAiCompatibleClient
     }
 
     /**
-     * @param  list<array{role: string, content: string}>  $messages
+     * @param  list<array{role: string, content: mixed}>  $messages
      * @param  array<string, mixed>  $options  extra body fields (temperature, response_format…)
      * @return array<string, mixed> decoded response
      */
@@ -72,7 +72,7 @@ final class OpenAiCompatibleClient
     /**
      * Content of the first choice of a chat completion.
      *
-     * @param  list<array{role: string, content: string}>  $messages
+     * @param  list<array{role: string, content: mixed}>  $messages
      * @param  array<string, mixed>  $options
      */
     public function complete(array $messages, array $options = []): string
@@ -84,6 +84,97 @@ final class OpenAiCompatibleClient
         }
 
         return $content;
+    }
+
+    /**
+     * Embedding vector of one text (POST /embeddings; OpenAI-only tools, image search).
+     *
+     * @return list<float>
+     */
+    public function embedding(string $input, string $model, ?int $dimensions = null): array
+    {
+        $this->guardConfigured();
+
+        $response = $this->send(fn (PendingRequest $request): Response => $request->post('/embeddings', array_filter(['model' => $model, 'input' => $input, 'dimensions' => $dimensions], static fn (mixed $value): bool => $value !== null)));
+        $this->usage['prompt'] += (int) data_get($response, 'usage.prompt_tokens', 0);
+        $vector = data_get($response, 'data.0.embedding');
+
+        if (! is_array($vector) || $vector === []) {
+            throw new AiRequestException(AiErrorType::InvalidResponse, 'Embedding missing.');
+        }
+
+        return array_values(array_map(static fn (mixed $value): float => (float) $value, $vector));
+    }
+
+    /**
+     * Output text of an OpenAI Responses API call (POST /responses), e.g. with the built-in
+     * `web_search` tool (AI price finder).
+     *
+     * @param  array<string, mixed>  $options  tools, temperature…
+     */
+    public function respond(string $input, array $options = []): string
+    {
+        $this->guardConfigured();
+
+        $response = $this->send(fn (PendingRequest $request): Response => $request->post('/responses', [
+            'model' => $this->config->model,
+            'input' => $input,
+            ...$options,
+        ]));
+        $this->usage['prompt'] += (int) data_get($response, 'usage.input_tokens', 0);
+        $this->usage['completion'] += (int) data_get($response, 'usage.output_tokens', 0);
+
+        $text = is_string($response['output_text'] ?? null) ? $response['output_text'] : '';
+
+        foreach ((array) ($response['output'] ?? []) as $item) {
+            foreach (is_array($item) ? (array) ($item['content'] ?? []) : [] as $part) {
+                if (is_array($part) && ($part['type'] ?? null) === 'output_text' && is_string($part['text'] ?? null)) {
+                    $text .= $part['text'];
+                }
+            }
+        }
+
+        if (trim($text) === '') {
+            throw new AiRequestException(AiErrorType::InvalidResponse, 'Empty response.');
+        }
+
+        return $text;
+    }
+
+    /**
+     * Generated images as raw binary PNG strings (POST /images/generations; AI logo).
+     *
+     * @return list<string>
+     */
+    public function images(string $prompt, string $model, int $count = 1, string $size = '1024x1024'): array
+    {
+        $this->guardConfigured();
+
+        $body = ['model' => $model, 'prompt' => $prompt, 'n' => $count, 'size' => $size];
+
+        if (str_starts_with($model, 'dall-e')) {
+            $body['response_format'] = 'b64_json';
+        }
+
+        $response = $this->send(fn (PendingRequest $request): Response => $request->post('/images/generations', $body));
+        $this->usage['prompt'] += (int) data_get($response, 'usage.input_tokens', 0);
+        $this->usage['completion'] += (int) data_get($response, 'usage.output_tokens', 0);
+
+        $images = [];
+
+        foreach ((array) data_get($response, 'data', []) as $item) {
+            $binary = is_array($item) && is_string($item['b64_json'] ?? null) ? base64_decode($item['b64_json'], true) : false;
+
+            if (is_string($binary) && $binary !== '') {
+                $images[] = $binary;
+            }
+        }
+
+        if ($images === []) {
+            throw new AiRequestException(AiErrorType::InvalidResponse, 'No image returned.');
+        }
+
+        return $images;
     }
 
     /**

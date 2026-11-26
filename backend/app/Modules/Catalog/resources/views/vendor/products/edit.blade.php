@@ -45,6 +45,7 @@
                 @if (auth('vendor')->user()?->can('flash-sales.manage'))
                     <x-ui::button variant="secondary" size="lg" icon="zap" class="flex-1 sm:flex-none" data-remote-modal="flash-sale-attach-modal" :data-url="vendor_route('marketing.flash-sales.available-for-product', ['product' => $product->id])">{{ __('commerce::vendor_promotions.flash_sales.attach.title') }}</x-ui::button>
                 @endif
+                @include('ai::vendor.product-tools.buttons', ['product' => $product])
                 <x-ui::button type="submit" size="lg" form="product-edit-form" class="flex-1 sm:min-w-[183px] sm:flex-none">{{ __('catalog::vendor.own.save') }}</x-ui::button>
             @endif
         </div>
@@ -223,5 +224,6 @@
 
     @include('catalog::vendor.products._modals', ['canManage' => $canManage])
     @include('ai::vendor.product-translation.modal', ['product' => $product])
+    @include('ai::vendor.product-tools.modals', ['product' => $product])
     @include('commerce::vendor.flash-sales._attach-modal')
 </x-vendor::layout>
