@@ -38,7 +38,7 @@ class UpdateVendorAccountRequest extends FormRequest
     public function rules(): array
     {
         $staff = $this->staff();
-        $owner = (bool) $staff->getAttribute('is_owner');
+        $owner = (bool) ($staff->getAttributes()['is_owner'] ?? false);
 
         return [
             'name' => ['required', 'string', 'max:120', 'not_regex:/[<>]/'],
@@ -65,7 +65,7 @@ class UpdateVendorAccountRequest extends FormRequest
 
     public function toData(): VendorAccountData
     {
-        $owner = (bool) $this->staff()->getAttribute('is_owner');
+        $owner = (bool) ($this->staff()->getAttributes()['is_owner'] ?? false);
 
         return new VendorAccountData(
             name: trim((string) $this->validated('name')),

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Platform\Services;
 
+use App\Modules\Affiliates\Services\ReferralTracker;
 use App\Modules\Billing\DTOs\InvoiceLineData;
 use App\Modules\Billing\Enums\BillingTerm;
 use App\Modules\Billing\Enums\PlanStatus;
@@ -48,6 +49,7 @@ class RegistrationFlowService extends BaseService
         private readonly VendorRegistrationService $registrationService,
         private readonly PlanRepositoryContract $plans,
         private readonly OwnerService $owners,
+        private readonly ReferralTracker $referrals,
     ) {}
 
     public function start(RegistrationSession $session, SignUpDraftData $draft): void
@@ -130,6 +132,8 @@ class RegistrationFlowService extends BaseService
                 'social_provider' => $draft->socialProvider,
                 'default_country_id' => $draft->defaultCountryId,
                 'plan_choice' => $needsPayment ? PlanChoice::Paid->value : PlanChoice::Trial->value,
+                // Affiliate attribution survives the e-mail link being opened in another browser.
+                'affiliate_click_id' => $this->referrals->currentClickId(request()),
             ], static fn (mixed $value): bool => $value !== null),
             ownerId: $draft->ownerId,
             emailVerified: $draft->emailVerified,

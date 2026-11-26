@@ -44,15 +44,16 @@ class AccountController extends Controller
         $previousEmail = $staff->email;
         $staff = $this->accounts->update($staff, $request->toData());
 
+        $locale = $staff->locale ?? app()->getLocale();
+        $message = $staff->email !== $previousEmail
+            ? __('identity::vendor_account.updated_verify', ['email' => $staff->email], $locale)
+            : __('identity::vendor_account.updated', [], $locale);
+
         if ($staff->locale !== null && $staff->locale !== $previousLocale) {
             Cookie::queue(Cookie::make(SetLocale::COOKIE, $staff->locale, 60 * 24 * 365, httpOnly: false));
 
-            return JsonResponder::success(__('identity::vendor_account.updated', [], $staff->locale), redirect: vendor_route('settings.account'));
+            return JsonResponder::success($message, redirect: vendor_route('settings.account'));
         }
-
-        $message = $staff->email !== $previousEmail
-            ? __('identity::vendor_account.updated_verify', ['email' => $staff->email])
-            : __('identity::vendor_account.updated');
 
         return JsonResponder::success($message);
     }
@@ -70,6 +71,7 @@ class AccountController extends Controller
         /** @var VendorStaff $staff */
         $staff = $request->user('vendor');
 
-        return $staff;
+        // A fresh copy: the guard's instance may not carry every column (strict models).
+        return $staff->fresh() ?? $staff;
     }
 }

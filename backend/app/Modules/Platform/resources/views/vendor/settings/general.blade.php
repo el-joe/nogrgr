@@ -30,7 +30,9 @@
 
             <div class="grid gap-6">
                 @foreach (['countries' => 'globe', 'categories' => 'layers'] as $type => $icon)
-                    @php($card = $cards[$type])
+                    @php
+                        $card = $cards[$type];
+                    @endphp
                     <x-ui::card :title="__('platform::vendor_general.'.$type.'.title')" :id="'vendor-general-'.$type">
                         @if ($canManage)
                             <x-slot:actions>

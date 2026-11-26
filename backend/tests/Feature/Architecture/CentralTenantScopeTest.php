@@ -13,6 +13,8 @@ use Tests\Support\AppClasses;
 
 const TENANT_SCOPE_EXEMPT = [
     Domain::class, // identifies the tenant itself
+    \App\Modules\Affiliates\Models\AffiliateClick::class, // tenant_id = the referred store; read platform-wide by admin/affiliate (#93)
+    \App\Modules\Affiliates\Models\AffiliateConversion::class, // tenant_id = the referred store; read platform-wide by admin/affiliate (#93)
 ];
 
 it('applies the tenant scope to every central model with tenant_id', function (): void {

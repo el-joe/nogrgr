@@ -30,7 +30,9 @@
                     </thead>
                     <tbody class="divide-y divide-line">
                         @foreach ($rows as $row)
-                            @php($currency = $row['currency'])
+                            @php
+                                $currency = $row['currency'];
+                            @endphp
                             <tr data-currency-row="{{ $currency->code }}">
                                 <td class="px-4 py-3">
                                     <span class="grid">
