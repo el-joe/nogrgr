@@ -18,4 +18,4 @@
     $translationKey = 'ui.status.'.$key;
     $label = trim((string) $slot) !== '' ? $slot : (__($translationKey) !== $translationKey ? __($translationKey) : \Illuminate\Support\Str::headline($key));
 @endphp
-<x-ui::badge :tone="$tone" :variant="$variant" {{ $attributes }}>{{ $label }}</x-ui::badge>
+<x-ui::badge :tone="$tone" :variant="$variant" :data-status="$key" {{ $attributes }}>{{ $label }}</x-ui::badge>

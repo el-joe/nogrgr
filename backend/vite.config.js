@@ -22,6 +22,11 @@ const centralImages = readdirSync('resources/images/central', { recursive: true 
     .filter((file) => /\.(webp|avif|svg|png)$/.test(file))
     .map((file) => `resources/images/central/${file}`);
 
+/** Vendor panel brand lock-up (client Tenant Panel side menu 12:15498), used by <img> in vendor::sidebar. */
+const vendorBrand = readdirSync('resources/images/vendor/brand')
+    .filter((file) => file.endsWith('.webp'))
+    .map((file) => `resources/images/vendor/brand/${file}`);
+
 /** Store fonts a vendor can pick in Appearance (VEN-034b, StoreFont::cssEntry()), loaded only when chosen. */
 const storeFonts = readdirSync('resources/css/storefront/fonts')
     .filter((file) => file.endsWith('.css'))
@@ -30,7 +35,7 @@ const storeFonts = readdirSync('resources/css/storefront/fonts')
 export default defineConfig({
     plugins: [
         laravel({
-            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages, ...storeFonts],
+            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages, ...vendorBrand, ...storeFonts],
             refresh: ['resources/views/**', 'app/Modules/**/resources/views/**', 'app/Modules/**/routes/**', 'lang/**'],
         }),
         tailwindcss(),

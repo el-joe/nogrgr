@@ -5,9 +5,10 @@
     then it scrolls; footer "View all". Optional links render only when given.
     Live: with realtime (Reverb channel config) resources/js/panels/notification-live.js
     prepends pushed rows and bumps the count; latest-url re-reads the feed after actions.
+    trigger-icon / trigger-icon-size swap the bell glyph (vendor topbar uses the client tp-bell).
     :items="[['title' => …, 'meta' => …, 'time' => '2m', 'icon' => 'cart', 'tone' => 'brand', 'unread' => true, 'url' => …]]"
 --}}
-@props(['items' => [], 'unread' => null, 'markAllUrl' => null, 'viewAllUrl' => null, 'latestUrl' => null, 'realtime' => null])
+@props(['items' => [], 'unread' => null, 'markAllUrl' => null, 'viewAllUrl' => null, 'latestUrl' => null, 'realtime' => null, 'triggerIcon' => 'bell', 'triggerIconSize' => 20])
 @php
     $unread ??= collect($items)->where('unread', true)->count();
     $tones = ['brand' => 'bg-primary-subtle text-ink-brand', 'success' => 'bg-success-bg text-success', 'warning' => 'bg-warning-bg text-warning', 'danger' => 'bg-danger-bg text-danger', 'info' => 'bg-info-bg text-info'];
@@ -15,7 +16,7 @@
 <x-ui::dropdown align="end" width="min(380px, calc(100vw - 32px))" :label="__('ui.notifications.title')" data-notification-bell :data-latest-url="$latestUrl" {{ $attributes }}>
     <x-slot:trigger>
         <button type="button" data-dropdown-trigger aria-haspopup="menu" aria-expanded="false" class="relative grid size-10 place-items-center rounded-control text-ink-secondary hover:bg-subtle hover:text-ink" aria-label="{{ trans_choice('ui.notifications.bell', $unread, ['count' => $unread]) }}" title="{{ __('ui.notifications.title') }}">
-            <x-ui::icon name="bell" :size="20" />
+            <x-ui::icon :name="$triggerIcon" :size="$triggerIconSize" />
             <span data-notification-count class="absolute end-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[11px] font-semibold leading-none text-on-primary ring-2 ring-surface" @if ($unread === 0) hidden @endif>{{ $unread > 99 ? '99+' : $unread }}</span>
         </button>
     </x-slot:trigger>

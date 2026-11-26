@@ -21,7 +21,7 @@
         default => $soft,
     };
 @endphp
-<span {{ $attributes->class(['inline-flex h-5 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full text-xs font-medium leading-4', 'px-2.5' => $variant !== 'count', $classes]) }}>
+<span data-tone="{{ $tone }}" data-variant="{{ $variant }}" {{ $attributes->class(['ui-badge inline-flex h-5 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full text-xs font-medium leading-4', 'px-2.5' => $variant !== 'count', $classes]) }}>
     @if ($showDot)
         <span class="size-1.5 rounded-full {{ $dotColor }}" aria-hidden="true"></span>
     @endif

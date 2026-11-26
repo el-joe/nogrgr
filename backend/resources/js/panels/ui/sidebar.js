@@ -9,6 +9,7 @@
  * private windows / blocked storage just fall back to the defaults).
  * While the drawer / overlay is open the content behind it is inert, so focus stays in
  * the sidebar (Esc, the scrim or the close button close it and focus returns to the toggle).
+ * A sidebar with data-sidebar-pinned stays expanded at ≥ 1280 (no remembered collapse).
  * Groups: one open at a time. Keyboard: ↑ ↓ move between items, → / ← open / close a
  * group (mirrored in RTL). Collapsed mode: hovering or focusing a group shows a flyout.
  */
@@ -42,6 +43,11 @@ const lg = window.matchMedia('(min-width: 1024px)');
 
 function baseMode() {
     if (xl.matches) {
+        /* data-sidebar-pinned (vendor Tenant Panel side menu 12:15498): never collapses on wide screens. */
+        if (sidebarElement()?.hasAttribute('data-sidebar-pinned')) {
+            return 'expanded';
+        }
+
         return storage.get(COLLAPSED_KEY) === '1' ? 'collapsed' : 'expanded';
     }
 
@@ -91,7 +97,9 @@ function setMode(mode) {
 export function toggleSidebar() {
     const mode = html.dataset.sidebarMode;
 
-    if (xl.matches) {
+    if (xl.matches && sidebarElement()?.hasAttribute('data-sidebar-pinned')) {
+        setMode('expanded');
+    } else if (xl.matches) {
         const collapse = mode !== 'collapsed';
         storage.set(COLLAPSED_KEY, collapse ? '1' : null);
         setMode(collapse ? 'collapsed' : 'expanded');

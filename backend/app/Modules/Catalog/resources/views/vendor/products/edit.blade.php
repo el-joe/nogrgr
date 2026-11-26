@@ -1,5 +1,7 @@
 {{--
-    Vendor › Product edit (VEN-012, Vendor Panel (new screens) 83:100772 / 83:101628).
+    Vendor › Product edit (VEN-012, flow 83:100772 / 83:101628, aligned frame 184:29780) in the
+    client "Add Own Product" form language 12:17411 (decision #101): Bold 32 title, Back to
+    products outline + Save product primary in the head, r24 section cards, filled inputs.
     The vendor edits only store business data here: markup per variant × country (012a,
     live server preview), store category / badge placement (012d) and active / featured.
     Central data — content, images, stock, weight, variants — is read-only (012c stock &
@@ -22,16 +24,10 @@
     $overridden = array_keys($view->override?->approvals ?? []);
 @endphp
 <x-vendor::layout :title="$view->name" page="vendor-catalog">
-    <nav aria-label="{{ __('ui.breadcrumbs') }}" class="flex items-center gap-1.5 text-[13px] text-ink-secondary">
-        <a href="{{ vendor_route('catalog.products.index') }}" class="hover:text-ink">{{ __('catalog::vendor.products.title') }}</a>
-        <x-ui::icon name="chevron-right" :size="14" data-flip />
-        <span class="font-medium text-ink">{{ $view->name }}</span>
-    </nav>
-
     <header class="flex flex-wrap items-start justify-between gap-4" data-reveal="fade-up">
         <div class="grid min-w-0 gap-1">
             <div class="flex flex-wrap items-center gap-3">
-                <h1 class="text-2xl font-semibold leading-8 text-ink">{{ $view->name }}</h1>
+                <h1 class="ui-page-title text-[26px] font-bold leading-[1.5] text-ink sm:text-[32px]">{{ $view->name }}</h1>
                 @if (! $view->available)
                     <x-ui::badge tone="danger" dot>{{ __('catalog::vendor.products.unavailable') }}</x-ui::badge>
                 @elseif ($product->is_active)
@@ -40,17 +36,18 @@
                     <x-ui::badge tone="neutral" dot>{{ __('catalog::vendor.products.hidden') }}</x-ui::badge>
                 @endif
             </div>
-            <p class="text-sm text-ink-secondary">{{ __('catalog::vendor.edit.subtitle') }}</p>
+            <p class="ui-page-subtitle text-sm text-ink-muted">{{ __('catalog::vendor.edit.subtitle') }}</p>
         </div>
-        @if ($canManage)
-            <div class="flex flex-wrap gap-3">
-                <x-ui::button variant="secondary" icon="edit" data-remote-modal="edit-request-modal" :data-url="vendor_route('catalog.edit-requests.form', ['product' => $product->id])">{{ __('catalog::vendor.edit.request_edit') }}</x-ui::button>
+        <div class="flex w-full flex-wrap gap-3 sm:w-auto">
+            <x-ui::button variant="secondary" size="lg" icon="chevron-left" :href="vendor_route('catalog.products.index')" class="flex-1 sm:flex-none">{{ __('catalog::vendor.new.back') }}</x-ui::button>
+            @if ($canManage)
+                <x-ui::button variant="secondary" size="lg" icon="edit" class="flex-1 sm:flex-none" data-remote-modal="edit-request-modal" :data-url="vendor_route('catalog.edit-requests.form', ['product' => $product->id])">{{ __('catalog::vendor.edit.request_edit') }}</x-ui::button>
                 @if (auth('vendor')->user()?->can('flash-sales.manage'))
-                    <x-ui::button variant="secondary" icon="zap" data-remote-modal="flash-sale-attach-modal" :data-url="vendor_route('marketing.flash-sales.available-for-product', ['product' => $product->id])">{{ __('commerce::vendor_promotions.flash_sales.attach.title') }}</x-ui::button>
+                    <x-ui::button variant="secondary" size="lg" icon="zap" class="flex-1 sm:flex-none" data-remote-modal="flash-sale-attach-modal" :data-url="vendor_route('marketing.flash-sales.available-for-product', ['product' => $product->id])">{{ __('commerce::vendor_promotions.flash_sales.attach.title') }}</x-ui::button>
                 @endif
-                <x-ui::button type="submit" form="product-edit-form" icon="check">{{ __('catalog::vendor.save') }}</x-ui::button>
-            </div>
-        @endif
+                <x-ui::button type="submit" size="lg" form="product-edit-form" class="flex-1 sm:min-w-[183px] sm:flex-none">{{ __('catalog::vendor.own.save') }}</x-ui::button>
+            @endif
+        </div>
     </header>
 
     <form id="product-edit-form" method="POST" action="{{ vendor_route('catalog.products.update', ['product' => $product->id]) }}" data-ajax data-product-edit data-preview-url="{{ vendor_route('catalog.products.pricing.preview', ['product' => $product->id]) }}" novalidate>
@@ -64,9 +61,9 @@
             {{-- 012a Pricing per variant / country --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="pricing" :active="$tab === 'pricing'" class="pt-5">
                 <div class="grid items-start gap-4 lg:grid-cols-[1fr_262px]">
-                    <section class="overflow-hidden rounded-card border border-line bg-surface shadow-card">
-                        <header class="flex flex-wrap items-center justify-between gap-3 px-4 py-4">
-                            <h2 class="text-base font-semibold text-ink">{{ __('catalog::vendor.edit.price_per_country') }}</h2>
+                    <section class="overflow-hidden rounded-[24px] bg-surface">
+                        <header class="flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
+                            <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.price_per_country') }}</h2>
                             @if ($canManage && $rows !== [])
                                 <x-ui::button size="sm" variant="secondary" icon="percent" data-remote-modal="price-list-modal" :data-url="vendor_route('catalog.products.price-list', ['product' => $product->id])">{{ __('catalog::vendor.edit.apply_all') }}</x-ui::button>
                             @endif
@@ -77,7 +74,7 @@
                             </div>
                         @else
                             <div class="relative overflow-x-auto">
-                                <table class="w-full min-w-[720px] text-sm">
+                                <table class="vnd-table w-full min-w-[720px] text-sm">
                                     <thead class="bg-subtle text-[13px] text-ink-secondary">
                                         <tr>
                                             <th scope="col" class="px-4 py-3 text-start font-medium">{{ __('catalog::vendor.price_list.variant') }}</th>
@@ -115,8 +112,8 @@
                             </div>
                         @endif
                     </section>
-                    <aside class="grid gap-3 rounded-card border border-line bg-surface p-4 shadow-card" data-pricing-summary>
-                        <h2 class="text-base font-semibold text-ink">{{ __('catalog::vendor.edit.summary') }}</h2>
+                    <aside class="grid gap-3 rounded-[24px] bg-surface p-4 sm:p-6" data-pricing-summary>
+                        <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.summary') }}</h2>
                         <dl class="grid gap-2.5 text-sm">
                             <div class="flex justify-between gap-3"><dt class="text-ink-secondary">{{ __('catalog::vendor.edit.central_price') }}</dt><dd class="font-semibold text-ink" dir="ltr" data-summary="central">{{ $summary['central'] ?? '—' }}</dd></div>
                             <div class="flex justify-between gap-3"><dt class="text-ink-secondary">{{ __('catalog::vendor.edit.avg_price') }}</dt><dd class="font-semibold text-ink" dir="ltr" data-summary="average">{{ $summary['average'] ?? '—' }}</dd></div>
@@ -130,18 +127,18 @@
 
             {{-- 012c Stock & weight (central, read-only) --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="stock" :active="$tab === 'stock'" class="pt-5">
-                <section class="grid gap-4 rounded-card border border-line bg-surface p-5 shadow-card">
+                <section class="grid gap-4 rounded-[24px] bg-surface p-4 sm:p-6">
                     <header class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h2 class="text-base font-semibold text-ink">{{ __('catalog::vendor.edit.stock_title') }}</h2>
-                            <p class="text-[13px] text-ink-secondary">{{ __('catalog::vendor.edit.stock_hint') }}</p>
+                            <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.stock_title') }}</h2>
+                            <p class="text-xs text-ink-muted">{{ __('catalog::vendor.edit.stock_hint') }}</p>
                         </div>
                         @if ($canManage)
                             <x-ui::button size="sm" variant="secondary" icon="message" data-remote-modal="edit-request-modal" :data-url="vendor_route('catalog.edit-requests.form', ['product' => $product->id, 'field' => 'weight_grams'])">{{ __('catalog::vendor.edit.request_weight') }}</x-ui::button>
                         @endif
                     </header>
-                    <div class="relative overflow-x-auto rounded-card border border-line">
-                        <table class="w-full text-sm">
+                    <div class="relative overflow-x-auto rounded-[12px]">
+                        <table class="vnd-table w-full text-sm">
                             <thead class="bg-subtle text-[13px] text-ink-secondary">
                                 <tr>
                                     <th scope="col" class="px-4 py-3 text-start font-medium">{{ __('catalog::vendor.price_list.variant') }}</th>
@@ -171,9 +168,9 @@
 
             {{-- 012d Categories & badges (store placement) --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="categories" :active="$tab === 'categories'" class="pt-5">
-                <section class="grid max-w-[640px] gap-4 rounded-card border border-line bg-surface p-5 shadow-card">
+                <section class="grid max-w-[640px] gap-4 rounded-[24px] bg-surface p-4 sm:p-6">
                     <input type="hidden" name="placement" value="1">
-                    <h2 class="text-base font-semibold text-ink">{{ __('catalog::vendor.edit.categories_title') }}</h2>
+                    <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.categories_title') }}</h2>
                     <x-ui::select name="category_ids" multiple :label="__('catalog::vendor.edit.your_categories')" :options="$categoryOptions" :selected="$view->categoryIds" :disabled="! $canManage" :placeholder="__('catalog::vendor.edit.pick_categories')" />
                     <x-ui::select name="store_category_ids" multiple :label="__('catalog::vendor.edit.your_store_categories')" :options="$storeCategoryOptions" :selected="array_map('intval', $product->store_category_ids ?? [])" :disabled="! $canManage || $storeCategoryOptions === []" :placeholder="__('catalog::vendor.edit.pick_store_categories')" />
                     <x-ui::select name="badge_ids" multiple :label="__('catalog::vendor.edit.your_badges')" :options="$badgeOptions" :selected="$view->badgeIds" :disabled="! $canManage" :placeholder="__('catalog::vendor.edit.pick_badges')" />
@@ -189,8 +186,8 @@
             {{-- 012e Central snapshot (read-only) --}}
             <x-ui::tab-panel tabs="product-edit-tabs" key="snapshot" :active="$tab === 'snapshot'" class="pt-5">
                 <div class="grid items-start gap-4 lg:grid-cols-2">
-                    <section class="grid gap-4 rounded-card border border-line bg-surface p-5 shadow-card">
-                        <h2 class="text-base font-semibold text-ink">{{ __('catalog::vendor.edit.snapshot_title') }}</h2>
+                    <section class="grid gap-4 rounded-[24px] bg-surface p-4 sm:p-6">
+                        <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.snapshot_title') }}</h2>
                         <dl class="grid gap-2.5 text-sm">
                             <div class="flex justify-between gap-3"><dt class="text-ink-secondary">{{ __('catalog::vendor.edit.central_title') }}</dt><dd class="text-end font-medium text-ink">{{ $central?->name ?? '—' }}</dd></div>
                             <div class="flex justify-between gap-3"><dt class="text-ink-secondary">{{ __('catalog::vendor.edit.central_price') }}</dt><dd class="font-medium text-ink" dir="ltr">{{ $summary['central'] ?? '—' }}</dd></div>
@@ -202,8 +199,8 @@
                             <p class="text-sm leading-6 text-ink-secondary">{{ $central->summary }}</p>
                         @endif
                     </section>
-                    <section class="grid gap-3 rounded-card border border-line bg-surface p-5 shadow-card">
-                        <h2 class="text-base font-semibold text-ink">{{ __('catalog::vendor.edit.overrides_title') }}</h2>
+                    <section class="grid gap-3 rounded-[24px] bg-surface p-4 sm:p-6">
+                        <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.edit.overrides_title') }}</h2>
                         @if ($overridden === [])
                             <p class="text-sm text-ink-secondary">{{ __('catalog::vendor.edit.no_overrides') }}</p>
                         @else

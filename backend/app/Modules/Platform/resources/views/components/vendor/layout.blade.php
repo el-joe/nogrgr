@@ -1,7 +1,7 @@
 {{--
-    Vendor (store) panel shell — Tenant Panel Layout (Figma 12:25829 side menu, topbar
-    of Dashboard 12:11267) with the Vendor Panel (new screens) additions: language,
-    dark / light, notifications bell, store link, impersonation banner (82:101033).
+    Vendor (store) panel shell — client Tenant Panel Layout 12:10147 (decision #101):
+    side menu 12:15498, top bar 12:15522, page bg #F3F3F3 (mobile #FFF5F3), content
+    1156 max with 24 px gutters; impersonation banner (82:101033).
     Nav = config/navigation/vendor.php filtered by permission (PanelShell); the "setup"
     badge counts open setup checklist steps.
     <x-vendor::layout :title="…" page="vendor-onboarding">…</x-vendor::layout>
@@ -32,13 +32,13 @@
     />
 
     <div class="ui-shell-main flex min-h-screen flex-col">
-        <x-vendor::topbar :shell="$shell" :store-url="$storeUrl" />
+        <x-vendor::topbar :shell="$shell" :store-url="$storeUrl" :store-name="$store?->name" :logo-url="$logoUrl" />
 
         @if ($impersonation)
             <x-vendor::impersonation-banner :impersonation="$impersonation" :store-name="$store?->name" />
         @endif
 
-        <main id="main" tabindex="-1" class="flex-1 px-4 py-6 outline-none sm:px-6 xl:px-6 xl:py-8" @if ($page) data-page="{{ $page }}" @endif>
+        <main id="main" tabindex="-1" class="vnd-main flex-1 px-4 py-6 outline-none sm:px-6" @if ($page) data-page="{{ $page }}" @endif>
             <div {{ $attributes->class(['mx-auto grid w-full max-w-[1156px] gap-8 *:min-w-0']) }}>
                 {{ $slot }}
             </div>

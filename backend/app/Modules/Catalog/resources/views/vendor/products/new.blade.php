@@ -1,5 +1,6 @@
 {{--
-    Vendor › Products › New (VEN-011, Tenant Panel Layout mobile 12:21874): central products
+    Vendor › Products › New (VEN-011, desktop = client "New in products" grid 12:13819, mobile
+    12:21874; cards in _new-card): central products
     offered to the store and not added yet, as cards; select some and "Add selected", or
     "Add all"; each card opens the preview (VEN-011a). Adding = store_products rows only
     (central data is never copied, decision #65).

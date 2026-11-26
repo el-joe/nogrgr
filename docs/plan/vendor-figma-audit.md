@@ -98,9 +98,12 @@ From `05-page-coverage.md` (Figma column), cross-checked against the code in `ba
      - Finance, Support and Notifications move under the client's 11 items or into the store menu.
      - The language switch is a 40 px box in the client style.
    - This affects every vendor page.
+   - **Fixed in code (2026-11-26, vendor-shell):** `config/navigation/vendor.php` = the 11 client items in order (client icons as `tp-*` SVGs from 12:15498); a group links to its first reachable sub-page and lists its sub-pages indented only while active (180:28706); Finance pages under Settings; Support / Help center / Notifications / My account / Open store in the #E7E7E7 store menu. Sidebar 236 px with the client logo lock-up (`resources/images/vendor/brand/`), store card, pinned (never collapsed at 1280 and up). Top bar 74 px: Select your country (live-store preview country of the dashboard), #F5F5F5 search (Ctrl/Cmd K palette), language box, bell box, black dark-mode box, store menu. Page bg #F3F3F3; mobile = black r24 bar + #FFF5F3. Screens: `figma-audit/code-before-*` / `code-after-*`.
 2. **VEN-011 New central products, desktop.** It must follow **12:13819** ("New in products" card grid with "Already added", price boxes and "Create your Ad"). Code was built from the mobile-only note. Fix the coverage mapping: VEN-011 desktop = 12:13819, VEN-016a = no client frame (needs a 60:10147 frame in client style).
+   - **Fixed in code:** `_new-card` follows the 12:13819 card (purple ribbon, Bold name, dark price box + light stock box, preview square + purple full-width CTA). There is no "cheaper than market" figure in the data model, so that chip is not shown.
 3. **VEN-090 Notifications.** Code follows 12:17282, which is correct. Our duplicate frame 88:112846 "VEN Notifications inbox" must not be used. Mark it superseded.
 4. **VEN-045 Analytics tabs 045b / 045d.** These were built from 87:108835 (our style). They must reuse the 12:16223 / 12:16815 tab layout: the same tab bar, KPI cards and chart cards.
+   - **Fixed in code:** one analytics template for all four tabs: Bold 32 title + period / Download report, swipeable pill tabs (`x-ui::tabs variant="pill"`), tab title Bold 24 + subtitle, KPI / chart cards, table card with its title inside.
 5. **VEN-012 / 012a–e Product edit (central overrides).** This screen is missing from the client page, but it is the edit form of a product. It must use the 12:17411 "Add Own Product" form language:
    - section cards with title 18 + subtitle
    - filled inputs #F5F5F5 / #EAEAEA r8 with no border
@@ -108,8 +111,11 @@ From `05-page-coverage.md` (Figma column), cross-checked against the code in `ba
    - the country checklist style
 
    Built from 83:100772 / 83:101628 (bordered inputs, tabs, r10 buttons).
+   - **Fixed in code:** Bold 32 head with Back to products / Request edit / Add to flash sale outline + Save product primary (48 px), r24 section cards without border / shadow, filled inputs, client tables (`.vnd-table`). The 012b content tab is the Ai module partial (agent ven074) and was not touched.
 6. **Buttons everywhere.** Code buttons follow our Button r10. Client `Component 1` (12:40267) is **square (r0)**, Outfit Medium 16, 40 / 48 / 56 heights. Page-level outline buttons on 12:15191 use r8–12 (download report, pagination), so keep r8 only for pagination and the filter icon button.
+   - **Fixed in code:** vendor kit in `resources/css/panels/vendor-shell.css`: every `x-ui::button` on the vendor surface is square, Medium 16, md 40 / lg 48 / new `xl` 56, primary #FD6F04 / #E66504 / #8B3D02, secondary = #FD6F04 outline, disabled #787878; icon-only buttons stay r8.
 7. **Inputs.** The client uses filled #F5F5F5 (search) / #EAEAEA (form) r8 with no border (12:17411). Our inputs are white with a light grey border, r8.
+   - **Fixed in code:** vendor inputs / Select2 / phone are filled #EAEAEA r8 without border (48 high in fields; white + brand line on focus); filters and the topbar search use #F5F5F5. Also re-skinned: page title Bold 32 + 14 #787878 (no breadcrumb on list pages), `x-ui::card` r12 without border / shadow with 24 / 16 titles, `x-ui::kpi-card` = client KPI Card (label 14, value Bold 32, note 12, illustration at the end), DataTables header #F5F5F5 h48 14 #A3A3A3 + zebra #F8F8F8 + #F0F0F0 lines, status pills = client `State` colours (r40, 24 high; Pending text darkened to #C9A800 for legibility).
 
 ## 3. Visual drift of 60:10147 frames vs 12:10147
 
@@ -150,26 +156,122 @@ All new frames are built from client components where they exist:
 
 The client's lottie / logo images are reused by image hash. Client nodes were only instanced or read. Nothing was cloned out of them or edited.
 
-The 4 aligned frames swap the shell and restyle cards, buttons and titles. Inner widgets (inputs, tables, tabs, badges) still use our kit. They are a correct reference for shell, page head and cards. Inputs and tables should follow §3 when coded.
+The 4 aligned frames first swapped only the shell, cards, buttons and titles. In batch 3 (below) their inputs, tables, tabs and badges were also moved to the new TP kit, so they now follow §3 fully.
 
-## 5. Still to align (60:10147 frames left in the old style), by usage
+## 4b. Batch 3 — new aligned UI kit + aligned frames (2026-11-26)
 
-1. 83:101628 VEN-012b–e product edit tabs
-2. 84:104582 VEN-022a return detail
-3. 84:105181 VEN-023 / 024
-4. 84:105854 VEN-025b
-5. 87:107268 / 87:108154 coupons and flash sales
-6. 87:108835 analytics 045b / d (use 12:16223)
-7. 88:109601 / 88:110393 / 88:111108 finance
-8. 85:104756 … 85:110108 Your Store
-9. 90:111315 … 90:117144 settings 1 (except 074 and 076)
-10. 91:* settings 2
-11. 88:111731 / 88:112298 support and help
-12. 83:102290 / 83:102998 / 83:103600 / 83:104181, 84:103244, 84:106555, 84:107236, 87:109541 … 87:111915, 88:113398
-13. 82:* auth, onboarding and errors. Auth and errors have no shell; they only need the button, input and bg tokens.
-14. 92:130313 UI kit. Rebuild it as the client kit: 12:40266 plus the missing pieces.
+### UI kit (replaces 92:130313)
 
-Superseded: 88:112846 (Notifications inbox), replaced by client 12:17282.
+| Node | What |
+|---|---|
+| **191:30162** | Section "Vendor Panel / UI kit — aligned to Tenant Panel", x 12800 on 60:10147 |
+| **191:30163** | VEN-093 UI kit — aligned to Tenant Panel — Desktop 1440 (old 92:130313 superseded) |
+| VariableCollection 191:30110 | "Vendor · Tenant Panel (12:10147)": 33 colour tokens (bg / brand / text / border / status), radius (0 / 4 / 8 / 12 / 24 / 38), space (4–32), sizes (sidebar 236, top bar 74, controls 40 / 48 / 56). Every TP component binds them. |
+| 191:30444 | **TP/Field**: Type Text / Select / Textarea × State Default / Filled / Focus / Error / Disabled, plus Search. Props: Label, Value, Helper, Show helper, Required, Show label. |
+| 191:30454 | TP/Checkbox (Off / On) |
+| 191:30473 | TP/Status: client `State` look, plus Danger and Neutral tones. Props: Tone, Label. |
+| 191:30478 | TP/Tab: the pill tabs of 12:16229 (Active #FD6F04 Medium 16, Idle #DCDCDC 14 #5E5E5E) |
+| 191:30489 | TP/Locale tabs (EN / AR) |
+| 191:30510 | TP/Icon button (filter 56×48 r8, Primary / Outline) |
+| 193:30171 | **TP/Table cell**: Header / Text / Text + sub / Product / Number / Status / Checkbox / Actions. Rows are frames: header #F5F5F5, 1 px #F0F0F0 bottom border, zebra #F8F8F8. |
+| 193:30172 | TP/Pagination (12:15482 pattern) |
+| 193:30334 / 193:30367 | **TP/Modal** (566, r24, the 12:14923 popup language with r8 buttons) / **TP/Bottom sheet** (375, top r24 + handle). The modal becomes a bottom sheet on mobile. |
+| 193:30444 | TP/Toast (Success / Error / Info) |
+| 193:30445 | TP/Empty state (client box illustration 12:40631 + Component 1 Mid) |
+| 193:30479 / 193:30482 | TP/Page title (Bold 32 + 14 #787878) / TP/Card header (SemiBold 24 + 16 #888580) |
+
+The kit also shows client components instanced as-is: Component 1, Frame 427, KPI Card, State, Frame 224, Frame 102, Frame 423, Frame 409 and Nav bar mobile. Dropdown 12:40345 uses General Sans, which is not installed, so it can only be referenced on the client board.
+
+**Correction to §3 / #101 (read from the nodes):** client form fields (Frame 224, 12:40380) are **#ECECEC, r12, h48, label 14 #787878, required star #E00000, placeholder #C1C1C1**. Focus = white with 1 px #FD6F04. Search and top-bar boxes are #F5F5F5 r8. Table body text is 14 #A3A3A3 (product name 12). Client popups use r24 cards with r8 buttons; page-level buttons stay square `Component 1`.
+
+### How the batch-3 frames were made
+
+Each frame is a copy of its old 60:10147 frame. The copy gets:
+- the client shell: sidebar 12:15498 with the matching item active and the section's sub-pages indented under it, top bar 12:15522, bg #F3F3F3, no breadcrumb, Bold 32 title
+- every kit instance swapped:
+  - Button → `Component 1` (square, icons off)
+  - Badge → TP/Status
+  - Input / Select / Textarea → TP/Field
+  - Table Cell → TP/Table cell, with header / zebra rows
+  - Tab → TP/Tab
+  - KPI Card → client `KPI Card` (a negative delta uses the `grow down` State)
+- card borders and shadows removed
+
+Finance has no client sidebar item, so its pages sit under **Settings** (sub-items: Subscription & balance, Billing & invoices, Payments & payouts). Support and Help have no sidebar item either; they open from the store menu, so no item is active.
+
+Mobile 375 frames reuse the 182:29054 shell: black header with r24 bottom, #FFF5F3 bg, swipeable KPI row and tabs, table rows as cards, two-column blocks stacked, and `Nav bar mobile`.
+
+### New node ids per VEN row (all in section 184:29202 unless noted)
+
+| VEN row | Old frame (superseded) | Aligned desktop | Mobile 375 |
+|---|---|---|---|
+| 012 / 012a | 83:100772 | 184:29780 (kit updated) | — |
+| 012b–e | 83:101628 | **196:30720** | — |
+| 021 | 84:102416 | 184:29203 (kit updated) | — |
+| 022 | 84:103852 | 184:30357 (kit updated) | — |
+| 022a | 84:104582 | **197:30913** | **205:38137** |
+| 023 / 024 | 84:105181 | **197:31485** | — |
+| 025b | 84:105854 | **197:32195** | **205:38558** |
+| 030 / 031 | 85:104756 | **200:32864** | — |
+| 032 | 85:105527 | **200:33486** | — |
+| 033 / 033a | 85:106165 | **200:34128** | — |
+| 034 / 034a | 85:106903 | **200:34905** | — |
+| 034b–f | 85:107559 | **200:35591** | — |
+| 035 | 85:108271 | **200:36358** | — |
+| 036 / 036a / 036b | 85:108862 | **200:36959** | — |
+| 037 / 037a | 85:109494 | **200:37622** | — |
+| 030a / 030b / 035a (modals) | 85:110108 | **200:38274** | — |
+| 040 | 87:107268 | **199:31453** | **205:39102** |
+| 041 | 87:108154 | **199:32265** | — |
+| 045b / 045d | 87:108835 | **199:32944** (12:16223 tab layout) | — |
+| 060 / 060c / 060d | 88:109601 | **199:33682** | **205:39617** |
+| 061 / 061a | 88:110393 | **199:34398** | — |
+| 062 / 063 / 064 | 88:111108 | **199:35131** | — |
+| 070 | 90:111315 | **201:34510** | — |
+| 071 | 90:112042 | **201:35177** | — |
+| 072 | 90:112623 | **201:35816** | — |
+| 073 / 073a / 073b | 90:113194 | **201:36468** | — |
+| 074 / 074a | 90:113836 | 180:28706 / 180:29374 (RTL) | 182:29054 |
+| 075 | 90:114518 | **201:37173** | — |
+| 076 / 076a | 90:115176 | 184:30994 (kit updated) | — |
+| 077 / 077a | 90:115822 | **201:37881** | — |
+| 078 / 078a / 078b | 90:116465 | **201:38547** | — |
+| 079 | 90:117144 | **201:39338** | — |
+| 080 / 080a | 91:114835 | **202:36036** | — |
+| 081 | 91:115511 | **202:36460** | — |
+| 082 / 082a | 91:116087 | **202:36870** | — |
+| 083 | 91:116736 | **202:37396** | — |
+| 084 | 91:117308 | **202:37788** | — |
+| 085 | 91:117954 | **202:38264** | — |
+| 086 | 91:118575 | **202:38750** | — |
+| 087 | 91:119215 | **202:39204** | — |
+| 071a / 071b / 082 add domain (modals) | 91:119876 | **202:39659** | — |
+| 091 / 091b | 88:111731 | **206:38046** | — |
+| 092 / 092a | 88:112298 | **206:38560** | — |
+| Products & AI modals (010a, 010b, 010d, 011a, 012…) | 83:104181 | **206:39026** | — |
+| Orders & customers modals (021a–c, 025a, 025c) | 84:107236 | **206:39513** | — |
+| Marketing & requests modals (040a, 041a, 041b, 05x) | 87:111915 | **206:39923** | — |
+| Finance & support modals (060a, 060b, 091a) | 88:113398 | **206:40420** | — |
+| 093 UI kit | 92:130313 | **191:30163** | — |
+
+**Superseded**, kept untouched as history: every "old frame" in the table above, plus 88:112846 (Notifications inbox, replaced by client 12:17282).
+
+## 5. Still to align (60:10147 frames left in the old style)
+
+1. 83:102290 VEN-013 edit requests history
+2. 83:102998 VEN-014 / 017c sort
+3. 83:103600 VEN-018 badges
+4. 84:103244 VEN-021d pay platform
+5. 84:106555 VEN-026 newsletter subscribers
+6. 87:109541 / 87:110114 / 87:110730 VEN-050c / 050f / 050i / 050j request detail and result
+7. 87:111264 VEN-055 partner program
+8. 82:* auth, onboarding and errors. Auth and errors have no shell; they only need the TP/Field, Component 1 and bg tokens.
+9. Mobile 375 frames for the remaining aligned desktop frames. So far there are 4 (022a, 025b, 040, 060) plus VEN-074.
+
+Known residuals in batch-3 frames. They are fine as a reference but must not be copied literally when coding:
+- Old pagination bars (our own pager) were left in a few tables. Code uses TP/Pagination.
+- Card titles inside cards kept their old 14–16 SemiBold. The client card title is SemiBold 24 #111111 (TP/Card header).
+- Chart cards keep our chart drawing inside a client-style card.
 
 ## 6. Font note
 

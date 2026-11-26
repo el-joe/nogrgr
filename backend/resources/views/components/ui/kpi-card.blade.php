@@ -22,20 +22,20 @@
     $trendIcon = ['up' => 'arrow-up', 'down' => 'arrow-down', 'neutral' => 'minus'][$trend];
     $points = \App\Shared\Support\Ui::sparkline(array_values($spark));
 @endphp
-<article {{ $attributes->class([
-    'relative flex flex-col gap-4 rounded-card p-5',
+<article data-highlight="{{ $highlight ? 'true' : 'false' }}" {{ $attributes->class([
+    'ui-kpi relative flex flex-col gap-4 rounded-card p-5',
     'bg-linear-to-br from-[var(--nog-highlight-from)] to-[var(--nog-highlight-to)] text-white shadow-raised' => $highlight,
     'border border-line bg-surface text-ink shadow-card' => ! $highlight,
 ]) }}>
-    <header class="flex items-center gap-3">
-        <span @class(['grid size-10 shrink-0 place-items-center rounded-control', 'bg-white/15 text-white' => $highlight, 'bg-primary-subtle text-ink-brand' => ! $highlight])>
+    <header class="ui-kpi-head flex items-center gap-3">
+        <span @class(['ui-kpi-icon grid size-10 shrink-0 place-items-center rounded-control', 'bg-white/15 text-white' => $highlight, 'bg-primary-subtle text-ink-brand' => ! $highlight])>
             <x-ui::icon :name="$icon" :size="20" />
         </span>
-        <h3 @class(['min-w-0 flex-1 truncate text-sm font-medium', 'text-white' => $highlight, 'text-ink-secondary' => ! $highlight])>{{ $label }}</h3>
+        <h3 @class(['ui-kpi-label min-w-0 flex-1 truncate text-sm font-medium', 'text-white' => $highlight, 'text-ink-secondary' => ! $highlight])>{{ $label }}</h3>
         {{ $menu ?? '' }}
     </header>
-    <p class="text-[28px] font-semibold leading-9 tracking-tight" dir="ltr" @if ($countUp !== null) data-count-up="{{ $countUp }}" data-count-format="{{ $countFormat }}" @endif><bdi dir="ltr">{{ $value }}</bdi></p>
-    <footer class="flex items-center gap-2">
+    <p class="ui-kpi-value text-[28px] font-semibold leading-9 tracking-tight" dir="ltr" @if ($countUp !== null) data-count-up="{{ $countUp }}" data-count-format="{{ $countFormat }}" @endif><bdi dir="ltr">{{ $value }}</bdi></p>
+    <footer class="ui-kpi-foot flex items-center gap-2">
         @if ($deltaText !== null)
             <span dir="ltr" @class([
                 'inline-flex h-5 items-center gap-0.5 rounded-full px-1.5 text-xs font-medium',
@@ -48,9 +48,9 @@
             </span>
         @endif
         @if ($comparison)
-            <span @class(['min-w-0 flex-1 text-xs leading-4', 'text-white/80' => $highlight, 'text-ink-secondary' => ! $highlight])>{{ $comparison }}</span>
+            <span @class(['ui-kpi-note min-w-0 flex-1 text-xs leading-4', 'text-white/80' => $highlight, 'text-ink-secondary' => ! $highlight])>{{ $comparison }}</span>
         @endif
-        <svg class="ms-auto shrink-0" width="72" height="24" viewBox="0 0 72 24" fill="none" aria-hidden="true" focusable="false">
+        <svg class="ui-kpi-spark ms-auto shrink-0" width="72" height="24" viewBox="0 0 72 24" fill="none" aria-hidden="true" focusable="false">
             <polyline points="{{ $points }}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" @class(['text-white' => $highlight, 'text-success' => ! $highlight && $trend === 'up', 'text-danger' => ! $highlight && $trend === 'down', 'text-primary' => ! $highlight && $trend === 'neutral']) />
         </svg>
     </footer>

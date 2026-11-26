@@ -1,5 +1,6 @@
 {{--
-    Button (Figma 25:10355). variant: primary|secondary|ghost|danger · size: sm|md|lg.
+    Button (Figma 25:10355). variant: primary|secondary|ghost|danger · size: sm|md|lg|xl (xl = 56, client
+    Component 1 Large). ui-btn-<size> lets a surface restyle sizes (vendor: panels/vendor-shell.css).
     Renders <a> when href is given. loading=true shows the spinner + loading text and
     blocks clicks (width kept); ajax forms toggle it automatically on the submit button.
     <x-ui::button icon="plus">{{ __('…') }}</x-ui::button>
@@ -21,9 +22,10 @@
         'sm' => ['h-8 px-3 gap-1.5 text-[13px] leading-4', 16],
         'md' => ['h-10 px-4 gap-2 text-sm leading-5', 18],
         'lg' => ['h-12 px-5 gap-2 text-base leading-6', 20],
+        'xl' => ['h-14 px-6 gap-2 text-base leading-6', 24],
     ];
     [$sizeClasses, $iconSize] = $sizes[$size] ?? $sizes['md'];
-    $classes = ['ui-btn', 'ui-btn-'.$variant, $sizeClasses, 'w-full' => $block];
+    $classes = ['ui-btn', 'ui-btn-'.$variant, 'ui-btn-'.(array_key_exists($size, $sizes) ? $size : 'md'), $sizeClasses, 'w-full' => $block];
     $loadingLabel = $loadingText ?? __('ui.saving');
 @endphp
 @if ($href && ! $disabled)

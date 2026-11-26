@@ -10,8 +10,8 @@
     ])
 @endif
 
-<section class="grid gap-3" aria-labelledby="analytics-table-title">
-    <h2 id="analytics-table-title" class="text-base font-semibold text-ink">{{ $tableTitle }}</h2>
+<section class="grid gap-4 rounded-[12px] bg-surface p-4 sm:p-6" aria-labelledby="analytics-table-title" data-reveal="fade-up">
+    <h2 id="analytics-table-title" class="text-2xl font-semibold leading-[1.5] text-[var(--vnd-card-title)]">{{ $tableTitle }}</h2>
     <x-ui::datatable
         id="analytics-table"
         :url="$dataUrl"
