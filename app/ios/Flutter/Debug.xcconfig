@@ -1,1 +1,6 @@
+// Development defaults; scripts/build_tenant.sh writes Tenant.xcconfig (gitignored)
+// from tenants/<key>/tenant.json, which overrides them.
+TENANT_BUNDLE_ID=com.nogrgr.app
+TENANT_APP_NAME=Nogrgr
+#include? "Tenant.xcconfig"
 #include "Generated.xcconfig"

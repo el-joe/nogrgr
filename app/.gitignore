@@ -46,3 +46,10 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# White-label build outputs (scripts/build_tenant.sh)
+/android/app/tenant.properties
+/ios/Flutter/Tenant.xcconfig
+/build/tenant/
+/tenants/*/firebase.env
+/dist/

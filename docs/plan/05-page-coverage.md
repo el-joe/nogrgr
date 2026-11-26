@@ -710,9 +710,9 @@
 
 | ID | Page / screen | Route (new, proposed name) | Key actions & states | Old source | Figma node | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| APP-001 | Splash / bootstrap | `/splash` | offline, tenant resolve fail | mobile.bootstrap, mobile.resolve | design needed | P11 | todo |
-| APP-002 | Force update / maintenance / store unavailable | `/blocked` | | mobile.bootstrap | design needed | P11 | todo |
-| APP-003 | First-run: country, language, currency | `/preferences/setup` | | mobile.preferences.options | design needed | P11 | todo |
+| APP-001 | Splash / bootstrap | `/splash` | offline, tenant resolve fail | mobile.bootstrap, mobile.resolve | m 149:103879/103898/103917/103936/103956 | P11 | done |
+| APP-002 | Force update / maintenance / store unavailable | `/blocked` |  | mobile.bootstrap | m 149:103975/103995/104014 | P11 | done |
+| APP-003 | First-run: country, language, currency | `/preferences/setup` |  | mobile.preferences.options | m 149:104095 (+ onboarding 149:104033/104054/104075) | P11 | done |
 | APP-004 | Home — Ecommet skin | `/home` | sections, pull to refresh, skeletons | mobile.home.section | design needed (base m 1:2656) | P11 | todo |
 | APP-004a | ↳ Home — Elora v1 skin | `/home` | | mobile.home.section | design needed (base m 1:21125) | P11 | todo |
 | APP-004b | ↳ Home — Elora v2 skin | `/home` | | mobile.home.section | design needed (base m 1:24137) | P11 | todo |
@@ -743,18 +743,18 @@
 | APP-016 | Request return | `/orders/:uuid/return` | media upload | mobile.returns.store, .options | design needed | P11 | todo |
 | APP-017 | Returns list | `/returns` | empty | mobile.returns.index | design needed | P11 | todo |
 | APP-018 | Return detail | `/returns/:id` | | mobile.returns.show | design needed | P11 | todo |
-| APP-019 | Favorites | `/favorites` | empty | mobile.favorites.* | design needed | P11 | todo |
-| APP-020 | Login (+ Google / Apple) | `/auth/login` | | mobile.auth.login | design needed | P11 | todo |
-| APP-021 | Register | `/auth/register` | | mobile.auth.register | design needed | P11 | todo |
-| APP-022 | Forgot password | `/auth/forgot` | | mobile.auth.forgot | design needed | P11 | todo |
-| APP-023 | Reset password (code) | `/auth/reset` | | mobile.auth.reset | design needed | P11 | todo |
-| APP-024 | Account menu | `/account` | guest state | mobile.profile.show | design needed | P11 | todo |
+| APP-019 | Favorites | `/favorites` | empty | mobile.favorites.* | — | P11 | partial (list/empty/remove; product link with catalog batch) |
+| APP-020 | Login (+ Google / Apple) | `/auth/login` |  | mobile.auth.login | m 149:104141 | P11 | done (social sign-in hidden: no customer social API, #104c) |
+| APP-021 | Register | `/auth/register` |  | mobile.auth.register | m 149:104186 | P11 | done (+ e-mail code verify) |
+| APP-022 | Forgot password | `/auth/forgot` |  | mobile.auth.forgot | m 149:104231 | P11 | done |
+| APP-023 | Reset password (code) | `/auth/reset` |  | mobile.auth.reset | m 149:104261 | P11 | done |
+| APP-024 | Account menu | `/account` | guest state | mobile.profile.show | m 149:104308 / 149:104483 | P11 | partial (rows for orders/returns/addresses/inbox/help join with their screens) |
 | APP-025 | Edit profile | `/account/profile` | | mobile.profile.update | design needed | P11 | todo |
 | APP-026 | Change password | `/account/password` | | mobile.profile.password | design needed | P11 | todo |
 | APP-027 | Delete account (confirm) | `/account/delete` | | mobile.auth.account.delete | design needed | P11 | todo |
 | APP-028 | Addresses list | `/account/addresses` | default, delete | mobile.addresses.index, .destroy, .default | design needed | P11 | todo |
 | APP-028a | ↳ Address add / edit (map, intl phone) | `/account/addresses/edit` | | mobile.addresses.store, .update | design needed | P11 | todo |
-| APP-029 | Settings (language, currency, country, push toggles) | `/settings` | | mobile.preferences.options, mobile.device-tokens.* | design needed | P11 | todo |
+| APP-029 | Settings (language, currency, country, push toggles) | `/settings` | | mobile.preferences.options, mobile.device-tokens.* | design needed | P11 | partial (country/language/currency/appearance; push toggles todo) |
 | APP-030 | Notifications inbox (push history) | `/notifications` | empty | — (new, D10) | design needed | P11 | todo |
 | APP-031 | CMS page / menus | `/pages/:slug` | | mobile.pages.show, mobile.menus | design needed | P11 | todo |
 | APP-032 | No connection / generic error / empty | component | retry | — | design needed | P11 | todo |

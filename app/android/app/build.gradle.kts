@@ -1,11 +1,24 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// White-label identity: scripts/build_tenant.sh writes tenant.properties (gitignored)
+// from tenants/<key>/tenant.json. Without it the development defaults apply.
+val tenant = Properties().apply {
+    val file = file("tenant.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+
 android {
-    namespace = "com.example.app"
+    namespace = "com.nogrgr.app"
+
+    buildFeatures {
+        resValues = true
+    }
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,10 +28,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = tenant.getProperty("applicationId", "com.nogrgr.app")
+        resValue("string", "app_name", tenant.getProperty("appName", "Nogrgr"))
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
@@ -29,11 +40,23 @@ android {
         versionName = flutter.versionName
     }
 
+    // Release signing per tenant: keystore path + passwords come from the environment of
+    // the build machine (never committed). Without them release builds use the debug key.
+    val keystore = System.getenv("NOGRGR_KEYSTORE")
+    signingConfigs {
+        if (keystore != null) {
+            create("tenant") {
+                storeFile = file(keystore)
+                storePassword = System.getenv("NOGRGR_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("NOGRGR_KEY_ALIAS")
+                keyPassword = System.getenv("NOGRGR_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName(if (keystore != null) "tenant" else "debug")
         }
     }
 }
