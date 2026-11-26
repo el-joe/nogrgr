@@ -26,7 +26,7 @@
         <x-sf::seo :seo="$seo" />
     </x-slot:head>
     <script type="application/json" id="sf-context">{!! json_encode($island, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
-    <div class="sf-page flex min-h-screen flex-col" @if ($page) data-sf-page="{{ $page }}" @endif>
+    <div class="sf-page flex min-h-screen flex-col" data-theme-variant="{{ $context->theme()->variant }}" @if ($page) data-sf-page="{{ $page }}" @endif>
         <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:start-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:shadow">{{ __st('shell.skip_to_content') }}</a>
         <x-sf::header :family="$family" :mobile-title="$mobileTitle" :back="$back" />
         <main id="main" {{ $attributes->class(['flex-1']) }}>

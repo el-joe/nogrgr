@@ -1,6 +1,27 @@
 /**
- * "elora" family: home variants + shared inner pages.
+ * "elora" family: home variants + shared inner pages (catalog modules in
+ * resources/js/storefront/catalog/*; motion from core/motion via data-* attributes).
  */
+import { initCart } from '../catalog/cart';
+import { initFavorites } from '../catalog/favorites';
+import { initSearch } from '../catalog/search';
+import { initListing } from '../catalog/listing';
+import { initUi } from '../catalog/ui';
+import { initCommerce } from '../commerce/index.js';
+import { initEloraHome } from './home.js';
+import { initEloraPages } from './pages.js';
+
 export function initElora() {
-    // family-specific behaviour goes here
+    initCart();
+    initFavorites();
+    initSearch(document);
+    initListing(document);
+    initUi(document);
+    initCommerce(document);
+    initEloraHome(document);
+    initEloraPages(document);
+
+    if (document.querySelector('[data-product-page]')) {
+        import('../catalog/product').then(({ initProduct }) => initProduct(document));
+    }
 }

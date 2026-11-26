@@ -149,6 +149,11 @@ function bindReview() {
     form.addEventListener('ajax:success', () => {
         window.setTimeout(() => window.location.reload(), 600);
     });
+
+    /* "Write a review" link of the order-delivered e-mail (?review=1): open the first reviewable item. */
+    if (new URLSearchParams(window.location.search).get('review') === '1') {
+        document.querySelector('[data-review]')?.click();
+    }
 }
 
 /* ---------- Reorder ---------- */

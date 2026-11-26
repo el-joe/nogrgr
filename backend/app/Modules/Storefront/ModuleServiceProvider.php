@@ -19,6 +19,7 @@ use App\Modules\Storefront\Repositories\Eloquent\StoreBannerRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StorefrontCatalogRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StorePageRepository;
 use App\Modules\Storefront\Repositories\Eloquent\ThemeRepository;
+use App\Modules\Storefront\Services\Catalog\BadgeShelves;
 use App\Modules\Storefront\Services\Catalog\CategoryCatalog;
 use App\Modules\Storefront\Services\Catalog\ProductCards;
 use App\Modules\Storefront\Services\Catalog\ProductIndex;
@@ -52,6 +53,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         // Catalog read model memoised per request (sf-catalog).
         $this->app->scoped(ProductIndex::class);
         $this->app->scoped(CategoryCatalog::class);
+        $this->app->scoped(BadgeShelves::class);
         $this->app->scoped(ProductCards::class);
     }
 

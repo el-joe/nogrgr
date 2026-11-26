@@ -41,7 +41,7 @@ class ProductListing
     {
         $scoped = $this->scope($query, $category);
         $filtered = array_values(array_filter($scoped, fn (IndexEntry $entry): bool => $this->matches($entry, $query)));
-        $sorted = $this->sort($filtered, $query);
+        $sorted = $this->sort($filtered, $query, $category !== null && $query->sort === ListingSort::Recommended ? array_flip($this->categories->productOrder($category)) : []);
         $page = array_slice($sorted, ($query->page - 1) * $query->perPage, $query->perPage);
 
         return new ListingResult(
@@ -159,10 +159,18 @@ class ProductListing
 
     /**
      * @param  list<IndexEntry>  $entries
+     * @param  array<int, int>  $positions  store product id => category position
      * @return list<IndexEntry>
      */
-    private function sort(array $entries, ListingQuery $query): array
+    private function sort(array $entries, ListingQuery $query, array $positions = []): array
     {
+        if ($positions !== []) {
+            /* Category pages: the store's category order first (decision #74 positions), then Recommended. */
+            usort($entries, static fn (IndexEntry $a, IndexEntry $b): int => [$positions[$a->id] ?? PHP_INT_MAX, $b->featured, $a->sortOrder, $b->soldCount] <=> [$positions[$b->id] ?? PHP_INT_MAX, $a->featured, $b->sortOrder, $a->soldCount]);
+
+            return $entries;
+        }
+
         $sold = $query->sort === ListingSort::BestSelling ? $this->soldIn($query->period) : [];
         $term = $query->term;
 

@@ -266,11 +266,11 @@
 | VEN-022a | ↳ Return detail (all transitions: approve, reject, info, received, inspect, refund, exchange, close, note) | `vendor.sales.returns.show` | one modal per action | tenant.returns.show | designed: Vendor Panel (new screens) 84:104582 | P5 | done |
 | VEN-023 | Refunds (retry, complete, reject) | `vendor.sales.refunds.index` | Std | tenant.refunds.index | designed: Vendor Panel (new screens) 84:105181 | P5 | done |
 | VEN-024 | Return analytics | `vendor.sales.returns.analytics` | charts, export | tenant.returns.analytics | designed: Vendor Panel (new screens) 84:105181 | P8 | todo |
-| VEN-025 | Customers | `vendor.sales.customers.index` | Std; export, delete | tenant.customers.index, tenant.customers.export | 12:15544, m 12:23838 | P8 | todo |
-| VEN-025a | ↳ Customer create | `vendor.sales.customers.create` | intl-tel-input | tenant.customers.create | designed: Vendor Panel (new screens) 84:107236 | P8 | todo |
-| VEN-025b | ↳ Customer detail (profile, toggle active, payments) | `vendor.sales.customers.show` | | tenant.customers.show | designed: Vendor Panel (new screens) 84:105854 | P8 | todo |
-| VEN-025c | ↳ Address create / edit modal (cities by country) | modal | | tenant.customers.addresses.show, tenant.cities.by-country | designed: Vendor Panel (new screens) 84:107236 | P8 | todo |
-| VEN-026 | Newsletter subscribers | `vendor.sales.subscribers.index` | Std; export, delete | tenant.settings.subscribers, tenant.settings.subscribers.export | designed: Vendor Panel (new screens) 84:106555 | P8 | todo |
+| VEN-025 | Customers | `vendor.sales.customers.index` | Std; export, delete | tenant.customers.index, tenant.customers.export | 12:15544, m 12:23838 | P8 | done |
+| VEN-025a | ↳ Customer create | `vendor.sales.customers.create` | intl-tel-input | tenant.customers.create | designed: Vendor Panel (new screens) 84:107236 | P8 | done |
+| VEN-025b | ↳ Customer detail (profile, toggle active, payments) | `vendor.sales.customers.show` | | tenant.customers.show | designed: Vendor Panel (new screens) 84:105854 | P8 | done |
+| VEN-025c | ↳ Address create / edit modal (cities by country) | modal | | tenant.customers.addresses.show, tenant.cities.by-country | designed: Vendor Panel (new screens) 84:107236 | P8 | done |
+| VEN-026 | Newsletter subscribers | `vendor.sales.subscribers.index` | Std; export, delete | tenant.settings.subscribers, tenant.settings.subscribers.export | designed: Vendor Panel (new screens) 84:106555 | P8 | done |
 | VEN-030 | Themes (per country theme + home variant) | `vendor.store.themes.index` | activate, per-country | tenant.store.themes | designed: Vendor Panel (new screens) 85:104756 | P7 | todo |
 | VEN-030a | ↳ Theme countries modal | modal | | tenant.store.themes.countries | designed: Vendor Panel (new screens) 85:110108 | P7 | todo |
 | VEN-030b | ↳ Country home-variant modal | modal | | tenant.store.themes.country-variants | designed: Vendor Panel (new screens) 85:110108 | P7 | todo |

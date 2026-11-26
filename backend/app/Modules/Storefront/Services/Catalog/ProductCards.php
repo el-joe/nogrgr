@@ -56,7 +56,18 @@ class ProductCards
             favorited: isset($this->favoriteIds()[$entry->id]),
             soldCount: $entry->soldCount,
             priceMinor: $entry->price,
+            stockLeft: $entry->stockLeft,
+            weight: $entry->weightGrams !== null ? self::weight($entry->weightGrams) : null,
+            badge: $entry->badgeIds !== [] ? app(BadgeShelves::class)->label($entry->badgeIds) : null,
         );
+    }
+
+    /**
+     * Shipping weight label of a card ("200g", "1.2kg").
+     */
+    public static function weight(int $grams): string
+    {
+        return $grams >= 1000 ? rtrim(rtrim(number_format($grams / 1000, 2, '.', ''), '0'), '.').'kg' : $grams.'g';
     }
 
     public static function url(int $id, string $slug): string

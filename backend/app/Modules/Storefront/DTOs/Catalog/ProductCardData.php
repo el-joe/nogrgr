@@ -31,7 +31,18 @@ final readonly class ProductCardData
         public bool $favorited,
         public int $soldCount,
         public int $priceMinor,
+        public ?int $stockLeft = null,
+        public ?string $weight = null,
+        public ?string $badge = null,
     ) {}
+
+    /**
+     * "Only N left" hint for low stock (Elora cards); null when stock is unlimited or plenty.
+     */
+    public function lowStock(int $threshold = 10): ?int
+    {
+        return $this->inStock && $this->stockLeft !== null && $this->stockLeft > 0 && $this->stockLeft <= $threshold ? $this->stockLeft : null;
+    }
 
     /**
      * Elapsed share of the flash sale window (0–100) for the deal card progress bar.

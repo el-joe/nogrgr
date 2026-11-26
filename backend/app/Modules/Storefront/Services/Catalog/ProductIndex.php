@@ -25,6 +25,7 @@ use App\Modules\Localization\Services\StoreCountries;
 use App\Modules\Storefront\DTOs\Catalog\IndexEntry;
 use App\Modules\Storefront\Repositories\Contracts\StorefrontCatalogRepositoryContract;
 use App\Modules\Storefront\Services\StorefrontContext;
+use App\Modules\Storefront\Support\StoreOwnCategory;
 use App\Shared\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
@@ -92,7 +93,7 @@ class ProductIndex
     /**
      * Prices one loaded product for the country (product page, live).
      *
-     * @return array{price: int, regular: int, compare: int|null, flash: FlashDiscount|null, variants: array<int, array{price: int, regular: int, compare: int|null, stock: int|null}>, in_stock: bool}|null
+     * @return array{price: int, regular: int, compare: int|null, flash: FlashDiscount|null, variants: array<int, array{price: int, regular: int, compare: int|null, stock: int|null}>, in_stock: bool, stock_left: int|null}|null
      */
     public function price(StoreProductView $view, int $countryId): ?array
     {
@@ -197,8 +198,8 @@ class ProductIndex
                     flash: $flash !== null && $sale !== null ? ['percentage' => $flash->percentage, 'starts_at' => $sale->startsAt->toIso8601String(), 'ends_at' => $sale->endsAt->toIso8601String()] : null,
                     inStock: $priced['in_stock'],
                     hasVariants: count($priced['variants']) > 0,
-                    categoryIds: $view->categoryIds,
-                    badgeIds: $view->badgeIds,
+                    categoryIds: [...$view->categoryIds, ...array_map(static fn (mixed $id): int => StoreOwnCategory::idFor((int) $id), $view->product->store_category_ids ?? [])],
+                    badgeIds: $view->product->badge_ids !== null ? array_map('intval', $view->product->badge_ids) : $view->badgeIds,
                     options: $options,
                     featured: $view->product->is_featured,
                     soldCount: max((int) $view->product->sold_count, (int) ($view->central->sold_count ?? 0)),
@@ -207,6 +208,8 @@ class ProductIndex
                     createdAt: (int) $view->product->created_at?->getTimestamp(),
                     updatedAt: (int) max($view->product->updated_at?->getTimestamp() ?? 0, $view->central?->updated_at?->getTimestamp() ?? 0),
                     sortOrder: $view->product->sort_order,
+                    stockLeft: $priced['stock_left'],
+                    weightGrams: $view->weightGrams > 0 ? $view->weightGrams : null,
                 );
             }
         });
@@ -222,7 +225,7 @@ class ProductIndex
      * Same sellability rules as CartLineResolver::line(); null = not sold in the country.
      *
      * @param  array<string, int|null>  $sellable
-     * @return array{price: int, regular: int, compare: int|null, flash: FlashDiscount|null, variants: array<int, array{price: int, regular: int, compare: int|null, stock: int|null}>, in_stock: bool}|null
+     * @return array{price: int, regular: int, compare: int|null, flash: FlashDiscount|null, variants: array<int, array{price: int, regular: int, compare: int|null, stock: int|null}>, in_stock: bool, stock_left: int|null}|null
      */
     private function priceView(StoreProductView $view, ProductRef $ref, int $countryId, ?FlashDiscount $flash, array $sellable): ?array
     {
@@ -274,6 +277,7 @@ class ProductIndex
 
         $cheapest = collect($rows)->sortBy('price')->first();
         $inStock = collect($rows)->contains(static fn (array $row): bool => $row['stock'] === null || $row['stock'] > 0);
+        $stockLeft = collect($rows)->contains(static fn (array $row): bool => $row['stock'] === null) ? null : (int) collect($rows)->sum('stock');
 
         return [
             'price' => $cheapest['price'],
@@ -282,6 +286,7 @@ class ProductIndex
             'flash' => $flash,
             'variants' => array_key_exists(0, $rows) && count($rows) === 1 ? [] : $rows,
             'in_stock' => $inStock,
+            'stock_left' => $stockLeft,
         ];
     }
 

@@ -70,7 +70,7 @@ class CheckoutController extends Controller
         ));
 
         return JsonResponder::success(data: [
-            'summary' => view('components.storefront.checkout.summary', ['cart' => $data['cart']])->render(),
+            'summary' => view(StorefrontView::component('checkout.summary'), ['cart' => $data['cart']])->render(),
             'shipping' => $data['shipping'],
             'block' => $data['block'],
             'block_message' => $data['options']['block_message'],

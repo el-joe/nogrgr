@@ -8,15 +8,15 @@
     $customer = auth('customer')->user();
     $account = $customer ? 'storefront.account.profile' : 'storefront.account.login';
     $catalog = [
-        'home' => ['route' => 'storefront.home', 'icon' => $family === 'ecommet' ? 'home' : 'store', 'label' => 'shell.mobile.home'],
+        'home' => ['route' => 'storefront.home', 'icon' => $family === 'souqify' ? 'store' : 'home', 'label' => 'shell.mobile.home'],
         'categories' => ['route' => 'storefront.categories.index', 'icon' => 'grid', 'label' => 'shell.mobile.categories'],
-        'favorites' => ['route' => 'storefront.favorites', 'icon' => $family === 'ecommet' ? 'heart' : 'star', 'label' => 'shell.mobile.favorites'],
+        'favorites' => ['route' => 'storefront.favorites', 'icon' => $family === 'souqify' ? 'star' : 'heart', 'label' => 'shell.mobile.favorites'],
         'offers' => ['route' => 'storefront.offers', 'icon' => 'percent', 'label' => 'shell.mobile.offers'],
         'orders' => ['route' => 'storefront.orders.index', 'icon' => 'box', 'label' => 'shell.mobile.orders'],
         'cart' => ['route' => 'storefront.cart', 'icon' => 'cart', 'label' => 'shell.mobile.cart'],
-        'account' => ['route' => $account, 'icon' => $family === 'ecommet' ? 'user-circle' : 'users', 'label' => $family === 'souqify' ? 'shell.mobile.profile' : ($family === 'elora' ? 'shell.mobile.account' : 'shell.mobile.profile')],
+        'account' => ['route' => $account, 'icon' => $family === 'ecommet' ? 'user-circle' : ($family === 'elora' ? 'user' : 'users'), 'label' => 'shell.mobile.profile'],
     ];
-    $order = ['ecommet' => ['home', 'cart', 'favorites', 'account'], 'elora' => ['home', 'categories', 'cart', 'account'], 'souqify' => ['home', 'favorites', 'offers', 'orders', 'account']][$family] ?? ['home', 'account'];
+    $order = ['ecommet' => ['home', 'cart', 'favorites', 'account'], 'elora' => ['home', 'favorites', 'orders', 'account', 'cart'], 'souqify' => ['home', 'favorites', 'offers', 'orders', 'account']][$family] ?? ['home', 'account'];
     $items = collect($order)->mapWithKeys(fn ($key) => [$key => $catalog[$key]])->filter(fn ($item) => Route::has($item['route']))->all();
 @endphp
 @if (count($items) > 1)

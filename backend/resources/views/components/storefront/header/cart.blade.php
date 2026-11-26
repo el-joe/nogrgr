@@ -18,6 +18,10 @@
 </{{ $href ? 'a' : 'span' }}>
 @if ($href)
     @once
-        <x-sf::cart.drawer />
+        @if (\App\Modules\Storefront\Support\StorefrontTheme::family() === 'elora')
+            <x-sf::elora.inner.cart.drawer />
+        @else
+            <x-sf::cart.drawer />
+        @endif
     @endonce
 @endif

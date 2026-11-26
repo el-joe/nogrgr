@@ -27,12 +27,17 @@ class HomeService
 
     public const TABS = 10;
 
+    public const CATEGORIES = 22;
+
+    public const RECOMMENDED_ROWS = 4;
+
     public function __construct(
         private readonly ProductListing $listing,
         private readonly ProductCards $cards,
         private readonly CategoryCatalog $categories,
         private readonly FlashSaleCatalog $flashSales,
         private readonly StorefrontContext $context,
+        private readonly BadgeShelves $badges,
     ) {}
 
     /**
@@ -51,6 +56,28 @@ class HomeService
             'best' => $this->grid(ListingKind::BestSelling),
             'rated' => $this->grid(ListingKind::TopRated),
             'newest' => $this->grid(ListingKind::NewIn),
+        ];
+    }
+
+    /**
+     * Extra data of the Elora home variants (Figma "Elora Variants" 1:15432 … 1:28992): top
+     * categories with images, product rails (trending / top rated / new / offers), the
+     * "Recommended for you" rows and the store's badge shelves (badge order, decision #79).
+     *
+     * @return array{categories: list<Category>, trending: list<ProductCardData>, topRated: list<ProductCardData>, newRail: list<ProductCardData>, offers: list<ProductCardData>, recommended: list<list<ProductCardData>>, badges: list<array{id: int, name: string, cards: list<ProductCardData>}>}
+     */
+    public function elora(): array
+    {
+        $recommended = $this->listing->listing(new ListingQuery(kind: ListingKind::NewIn, sort: ListingSort::Recommended, page: 1, perPage: self::RAIL * self::RECOMMENDED_ROWS));
+
+        return [
+            'categories' => array_slice(array_map(static fn (array $node): Category => $node['category'], $this->categories->tree()), 0, self::CATEGORIES),
+            'trending' => $this->cards->make($this->listing->rail(ListingKind::BestSelling, self::RAIL)),
+            'topRated' => $this->cards->make($this->listing->rail(ListingKind::TopRated, self::RAIL)),
+            'newRail' => $this->cards->make($this->listing->rail(ListingKind::NewIn, self::RAIL)),
+            'offers' => $this->cards->make($this->listing->rail(ListingKind::Offers, self::RAIL)),
+            'recommended' => array_values(array_filter(array_chunk($recommended->cards, self::RAIL))),
+            'badges' => $this->badges->shelves(self::RAIL),
         ];
     }
 

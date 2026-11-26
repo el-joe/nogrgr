@@ -44,8 +44,8 @@ class CartController extends Controller
         $cart = $this->cart->data($request);
 
         return JsonResponder::success(data: [
-            'html' => view('components.storefront.cart.body', ['cart' => $cart])->render(),
-            'summary' => view('components.storefront.cart.summary', ['cart' => $cart])->render(),
+            'html' => view(StorefrontView::component('cart.body'), ['cart' => $cart])->render(),
+            'summary' => view(StorefrontView::component('cart.summary'), ['cart' => $cart])->render(),
             'items_count' => $cart['items_count'],
             'empty' => $cart['lines'] === [],
         ]);
@@ -56,7 +56,7 @@ class CartController extends Controller
         $cart = $this->cart->data($request);
 
         return JsonResponder::success(data: [
-            'html' => view('components.storefront.cart.mini-body', ['cart' => $cart])->render(),
+            'html' => view(StorefrontView::component('cart.mini-body'), ['cart' => $cart])->render(),
             'items_count' => $cart['items_count'],
         ]);
     }

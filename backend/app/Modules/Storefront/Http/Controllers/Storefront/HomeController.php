@@ -2,8 +2,10 @@
 
 namespace App\Modules\Storefront\Http\Controllers\Storefront;
 
+use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Services\Catalog\HomeService;
 use App\Modules\Storefront\Services\Seo\StorefrontSeo;
+use App\Modules\Storefront\Services\StorefrontContext;
 use App\Modules\Storefront\Support\StorefrontView;
 use App\Shared\Http\Controller;
 use Illuminate\Contracts\View\View;
@@ -22,7 +24,10 @@ class HomeController extends Controller
 
     public function __invoke(): View
     {
-        return StorefrontView::make('pages.home', $this->home->sections() + ['seo' => $this->seo->home()]);
+        $theme = app(StorefrontContext::class)->theme();
+        $extra = $theme->family === ThemeFamily::Elora ? $this->home->elora() + ['variant' => $theme->variant] : [];
+
+        return StorefrontView::make('pages.home', $this->home->sections() + $extra + ['seo' => $this->seo->home()]);
     }
 
     /**

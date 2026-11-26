@@ -7,6 +7,10 @@
     variants link to the product page instead. tag: best|new|rating|discount|null.
 --}}
 @props(['card', 'variant' => 'grid', 'ribbon' => false, 'tag' => null, 'rank' => null, 'eager' => false])
+@if (\App\Modules\Storefront\Support\StorefrontTheme::family() === 'elora')
+    {{-- Elora family: its own card (Figma Elora 1:22460 family); same data and JS hooks. --}}
+    <x-sf::elora.product-card :card="$card" :eager="$eager" :rank="$rank" {{ $attributes }} />
+@else
 @php
     /** @var \App\Modules\Storefront\DTOs\Catalog\ProductCardData $card */
     $deal = $variant === 'deal';
@@ -90,3 +94,4 @@
         @endif
     </div>
 </article>
+@endif

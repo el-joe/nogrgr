@@ -22,6 +22,19 @@ final class StorefrontView
         return view(self::resolve($name), $data);
     }
 
+    /**
+     * A shared storefront component view (`components.storefront.{name}`) or the family's own
+     * version (`components.storefront.{family}.inner.{name}`) when the family has one. Used for
+     * the server-rendered fragments (cart body / summary, mini cart, checkout summary).
+     */
+    public static function component(string $name): string
+    {
+        $family = app(StorefrontContext::class)->theme()->family->value;
+        $themed = 'components.storefront.'.$family.'.inner.'.$name;
+
+        return view()->exists($themed) ? $themed : 'components.storefront.'.$name;
+    }
+
     public static function resolve(string $name): string
     {
         $theme = app(StorefrontContext::class)->theme();

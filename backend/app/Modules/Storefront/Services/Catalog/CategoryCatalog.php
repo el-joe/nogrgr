@@ -5,15 +5,21 @@ namespace App\Modules\Storefront\Services\Catalog;
 use App\Modules\Catalog\DTOs\Vendor\StoreCategoryRow;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Services\Vendor\StoreTaxonomyReader;
+use App\Modules\Catalog\Support\StoreCategoryRef;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Storefront\Repositories\Contracts\StorefrontCatalogRepositoryContract;
+use App\Modules\Storefront\Services\StorefrontContext;
+use App\Modules\Storefront\Support\StoreOwnCategory;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Store categories: the active central categories the store places products in (store
  * placement category_ids, else central, via StoreCatalogReader → ProductIndex) plus their
- * ancestors, limited to the store's selling categories when it has any. Feeds the header
- * mega-dropdown, the mobile categories browser, chips, category pages and the sitemap.
+ * ancestors, limited to the store's selling categories when it has any, plus the store's
+ * own active categories (decision #74 / #79: StoreOwnCategory, negative ids, products via
+ * `store_products.store_category_ids`, limited to their `country_ids`). Order = the store's
+ * order (StoreTaxonomyReader). Feeds the header mega-dropdown, the mobile categories
+ * browser, chips, category pages and the sitemap.
  */
 class CategoryCatalog
 {
@@ -31,6 +37,7 @@ class CategoryCatalog
         private readonly StorefrontCatalogRepositoryContract $repository,
         private readonly ProductIndex $index,
         private readonly StoreTaxonomyReader $taxonomy,
+        private readonly StorefrontContext $context,
     ) {}
 
     /**
@@ -176,9 +183,19 @@ class CategoryCatalog
             return $this->all;
         }
 
-        $categories = $this->repository->activeCategories();
+        $categories = $this->repository->activeCategories()->keyBy('id');
+        $slugs = $categories->pluck('slug')->flip()->all();
 
-        return $this->all = $categories->keyBy('id');
+        foreach ($this->ownRows() as $row) {
+            $own = $row->own;
+            $slug = (string) ($own->slug ?: 'c-'.$own->id);
+            $slug = isset($slugs[$slug]) ? $slug.'-'.$own->id : $slug;
+            $slugs[$slug] = true;
+            $category = StoreOwnCategory::fromStore($own, $slug);
+            $categories->put($category->id, $category);
+        }
+
+        return $this->all = $categories;
     }
 
     /**
@@ -213,7 +230,9 @@ class CategoryCatalog
                 $category = $category->parent_id !== null ? $all->get($category->parent_id) : null;
             }
 
-            if ($chain === [] || ($selling !== [] && array_intersect($chain, $selling) === [])) {
+            $own = $id < 0;
+
+            if ($chain === [] || (! $own && $selling !== [] && array_intersect($chain, $selling) === [])) {
                 continue;
             }
 
@@ -240,10 +259,43 @@ class CategoryCatalog
     {
         $order = [];
 
-        foreach (array_values(array_filter($this->taxonomy->categories(), static fn (StoreCategoryRow $row): bool => $row->ref->isCentral())) as $position => $row) {
-            $order[$row->ref->id] = $position;
+        foreach ($this->taxonomy->categories() as $position => $row) {
+            $order[$row->ref->isCentral() ? $row->ref->id : StoreOwnCategory::idFor($row->ref->id)] = $position;
         }
 
         return $order;
+    }
+
+    /**
+     * Store product ids of a category in the store's category order (StoreTaxonomyReader
+     * positions), used as the "Recommended" order of category pages.
+     *
+     * @return list<int>
+     */
+    public function productOrder(Category $category): array
+    {
+        $ref = $category instanceof StoreOwnCategory ? StoreCategoryRef::store($category->storeCategoryId()) : StoreCategoryRef::central($category->id);
+
+        return $this->taxonomy->productIds($ref);
+    }
+
+    /**
+     * Active store-own categories sold in the shopping country.
+     *
+     * @return list<StoreCategoryRow>
+     */
+    private function ownRows(): array
+    {
+        $countryId = $this->context->countryId();
+
+        return array_values(array_filter($this->taxonomy->categories(), static function (StoreCategoryRow $row) use ($countryId): bool {
+            if (! $row->isOwn() || ! $row->visible) {
+                return false;
+            }
+
+            $countries = array_map('intval', $row->own->country_ids ?? []);
+
+            return $countries === [] || ($countryId !== null && in_array($countryId, $countries, true));
+        }));
     }
 }

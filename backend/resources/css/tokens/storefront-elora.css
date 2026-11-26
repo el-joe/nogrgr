@@ -53,3 +53,133 @@
     --sf-footer-bar: #3a3a3a;
     --sf-footer-bottom: #3a3a3a;
 }
+
+/*
+ * Elora home-variant tokens (Figma "Elora Variants"; decision #79). The page shell carries
+ * data-theme-variant="1…6" (store theme), so the accent also follows on the inner pages.
+ *   --elo-page        page background            --elo-price      price colour
+ *   --elo-weight      weight label colour        --elo-features-* trust strip
+ *   --elo-flash-bg    flash-sale panel           --elo-new-bg     "New In" band
+ *   --elo-best-bg     "Best Seller" band         --elo-cta-*      hero button
+ *   --elo-band        orange category / promo bands (v1)
+ */
+:root {
+    --elo-page: #ffffff;
+    --elo-price: #121212;
+    --elo-weight: #ff4d00;
+    --elo-see-all: #ff4d00;
+    --elo-features-bg: #242424;
+    --elo-features-ink: #ffffff;
+    --elo-flash-bg: linear-gradient(90deg, #2bd497 0%, #c7c04a 40%, #f2563b 70%, #c8400c 100%);
+    --elo-flash-ink: #ffffff;
+    --elo-new-bg: transparent;
+    --elo-best-bg: transparent;
+    --elo-section-ink: #121212;
+    --elo-band: linear-gradient(90deg, #c94e19 0%, #f26522 50%, #c94e19 100%);
+    --elo-cta-bg: #ff4d00;
+    --elo-cta-ink: #ffffff;
+    --elo-tag-bg: #ff4d00;
+    --elo-sold-bg: #ffd428;
+    --elo-card-cart-bg: #ffffff;
+    --elo-card-cart-ink: #121212;
+}
+
+[data-theme-variant='2'] {
+    --nog-primary: #8a38f5;
+    --nog-primary-hover: #7426de;
+    --sf-cta: #8a38f5;
+    --sf-cta-hover: #7426de;
+    --sf-accent: #8a38f5;
+    --sf-accent-subtle: #f3ebff;
+    --elo-page: #f0f0f0;
+    --elo-see-all: #8a38f5;
+    --elo-features-bg: #ffd428;
+    --elo-features-ink: #121212;
+    --elo-flash-bg: linear-gradient(180deg, #9d5cf8 0%, #8a38f5 45%, #5a1fb0 100%);
+    --elo-new-bg: linear-gradient(90deg, #ffd400 0%, #fff3b0 70%, #f0f0f0 100%);
+    --elo-best-bg: #ffd428;
+    --elo-cta-bg: #ffd428;
+    --elo-cta-ink: #121212;
+    --elo-tag-bg: #8a38f5;
+}
+
+[data-theme-variant='3'] {
+    --nog-primary: #132092;
+    --nog-primary-hover: #0d1670;
+    --sf-cta: #132092;
+    --sf-cta-hover: #0d1670;
+    --sf-accent: #132092;
+    --sf-accent-subtle: #eceefb;
+    --elo-page: #f0f0f0;
+    --elo-price: #132092;
+    --elo-weight: #132092;
+    --elo-see-all: #132092;
+    --elo-features-bg: #132092;
+    --elo-flash-bg: linear-gradient(160deg, #ff6f91 0%, #f9a65a 35%, #f7d154 55%, #2fd6a3 80%, #1b9cc4 100%);
+    --elo-new-bg: repeating-linear-gradient(170deg, #c9a646 0 18px, #d4b456 18px 30px);
+    --elo-best-bg: #ffd428;
+    --elo-cta-bg: #ffffff;
+    --elo-cta-ink: #132092;
+    --elo-tag-bg: #132092;
+}
+
+[data-theme-variant='4'] {
+    --nog-primary: #019842;
+    --nog-primary-hover: #017a35;
+    --sf-cta: #019842;
+    --sf-cta-hover: #017a35;
+    --sf-accent: #019842;
+    --sf-accent-subtle: #e6f5ec;
+    --elo-page: #f0f0f0;
+    --elo-price: #019842;
+    --elo-weight: #019842;
+    --elo-see-all: #019842;
+    --elo-features-bg: #019842;
+    --elo-flash-bg: repeating-linear-gradient(135deg, #019842 0 56px, #0fa24d 56px 112px);
+    --elo-new-bg: #f6e8a4;
+    --elo-best-bg: #f6e8a4;
+    --elo-cta-bg: #ffffff;
+    --elo-cta-ink: #019842;
+    --elo-tag-bg: #019842;
+}
+
+[data-theme-variant='5'] {
+    --nog-primary: #fe3a6a;
+    --nog-primary-hover: #e42455;
+    --sf-cta: #fe3a6a;
+    --sf-cta-hover: #e42455;
+    --sf-accent: #fe3a6a;
+    --sf-accent-subtle: #ffecf1;
+    --elo-page: #f0f0f0;
+    --elo-price: #fe3a6a;
+    --elo-weight: #fe3a6a;
+    --elo-see-all: #fe3a6a;
+    --elo-features-bg: #fe3a6a;
+    --elo-flash-bg: radial-gradient(circle at 20% 30%, rgb(255 255 255 / 0.18) 0 2px, transparent 3px) 0 0 / 46px 46px, linear-gradient(180deg, #e0386a 0%, #cf2f5b 100%);
+    --elo-new-bg: linear-gradient(115deg, #ff7eb3 0%, #ffb36b 30%, #ffe66d 50%, #5ce1e6 75%, #ff5fa2 100%);
+    --elo-best-bg: linear-gradient(180deg, #ff6f9c 0%, #e8336b 100%);
+    --elo-section-ink: #121212;
+    --elo-cta-bg: #fe3a6a;
+    --elo-cta-ink: #ffffff;
+    --elo-tag-bg: #fe3a6a;
+}
+
+[data-theme-variant='6'] {
+    --nog-primary: #ff6a00;
+    --nog-primary-hover: #e25e00;
+    --sf-cta: #ff6a00;
+    --sf-cta-hover: #e25e00;
+    --sf-accent: #ff6a00;
+    --sf-accent-subtle: #fff0e5;
+    --elo-page: #f0f0f0;
+    --elo-price: #ff6a00;
+    --elo-weight: #ff6a00;
+    --elo-see-all: #ff6a00;
+    --elo-features-bg: #fb7701;
+    --elo-flash-bg: radial-gradient(circle at 75% 40%, #ffb347 0%, transparent 45%), linear-gradient(180deg, #ff8a2b 0%, #ff7a18 100%);
+    --elo-new-bg: repeating-radial-gradient(circle at 50% 50%, #ff7a00 0 26px, #ff8f24 26px 52px);
+    --elo-best-bg: repeating-radial-gradient(circle at 50% 40%, #ff8a1c 0 30px, #ff9a3a 30px 60px);
+    --elo-cta-bg: #ffffff;
+    --elo-cta-ink: #ff6a00;
+    --elo-tag-bg: #ff6a00;
+}

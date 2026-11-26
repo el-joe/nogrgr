@@ -1,0 +1,1357 @@
+/*
+ * Elora storefront layer (Figma page "Elora Variants"): navbar 1:20866, footer, phone nav,
+ * product cards (1:26741 / wide 1:26858), home sections of the six variants. Values come
+ * from the Elora tokens (tokens/storefront-elora.css: --nog-*, --sf-*, --elo-*), the
+ * variant overrides ride on [data-theme-variant]. Motion via the shared mo-* layer.
+ */
+@theme inline {
+    --color-elo-page: var(--elo-page);
+    --color-elo-price: var(--elo-price);
+}
+
+@layer components {
+    /* Rails bleed to the viewport edge like Figma, never past it. */
+    .elo-home {
+        overflow-x: clip;
+    }
+
+    .elo-home-wrap {
+        width: 100%;
+        max-width: 1440px;
+        margin-inline: auto;
+        padding-inline: 16px;
+    }
+
+    @media (min-width: 1024px) {
+        .elo-home-wrap {
+            padding-inline: 56px;
+        }
+    }
+
+    .elo-section {
+        margin-top: 48px;
+        padding-block: 8px;
+    }
+
+    .elo-band-new,
+    .elo-band-best {
+        padding-block: 32px;
+    }
+
+    .elo-band-new {
+        background: var(--elo-new-bg);
+    }
+
+    .elo-band-best {
+        background: var(--elo-best-bg);
+    }
+
+    @media (max-width: 1023px) {
+        .elo-section {
+            margin-top: 24px;
+        }
+
+        .elo-band-new,
+        .elo-band-best {
+            padding-block: 20px;
+        }
+    }
+
+    /* ---------- Header (1:20867) ---------- */
+    .elo-header {
+        transition: box-shadow var(--motion-base) var(--ease-out), transform var(--motion-base) var(--ease-out);
+    }
+
+    .elo-header[data-scrolled] {
+        box-shadow: 0 6px 18px rgb(18 18 18 / 0.08);
+    }
+
+    .elo-header-bar {
+        position: relative;
+    }
+
+    .elo-menu-btn {
+        display: grid;
+        justify-items: center;
+        gap: 2px;
+        color: var(--nog-ink);
+    }
+
+    .elo-menu-icon {
+        position: relative;
+        display: grid;
+        gap: 5px;
+        width: 24px;
+        padding-block: 4px;
+    }
+
+    .elo-menu-icon span {
+        display: block;
+        height: 2px;
+        border-radius: 2px;
+        background: currentColor;
+        transition: transform var(--motion-base) var(--ease-out), opacity var(--motion-fast) var(--ease-out);
+    }
+
+    .elo-menu-btn[aria-expanded='true'] .elo-menu-icon span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+
+    .elo-menu-btn[aria-expanded='true'] .elo-menu-icon span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .elo-menu-btn[aria-expanded='true'] .elo-menu-icon span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .elo-mega {
+        position: absolute;
+        inset-inline: 0;
+        top: 100%;
+        z-index: 45;
+        background: #fff;
+        box-shadow: 0 18px 30px rgb(18 18 18 / 0.1);
+        animation: elo-drop var(--motion-base) var(--ease-out);
+    }
+
+    .elo-mega-tab {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 8px;
+        border-radius: 2px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        color: var(--nog-ink);
+    }
+
+    .elo-mega-tab[aria-selected='true'],
+    .elo-mega-tab:hover {
+        background: #f4f4f4;
+        color: var(--nog-primary);
+    }
+
+    .elo-mega-panel {
+        display: grid;
+        align-content: start;
+        gap: 14px;
+        width: 180px;
+        max-height: 520px;
+        overflow-y: auto;
+        padding: 20px 26px;
+        background: #f4f4f4;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+
+    .elo-mega-panel[hidden] {
+        display: none;
+    }
+
+    .elo-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        z-index: 50;
+        min-width: 280px;
+        padding: 16px;
+        border-radius: 16px;
+        background: #fff;
+        color: var(--nog-ink);
+        box-shadow: 0 16px 36px rgb(18 18 18 / 0.14);
+        opacity: 0;
+        transform: translateY(6px);
+        visibility: hidden;
+        transition: opacity var(--motion-fast) var(--ease-out), transform var(--motion-base) var(--ease-out), visibility 0s linear var(--motion-base);
+    }
+
+    .elo-dropdown[data-open] {
+        opacity: 1;
+        transform: none;
+        visibility: visible;
+        transition-delay: 0s;
+    }
+
+    .elo-mobile-hero {
+        background: linear-gradient(180deg, var(--nog-primary) 0%, color-mix(in srgb, var(--nog-primary) 82%, #000) 100%);
+        border-end-start-radius: 0;
+    }
+
+    /* ---------- Footer / phone nav ---------- */
+    .elo-footer {
+        background: #3a3a3a;
+    }
+
+    .elo-footer-badges li {
+        background: #fff;
+        border-color: transparent;
+    }
+
+    .elo-mobile-nav {
+        position: fixed;
+        inset-inline: 16px;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .elo-mobile-nav-pill {
+        display: flex;
+        flex: 1;
+        height: 64px;
+        padding-inline: 8px;
+        border-radius: 999px;
+        background: #fff;
+        box-shadow: 0 6px 20px rgb(18 18 18 / 0.12);
+    }
+
+    .elo-mobile-cart {
+        display: grid;
+        place-items: center;
+        align-content: center;
+        gap: 2px;
+        width: 72px;
+        height: 72px;
+        border-radius: 999px;
+        background: #121212;
+        color: #fff;
+        box-shadow: 0 8px 20px rgb(18 18 18 / 0.25);
+    }
+
+    .elo-mobile-bar {
+        position: fixed;
+        inset-inline: 0;
+        bottom: 0;
+        z-index: 40;
+        padding-bottom: env(safe-area-inset-bottom);
+        background: #fff;
+        box-shadow: 0 -4px 16px rgb(18 18 18 / 0.08);
+    }
+
+    .elo-mobile-cart-raised {
+        width: 68px;
+        height: 68px;
+        margin: -22px auto 0;
+        background: var(--nog-primary);
+        border: 4px solid #fff;
+    }
+
+    /* ---------- Section heading ---------- */
+    .elo-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .elo-heading-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 32px;
+        font-weight: 500;
+        line-height: 1.25;
+    }
+
+    .elo-heading-center,
+    .elo-heading-center-plain,
+    .elo-heading-center-light {
+        justify-content: center;
+        position: relative;
+    }
+
+    .elo-heading-center .elo-heading-title {
+        font-size: 48px;
+        font-weight: 600;
+    }
+
+    .elo-heading-center .elo-heading-link {
+        position: absolute;
+        inset-inline-end: 0;
+    }
+
+    .elo-heading-split {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+    }
+
+    .elo-heading-split .elo-heading-title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .elo-heading-center-plain .elo-heading-title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .elo-see-all {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 18px;
+        color: var(--elo-see-all);
+        white-space: nowrap;
+        transition: gap var(--motion-fast) var(--ease-out);
+    }
+
+    .elo-see-all:hover {
+        gap: 8px;
+    }
+
+    .elo-heading-split .elo-see-all {
+        justify-self: start;
+        color: var(--nog-primary);
+    }
+
+    @media (max-width: 1023px) {
+        .elo-heading-title,
+        .elo-heading-split .elo-heading-title,
+        .elo-heading-center-plain .elo-heading-title {
+            font-size: 18px;
+        }
+
+        .elo-heading-center .elo-heading-title {
+            font-size: 22px;
+        }
+
+        .elo-heading-center,
+        .elo-heading-split {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .elo-heading-center .elo-heading-link {
+            position: static;
+        }
+
+        .elo-heading-split .elo-heading-link {
+            order: 2;
+        }
+
+        .elo-see-all {
+            font-size: 14px;
+        }
+    }
+
+    /* ---------- Buttons ---------- */
+    .elo-round-btn {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        background: #fff;
+        color: var(--nog-ink);
+        box-shadow: 0 4px 7px rgb(0 0 0 / 0.1);
+        transition: opacity var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
+    }
+
+    .elo-round-btn:hover {
+        transform: scale(1.08);
+    }
+
+    .elo-round-btn.swiper-button-disabled,
+    .elo-round-btn:disabled {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .elo-outline-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-width: 258px;
+        height: 50px;
+        padding-inline: 32px;
+        border: 1px solid var(--nog-primary);
+        border-radius: 8px;
+        color: var(--nog-primary);
+        font-size: 18px;
+        transition: background-color var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);
+    }
+
+    .elo-outline-btn:hover {
+        background: var(--nog-primary);
+        color: #fff;
+    }
+
+    .elo-outline-accent {
+        min-width: 208px;
+        height: 64px;
+        border-radius: 999px;
+    }
+
+    .elo-ghost-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        min-width: 172px;
+        height: 64px;
+        padding-inline: 36px;
+        border: 2px solid currentColor;
+        border-radius: 999px;
+        font-size: 24px;
+        color: #fff;
+        transition: background-color var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);
+    }
+
+    .elo-ghost-btn:hover {
+        background: #fff;
+        color: var(--nog-primary);
+    }
+
+    .elo-white-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: min(100%, 720px);
+        height: 50px;
+        border-radius: 999px;
+        background: #fff;
+        color: var(--nog-primary);
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    @media (max-width: 1023px) {
+        .elo-outline-btn {
+            min-width: 200px;
+            height: 44px;
+            font-size: 15px;
+        }
+
+        .elo-ghost-btn {
+            height: 44px;
+            min-width: 140px;
+            font-size: 16px;
+        }
+    }
+
+    /* ---------- Product card (1:26741) ---------- */
+    .elo-card {
+        display: flex;
+        flex-direction: column;
+        border-radius: 8px;
+        background: #fdfdfd;
+        --motion-card-shadow: 0 12px 26px rgb(18 18 18 / 0.12);
+    }
+
+    .elo-card-media {
+        position: relative;
+        aspect-ratio: 210 / 183;
+        border-radius: 8px;
+        background: #f2f2f2;
+    }
+
+    .elo-card-media > img:first-child {
+        transition: transform var(--motion-slow) var(--ease-out);
+    }
+
+    @media (hover: hover) {
+        .elo-card:hover .elo-card-media > img:first-child {
+            transform: scale(1.05);
+        }
+    }
+
+    .elo-card-tag {
+        position: absolute;
+        top: 0;
+        inset-inline-end: 0;
+        display: grid;
+        place-items: center;
+        height: 28px;
+        padding-inline: 6px;
+        border-start-end-radius: 8px;
+        border-end-start-radius: 8px;
+        background: var(--elo-tag-bg);
+        color: #fff;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        animation: elo-shine 1.2s var(--ease-out) 1;
+    }
+
+    .elo-card-sold {
+        position: absolute;
+        top: 0;
+        inset-inline-end: 0;
+        padding: 2px 6px;
+        border-end-start-radius: 6px;
+        background: var(--elo-sold-bg);
+        color: #121212;
+        font-size: 10px;
+    }
+
+    .elo-card-heart {
+        position: absolute;
+        top: 6px;
+        inset-inline-start: 6px;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: #fff;
+        color: var(--nog-ink);
+        filter: drop-shadow(0 4px 2px rgb(0 0 0 / 0.15));
+    }
+
+    .elo-card-heart[aria-pressed='true'] {
+        color: var(--nog-primary);
+    }
+
+    .elo-card-cart {
+        position: absolute;
+        bottom: 5px;
+        inset-inline-end: 6px;
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 34px;
+        border-radius: 12px;
+        background: var(--elo-card-cart-bg);
+        color: var(--elo-card-cart-ink);
+        box-shadow: 0 4px 7px rgb(0 0 0 / 0.1);
+        transition: background-color var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
+    }
+
+    .elo-card-cart:hover {
+        background: var(--nog-primary);
+        color: #fff;
+    }
+
+    .elo-card-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .elo-card-name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        color: #121212;
+    }
+
+    .elo-card-name::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+
+    .elo-card :is(button, a:not(.elo-card-name)) {
+        z-index: 1;
+    }
+
+    .elo-card-weight {
+        flex-shrink: 0;
+        font-size: 14px;
+        color: var(--elo-weight);
+    }
+
+    .elo-card-price {
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--elo-price);
+    }
+
+    .elo-card-bar {
+        display: block;
+        height: 7px;
+        border-radius: 999px;
+        background: #e5e5e5;
+        overflow: hidden;
+    }
+
+    .elo-card-bar > span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--nog-primary);
+        transition: width var(--motion-slow) var(--ease-out);
+    }
+
+    .elo-card-wide {
+        flex-direction: row;
+        background: #fff;
+        box-shadow: 0 4px 7px rgb(0 0 0 / 0.1);
+    }
+
+    .elo-card-wide .elo-card-media {
+        width: 42%;
+        flex-shrink: 0;
+        aspect-ratio: auto;
+        min-height: 160px;
+    }
+
+    .elo-card-wide .elo-card-body {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 12px;
+    }
+
+    .elo-card-spot {
+        box-shadow: 0 10px 26px rgb(18 18 18 / 0.16);
+        background: #fff;
+    }
+
+    @media (max-width: 1023px) {
+        .elo-card-name {
+            font-size: 14px;
+        }
+
+        .elo-card-weight {
+            font-size: 12px;
+        }
+
+        .elo-card-price {
+            font-size: 16px;
+        }
+
+        .elo-card-wide .elo-card-media {
+            min-height: 140px;
+        }
+    }
+
+    /* ---------- Hero ---------- */
+    .elo-hero-contained {
+        width: min(100% - 32px, 1200px);
+        margin: 24px auto 0;
+    }
+
+    .elo-hero-contained .elo-hero-swiper {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .elo-hero-slide {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        background: #eee;
+    }
+
+    .elo-hero-contained .elo-hero-slide {
+        aspect-ratio: 1200 / 385;
+    }
+
+    .elo-hero-full .elo-hero-slide {
+        height: 543px;
+    }
+
+    .elo-hero-copy {
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 0;
+        display: grid;
+        align-content: center;
+        justify-items: start;
+        gap: 20px;
+        width: min(560px, 60%);
+        padding-inline: 56px;
+        color: #fff;
+        background: linear-gradient(90deg, rgb(0 0 0 / 0.28), transparent);
+    }
+
+    [dir='rtl'] .elo-hero-copy {
+        background: linear-gradient(-90deg, rgb(0 0 0 / 0.28), transparent);
+    }
+
+    .elo-hero-title {
+        font-size: 64px;
+        font-weight: 600;
+        line-height: 1.1;
+    }
+
+    .elo-hero-sub {
+        font-size: 24px;
+        opacity: 0.9;
+    }
+
+    .elo-hero-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 286px;
+        height: 64px;
+        padding-inline: 32px;
+        border-radius: 999px;
+        background: var(--elo-cta-bg);
+        color: var(--elo-cta-ink);
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .elo-hero-dots {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding-block: 16px 8px;
+    }
+
+    .elo-hero-dots .swiper-pagination {
+        display: flex;
+        align-items: center;
+    }
+
+    .elo-hero-dots .swiper-pagination-bullet {
+        display: inline-block;
+        cursor: pointer;
+        width: 13px;
+        height: 13px;
+        margin: 0 3px !important;
+        border-radius: 999px;
+        background: #d4d4d4;
+        opacity: 1;
+        transition: width var(--motion-base) var(--ease-out), background-color var(--motion-base) var(--ease-out);
+    }
+
+    .elo-hero-dots .swiper-pagination-bullet-active {
+        width: 40px;
+        background: var(--nog-primary);
+    }
+
+    @media (max-width: 1023px) {
+        .elo-hero-contained {
+            margin-top: 12px;
+        }
+
+        .elo-hero-contained .elo-hero-swiper {
+            border-radius: 12px;
+        }
+
+        .elo-hero-contained .elo-hero-slide {
+            aspect-ratio: 329 / 140;
+        }
+
+        .elo-hero-full .elo-hero-slide {
+            height: 220px;
+        }
+
+        .elo-hero-copy {
+            gap: 8px;
+            width: 70%;
+            padding-inline: 16px;
+        }
+
+        .elo-hero-title {
+            font-size: 24px;
+        }
+
+        .elo-hero-sub {
+            font-size: 12px;
+        }
+
+        .elo-hero-cta {
+            min-width: 0;
+            height: 34px;
+            padding-inline: 18px;
+            font-size: 13px;
+        }
+
+        .elo-hero-dots .swiper-pagination-bullet {
+            width: 8px;
+            height: 8px;
+        }
+
+        .elo-hero-dots .swiper-pagination-bullet-active {
+            width: 24px;
+        }
+    }
+
+    /* ---------- Trust strip ---------- */
+    .elo-features-dark {
+        margin-top: 24px;
+        padding-block: 16px;
+        background: var(--elo-features-bg);
+        color: var(--elo-features-ink);
+        font-size: 20px;
+    }
+
+    .elo-features {
+        margin-top: 24px;
+        padding-block: 13px;
+        background: var(--elo-features-bg);
+        color: var(--elo-features-ink);
+    }
+
+    @media (max-width: 1023px) {
+        .elo-features-dark {
+            margin-top: 0;
+            padding-block: 10px;
+            font-size: 11px;
+            background: var(--nog-primary);
+        }
+
+        .elo-features {
+            margin-top: 12px;
+            padding-block: 8px;
+        }
+    }
+
+    /* ---------- Tabs (v1) ---------- */
+    .elo-tab {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-width: 155px;
+        height: 40px;
+        padding-inline: 18px;
+        border: 1px solid var(--nog-primary);
+        border-radius: 999px;
+        color: var(--nog-primary);
+        font-size: 16px;
+        transition: background-color var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);
+    }
+
+    .elo-tab[aria-selected='true'] {
+        background: var(--nog-primary);
+        color: #fff;
+    }
+
+    [data-elo-tabs] [role='tabpanel']:not([hidden]) {
+        animation: elo-fade-up var(--motion-base) var(--ease-out);
+    }
+
+    @media (max-width: 1023px) {
+        .elo-tab {
+            min-width: 0;
+            height: 34px;
+            font-size: 13px;
+        }
+    }
+
+    /* ---------- Categories ---------- */
+    .elo-cat-circle {
+        display: grid;
+        justify-items: center;
+        gap: 10px;
+        width: 82px;
+    }
+
+    .elo-cat-circle-img {
+        display: block;
+        width: 82px;
+        height: 82px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #f2f2f2;
+        transition: box-shadow var(--motion-base) var(--ease-out), transform var(--motion-base) var(--ease-out);
+    }
+
+    .elo-cat-circle:hover .elo-cat-circle-img {
+        box-shadow: 0 0 0 3px var(--nog-primary);
+    }
+
+    @media (max-width: 1023px) {
+        .elo-cat-circle {
+            width: 100%;
+            gap: 6px;
+        }
+
+        .elo-cat-circle-img {
+            width: 48px;
+            height: 48px;
+        }
+
+        .elo-orange-band .elo-cat-circle-img {
+            width: 64px;
+            height: 64px;
+        }
+    }
+
+    .elo-cat-tile {
+        position: relative;
+        display: block;
+        height: 100%;
+        overflow: hidden;
+        padding: 20px 16px;
+        border-radius: 16px;
+        background: #fff;
+        transition: box-shadow var(--motion-base) var(--ease-out), transform var(--motion-base) var(--ease-out);
+    }
+
+    .elo-cat-tile:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgb(18 18 18 / 0.1);
+    }
+
+    .elo-cat-tile-name {
+        position: relative;
+        z-index: 1;
+        display: block;
+        max-width: 70%;
+        color: var(--nog-primary);
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    .elo-cat-tile-img {
+        position: absolute;
+        inset-inline-end: -10px;
+        bottom: -10px;
+        width: 75%;
+        height: 60%;
+        object-fit: contain;
+        transition: transform var(--motion-slow) var(--ease-out);
+    }
+
+    .elo-cat-tile-wide .elo-cat-tile-img {
+        width: 40%;
+        height: 100%;
+        bottom: 0;
+    }
+
+    .elo-cat-tile:hover .elo-cat-tile-img {
+        transform: scale(1.08) rotate(-3deg);
+    }
+
+    .elo-cat-cutout,
+    .elo-cat-boxed {
+        display: grid;
+        justify-items: center;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .elo-cat-cutout-img {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 100px;
+        height: 80px;
+    }
+
+    [data-theme-variant='3'] .elo-cat-cutout-img::before {
+        content: '';
+        position: absolute;
+        inset: 8px 4px;
+        z-index: -1;
+        border-radius: 56% 44% 60% 40% / 55% 50% 50% 45%;
+        background: #1565ff;
+        transition: transform var(--motion-slow) var(--ease-out);
+    }
+
+    .elo-cat-cutout:hover .elo-cat-cutout-img::before {
+        transform: rotate(12deg) scale(1.06);
+    }
+
+    .elo-cat-cutout-img img,
+    .elo-cat-cutout-img .eco-cat-ph {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .elo-cat-cutout-name {
+        font-size: 18px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .elo-cat-boxed-img {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        aspect-ratio: 1;
+        padding: 10px;
+        border: 1.5px solid #bdbdbd;
+        border-radius: 12px;
+        background: #fff;
+        transition: border-color var(--motion-fast) var(--ease-out), background-color var(--motion-fast) var(--ease-out);
+    }
+
+    .elo-cat-boxed:hover .elo-cat-boxed-img {
+        border-color: var(--nog-primary);
+        background: color-mix(in srgb, var(--nog-primary) 10%, #fff);
+    }
+
+    .elo-cat-boxed-name {
+        font-size: 13px;
+    }
+
+    .elo-cat-slanted {
+        position: relative;
+        display: flex;
+        align-items: center;
+        height: 64px;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .elo-cat-slanted-name {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: 62%;
+        padding-inline: 8px 18px;
+        background: var(--nog-primary);
+        clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%);
+        color: #fff;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    [dir='rtl'] .elo-cat-slanted-name {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 22% 100%);
+    }
+
+    .elo-cat-slanted-img {
+        display: grid;
+        place-items: center;
+        width: 38%;
+        height: 100%;
+        padding: 6px;
+    }
+
+    @media (max-width: 1023px) {
+        .elo-cat-tile-name {
+            font-size: 16px;
+        }
+
+        .elo-cat-cutout-img {
+            width: 76px;
+            height: 60px;
+        }
+
+        .elo-cat-cutout-name {
+            font-size: 13px;
+        }
+    }
+
+    .elo-orange-band {
+        background: var(--elo-band);
+        background-color: var(--nog-primary);
+    }
+
+    [data-theme-variant]:not([data-theme-variant='1']) .elo-orange-band {
+        background: var(--nog-primary);
+    }
+
+    /* ---------- Flash sale ---------- */
+    .elo-flash-band {
+        background: var(--elo-flash-bg);
+    }
+
+    .elo-flash-panel {
+        background: var(--elo-flash-bg);
+        color: var(--elo-flash-ink);
+    }
+
+    .elo-countdown {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .elo-countdown-box {
+        display: inline-flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 1px;
+    }
+
+    .elo-countdown-square .elo-countdown-box {
+        min-width: 90px;
+        height: 64px;
+        align-items: center;
+        border: 1px solid rgb(255 255 255 / 0.7);
+        border-radius: 4px;
+        background: #e8541c;
+        color: #fff;
+        font-size: 40px;
+        font-weight: 600;
+    }
+
+    .elo-countdown-square small {
+        font-size: 32px;
+    }
+
+    .elo-countdown-plain .elo-countdown-box + .elo-countdown-box::before {
+        content: ':';
+        margin-inline-end: 2px;
+    }
+
+    .elo-countdown-white .elo-countdown-box,
+    .elo-countdown-outline .elo-countdown-box {
+        width: 64px;
+        height: 64px;
+        align-items: center;
+        border-radius: 8px;
+        font-size: 34px;
+        font-weight: 600;
+    }
+
+    .elo-countdown-white .elo-countdown-box {
+        background: #fff;
+        color: var(--nog-primary);
+        box-shadow: inset 0 -10px 0 rgb(0 0 0 / 0.04);
+    }
+
+    .elo-countdown-outline .elo-countdown-box {
+        border: 2px solid #fff;
+        color: #fff;
+    }
+
+    .elo-ends-vertical {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        color: #ffd428;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .elo-flash-display {
+        font-size: 72px;
+        font-weight: 900;
+        font-style: italic;
+        line-height: 0.95;
+        color: #fff;
+        text-shadow: 0 6px 0 #c2410c, 0 10px 22px rgb(0 0 0 / 0.2);
+        text-transform: uppercase;
+    }
+
+    .elo-flash-tile {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    .elo-flash-tile-img {
+        position: relative;
+        display: block;
+        aspect-ratio: 190 / 280;
+        overflow: hidden;
+        background: #f2f2f2;
+    }
+
+    .elo-flash-chip {
+        position: absolute;
+        top: 8px;
+        inset-inline-start: 8px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: var(--nog-primary);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 1023px) {
+        .elo-countdown-square .elo-countdown-box {
+            min-width: 44px;
+            height: 30px;
+            font-size: 18px;
+        }
+
+        .elo-countdown-square small {
+            font-size: 14px;
+        }
+
+        .elo-countdown-white .elo-countdown-box,
+        .elo-countdown-outline .elo-countdown-box {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+        }
+
+        .elo-flash-display {
+            font-size: 40px;
+        }
+    }
+
+    /* ---------- Spotlight (card fan 1:30232) ---------- */
+    .elo-spotlight .swiper-slide {
+        width: clamp(200px, 22vw, 296px);
+    }
+
+    .elo-spotlight.mo-spotlight-left .swiper-slide {
+        width: clamp(200px, 20vw, 280px);
+    }
+
+    /* ---------- Shop by category ---------- */
+    .elo-shop-card {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 4px 7px rgb(0 0 0 / 0.1);
+    }
+
+    .elo-shop-card-img {
+        display: block;
+        aspect-ratio: 177 / 208;
+        overflow: hidden;
+    }
+
+    .elo-shop-card-name {
+        padding: 10px 8px 12px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .elo-mosaic-tile,
+    .elo-portrait-tile,
+    .elo-small-tile {
+        position: relative;
+        display: block;
+        height: 100%;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #e9e9ee;
+    }
+
+    .elo-mosaic-tile::after,
+    .elo-small-tile::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 35%, color-mix(in srgb, var(--nog-primary) 85%, transparent) 100%);
+        pointer-events: none;
+    }
+
+    .elo-mosaic-name,
+    .elo-small-name {
+        position: absolute;
+        inset-inline: 0;
+        bottom: 18px;
+        z-index: 1;
+        text-align: center;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .elo-small-tile {
+        aspect-ratio: 134 / 90;
+        height: auto;
+    }
+
+    .elo-small-name {
+        bottom: 8px;
+        font-size: 13px;
+    }
+
+    .elo-portrait-tile {
+        aspect-ratio: 210 / 300;
+        height: auto;
+    }
+
+    .elo-portrait-tile::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 50%, rgb(0 0 0 / 0.55) 100%);
+    }
+
+    .elo-portrait-name {
+        position: absolute;
+        inset-inline: 12px;
+        bottom: 14px;
+        z-index: 1;
+        display: grid;
+        justify-items: start;
+        gap: 8px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .elo-portrait-shop {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: var(--nog-primary);
+        font-size: 12px;
+    }
+
+    .elo-side-title {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        align-self: center;
+        border-inline-start: 6px solid var(--nog-primary);
+        color: var(--nog-primary);
+        white-space: nowrap;
+    }
+
+    [dir='rtl'] .elo-side-title {
+        transform: none;
+    }
+
+    @media (max-width: 1023px) {
+        .elo-side-title {
+            writing-mode: horizontal-tb;
+            transform: none;
+            border: 0;
+        }
+
+        .elo-mosaic-name {
+            font-size: 15px;
+        }
+    }
+
+    .elo-home .eco-cat-ph {
+        width: 100%;
+        height: 100%;
+    }
+
+    @keyframes elo-drop {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+    }
+
+    @keyframes elo-fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+    }
+
+    @keyframes elo-shine {
+        from {
+            filter: brightness(1.35);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .elo-mega,
+        [data-elo-tabs] [role='tabpanel']:not([hidden]),
+        .elo-card-tag {
+            animation: none;
+        }
+    }
+}
+
+/* Unlayered: the shared cart entry paints its count with a utility; Elora shows it in the variant accent (1:20867). */
+.elo-header-cart [data-cart-count] {
+    background: var(--nog-primary);
+}

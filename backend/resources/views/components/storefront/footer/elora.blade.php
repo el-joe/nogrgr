@@ -1,24 +1,40 @@
-{{-- Elora footer (rebuilt in Elora style, Storefront additions): name, compact columns, copyright. --}}
+{{--
+    Elora footer (Figma "Elora Variants" footer 1:26977 / phone m 1:21125 bottom): #3A3A3A block —
+    store logo, "We accept" payment badges (the store's gateways) at the start, link columns
+    (store pages + catalog links) at the end; grey legal bar; dark copyright bar. Phones: centred
+    logo, two-column links. Social icons are left out until stores can set their profiles.
+--}}
 @props(['columns' => [], 'legal' => [], 'name'])
-<footer class="mt-auto bg-sf-footer text-white" aria-label="{{ __st('shell.footer.label') }}">
-    <div class="mx-auto grid max-w-[1200px] gap-6 px-6 py-10">
-        <x-sf::logo tone="light" />
+<footer class="elo-footer mt-auto text-white" aria-label="{{ __st('shell.footer.label') }}">
+    <div class="mx-auto grid max-w-[1440px] gap-10 px-6 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:px-[152px]">
+        <div class="grid content-start gap-6 max-lg:justify-items-center">
+            <x-sf::logo tone="light" size="lg" />
+            <div class="grid gap-3 max-lg:justify-items-center">
+                <p class="text-base font-medium">{{ __st('elora.footer.we_accept') }}</p>
+                <x-sf::cart.pay-badges class="elo-footer-badges" />
+            </div>
+        </div>
         @if ($columns)
-            <div class="flex flex-wrap gap-x-24 gap-y-6">
+            <div class="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:justify-items-end">
                 @foreach ($columns as $key => $links)
-                    <div class="grid content-start gap-2">
-                        <h2 class="text-sm font-medium">{{ __st('shell.footer.columns.'.$key) }}</h2>
-                        @foreach ($links as $link)<a href="{{ $link['url'] }}" class="text-xs text-white/90 hover:underline">{{ $link['title'] }}</a>@endforeach
+                    <div class="grid content-start gap-4">
+                        <h2 class="text-xl font-medium max-lg:text-base">{{ __st('shell.footer.columns.'.$key) }}</h2>
+                        <ul class="grid gap-3" role="list">
+                            @foreach ($links as $link)<li><a href="{{ $link['url'] }}" class="text-sm text-white/90 transition hover:text-white hover:underline">{{ $link['title'] }}</a></li>@endforeach
+                        </ul>
                     </div>
                 @endforeach
             </div>
         @endif
-        <div class="flex flex-wrap items-center justify-between gap-4 text-xs">
-            <p>{{ __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
-            <div class="flex flex-wrap items-center gap-6">
+    </div>
+    @if ($legal)
+        <nav class="bg-[#4d4d4d]" aria-label="{{ __st('shell.footer.legal') }}">
+            <div class="mx-auto flex max-w-[1440px] flex-wrap justify-center gap-x-24 gap-y-2 px-6 py-3 text-sm max-lg:gap-x-10">
                 @foreach ($legal as $link)<a href="{{ $link['url'] }}" class="hover:underline">{{ $link['title'] }}</a>@endforeach
-                <x-sf::lang-switch tone="light" />
             </div>
-        </div>
+        </nav>
+    @endif
+    <div class="bg-[#262626] py-3 text-center text-sm max-lg:pb-24">
+        <p>{{ __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
     </div>
 </footer>
