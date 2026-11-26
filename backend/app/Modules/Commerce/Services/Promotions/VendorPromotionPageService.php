@@ -10,12 +10,14 @@ use App\Modules\Commerce\DTOs\Promotions\PromotionCoupon;
 use App\Modules\Commerce\DTOs\Promotions\PromotionFlashSale;
 use App\Modules\Commerce\Enums\DiscountSource;
 use App\Modules\Commerce\Enums\FlashSaleStatus;
+use App\Modules\Commerce\Enums\PromotionKind;
 use App\Modules\Commerce\Models\StoreCoupon;
 use App\Modules\Commerce\Models\StoreFlashSale;
 use App\Modules\Commerce\Repositories\Contracts\CouponRepositoryContract;
 use App\Modules\Commerce\Repositories\Contracts\StoreCouponRepositoryContract;
 use App\Modules\Commerce\Repositories\Contracts\StoreFlashSaleRepositoryContract;
 use App\Modules\Localization\Services\CountryService;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -149,6 +151,51 @@ class VendorPromotionPageService
             ->map(static fn (PromotionFlashSale $sale): string => $sale->title)
             ->values()
             ->all();
+    }
+
+    /**
+     * Central promotions the store opted out of (hidden) that are still running or
+     * upcoming: the "join" opportunities of the vendor dashboard (VEN-009c). Flash sales
+     * first, then coupons, soonest ending first.
+     *
+     * @return Collection<int, array{kind: PromotionKind, id: int, title: string, percentage: float|null, code: string|null, ends_at: CarbonImmutable|null}>
+     */
+    public function hiddenCentralOffers(bool $sales = true, bool $coupons = true, int $limit = 6): Collection
+    {
+        $offers = collect();
+
+        if ($sales) {
+            $offers = $offers->concat($this->sales->all(includeHidden: true)
+                ->filter(static fn (PromotionFlashSale $sale): bool => $sale->source === DiscountSource::Central && $sale->hidden
+                    && in_array($sale->status(), [FlashSaleStatus::Live, FlashSaleStatus::Scheduled], true))
+                ->sortBy(static fn (PromotionFlashSale $sale): int => $sale->endsAt->getTimestamp())
+                ->map(static fn (PromotionFlashSale $sale): array => [
+                    'kind' => PromotionKind::FlashSale,
+                    'id' => $sale->id,
+                    'title' => $sale->title,
+                    'percentage' => $sale->percentage,
+                    'code' => null,
+                    'ends_at' => $sale->endsAt,
+                ]));
+        }
+
+        if ($coupons) {
+            $now = CarbonImmutable::now();
+            $offers = $offers->concat($this->coupons->all(includeHidden: true)
+                ->filter(static fn (PromotionCoupon $coupon): bool => $coupon->isCentral() && $coupon->hidden && $coupon->active
+                    && ($coupon->endsAt === null || $coupon->endsAt->greaterThanOrEqualTo($now)))
+                ->sortBy(static fn (PromotionCoupon $coupon): int => $coupon->endsAt?->getTimestamp() ?? PHP_INT_MAX)
+                ->map(static fn (PromotionCoupon $coupon): array => [
+                    'kind' => PromotionKind::Coupon,
+                    'id' => $coupon->id,
+                    'title' => trim((string) $coupon->name) !== '' ? (string) $coupon->name : $coupon->code,
+                    'percentage' => null,
+                    'code' => $coupon->code,
+                    'ends_at' => $coupon->endsAt,
+                ]));
+        }
+
+        return $offers->take($limit)->values();
     }
 
     public function centralFlashSale(int $id): ?PromotionFlashSale

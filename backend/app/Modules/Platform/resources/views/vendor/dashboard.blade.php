@@ -1,9 +1,10 @@
 {{--
-    Vendor dashboard (Tenant Panel Layout, Dashboard 12:11267 header + hero), P2 foundation:
-    welcome header (Customize store / View store), the store hero with "Store power"
-    = setup progress and the readiness chips around the ring, then the setup progress
-    widget (VEN-008) and the store status card. Sales / orders / customers KPI cards and
-    the opportunity widgets join with their data (VEN-009, P5 / P8) — no sample numbers.
+    Vendor dashboard (Tenant Panel Layout, Dashboard 12:11267): welcome header (Customize
+    store / View store), the store hero with "Store power" = setup progress and the
+    readiness chips around the ring, the setup progress widget (VEN-008) and store status
+    card, then the permission-aware widgets (VendorDashboardWidgetService): pay the
+    platform (009a), opportunities + flash-sale modal (009c), new-in products (009d), live
+    store preview by country (009f) and the partner banner (009b).
 --}}
 @use('App\Modules\Platform\Enums\SetupStep')
 @php
@@ -110,5 +111,14 @@
         </section>
     </div>
 
+    @include('platform::vendor.dashboard._pay-alert', ['owed' => $widgets->owed, 'failed' => $widgets->failed('owed')])
+    @include('platform::vendor.dashboard._opportunities')
+    @include('platform::vendor.dashboard._new-in')
+    @include('platform::vendor.dashboard._storefront')
+
     @include('affiliates::vendor._partner')
+
+    @if ($widgets->opportunities !== null)
+        @include('commerce::vendor.flash-sales._attach-modal')
+    @endif
 </x-vendor::layout>

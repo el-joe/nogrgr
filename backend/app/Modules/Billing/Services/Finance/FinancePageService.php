@@ -154,6 +154,20 @@ class FinancePageService
     }
 
     /**
+     * What the store owes the platform (USD minor units, ledger receivable) and how many
+     * orders are still open: the vendor dashboard "pay the platform" alert (VEN-009a).
+     *
+     * @return array{owed: int, orders: int}
+     */
+    public function owedToPlatform(int $tenantId): array
+    {
+        return [
+            'owed' => max(0, $this->ledger->balanceOf($tenantId)['receivable']),
+            'orders' => $this->entries->openReceivables($tenantId)->count(),
+        ];
+    }
+
+    /**
      * @return array{results: list<array{id: int, text: string}>, pagination: array{more: bool}}
      */
     public function storeSearch(?string $term, int $page = 1): array
