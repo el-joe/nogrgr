@@ -87,3 +87,6 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - qa-p8 started: browser QA of the new vendor pages.
 - qa-p8 PASS (4 fixes, uncommitted). p8-polish started: QA-P8-005..011 + 403 page + client rule "images object-contain, not cover" (arch test).
 - QUEUED "fonts": client (2026-11-26) wants exact Figma fonts on admin/vendor panels, central website and each storefront theme family (Ecommet/Elora/Souqify + variants), en + ar; self-hosted via @fontsource / local files (no CDN); currently Outfit + IBM Plex Sans Arabic everywhere.
+- Committed 2325db0 (full suite 2170/2172 before fonts; 2 route-allowlist failures fixed): P8 batch 1 + QA-P8 fixes, inline Stripe card (#78b) + USD-only (#87), images contain (#88), Figma fonts per surface (#89: Outfit + Noto Sans Arabic; vendor panel IBM Plex Sans Arabic).
+- Open for client: Stripe row shows Apple/Google Pay badges though card-only; General Sans (Tenant Panel labels) needs a self-host OK; Flutter Stripe SDK pending (P11).
+- Started: vendorp8b (remaining VEN rows), p9 (affiliates, support, reports, notifications UI, owner pages).
