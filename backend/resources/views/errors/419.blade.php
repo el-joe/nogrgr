@@ -1,7 +1,9 @@
-{{-- Central host: the central website 419 page (WEB-030); other hosts: the framework minimal page. --}}
+{{-- Central host: the central website 419 page (WEB-030); store hosts: the themed store page (sf-checkout); other hosts: the framework minimal page. --}}
 @include('errors._locale')
 @if (in_array(request()->getHost(), \App\Shared\Tenancy\CentralDomains::all(), true))
     @include('content::central.errors.419')
+@elseif ($storeView = \App\Modules\Storefront\Support\StoreErrorPage::view('419'))
+    @include($storeView)
 @else
     @include('errors._fallback', ['code' => '419', 'message' => __('Page Expired')])
 @endif

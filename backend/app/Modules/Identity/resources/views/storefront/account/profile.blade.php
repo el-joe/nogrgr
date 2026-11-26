@@ -29,7 +29,7 @@
             <div class="grid gap-4 sm:grid-cols-2">
                 <x-sf::form.input name="name" :label="__('identity::account.fields.name')" :value="$customer->name" autocomplete="name" required maxlength="120" />
                 <x-sf::form.phone :label="__('identity::account.fields.phone')" :value="$customer->phone" :country="$phoneCountry" />
-                <x-sf::form.input name="email" type="email" :label="__('identity::account.fields.email')" :value="$customer->email" autocomplete="email" required dir="ltr" />
+                <x-sf::form.input name="email" type="email" :label="__('identity::account.fields.email')" :value="$customer->email" autocomplete="email" required dir="ltr" :helper="__st('account.email_change_hint')" />
                 <x-sf::form.field :label="__('identity::account.fields.locale')" for="sf-locale" error-key="locale">
                     <div class="sf-control">
                         <select id="sf-locale" name="locale">

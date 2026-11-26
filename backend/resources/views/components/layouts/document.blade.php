@@ -8,6 +8,7 @@
     'title' => null,
     'surface' => 'central',
     'bodyClass' => '',
+    'fullTitle' => null,
 ])
 <!DOCTYPE html>
 <html
@@ -21,7 +22,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ? $title.' · ' : '' }}{{ config('app.name') }}</title>
+    <title>{{ $fullTitle ?? ($title ? $title.' · ' : '').config('app.name') }}</title>
     {{ $head ?? '' }}
     <script type="application/json" id="app-i18n">@json(trans('js'))</script>
     @vite($entries)

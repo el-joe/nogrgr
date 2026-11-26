@@ -25,4 +25,10 @@ enum StoreSettingKey: string
 
     /** ISO timestamp: the store was launched from the setup wizard (VEN-007 step 4). */
     case LaunchedAt = 'launched_at';
+
+    /** Storefront theme per country (Storefront\Services\StoreThemeService): {"default": slug, "countries": {id: slug}}. */
+    case StoreTheme = 'store_theme';
+
+    /** bool: product reviews wait for the store's approval before they are public (Engagement\Services\Reviews\ReviewSettingsService, default false = publish). */
+    case ReviewsRequireApproval = 'reviews_require_approval';
 }

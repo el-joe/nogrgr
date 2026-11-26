@@ -57,7 +57,7 @@ it('falls back to the ecommet family', function (array $attributes): void {
     'unknown family' => [['theme_family' => 'unknown']],
 ]);
 
-it('hides account links whose pages do not exist yet', function (): void {
+it('links every account page from the account navigation', function (): void {
     $tenant = $this->createTenant('acme');
     $customer = $this->createCustomer($tenant);
 
@@ -65,9 +65,9 @@ it('hides account links whose pages do not exist yet', function (): void {
         ->get($this->tenantUrl($tenant, '/account/profile'))
         ->assertOk()
         ->assertSee('/account/profile"', false)
-        ->assertDontSee('/account/orders', false)
-        ->assertDontSee('/account/returns', false)
-        ->assertDontSee('/account/wishlist', false);
+        ->assertSee('/account/orders"', false)
+        ->assertSee('/account/returns"', false)
+        ->assertSee('/account/wishlist"', false);
 });
 
 it('renders the saved addresses as cards with the edit, default and delete hooks', function (): void {

@@ -9,6 +9,9 @@ import { initMap } from './map';
 import { initAccountForms } from './forms';
 import { initAddressBooks } from './address-book';
 import { initCheckoutSteps } from './checkout';
+import { initOrders } from './orders';
+import { initReturns } from './returns';
+import { initVerify } from './verify';
 
 export function initAccount(root = document) {
     initAccountForms(root);
@@ -19,4 +22,7 @@ export function initAccount(root = document) {
     initComboboxes(document);
     initCities(document);
     document.querySelectorAll('form[data-address-form]').forEach(initMap);
+    initOrders(root);
+    initReturns(root);
+    initVerify(root);
 }

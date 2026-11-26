@@ -3,8 +3,8 @@
 use App\Shared\Support\Icon;
 use App\Shared\Support\Ui;
 
-it('exports the 73 Figma icons as currentColor SVGs', function (): void {
-    expect(Icon::names())->toHaveCount(73)->toContain('dashboard', 'panel-left', 'openai');
+it('exports the Figma icons as currentColor SVGs', function (): void {
+    expect(Icon::names())->toHaveCount(90)->toContain('dashboard', 'panel-left', 'openai');
 
     $svg = Icon::svg('chevron-right', 16, 'class="x"');
 

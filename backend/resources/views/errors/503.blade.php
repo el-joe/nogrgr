@@ -6,6 +6,8 @@
 @include('errors._locale')
 @if (in_array(request()->getHost(), \App\Shared\Tenancy\CentralDomains::all(), true))
     @include('content::central.errors.503', ['retryAfter' => $retryAfter])
+@elseif ($storeView = \App\Modules\Storefront\Support\StoreErrorPage::view('503'))
+    @include($storeView)
 @else
     @include('errors._fallback', ['code' => '503', 'message' => __('Service Unavailable')])
 @endif

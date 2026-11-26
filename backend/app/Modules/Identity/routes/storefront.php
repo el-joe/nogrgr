@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Identity\Http\Controllers\Storefront\AddressController;
+use App\Modules\Identity\Http\Controllers\Storefront\EmailVerificationController;
 use App\Modules\Identity\Http\Controllers\Storefront\LoginController;
 use App\Modules\Identity\Http\Controllers\Storefront\NotificationPreferencesController;
 use App\Modules\Identity\Http\Controllers\Storefront\PasswordResetController;
@@ -28,6 +29,11 @@ Route::prefix('account')->name('account.')->group(function (): void {
 
     Route::middleware('auth:customer')->group(function (): void {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+
+        // SF-ECO-025c e-mail confirmation code
+        Route::get('verify-email', [EmailVerificationController::class, 'show'])->name('verification');
+        Route::post('verify-email', [EmailVerificationController::class, 'verify'])->middleware('throttle:10,1')->name('verification.verify');
+        Route::post('verify-email/resend', [EmailVerificationController::class, 'resend'])->middleware('throttle:6,1')->name('verification.resend');
 
         Route::get('profile', [ProfileController::class, 'show'])->name('profile');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

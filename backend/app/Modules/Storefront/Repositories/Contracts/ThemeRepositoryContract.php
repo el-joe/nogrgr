@@ -27,4 +27,13 @@ interface ThemeRepositoryContract extends RepositoryContract
     public function categories(): Collection;
 
     public function findCategoryBySlug(string $slug): ?ThemeCategory;
+
+    public function findActiveBySlug(string $slug): ?Theme;
+
+    /**
+     * Active themes of the catalogue in display order (vendor theme picker, resolution fallback).
+     *
+     * @return Collection<int, Theme>
+     */
+    public function active(): Collection;
 }

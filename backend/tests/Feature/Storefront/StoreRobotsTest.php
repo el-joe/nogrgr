@@ -18,7 +18,7 @@ it('serves a tenant robots.txt on the store host', function (): void {
         ->toContain('Disallow: /api/')
         ->toContain('Disallow: /store-api/')
         ->toContain('Disallow: /account')
-        ->not->toContain('Sitemap:')
+        ->toContain('Sitemap: '.$this->tenantUrl($tenant, '/sitemap.xml'))
         ->not->toContain('/affiliate');
 });
 

@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'verify_title' => 'Check your email',
+    'verify_text' => 'We sent a 6-digit code to :email. Enter it below to activate your account.',
+    'code_label' => 'Verification code',
+    'digit' => 'Digit :number',
+    'verify_submit' => 'Verify email',
+    'verifying' => 'Verifying…',
+    'no_code' => 'Didn’t get the code?',
+    'resend' => 'Resend',
+    'resend_in' => 'Resend in :time',
+    'change_email' => 'Change email',
+    'expires' => 'Code expires in :minutes minutes. Check spam if you can’t find it.',
+    'verified' => 'Your email is verified.',
+    'already_verified' => 'Your email is already verified.',
+    'code_sent' => 'A new code is on its way.',
+    'code_invalid' => 'This code is not valid or has expired.',
+    'code_locked' => 'Too many wrong codes. Request a new one.',
+    'mail_subject' => 'Your verification code: :code',
+    'mail_intro' => 'Use this code to verify your email address at :store:',
+    'mail_expiry' => 'The code expires in :minutes minutes.',
+    'mail_ignore' => 'If you did not create an account, you can ignore this email.',
+    'verify_banner' => 'Please verify your email address.',
+    'verify_now' => 'Verify now',
+];

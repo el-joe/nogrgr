@@ -7,6 +7,7 @@
  *     <div class="swiper" data-gallery-thumbs>…</div>
  */
 import { Swiper, modules, baseOptions, bindKeys } from './swiper';
+import { options } from './utils';
 
 export function initGallery(element) {
     const mainEl = element.querySelector('[data-gallery-main]');
@@ -22,6 +23,8 @@ export function initGallery(element) {
               freeMode: true,
               watchSlidesProgress: true,
               slideToClickedSlide: true,
+              /* data-gallery-thumbs='{"breakpoints":{"1024":{"direction":"vertical"}}}' */
+              ...options(thumbsEl, 'galleryThumbs'),
           })
         : null;
 
@@ -35,7 +38,11 @@ export function initGallery(element) {
         thumbs: thumbs ? { swiper: thumbs, slideThumbActiveClass: 'is-active' } : undefined,
         mousewheel: false,
         keyboard: { enabled: false },
+        ...options(mainEl, 'galleryMain'),
     });
+
+    element.swiper = main;
+    element.dispatchEvent(new CustomEvent('gallery:ready', { detail: { swiper: main } }));
 
     bindKeys(main);
 

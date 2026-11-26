@@ -10,13 +10,13 @@
             @foreach ($columns as $key => $links)
                 <div class="grid content-start gap-4">
                     <h2 class="text-xl font-medium">{{ __st('shell.footer.columns.'.$key) }}</h2>
-                    @foreach ($links as $link)<a href="{{ route($link['route']) }}" class="text-base text-white/70 hover:text-white">{{ __st($link['label']) }}</a>@endforeach
+                    @foreach ($links as $link)<a href="{{ $link['url'] }}" class="text-base text-white/70 hover:text-white">{{ $link['title'] }}</a>@endforeach
                 </div>
             @endforeach
         </div>
     </div>
     @if ($legal)
-        <div class="bg-sf-footer-bar"><nav class="mx-auto flex max-w-[1440px] flex-wrap justify-center gap-x-16 gap-y-2 px-8 py-3 text-sm" aria-label="{{ __st('shell.footer.legal') }}">@foreach ($legal as $link)<a href="{{ route($link['route']) }}" class="hover:underline">{{ __st($link['label']) }}</a>@endforeach</nav></div>
+        <div class="bg-sf-footer-bar"><nav class="mx-auto flex max-w-[1440px] flex-wrap justify-center gap-x-16 gap-y-2 px-8 py-3 text-sm" aria-label="{{ __st('shell.footer.legal') }}">@foreach ($legal as $link)<a href="{{ $link['url'] }}" class="hover:underline">{{ $link['title'] }}</a>@endforeach</nav></div>
     @endif
     <p class="py-4 text-center text-sm">{{ __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
 </footer>

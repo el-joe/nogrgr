@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'title' => 'Contact support',
+    'fields' => [
+        'name' => 'Full name',
+        'email' => 'Email',
+        'phone' => 'Phone',
+        'order_number' => 'Order number (optional)',
+        'subject' => 'Subject',
+        'message' => 'Message',
+        'attachments' => 'Photos',
+    ],
+    'placeholders' => [
+        'name' => 'Your full name',
+        'email' => 'name@example.com',
+        'order_number' => '#10482',
+        'subject' => 'Choose a subject',
+        'message' => 'Tell us what happened…',
+    ],
+    'subjects' => [
+        'order_issue' => 'Order issue',
+        'delivery' => 'Delivery',
+        'return_refund' => 'Return or refund',
+        'payment' => 'Payment',
+        'product_question' => 'Product question',
+        'account' => 'My account',
+        'other' => 'Something else',
+    ],
+    'attach' => 'Attach photos (JPG, PNG, max 5 MB)',
+    'attached' => ':count photo(s) attached',
+    'send' => 'Send request',
+    'sending' => 'Sending…',
+    'sent_title' => 'Request sent',
+    'sent' => 'Ticket #:ticket created. We will reply by email within 24 hours.',
+    'other_ways' => 'Other ways to reach us',
+    'browse_faqs' => 'Browse FAQs',
+    'call_us' => 'Call us on :phone',
+    'newsletter' => [
+        'title' => 'Get offers in your inbox',
+        'intro' => 'Subscribe to our newsletter. Unsubscribe anytime.',
+        'placeholder' => 'name@example.com',
+        'button' => 'Subscribe',
+        'subscribed' => 'You are subscribed. Watch your inbox for our next offers.',
+        'already' => 'This email is already subscribed.',
+    ],
+];

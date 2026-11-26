@@ -8,7 +8,7 @@
                 @foreach ($columns as $key => $links)
                     <div class="grid content-start gap-2">
                         <h2 class="text-sm font-medium">{{ __st('shell.footer.columns.'.$key) }}</h2>
-                        @foreach ($links as $link)<a href="{{ route($link['route']) }}" class="text-xs text-white/90 hover:underline">{{ __st($link['label']) }}</a>@endforeach
+                        @foreach ($links as $link)<a href="{{ $link['url'] }}" class="text-xs text-white/90 hover:underline">{{ $link['title'] }}</a>@endforeach
                     </div>
                 @endforeach
             </div>
@@ -16,7 +16,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4 text-xs">
             <p>{{ __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
             <div class="flex flex-wrap items-center gap-6">
-                @foreach ($legal as $link)<a href="{{ route($link['route']) }}" class="hover:underline">{{ __st($link['label']) }}</a>@endforeach
+                @foreach ($legal as $link)<a href="{{ $link['url'] }}" class="hover:underline">{{ $link['title'] }}</a>@endforeach
                 <x-sf::lang-switch tone="light" />
             </div>
         </div>

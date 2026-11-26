@@ -17,7 +17,7 @@ class CustomerOrderService
     public function __construct(private readonly OrderRepositoryContract $orders) {}
 
     /**
-     * @param  array{status?: string|null, search?: string|null}  $filters
+     * @param  array{status?: string|list<string>|null, search?: string|null}  $filters
      * @return LengthAwarePaginator<int, Order>
      */
     public function history(Customer $customer, array $filters, int $perPage = 15): LengthAwarePaginator

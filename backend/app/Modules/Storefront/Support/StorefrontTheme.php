@@ -2,12 +2,13 @@
 
 namespace App\Modules\Storefront\Support;
 
+use App\Modules\Storefront\Services\StorefrontContext;
+
 /**
  * The current store's theme family and branding for the storefront shells.
  *
- * Until the Storefront appearance settings exist, the family is read from the tenant's
- * data column (`theme_family`, set at registration or by the platform admin) and
- * falls back to "ecommet". The store name / logo come from the tenant record
+ * The family comes from the store's active theme for the shopping country
+ * (StorefrontContext → StoreThemeService; registration `theme_family`, then Ecommet). The store name / logo come from the tenant record
  * (`name`, optional `logo_url`); the vendor appearance page will own them later.
  */
 final class StorefrontTheme
@@ -21,9 +22,13 @@ final class StorefrontTheme
 
     public static function family(): string
     {
-        $family = function_exists('tenant') && tenancy()->initialized ? tenant('theme_family') : null;
+        if (! tenancy()->initialized) {
+            return self::DEFAULT_FAMILY;
+        }
 
-        return is_string($family) && in_array($family, self::FAMILIES, true) ? $family : self::DEFAULT_FAMILY;
+        $family = app(StorefrontContext::class)->family();
+
+        return in_array($family, self::FAMILIES, true) ? $family : self::DEFAULT_FAMILY;
     }
 
     public static function storeName(): string

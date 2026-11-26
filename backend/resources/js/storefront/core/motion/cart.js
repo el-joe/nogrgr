@@ -11,18 +11,20 @@
  */
 import { easing, prefersReducedMotion, token } from './utils';
 
-function bumpCount(target) {
-    const counter = document.querySelector('[data-cart-count]');
+function bumpCount(target, exact = null) {
+    const counters = [...document.querySelectorAll('[data-cart-count]')];
 
-    if (!counter) {
+    if (!counters.length) {
         return;
     }
 
-    counter.textContent = String((Number(counter.textContent) || 0) + 1);
-    counter.hidden = false;
-    counter.classList.remove('mo-bump');
-    void counter.offsetWidth;
-    counter.classList.add('mo-bump');
+    counters.forEach((counter) => {
+        counter.textContent = String(Number.isFinite(exact) ? exact : (Number(counter.textContent) || 0) + 1);
+        counter.hidden = false;
+        counter.classList.remove('mo-bump');
+        void counter.offsetWidth;
+        counter.classList.add('mo-bump');
+    });
     target?.classList.remove('mo-bump');
     void target?.offsetWidth;
     target?.classList.add('mo-bump');
@@ -94,7 +96,7 @@ export function initCart() {
         const image = product?.querySelector('[data-fly-image]');
         /* The cart icon may sit in a header hidden by scroll: show it so the arc has a target. */
         document.querySelector('[data-sticky-header][data-hidden]')?.removeAttribute('data-hidden');
-        const target = document.querySelector('[data-cart-target]');
+        const target = [...document.querySelectorAll('[data-cart-target]')].find((element) => element.offsetParent !== null) ?? document.querySelector('[data-cart-target]');
         let pending = Promise.resolve();
 
         button.dataset.state = 'loading';
@@ -102,8 +104,8 @@ export function initCart() {
         button.dispatchEvent(new CustomEvent('cart:add', { bubbles: true, detail: { product: product?.dataset.product, button, done: (promise) => (pending = promise) } }));
 
         try {
-            await Promise.all([pending, fly(image, target)]);
-            bumpCount(target);
+            const [result] = await Promise.all([pending, fly(image, target)]);
+            bumpCount(target, typeof result?.items_count === 'number' ? result.items_count : null);
             button.dataset.state = 'done';
             setTimeout(() => (button.dataset.state = 'idle'), token('--motion-slow') * 2.5);
         } catch {

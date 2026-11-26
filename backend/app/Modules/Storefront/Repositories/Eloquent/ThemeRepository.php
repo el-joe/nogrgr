@@ -46,4 +46,14 @@ class ThemeRepository extends BaseRepository implements ThemeRepositoryContract
     {
         return ThemeCategory::query()->where('slug', $slug)->first();
     }
+
+    public function findActiveBySlug(string $slug): ?Theme
+    {
+        return Theme::query()->where('slug', $slug)->where('is_active', true)->first();
+    }
+
+    public function active(): Collection
+    {
+        return Theme::query()->where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
+    }
 }
