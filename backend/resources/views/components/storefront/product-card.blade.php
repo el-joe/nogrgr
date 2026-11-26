@@ -10,6 +10,9 @@
 @if (\App\Modules\Storefront\Support\StorefrontTheme::family() === 'elora')
     {{-- Elora family: its own card (Figma Elora 1:22460 family); same data and JS hooks. --}}
     <x-sf::elora.product-card :card="$card" :eager="$eager" :rank="$rank" {{ $attributes }} />
+@elseif (\App\Modules\Storefront\Support\StorefrontTheme::family() === 'souqify')
+    {{-- Souqify family: its own card (Figma Souqify Deal Card 1:80148); same data and JS hooks. --}}
+    <x-sf::souqify.product-card :card="$card" :variant="in_array($variant, ['wide', 'side', 'deal'], true) ? $variant : 'card'" :eager="$eager" :rank="$rank" {{ $attributes }} />
 @else
 @php
     /** @var \App\Modules\Storefront\DTOs\Catalog\ProductCardData $card */

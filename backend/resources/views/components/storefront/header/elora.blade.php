@@ -17,7 +17,7 @@
 @endphp
 <header data-sticky-header class="elo-header sticky top-0 z-40 bg-white max-lg:static">
     <div class="hidden lg:block">
-        <div class="elo-header-bar mx-auto flex h-[90px] max-w-[1440px] items-center gap-6 px-12" data-elo-menu>
+        <div class="elo-header-bar mx-auto flex h-[90px] max-w-[1440px] items-center gap-4 px-6 xl:gap-6 xl:px-12" data-elo-menu>
             @if ($menu !== [])
                 <button type="button" class="elo-menu-btn mo-press" aria-expanded="false" aria-controls="elo-mega" data-elo-menu-toggle data-label-open="{{ __st('elora.menu.open') }}" data-label-close="{{ __st('elora.menu.close') }}" aria-label="{{ __st('elora.menu.open') }}">
                     <span class="elo-menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -25,8 +25,8 @@
                 </button>
             @endif
             <x-sf::logo tone="dark" size="lg" data-header-shrink />
-            <x-sf::header.search variant="elora" class="min-w-[220px] flex-1" />
-            <div class="flex shrink-0 items-center gap-8 xl:gap-10">
+            <x-sf::header.search variant="elora" class="min-w-[180px] flex-1 xl:min-w-[220px]" />
+            <div class="flex shrink-0 items-center gap-5 xl:gap-10">
                 <x-sf::locale-button tone="dark" />
                 @if (Route::has('storefront.favorites'))
                     <a href="{{ route('storefront.favorites') }}" class="inline-flex items-center gap-2 text-sm text-sf-ink hover:text-elo-primary"><x-ui::icon name="heart" :size="24" />{{ __st('shell.favorite') }}</a>

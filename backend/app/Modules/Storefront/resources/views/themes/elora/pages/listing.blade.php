@@ -46,7 +46,7 @@
             @include('storefront::themes.elora.partials.filters', ['mode' => 'sidebar'])
         </aside>
 
-        <div class="grid min-w-0 content-start gap-5 lg:gap-6">
+        <div class="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-5 lg:gap-6">
             @if ($isCategory || $kind === ListingKind::Search)
                 <nav aria-label="{{ __st('shell.breadcrumb') }}" class="hidden lg:block">
                     <ol class="elo-crumbs">

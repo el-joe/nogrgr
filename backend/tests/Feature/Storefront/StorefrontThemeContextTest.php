@@ -51,7 +51,8 @@ it('falls back to the ecommet views for families without their own page', functi
 
     $shop->tenant->run(function (): void {
         expect(app(StorefrontContext::class)->family())->toBe('souqify')
-            ->and(StorefrontView::resolve('pages.cart'))->toBe('storefront::themes.ecommet.pages.cart');
+            ->and(StorefrontView::resolve('pages.cart'))->toBe('storefront::themes.souqify.pages.cart')
+            ->and(StorefrontView::resolve('pages.orders.invoice'))->toBe('storefront::themes.ecommet.pages.orders.invoice');
     });
 });
 

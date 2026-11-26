@@ -214,7 +214,7 @@
 | VEN-004 | Verify email (result) | `vendor.auth.verify` | verified / expired | tenant.verification.verify | designed: Vendor Panel (new screens) 82:99909 | P2 | done |
 | VEN-005 | Impersonation accept (+ "impersonating" banner) | `vendor.auth.impersonate` | expired token error, leave | tenant.impersonate.accept | designed: Vendor Panel (new screens) 82:101033 | P2 | done |
 | VEN-006 | Panel shell (side menu, top bar, bell, store link, dark/light) | layout `x-vendor::layout` | permission nav, setup badge | TenantNavigation | 12:25829 (side menu), 12:40706 (KPI card), 12:40666, 12:40689, 12:40753 (type scale), 12:18944, 12:18951, 12:25854, 12:25858, 12:40266, 12:40743, 12:40745, 12:40748, 12:40749 | P2 | done |
-| VEN-007 | Onboarding (tour / setup) | `vendor.onboarding` | dismiss, complete tour | tenant.onboarding | designed: Vendor Panel (new screens) 82:100227 · wizard 82:99932 | P2 | partial — tour, checklist and the 4-step wizard (countries → languages → theme → launch) work in the browser; the Theme step only shows "No theme chosen yet" until the themes page (P7) exists |
+| VEN-007 | Onboarding (tour / setup) | `vendor.onboarding` | dismiss, complete tour | tenant.onboarding | designed: Vendor Panel (new screens) 82:100227 · wizard 82:99932 | P2 | done — tour, checklist and the 4-step wizard (countries → languages → theme → launch) work in the browser; the Theme step and checklist link to `vendor.store.themes.index` (VEN-030, P8) |
 | VEN-007a | ↳ Tab: Tour | tab | complete | tenant.onboarding.tour.complete | designed: Vendor Panel (new screens) 82:100227 | P2 | done |
 | VEN-007b | ↳ Tab: Setup checklist (logo upload, payment readiness skip) | tab | 8 steps, progress | tenant.onboarding.logo, .payment-readiness.skip | designed: Vendor Panel (new screens) 82:100227 | P2 | done |
 | VEN-008 | Setup progress widget | `vendor.widgets.setup-progress` | % done, links | tenant.widgets.setup-progress | designed: Vendor Panel (new screens) 82:100227 | P2 | done |
@@ -271,10 +271,10 @@
 | VEN-025b | ↳ Customer detail (profile, toggle active, payments) | `vendor.sales.customers.show` | | tenant.customers.show | designed: Vendor Panel (new screens) 84:105854 | P8 | done |
 | VEN-025c | ↳ Address create / edit modal (cities by country) | modal | | tenant.customers.addresses.show, tenant.cities.by-country | designed: Vendor Panel (new screens) 84:107236 | P8 | done |
 | VEN-026 | Newsletter subscribers | `vendor.sales.subscribers.index` | Std; export, delete | tenant.settings.subscribers, tenant.settings.subscribers.export | designed: Vendor Panel (new screens) 84:106555 | P8 | done |
-| VEN-030 | Themes (per country theme + home variant) | `vendor.store.themes.index` | activate, per-country | tenant.store.themes | designed: Vendor Panel (new screens) 85:104756 | P7 | todo |
-| VEN-030a | ↳ Theme countries modal | modal | | tenant.store.themes.countries | designed: Vendor Panel (new screens) 85:110108 | P7 | todo |
-| VEN-030b | ↳ Country home-variant modal | modal | | tenant.store.themes.country-variants | designed: Vendor Panel (new screens) 85:110108 | P7 | todo |
-| VEN-031 | Home variants | `vendor.store.home-variants` | select | tenant.store.home-variants | designed: Vendor Panel (new screens) 85:104756 | P7 | todo |
+| VEN-030 | Themes (per country theme + home variant) | `vendor.store.themes.index` | activate, per-country | tenant.store.themes | designed: Vendor Panel (new screens) 85:104756 | P7 | done — `ThemeController@index`: store default + selling-country tabs, family cards (Activate / Use in countries / Preview), home-variant section, reset to default; signed storefront preview (decision #85) |
+| VEN-030a | ↳ Theme countries modal | modal | | tenant.store.themes.countries | designed: Vendor Panel (new screens) 85:110108 | P7 | done — remote modal `store.themes.countries` (selling countries + make default) |
+| VEN-030b | ↳ Country home-variant modal | modal | | tenant.store.themes.country-variants | designed: Vendor Panel (new screens) 85:110108 | P7 | done — remote modal `store.themes.variant` (radio list of the family variants) |
+| VEN-031 | Home variants | `vendor.store.home-variants` | select | tenant.store.home-variants | designed: Vendor Panel (new screens) 85:104756 | P7 | done — `vendor.store.home-variants`: per-country table, change variant (030b), use store default, preview |
 | VEN-032 | Page builder (sections order / visibility) | `vendor.store.page-builder` | drag, toggle, preview | tenant.store.page-builder | designed: Vendor Panel (new screens) 85:105527 | P7 | todo |
 | VEN-033 | Pages | `vendor.store.pages.index` | Std; delete | tenant.store.pages | designed: Vendor Panel (new screens) 85:106165 | P8 | todo |
 | VEN-033a | ↳ Page create / edit | `vendor.store.pages.create` / `.edit` | translations | tenant.store.pages.create, tenant.store.pages.edit | designed: Vendor Panel (new screens) 85:106165 | P8 | todo |
@@ -285,8 +285,8 @@
 | VEN-034d | ↳ Tab: Top header links | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | todo |
 | VEN-034e | ↳ Tab: Footer | tab | | AppearanceController | designed: Vendor Panel (new screens) 85:107559 | P8 | todo |
 | VEN-034f | ↳ Tab: Social links (CRUD) | tab | | tenant.store.appearance.social.index, tenant.store.appearance.social.show | designed: Vendor Panel (new screens) 85:107559 | P8 | todo |
-| VEN-035 | Banners (country tabs, show/hide admin banners, sort) | `vendor.store.banners.index` | Std; plan limit | tenant.store.banners.index, tenant.store.banners | designed: Vendor Panel (new screens) 85:108271 | P8 | todo |
-| VEN-035a | ↳ Banner create / edit | modal | | tenant.store.banners.show | designed: Vendor Panel (new screens) 85:110108 | P8 | todo |
+| VEN-035 | Banners (country tabs, show/hide admin banners, sort) | `vendor.store.banners.index` | Std; plan limit | tenant.store.banners.index, tenant.store.banners | designed: Vendor Panel (new screens) 85:108271 | P8 | done |
+| VEN-035a | ↳ Banner create / edit | modal | | tenant.store.banners.show | designed: Vendor Panel (new screens) 85:110108 | P8 | done |
 | VEN-036 | Custom themes (Twig): upload ZIP, validation report, versions, submit, activate, delete | `vendor.store.custom-themes.index` | Std; rejected reason | tenant.store.blade-theme | designed: Vendor Panel (new screens) 85:108862 | P7 | todo |
 | VEN-036a | ↳ Starter kit download | `vendor.store.custom-themes.starter-kit` | download | tenant.store.blade-theme.starter-kit | designed: Vendor Panel (new screens) 85:108862 | P7 | todo |
 | VEN-036b | ↳ Theme settings (settings-schema form) | `vendor.store.custom-themes.settings` | | — (new, §D) | designed: Vendor Panel (new screens) 85:108862 | P7 | todo |
@@ -320,8 +320,8 @@
 | VEN-060b | ↳ Subscription payment result (success / cancel) | `vendor.finance.subscription.result` | | tenant.subscription-payment.charge, tenant.subscription-payment.cancel, tenant.subscription-payment.success | designed: Vendor Panel (new screens) 88:113398 | P2 | partial (QA-P5 re-check: gateway-error state verified in browser; paid/cancel result pages only covered by Pest, QA has no working subscription gateway) |
 | VEN-060c | ↳ Tab: Subscriptions history | tab | | tenant.finance.wallet.subscriptions.data | designed: Vendor Panel (new screens) 88:109601 | P2 | done |
 | VEN-060d | ↳ Tab: Transactions | tab | | tenant.finance.wallet.transactions.data | designed: Vendor Panel (new screens) 88:109601 | P5 | done |
-| VEN-061 | Billing (invoices) | `vendor.finance.invoices.index` | Std | tenant.finance.billing, tenant.finance.billing.data | designed: Vendor Panel (new screens) 88:110393 | P2 | todo |
-| VEN-061a | ↳ Invoice detail (print / PDF) | `vendor.finance.invoices.show` | | tenant.finance.billing.detail | designed: Vendor Panel (new screens) 88:110393 | P2 | todo |
+| VEN-061 | Billing (invoices) | `vendor.finance.invoices.index` | Std | tenant.finance.billing, tenant.finance.billing.data | designed: Vendor Panel (new screens) 88:110393 | P2 | done |
+| VEN-061a | ↳ Invoice detail (print / PDF) | `vendor.finance.invoices.show` | | tenant.finance.billing.detail | designed: Vendor Panel (new screens) 88:110393 | P2 | done |
 | VEN-062 | Vendor purchases (owed to platform) | `vendor.finance.purchases.index` | Std; export, settle | tenant.finance.vendor-purchases, tenant.finance.vendor-purchases.export | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
 | VEN-063 | Settlement payments | `vendor.finance.settlements.index` | Std | tenant.finance.settlement-payments | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
 | VEN-064 | Payouts received | `vendor.finance.payouts.index` | Std | tenant.finance.payouts | designed: Vendor Panel (new screens) 88:111108 | P5 | done |
@@ -350,7 +350,7 @@
 | VEN-082 | Settings: Domains (add, DNS check) | `vendor.settings.domains.index` | Std | tenant.settings.domains | designed: Vendor Panel (new screens) 91:116087 | P2 | todo |
 | VEN-082a | ↳ Domain detail (DNS records, status) | `vendor.settings.domains.show` | re-check | tenant.settings.domains.show | designed: Vendor Panel (new screens) 91:116087 | P2 | todo |
 | VEN-083 | Settings: Tracking pixels (Meta, TikTok, Snap, GA4) | `vendor.settings.tracking` | | tenant.settings.tracking | designed: Vendor Panel (new screens) 91:116736 | P8 | todo |
-| VEN-084 | Settings: Compliance center (identity, company, bank, documents, accept terms) | `vendor.settings.compliance` | review status | tenant.settings.compliance, tenant.settings.compliance.cities-by-country, tenant.compliance.accept | designed: Vendor Panel (new screens) 91:117308 | P8 | todo |
+| VEN-084 | Settings: Compliance center (identity, company, bank, documents, accept terms) | `vendor.settings.compliance.edit` (+ `.update`, `.submit`, `.cities`, `.documents.show`, `.documents.destroy`) | review status | tenant.settings.compliance, tenant.settings.compliance.cities-by-country, tenant.compliance.accept | designed: Vendor Panel (new screens) 91:117308 | P8 | done |
 | VEN-085 | Settings: API keys (public API v1) | `vendor.settings.api-keys` | create, revoke, copy once | — (new, §D) | designed: Vendor Panel (new screens) 91:117954 | P8 | todo |
 | VEN-086 | Settings: Audit log | `vendor.settings.audit` | Std; filter | — (new, §B) | designed: Vendor Panel (new screens) 91:118575 | P8 | todo |
 | VEN-087 | Settings: Notification preferences | `vendor.settings.notifications` | toggles | — (new) | designed: Vendor Panel (new screens) 91:119215 | P9 | todo |
@@ -468,12 +468,12 @@
 | SF-ELO-004 | Home — Elora v4 (Theme #3) | `store.home` | | tenant.home (elora home-v4) | 1:27464, m 1:24870 | P7 | done |
 | SF-ELO-005 | Home — Elora v5 (Theme #4) | `store.home` | | tenant.home (elora home-v5) | 1:28050, m 1:25467 | P7 | done |
 | SF-ELO-006 | Home — Elora v6 (Theme #5) | `store.home` | | tenant.home (elora home-v6) | 1:28992, m 1:25994 | P7 | done |
-| SF-SQF-001 | Home — Souqify v1 (base) | `store.home` | flash countdown, deals | tenant.home (souqify home) | 1:72835, m 1:77852 | P7 | todo |
-| SF-SQF-002 | Home — Souqify v2 (Theme #1) | `store.home` | | tenant.home (souqify home-v2) | 1:81585, m 1:78202 | P7 | todo |
-| SF-SQF-003 | Home — Souqify v3 (Theme #2) | `store.home` | | tenant.home (souqify home-v3) | 1:82288, m 1:78599 | P7 | todo |
-| SF-SQF-004 | Home — Souqify v4 (Theme #3) | `store.home` | | tenant.home (souqify home-v4) | 1:82796, m 1:78957 | P7 | todo |
-| SF-SQF-005 | Home — Souqify v5 (Theme #4) | `store.home` | | tenant.home (souqify home-v5) | 1:83157, m 1:79266 | P7 | todo |
-| SF-SQF-006 | Home — Souqify v6 (Theme #5) | `store.home` | | tenant.home (souqify home-v6) | 1:83936, m 1:79691 | P7 | todo |
+| SF-SQF-001 | Home — Souqify v1 (base) | `store.home` | flash countdown, deals | tenant.home (souqify home) | 1:72835, m 1:77852 | P7 | done |
+| SF-SQF-002 | Home — Souqify v2 (Theme #1) | `store.home` | | tenant.home (souqify home-v2) | 1:81585, m 1:78202 | P7 | done |
+| SF-SQF-003 | Home — Souqify v3 (Theme #2) | `store.home` | | tenant.home (souqify home-v3) | 1:82288, m 1:78599 | P7 | done |
+| SF-SQF-004 | Home — Souqify v4 (Theme #3) | `store.home` | | tenant.home (souqify home-v4) | 1:82796, m 1:78957 | P7 | done |
+| SF-SQF-005 | Home — Souqify v5 (Theme #4) | `store.home` | | tenant.home (souqify home-v5) | 1:83157, m 1:79266 | P7 | done |
+| SF-SQF-006 | Home — Souqify v6 (Theme #5) | `store.home` | | tenant.home (souqify home-v6) | 1:83936, m 1:79691 | P7 | done |
 | SF-SQF-007 | Home — Souqify alternate | — | — | — (Figma) | 1:73212 | — | post-launch (01-modules §D: seasonal skin, not part of the 13) |
 | SF-SQF-008 | Home — Souqify Christmas (snow) | — | — | — (Figma) | 1:73614 | — | post-launch (01-modules §D: seasonal skin, not part of the 13) |
 
@@ -586,46 +586,46 @@
 
 | ID | Page / screen | Route (new, proposed name) | Key actions & states | Old source | Figma node | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| SF-SQF-010 | Layout: navbar, footer (fix Elora logo), mobile nav bar | layout | | themes.souqify.layout | 1:81293, 1:81428, m 1:80539 | P7 | todo |
-| SF-SQF-011 | Components: buttons, product cards, side cards, deal card, labels, discount, swatches (36) | components | | themes.souqify | 1:74471, 1:74473, 1:74476, 1:74550, 1:76154, 1:76210, 1:76304, 1:80047, 1:80075, 1:80140, 1:80147, 1:80975, 1:81011, 1:81148, 1:82791, 1:81511–1:81583 | P7 | todo |
-| SF-SQF-012 | Search autocomplete | `store.search.autocomplete` | | tenant.storefront.search.autocomplete | designed: Storefront additions 135:112185 · m(ar) 135:112339 | P7 | todo |
+| SF-SQF-010 | Layout: navbar, footer (fix Elora logo), mobile nav bar | layout | | themes.souqify.layout | 1:81293, 1:81428, m 1:80539 | P7 | done |
+| SF-SQF-011 | Components: buttons, product cards, side cards, deal card, labels, discount, swatches (36) | components | | themes.souqify | 1:74471, 1:74473, 1:74476, 1:74550, 1:76154, 1:76210, 1:76304, 1:80047, 1:80075, 1:80140, 1:80147, 1:80975, 1:81011, 1:81148, 1:82791, 1:81511–1:81583 | P7 | done |
+| SF-SQF-012 | Search autocomplete | `store.search.autocomplete` | | tenant.storefront.search.autocomplete | designed: Storefront additions 135:112185 · m(ar) 135:112339 | P7 | done |
 | SF-SQF-013 | Image search modal | `store.search.image` | | tenant.storefront.search.image | designed: Storefront additions 135:112388 · results 135:112418 · m(ar) 135:112476 | P10 | todo |
-| SF-SQF-014 | Search results | `store.search` | | tenant.storefront.search | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | todo |
-| SF-SQF-015 | Best selling | `store.best-selling` | | tenant.storefront.best-selling | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | todo |
-| SF-SQF-016 | New in | `store.new-in` | | tenant.storefront.new-in | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | todo |
-| SF-SQF-017 | Top rated (full star) | `store.top-rated` | | tenant.storefront.full-star | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | todo |
-| SF-SQF-018 | Offers | `store.offers` | | tenant.storefront.offers | m 1:77354 | P7 | todo |
-| SF-SQF-019 | Category listing (filters) | `store.category` | | tenant.storefront.category | 1:75532, m 1:76311 | P7 | todo |
-| SF-SQF-020 | Product details | `store.product` | | tenant.storefront.product | 1:74583, m 1:77427 | P7 | todo |
-| SF-SQF-020a | ↳ Reviews modal | modal | | ProductPage | designed: Storefront additions 135:112511 · write 135:112647 · m(ar) 135:112684 | P7 | todo |
-| SF-SQF-020b | ↳ Delivery estimate popup | modal | | — (A3) | designed: Storefront additions 137:111894 · m(ar) 137:112053 (based on Elora 1:23053) | P7 | todo |
-| SF-SQF-021 | Mini cart / item added | dropdown | | CartDropdown | designed: Storefront additions 137:112371 · m(ar) 137:112504 | P7 | todo |
-| SF-SQF-022 | Cart | `store.cart` | | tenant.storefront.cart | 1:75039, m 1:76392 | P7 | todo |
-| SF-SQF-022a | ↳ Cart empty | state | | CartPage | designed: Storefront additions 137:112552 · m(ar) 137:112713 | P7 | todo |
-| SF-SQF-023 | Checkout | `store.checkout` | | tenant.storefront.checkout | 1:75299, m 1:76569 · Storefront additions: 98:101297 + states 98:101571, m 98:101659 + m states 98:101756 | P7 | todo |
-| SF-SQF-023a | ↳ Add address modal | modal | | CheckoutPage | 1:76266, m 1:80427 · Storefront additions: canonical 97:102061, m sheets 97:103874–97:104665 | P7 | todo |
-| SF-SQF-023b | ↳ Select address modal | modal | | CheckoutPage | m 1:80503 · Storefront additions: checkout list 98:101297, m 98:101659 | P7 | todo |
-| SF-SQF-023c | ↳ Payment redirect / cancelled | `store.payment.charge` / `.cancel` | | tenant.payment.charge, .cancel | designed: redirect 115:112186 / m(ar) 115:112366 · not completed 115:112217 / m(ar) 115:112397 · toasts 115:112455 / m 115:112525 | P7 | todo |
-| SF-SQF-024 | Order success | `store.orders.status` | | tenant.storefront.order-status | m 1:80522 | P7 | todo |
-| SF-SQF-025 | Login / register | `store.auth.login` | | tenant.storefront.login | Storefront additions: 99:102199, m 99:102634 / 99:102698 | P7 | todo |
-| SF-SQF-025a | ↳ Forgot password | `store.auth.password.request` | | — (new) | Storefront additions: 99:102459, m 99:102777 | P7 | todo |
-| SF-SQF-025b | ↳ Reset password | `store.auth.password.reset` | | — (new) | Storefront additions: 99:102459, m 99:102777 | P7 | todo |
-| SF-SQF-025c | ↳ Verify email | `store.auth.verify` | | — (new) | designed: Storefront additions 115:110988 / m(ar) 115:111147 | P7 | todo |
-| SF-SQF-026 | Account / profile (info, addresses) | `store.account` | | tenant.storefront.profile | Storefront additions: profile 101:105157, m 101:105423; addresses 101:105556, m 101:105806 | P7 | todo |
-| SF-SQF-027 | Favorites | `store.favorites` | | tenant.storefront.favorites | 1:75718, m 1:76864 | P7 | todo |
-| SF-SQF-028 | Orders | `store.orders.index` | | ProfilePage orders | 1:75734, m 1:77130 · Storefront additions: 100:103757, m 100:104358 | P7 | todo |
-| SF-SQF-028a | ↳ Orders empty | state | | ProfilePage | 1:76132, m 1:77298 | P7 | todo |
-| SF-SQF-029 | Order details | `store.orders.show` | | tenant.storefront.order-status | 1:75862, m 1:80745 · Storefront additions: 100:104070, m 100:104524 | P7 | todo |
-| SF-SQF-029a | ↳ Cancel order modal | modal | | ManagesOrderCancellation | Storefront additions: modals 103:109294, m sheets 103:109509 | P7 | todo |
-| SF-SQF-029b | ↳ Write review modal | modal | | OrderStatusPage | Storefront additions: modals 103:109294, m sheets 103:109509 | P7 | todo |
-| SF-SQF-030 | Order tracking | `store.orders.tracking` | | tenant.storefront.order-tracking | 1:75976, m 1:80856 | P7 | todo |
-| SF-SQF-030a | ↳ Live tracking | state | | — (Figma) | m 1:80997 | P7 | todo |
-| SF-SQF-031 | Request return | `store.returns.create` | | tenant.storefront.order-return | Storefront additions: 102:107866, m 102:108137 | P7 | todo |
-| SF-SQF-032 | Returns list | `store.returns.index` | | ProfilePage returns | Storefront additions: 102:107109, m 102:107360 | P7 | todo |
-| SF-SQF-033 | Return detail | `store.returns.show` | | tenant.storefront.return-detail | Storefront additions: 102:107474, m 102:107742 | P7 | todo |
-| SF-SQF-034 | CMS page | `store.page` | | tenant.storefront.page | designed: Storefront additions 115:111215 / m(ar) 115:111383 | P7 | todo |
-| SF-SQF-035 | Support request form / newsletter signup | component | | SupportRequestForm | designed: Storefront additions 115:111442 / m(ar) 115:111664 (form + newsletter + success toast) | P7 | todo |
-| SF-SQF-036 | 404 (themed) | `store.not-found` | | tenant.storefront.not-found | designed: Storefront additions 115:111795 / m(ar) 115:111960 | P7 | todo |
+| SF-SQF-014 | Search results | `store.search` | | tenant.storefront.search | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | done |
+| SF-SQF-015 | Best selling | `store.best-selling` | | tenant.storefront.best-selling | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | done |
+| SF-SQF-016 | New in | `store.new-in` | | tenant.storefront.new-in | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | done |
+| SF-SQF-017 | Top rated (full star) | `store.top-rated` | | tenant.storefront.full-star | reuse 1:75532 (m 1:76311), unchanged · variant notes 137:114609 | P7 | done |
+| SF-SQF-018 | Offers | `store.offers` | | tenant.storefront.offers | m 1:77354 | P7 | done |
+| SF-SQF-019 | Category listing (filters) | `store.category` | | tenant.storefront.category | 1:75532, m 1:76311 | P7 | done |
+| SF-SQF-020 | Product details | `store.product` | | tenant.storefront.product | 1:74583, m 1:77427 | P7 | done |
+| SF-SQF-020a | ↳ Reviews modal | modal | | ProductPage | designed: Storefront additions 135:112511 · write 135:112647 · m(ar) 135:112684 | P7 | done |
+| SF-SQF-020b | ↳ Delivery estimate popup | modal | | — (A3) | designed: Storefront additions 137:111894 · m(ar) 137:112053 (based on Elora 1:23053) | P7 | done |
+| SF-SQF-021 | Mini cart / item added | dropdown | | CartDropdown | designed: Storefront additions 137:112371 · m(ar) 137:112504 | P7 | done |
+| SF-SQF-022 | Cart | `store.cart` | | tenant.storefront.cart | 1:75039, m 1:76392 | P7 | done |
+| SF-SQF-022a | ↳ Cart empty | state | | CartPage | designed: Storefront additions 137:112552 · m(ar) 137:112713 | P7 | done |
+| SF-SQF-023 | Checkout | `store.checkout` | | tenant.storefront.checkout | 1:75299, m 1:76569 · Storefront additions: 98:101297 + states 98:101571, m 98:101659 + m states 98:101756 | P7 | done |
+| SF-SQF-023a | ↳ Add address modal | modal | | CheckoutPage | 1:76266, m 1:80427 · Storefront additions: canonical 97:102061, m sheets 97:103874–97:104665 | P7 | done |
+| SF-SQF-023b | ↳ Select address modal | modal | | CheckoutPage | m 1:80503 · Storefront additions: checkout list 98:101297, m 98:101659 | P7 | done |
+| SF-SQF-023c | ↳ Payment redirect / cancelled | `store.payment.charge` / `.cancel` | | tenant.payment.charge, .cancel | designed: redirect 115:112186 / m(ar) 115:112366 · not completed 115:112217 / m(ar) 115:112397 · toasts 115:112455 / m 115:112525 | P7 | done |
+| SF-SQF-024 | Order success | `store.orders.status` | | tenant.storefront.order-status | m 1:80522 | P7 | done |
+| SF-SQF-025 | Login / register | `store.auth.login` | | tenant.storefront.login | Storefront additions: 99:102199, m 99:102634 / 99:102698 | P7 | done |
+| SF-SQF-025a | ↳ Forgot password | `store.auth.password.request` | | — (new) | Storefront additions: 99:102459, m 99:102777 | P7 | done |
+| SF-SQF-025b | ↳ Reset password | `store.auth.password.reset` | | — (new) | Storefront additions: 99:102459, m 99:102777 | P7 | done |
+| SF-SQF-025c | ↳ Verify email | `store.auth.verify` | | — (new) | designed: Storefront additions 115:110988 / m(ar) 115:111147 | P7 | done |
+| SF-SQF-026 | Account / profile (info, addresses) | `store.account` | | tenant.storefront.profile | Storefront additions: profile 101:105157, m 101:105423; addresses 101:105556, m 101:105806 | P7 | done |
+| SF-SQF-027 | Favorites | `store.favorites` | | tenant.storefront.favorites | 1:75718, m 1:76864 | P7 | done |
+| SF-SQF-028 | Orders | `store.orders.index` | | ProfilePage orders | 1:75734, m 1:77130 · Storefront additions: 100:103757, m 100:104358 | P7 | done |
+| SF-SQF-028a | ↳ Orders empty | state | | ProfilePage | 1:76132, m 1:77298 | P7 | done |
+| SF-SQF-029 | Order details | `store.orders.show` | | tenant.storefront.order-status | 1:75862, m 1:80745 · Storefront additions: 100:104070, m 100:104524 | P7 | done |
+| SF-SQF-029a | ↳ Cancel order modal | modal | | ManagesOrderCancellation | Storefront additions: modals 103:109294, m sheets 103:109509 | P7 | done |
+| SF-SQF-029b | ↳ Write review modal | modal | | OrderStatusPage | Storefront additions: modals 103:109294, m sheets 103:109509 | P7 | done |
+| SF-SQF-030 | Order tracking | `store.orders.tracking` | | tenant.storefront.order-tracking | 1:75976, m 1:80856 | P7 | done |
+| SF-SQF-030a | ↳ Live tracking | state | | — (Figma) | m 1:80997 | P7 | done |
+| SF-SQF-031 | Request return | `store.returns.create` | | tenant.storefront.order-return | Storefront additions: 102:107866, m 102:108137 | P7 | done |
+| SF-SQF-032 | Returns list | `store.returns.index` | | ProfilePage returns | Storefront additions: 102:107109, m 102:107360 | P7 | done |
+| SF-SQF-033 | Return detail | `store.returns.show` | | tenant.storefront.return-detail | Storefront additions: 102:107474, m 102:107742 | P7 | done |
+| SF-SQF-034 | CMS page | `store.page` | | tenant.storefront.page | designed: Storefront additions 115:111215 / m(ar) 115:111383 | P7 | done |
+| SF-SQF-035 | Support request form / newsletter signup | component | | SupportRequestForm | designed: Storefront additions 115:111442 / m(ar) 115:111664 (form + newsletter + success toast) | P7 | done |
+| SF-SQF-036 | 404 (themed) | `store.not-found` | | tenant.storefront.not-found | designed: Storefront additions 115:111795 / m(ar) 115:111960 | P7 | done |
 
 ### 6.5 Storefront system pages (all families, not themed)
 

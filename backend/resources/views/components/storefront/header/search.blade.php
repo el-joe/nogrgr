@@ -23,14 +23,34 @@
                 <x-ui::icon name="search" :size="22" class="shrink-0 text-sf-ink" />
                 <input id="{{ $id }}" type="search" name="q" value="{{ request()->routeIs('storefront.search') ? request()->query('q') : '' }}" placeholder="{{ __st('shell.search') }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="{{ $id }}-panel" class="min-w-0 flex-1 bg-transparent text-base text-sf-ink outline-none placeholder:text-[#8f8f8f]" data-search-input>
             </div>
+        @elseif ($variant === 'souqify')
+            {{-- Souqify search box (1:81348: 54 tall #F6F5F5, "All Category" scope = cat[] filter, magnifier). --}}
+            @php($scopes = app(\App\Modules\Storefront\Services\Catalog\CategoryCatalog::class)->menu())
+            @php($picked = request()->routeIs('storefront.search') ? (int) (((array) request()->query('cat', []))[0] ?? 0) : 0)
+            <div class="sq-search">
+                @if ($scopes !== [])
+                    <label class="sr-only" for="{{ $id }}-scope">{{ __st('souqify.header.search_scope') }}</label>
+                    <select id="{{ $id }}-scope" name="cat[]" class="sq-search-scope">
+                        <option value="">{{ __st('souqify.header.all_categories') }}</option>
+                        @foreach ($scopes as $node)<option value="{{ $node['category']->id }}" @selected($picked === $node['category']->id)>{{ $node['category']->name }}</option>@endforeach
+                    </select>
+                @endif
+                <button type="submit" class="grid shrink-0 place-items-center text-sf-ink" aria-label="{{ __st('shell.search_submit') }}"><x-ui::icon name="search" :size="24" /></button>
+                <input id="{{ $id }}" type="search" name="q" value="{{ request()->routeIs('storefront.search') ? request()->query('q') : '' }}" placeholder="{{ __st('souqify.header.search_placeholder') }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="{{ $id }}-panel" class="min-w-0 flex-1 bg-transparent text-base text-[#4c4c4c] outline-none placeholder:text-[#4c4c4c]" data-search-input>
+            </div>
+        @elseif ($variant === 'souqify-mobile')
+            <div class="sq-search-pill flex h-12 items-center gap-3 rounded-full bg-white px-4 shadow-[0_4px_12px_rgba(0,0,0,0.12)]">
+                <x-ui::icon name="search" :size="20" class="shrink-0 text-[#8f8f8f]" />
+                <input id="{{ $id }}" type="search" name="q" value="{{ request()->routeIs('storefront.search') ? request()->query('q') : '' }}" placeholder="{{ __st('shell.search') }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="{{ $id }}-panel" class="min-w-0 flex-1 bg-transparent text-base text-sf-ink outline-none placeholder:text-[#8f8f8f]" data-search-input>
+            </div>
         @else
             <div class="flex h-[54px] items-center gap-3 rounded-full bg-[#f1f1f1] px-5">
                 <x-ui::icon name="search" :size="22" class="text-sf-ink" />
                 <input id="{{ $id }}" type="search" name="q" placeholder="{{ __st('shell.search') }}" class="min-w-0 flex-1 bg-transparent text-base text-sf-ink outline-none">
             </div>
         @endif
-        @if (str_starts_with($variant, 'ecommet') || str_starts_with($variant, 'elora'))
-        <div id="{{ $id }}-panel" class="{{ str_starts_with($variant, 'elora') ? 'elo-dropdown' : 'eco-dropdown eco-dropdown-arrow' }} inset-x-0 top-[calc(100%+12px)] min-w-[280px] p-4 text-start [--arrow-x:calc(50%-8px)] max-lg:fixed max-lg:inset-x-3 max-lg:top-[68px]" role="listbox" aria-label="{{ __st('search.suggestions') }}" data-search-panel>
+        @if (str_starts_with($variant, 'ecommet') || str_starts_with($variant, 'elora') || str_starts_with($variant, 'souqify'))
+        <div id="{{ $id }}-panel" class="{{ str_starts_with($variant, 'ecommet') ? 'eco-dropdown eco-dropdown-arrow' : (str_starts_with($variant, 'souqify') ? 'sq-dropdown' : 'elo-dropdown') }} inset-x-0 top-[calc(100%+12px)] min-w-[280px] p-4 text-start [--arrow-x:calc(50%-8px)] max-lg:fixed max-lg:inset-x-3 max-lg:top-[68px]" role="listbox" aria-label="{{ __st('search.suggestions') }}" data-search-panel>
             <div data-search-recent hidden>
                 <div class="mb-3 flex items-center justify-between">
                     <p class="text-base font-medium">{{ __st('search.recent') }}</p>

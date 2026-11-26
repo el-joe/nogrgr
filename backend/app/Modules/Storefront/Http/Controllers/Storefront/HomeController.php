@@ -25,7 +25,7 @@ class HomeController extends Controller
     public function __invoke(): View
     {
         $theme = app(StorefrontContext::class)->theme();
-        $extra = $theme->family === ThemeFamily::Elora ? $this->home->elora() + ['variant' => $theme->variant] : [];
+        $extra = in_array($theme->family, [ThemeFamily::Elora, ThemeFamily::Souqify], true) ? $this->home->elora() + ['variant' => $theme->variant] : [];
 
         return StorefrontView::make('pages.home', $this->home->sections() + $extra + ['seo' => $this->seo->home()]);
     }

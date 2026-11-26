@@ -18,8 +18,10 @@
 </{{ $href ? 'a' : 'span' }}>
 @if ($href)
     @once
-        @if (\App\Modules\Storefront\Support\StorefrontTheme::family() === 'elora')
-            <x-sf::elora.inner.cart.drawer />
+        {{-- The family's own drawer (components.storefront.{family}.inner.cart.drawer) when it has one. --}}
+        @php($drawer = 'components.storefront.'.\App\Modules\Storefront\Support\StorefrontTheme::family().'.inner.cart.drawer')
+        @if (view()->exists($drawer))
+            @include($drawer)
         @else
             <x-sf::cart.drawer />
         @endif

@@ -60,7 +60,7 @@ class HomeService
     }
 
     /**
-     * Extra data of the Elora home variants (Figma "Elora Variants" 1:15432 … 1:28992): top
+     * Extra data of the Elora and Souqify home variants (Figma "Elora Variants" 1:15432 … 1:28992): top
      * categories with images, product rails (trending / top rated / new / offers), the
      * "Recommended for you" rows and the store's badge shelves (badge order, decision #79).
      *
