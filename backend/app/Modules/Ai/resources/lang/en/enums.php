@@ -17,4 +17,22 @@ return [
         'unavailable' => 'The AI provider is unreachable right now. Check the base URL or try again later.',
         'invalid_response' => 'The AI provider returned an unexpected answer. Try again or choose another model.',
     ],
+    'store_translation_section' => [
+        'categories' => 'Categories',
+        'products' => 'Own products',
+        'variants' => 'Own product variants',
+        'product_overrides' => 'Catalogue products',
+        'variant_overrides' => 'Catalogue product variants',
+        'flash_sales' => 'Flash sales',
+        'banners' => 'Banners',
+        'menu_links' => 'Menu links',
+        'pages' => 'Pages',
+        'email_templates' => 'Email templates',
+        'store_settings' => 'Store identity & policies',
+        'static_texts' => 'Storefront texts',
+    ],
+    'translation_item_status' => [
+        'done' => 'Translated',
+        'failed' => 'Failed',
+    ],
 ];

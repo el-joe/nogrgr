@@ -2,6 +2,7 @@
 
 namespace App\Modules\Localization\Http\Controllers\Vendor;
 
+use App\Modules\Ai\Support\StoreTranslationLive;
 use App\Modules\Billing\Enums\PaymentLogStatus;
 use App\Modules\Billing\Exceptions\BillingRuleException;
 use App\Modules\Billing\Models\PaymentLog;
@@ -54,7 +55,38 @@ class StoreLanguageController extends Controller
             'purpose' => GatewayPurpose::VendorPayments,
             'canManage' => $this->canManage($request),
             'canSeeInvoices' => $this->staff($request)?->can('finance.invoices.view') ?? false,
+            'live' => StoreTranslationLive::config((int) $tenant->id, vendor_route('settings.languages.runs')),
         ]);
+    }
+
+    /**
+     * Live status of the store's translation runs (re-read on every Reverb push and
+     * polled while one is active): rendered status block + badge per bought language.
+     */
+    public function runs(Request $request): JsonResponse
+    {
+        $canManage = $this->canManage($request);
+        $runs = [];
+        $active = false;
+
+        foreach ($this->languages->storeLanguages($this->tenant()) as $row) {
+            $run = $row['run'];
+
+            if ($run === null || $row['row'] !== null) {
+                continue;
+            }
+
+            $name = $row['language']?->name ?: strtoupper($row['code']);
+            $active = $active || $run->status->isActive();
+            $runs[$row['code']] = [
+                'status' => $run->status->value,
+                'progress' => $run->progress,
+                'html' => view('localization::vendor.languages._run', ['run' => $run, 'name' => $name, 'canManage' => $canManage])->render(),
+                'badge' => view('localization::vendor.languages._run-badge', ['run' => $run])->render(),
+            ];
+        }
+
+        return JsonResponder::success(data: ['active' => $active, 'runs' => (object) $runs]);
     }
 
     public function history(Request $request, StoreLanguagePurchasesDataTable $table): JsonResponse

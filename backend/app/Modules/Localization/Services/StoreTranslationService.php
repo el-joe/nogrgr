@@ -168,25 +168,44 @@ class StoreTranslationService
             foreach ($translated as $key => $value) {
                 $key = (string) $key;
 
-                if (! is_string($value) || trim($value) === '' || ! isset($sources[$key])) {
+                if (! is_string($value) || ! isset($sources[$key])) {
                     continue;
                 }
 
-                $row = $this->rows->findEntry($key, $locale);
-
-                if ($row !== null && $row->isProtected()) {
-                    continue;
-                }
-
-                $attributes = ['value' => $value, 'source' => StaticTextSource::Ai, 'is_locked' => false, 'source_hash' => $this->catalog->hash($key, $locale)];
-                $row === null ? $this->rows->create($attributes + ['key' => $key, 'locale' => $locale]) : $this->rows->update($row, $attributes);
-                $written++;
+                $written += $this->writeAiStaticText($key, $locale, $value) ? 1 : 0;
             }
         }
 
         $this->resolver->forget($locale);
 
         return $written;
+    }
+
+    /**
+     * Save an AI translation of one static text (source "ai", unlocked) unless the row is
+     * protected (locked / manual edit). Callers flush the resolver cache when done.
+     */
+    public function writeAiStaticText(string $key, string $locale, string $value): bool
+    {
+        if (trim($value) === '') {
+            return false;
+        }
+
+        $row = $this->rows->findEntry($key, $locale);
+
+        if ($row !== null && $row->isProtected()) {
+            return false;
+        }
+
+        $attributes = ['value' => $value, 'source' => StaticTextSource::Ai, 'is_locked' => false, 'source_hash' => $this->catalog->hash($key, $locale)];
+        $row === null ? $this->rows->create($attributes + ['key' => $key, 'locale' => $locale]) : $this->rows->update($row, $attributes);
+
+        return true;
+    }
+
+    public function forgetStaticTexts(string $locale): void
+    {
+        $this->resolver->forget($locale);
     }
 
     /**

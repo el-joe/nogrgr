@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Services\StoreSettingsService;
 use App\Modules\Storefront\Enums\BannerPlacement;
@@ -36,7 +37,7 @@ use Spatie\Translatable\HasTranslations;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, StoreBannerCountry> $countryRows
  */
-class StoreBanner extends Model
+class StoreBanner extends Model implements AiTranslatable
 {
     use HasTranslations;
 
@@ -46,6 +47,16 @@ class StoreBanner extends Model
      * @var list<string>
      */
     public array $translatable = ['title', 'subtitle', 'cta_label'];
+
+    /**
+     * Fields the paid store translation run translates (decision #44).
+     *
+     * @return list<string>
+     */
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

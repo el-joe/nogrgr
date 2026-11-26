@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Storefront\Enums\FooterColumn;
 use App\Modules\Storefront\Enums\MenuLinkPlacement;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +23,7 @@ use Spatie\Translatable\HasTranslations;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-class StoreMenuLink extends Model
+class StoreMenuLink extends Model implements AiTranslatable
 {
     use HasTranslations;
 
@@ -32,6 +33,16 @@ class StoreMenuLink extends Model
      * @var list<string>
      */
     public array $translatable = ['label'];
+
+    /**
+     * Fields the paid store translation run translates (decision #44).
+     *
+     * @return list<string>
+     */
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

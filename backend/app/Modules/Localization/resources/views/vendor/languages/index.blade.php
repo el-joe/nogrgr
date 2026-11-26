@@ -15,6 +15,7 @@
     $nameOf = fn ($row) => $row['language']?->name ?: strtoupper($row['code']);
 @endphp
 <x-vendor::layout :title="__('localization::vendor_languages.title')" page="vendor-languages">
+    <script type="application/json" data-translation-live>@json($live)</script>
     <div class="grid gap-6">
         <x-ui::page-header :title="__('localization::vendor_languages.title')" :subtitle="__('localization::vendor_languages.subtitle')" :breadcrumbs="[__('navigation.admin.settings') => null, __('localization::vendor_languages.title') => null]">
             <x-slot:tabs>
@@ -81,11 +82,13 @@
                                                     <input type="hidden" name="enabled[]" value="{{ $row['code'] }}">
                                                 @endif
                                             @elseif ($run)
-                                                <x-ui::badge :tone="$run->status->tone()" dot>{{ $run->status->label() }}</x-ui::badge>
+                                                <span data-run-badge="{{ $row['code'] }}">@include('localization::vendor.languages._run-badge', ['run' => $run])</span>
                                             @endif
                                         </div>
                                         @if ($run && ! $active)
-                                            @include('localization::vendor.languages._run', ['run' => $run, 'name' => $nameOf($row)])
+                                            <div data-run-slot="{{ $row['code'] }}" data-run-active="{{ $run->status->isActive() ? '1' : '0' }}" aria-live="polite">
+                                                @include('localization::vendor.languages._run', ['run' => $run, 'name' => $nameOf($row)])
+                                            </div>
                                         @endif
                                     </li>
                                 @endforeach

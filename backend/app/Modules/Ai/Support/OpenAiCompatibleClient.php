@@ -26,7 +26,22 @@ final class OpenAiCompatibleClient
      */
     public const RETRY_BACKOFF_MS = [500, 1500];
 
+    /**
+     * Tokens reported by the provider since this client was built.
+     *
+     * @var array{prompt: int, completion: int}
+     */
+    private array $usage = ['prompt' => 0, 'completion' => 0];
+
     public function __construct(private readonly AiProviderConfig $config) {}
+
+    /**
+     * @return array{prompt: int, completion: int}
+     */
+    public function tokenUsage(): array
+    {
+        return $this->usage;
+    }
 
     public function config(): AiProviderConfig
     {
@@ -42,11 +57,16 @@ final class OpenAiCompatibleClient
     {
         $this->guardConfigured();
 
-        return $this->send(fn (PendingRequest $request): Response => $request->post('/chat/completions', [
+        $response = $this->send(fn (PendingRequest $request): Response => $request->post('/chat/completions', [
             'model' => $this->config->model,
             'messages' => $messages,
             ...$options,
         ]));
+
+        $this->usage['prompt'] += (int) data_get($response, 'usage.prompt_tokens', 0);
+        $this->usage['completion'] += (int) data_get($response, 'usage.completion_tokens', 0);
+
+        return $response;
     }
 
     /**

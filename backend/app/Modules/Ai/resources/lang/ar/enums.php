@@ -17,4 +17,22 @@ return [
         'unavailable' => 'تعذّر الوصول إلى مزوّد الذكاء الاصطناعي حاليًا. تحقّق من الرابط أو حاول لاحقًا.',
         'invalid_response' => 'أعاد مزوّد الذكاء الاصطناعي ردًا غير متوقّع. حاول مجددًا أو اختر نموذجًا آخر.',
     ],
+    'store_translation_section' => [
+        'categories' => 'التصنيفات',
+        'products' => 'المنتجات الخاصة',
+        'variants' => 'متغيرات المنتجات الخاصة',
+        'product_overrides' => 'منتجات الكتالوج',
+        'variant_overrides' => 'متغيرات منتجات الكتالوج',
+        'flash_sales' => 'العروض السريعة',
+        'banners' => 'البانرات',
+        'menu_links' => 'روابط القوائم',
+        'pages' => 'الصفحات',
+        'email_templates' => 'قوالب البريد الإلكتروني',
+        'store_settings' => 'هوية المتجر والسياسات',
+        'static_texts' => 'نصوص واجهة المتجر',
+    ],
+    'translation_item_status' => [
+        'done' => 'مترجم',
+        'failed' => 'فشل',
+    ],
 ];

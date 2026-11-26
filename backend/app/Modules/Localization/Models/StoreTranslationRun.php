@@ -25,6 +25,10 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int $failed_items
  * @property int $attempts
  * @property string|null $last_error
+ * @property string|null $provider AI provider of the last start (TranslationProvider value)
+ * @property string|null $model
+ * @property int $prompt_tokens
+ * @property int $completion_tokens
  * @property Carbon|null $queued_at
  * @property Carbon|null $started_at
  * @property Carbon|null $finished_at
@@ -43,7 +47,8 @@ class StoreTranslationRun extends Model
      */
     protected $fillable = [
         'tenant_id', 'language_id', 'language_code', 'addon_purchase_id', 'status', 'progress', 'total_items',
-        'done_items', 'failed_items', 'attempts', 'last_error', 'queued_at', 'started_at', 'finished_at',
+        'done_items', 'failed_items', 'attempts', 'last_error', 'provider', 'model', 'prompt_tokens', 'completion_tokens',
+        'queued_at', 'started_at', 'finished_at',
     ];
 
     /**
@@ -58,6 +63,8 @@ class StoreTranslationRun extends Model
             'done_items' => 'integer',
             'failed_items' => 'integer',
             'attempts' => 'integer',
+            'prompt_tokens' => 'integer',
+            'completion_tokens' => 'integer',
             'queued_at' => 'datetime',
             'started_at' => 'datetime',
             'finished_at' => 'datetime',

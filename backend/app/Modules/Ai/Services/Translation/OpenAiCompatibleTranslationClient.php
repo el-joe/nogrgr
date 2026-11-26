@@ -2,6 +2,7 @@
 
 namespace App\Modules\Ai\Services\Translation;
 
+use App\Modules\Ai\Contracts\ReportsTokenUsage;
 use App\Modules\Ai\Contracts\TranslationClient;
 use App\Modules\Ai\Enums\AiErrorType;
 use App\Modules\Ai\Enums\TranslationProvider;
@@ -14,7 +15,7 @@ use App\Modules\Ai\Support\OpenAiCompatibleClient;
  * same keys; anything else is an InvalidResponse. Texts are sent in chunks so one
  * call stays well inside the model's context.
  */
-final class OpenAiCompatibleTranslationClient implements TranslationClient
+final class OpenAiCompatibleTranslationClient implements ReportsTokenUsage, TranslationClient
 {
     public const CHUNK_SIZE = 50;
 
@@ -23,6 +24,11 @@ final class OpenAiCompatibleTranslationClient implements TranslationClient
     public function provider(): TranslationProvider
     {
         return $this->client->config()->provider;
+    }
+
+    public function tokenUsage(): array
+    {
+        return $this->client->tokenUsage();
     }
 
     public function translate(array $texts, string $from, string $to, array $glossary = []): array

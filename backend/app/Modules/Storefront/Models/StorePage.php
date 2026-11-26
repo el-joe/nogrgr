@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Storefront\Enums\StorePageType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -23,7 +24,7 @@ use Spatie\Translatable\HasTranslations;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-class StorePage extends Model
+class StorePage extends Model implements AiTranslatable
 {
     use HasTranslations;
 
@@ -33,6 +34,16 @@ class StorePage extends Model
      * @var list<string>
      */
     public array $translatable = ['title', 'body', 'meta_description'];
+
+    /**
+     * Fields the paid store translation run translates (decision #44).
+     *
+     * @return list<string>
+     */
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Notifications\Models;
 
+use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\EmailTemplateStatus;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +24,7 @@ use Spatie\Translatable\HasTranslations;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-class StoreEmailTemplate extends Model
+class StoreEmailTemplate extends Model implements AiTranslatable
 {
     use HasTranslations;
 
@@ -33,6 +34,16 @@ class StoreEmailTemplate extends Model
      * @var list<string>
      */
     public array $translatable = ['subject', 'body'];
+
+    /**
+     * Fields the paid store translation run translates (decision #44).
+     *
+     * @return list<string>
+     */
+    public function aiTranslatableFields(): array
+    {
+        return $this->translatable;
+    }
 
     /**
      * @var list<string>

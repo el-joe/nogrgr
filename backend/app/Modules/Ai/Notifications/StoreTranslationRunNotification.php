@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Modules\Ai\Notifications;
+
+use App\Modules\Notifications\Enums\NotificationCategory;
+use App\Modules\Notifications\Notifications\PanelNotification;
+
+/**
+ * Store owners: the paid AI translation of a bought language finished (language now
+ * live) or failed (retry from Settings › Languages). Vendor inbox + mail + Reverb.
+ * Texts: ai::store_translation.notifications.<event>.title / .body.
+ */
+class StoreTranslationRunNotification extends PanelNotification
+{
+    /**
+     * @param  array<string, string|int>  $parameters
+     */
+    public function __construct(
+        public readonly string $eventName,
+        public readonly array $parameters,
+        public readonly ?string $link = null,
+    ) {
+        parent::__construct();
+    }
+
+    public function category(): NotificationCategory
+    {
+        return NotificationCategory::System;
+    }
+
+    public function event(): string
+    {
+        return $this->eventName;
+    }
+
+    protected function titleKey(): string
+    {
+        return 'ai::store_translation.notifications.'.$this->eventName.'.title';
+    }
+
+    protected function bodyKey(): string
+    {
+        return 'ai::store_translation.notifications.'.$this->eventName.'.body';
+    }
+
+    /**
+     * @return array<string, string|int>
+     */
+    protected function params(): array
+    {
+        return $this->parameters;
+    }
+
+    protected function url(): ?string
+    {
+        return $this->link;
+    }
+}

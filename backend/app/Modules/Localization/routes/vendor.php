@@ -24,6 +24,7 @@ Route::middleware('auth:vendor')->prefix('settings/languages')->name('settings.l
     Route::middleware('permission:settings.languages.view,vendor')->group(function (): void {
         Route::get('/', 'index')->name('index');
         Route::get('history', 'history')->name('history');
+        Route::get('runs', 'runs')->name('runs');
     });
     Route::middleware('permission:settings.languages.manage,vendor')->group(function (): void {
         Route::put('/', 'update')->middleware('throttle:30,1')->name('update');
