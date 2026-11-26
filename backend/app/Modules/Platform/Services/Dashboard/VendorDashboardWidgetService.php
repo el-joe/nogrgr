@@ -2,6 +2,7 @@
 
 namespace App\Modules\Platform\Services\Dashboard;
 
+use App\Modules\Ai\Services\Tools\OpenAiTools;
 use App\Modules\Billing\Services\Finance\FinancePageService;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Services\Vendor\StoreCatalogService;
@@ -50,6 +51,7 @@ class VendorDashboardWidgetService extends BaseService
             'flash_sale' => $staff->can('flash-sales.manage'),
             'join_sale' => $staff->can('flash-sales.manage'),
             'join_coupon' => $staff->can('coupons.manage'),
+            'create_ad' => $staff->can('marketing.ads.manage') && OpenAiTools::configured(),
         ];
         $seesSales = $staff->can('flash-sales.view');
         $seesCoupons = $staff->can('coupons.view');

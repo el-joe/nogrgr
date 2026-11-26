@@ -103,3 +103,6 @@
         </x-slot:footer>
     </x-ui::modal>
 @endif
+
+{{-- VEN-010c AI Advertising Studio (video ad wizard) for this product. --}}
+@include('ai::vendor.ad-studio.modal', ['product' => $product ?? null])

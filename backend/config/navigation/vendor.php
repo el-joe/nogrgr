@@ -49,6 +49,7 @@ return [
             ['key' => 'marketing', 'label' => 'navigation.vendor.marketing', 'icon' => 'tp-marketing', 'children' => [
                 ['key' => 'marketing.coupons', 'label' => 'navigation.vendor.coupons', 'route' => 'vendor.marketing.coupons.index', 'permission' => 'coupons.view', 'active' => 'vendor.marketing.coupons.*'],
                 ['key' => 'marketing.flash-sales', 'label' => 'navigation.vendor.flash_sales', 'route' => 'vendor.marketing.flash-sales.index', 'permission' => 'flash-sales.view', 'active' => 'vendor.marketing.flash-sales.*'],
+                ['key' => 'marketing.ads', 'label' => 'navigation.vendor.ad_studio', 'route' => 'vendor.marketing.ads.index', 'permission' => 'marketing.ads.view', 'active' => 'vendor.marketing.ads.*'],
             ]],
             ['key' => 'analytics', 'label' => 'navigation.vendor.analytics', 'icon' => 'tp-analytics', 'route' => 'vendor.analytics', 'permission' => 'analytics.view', 'active' => 'vendor.analytics*'],
             ['key' => 'requests', 'label' => 'navigation.vendor.request_product', 'icon' => 'tp-request', 'badge' => 'vendor-requests', 'children' => [

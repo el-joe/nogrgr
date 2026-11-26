@@ -1,6 +1,7 @@
 {{--
     Header buttons of a product page opening the OpenAI product tools: VEN-010b AI price
-    finder (#product-ai-price-modal) and VEN-010c AI social posts (#product-ai-social-modal).
+    finder (#product-ai-price-modal) and VEN-010c AI social posts (#product-ai-social-modal),
+    plus "Create a video ad" (AI Advertising Studio, own permission marketing.ads.manage).
     Data (view composer): $product, $aiTools (null = hidden: OpenAI not configured or no
     manage permission). $style: 'button' (x-ui::button, imported product page) or 'cta'
     (vnd-cta, own-product form).
@@ -16,3 +17,4 @@
         <x-ui::button variant="secondary" size="lg" icon="sparkles" class="flex-1 sm:flex-none" data-overlay-open="product-ai-social-modal">{{ __('ai::tools.social.open') }}</x-ui::button>
     @endif
 @endif
+@include('ai::vendor.ad-studio.open-button', ['product' => $product ?? null, 'style' => $style])

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Ai\Http\Controllers\Vendor\AdStudioController;
 use App\Modules\Ai\Http\Controllers\Vendor\AiLogoController;
 use App\Modules\Ai\Http\Controllers\Vendor\AiTranslationController;
 use App\Modules\Ai\Http\Controllers\Vendor\ProductAiToolsController;
@@ -20,7 +21,25 @@ use Illuminate\Support\Facades\Route;
 | and vendor.catalog.own-products.ai-price|ai-social (catalog.own-products.manage).
 | VEN-034a AI logo generator: vendor.store.appearance.ai-logo.generate|apply
 | (store.appearance.manage, plan `ai_logos`).
+| VEN-010c AI Advertising Studio (4-step video ad wizard, plan `ai_ads`):
+| vendor.marketing.ads.index|data|show|download (marketing.ads.view) and
+| vendor.marketing.ads.products|store|retry|destroy (marketing.ads.manage).
 */
+
+Route::middleware('auth:vendor')->prefix('marketing/ads')->name('marketing.ads.')->controller(AdStudioController::class)->group(function (): void {
+    Route::middleware('permission:marketing.ads.view,vendor')->group(function (): void {
+        Route::get('/', 'index')->name('index');
+        Route::get('data', 'data')->name('data');
+        Route::get('{ad}', 'show')->whereNumber('ad')->name('show');
+        Route::get('{ad}/download', 'download')->whereNumber('ad')->name('download');
+    });
+    Route::middleware('permission:marketing.ads.manage,vendor')->group(function (): void {
+        Route::get('products', 'products')->name('products');
+        Route::post('/', 'store')->middleware('throttle:6,1')->name('store');
+        Route::post('{ad}/retry', 'retry')->whereNumber('ad')->middleware('throttle:6,1')->name('retry');
+        Route::delete('{ad}', 'destroy')->whereNumber('ad')->name('destroy');
+    });
+});
 
 Route::middleware(['auth:vendor', 'permission:store.appearance.manage,vendor'])->prefix('store/appearance/ai-logo')->name('store.appearance.ai-logo.')->controller(AiLogoController::class)->group(function (): void {
     Route::post('generate', 'generate')->middleware('throttle:5,1')->name('generate');

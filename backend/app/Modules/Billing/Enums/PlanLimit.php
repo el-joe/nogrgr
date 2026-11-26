@@ -21,4 +21,5 @@ enum PlanLimit: string
     case AiCalls = 'ai_calls';
     case ImageSearches = 'image_searches';
     case AiLogos = 'ai_logos';
+    case AiAds = 'ai_ads';
 }

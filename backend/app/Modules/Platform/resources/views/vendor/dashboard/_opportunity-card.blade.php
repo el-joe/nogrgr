@@ -1,7 +1,8 @@
 {{--
     One dashboard opportunity (VEN-009c, Dashboard 12:11267 card): a best-selling offered
     central product. Added → "Add to flash sale" (existing VEN-041b modal, store product
-    id); not added → "Add to store" (existing VEN-011 import). Data: $product (central
+    id) + "Create your Ad" (VEN-010c AI Advertising Studio, VEN-009e); not added → "Add to
+    store" (existing VEN-011 import). Data: $product (central
     Product), $storeProductId (int|null), $widgets.
 --}}
 @php
@@ -43,6 +44,9 @@
                 <button type="button" class="vnd-card-cta" data-added data-remote-modal="flash-sale-attach-modal" data-url="{{ vendor_route('marketing.flash-sales.available-for-product', ['product' => $storeProductId]) }}"><x-ui::icon name="zap" :size="20" />{{ __('platform::dashboard_vendor.opportunities.add_to_flash_sale') }}</button>
             @elseif (! $added && $widgets->can('import'))
                 <button type="button" class="vnd-card-cta" data-dashboard-import data-url="{{ vendor_route('catalog.products.new.import') }}" data-id="{{ $product->id }}"><x-ui::icon name="plus" :size="20" /><span data-label>{{ __('platform::dashboard_vendor.opportunities.add_to_store') }}</span></button>
+            @endif
+            @if ($added && $widgets->can('create_ad'))
+                <button type="button" class="vnd-card-cta ads-card-cta-ai mt-3" data-ad-studio-open data-product-id="{{ $storeProductId }}" data-product-name="{{ $product->name }}" data-product-image="{{ $image }}"><x-ui::icon name="ad-magic" :size="20" />{{ __('ai::ad_studio.widget.create') }}</button>
             @endif
         </div>
     </div>

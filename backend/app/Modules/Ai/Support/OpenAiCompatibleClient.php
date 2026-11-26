@@ -178,6 +178,47 @@ final class OpenAiCompatibleClient
     }
 
     /**
+     * One image generated from a reference photo (POST /images/edits, multipart; video ad
+     * scenes that must show the real product). Raw binary PNG.
+     */
+    public function editImage(string $reference, string $mime, string $prompt, string $model, string $size = '1024x1024'): string
+    {
+        $this->guardConfigured();
+
+        $response = $this->dispatch(fn (PendingRequest $request): Response => $request
+            ->attach('image', $reference, 'product.'.(explode('/', $mime)[1] ?? 'png'), ['Content-Type' => $mime])
+            ->post('/images/edits', ['model' => $model, 'prompt' => $prompt, 'n' => 1, 'size' => $size]), asJson: false)->json();
+
+        $this->usage['prompt'] += (int) data_get($response, 'usage.input_tokens', 0);
+        $this->usage['completion'] += (int) data_get($response, 'usage.output_tokens', 0);
+        $b64 = data_get($response, 'data.0.b64_json');
+        $binary = is_string($b64) ? base64_decode($b64, true) : false;
+
+        if (! is_string($binary) || $binary === '') {
+            throw new AiRequestException(AiErrorType::InvalidResponse, 'No image returned.');
+        }
+
+        return $binary;
+    }
+
+    /**
+     * Spoken audio of a text (POST /audio/speech, MP3 bytes; video ad voice-over).
+     */
+    public function speech(string $text, string $voice, string $model, ?string $instructions = null): string
+    {
+        $this->guardConfigured();
+
+        $body = array_filter(['model' => $model, 'input' => $text, 'voice' => $voice, 'response_format' => 'mp3', 'instructions' => $instructions], static fn (mixed $value): bool => $value !== null);
+        $audio = $this->dispatch(fn (PendingRequest $request): Response => $request->accept('audio/mpeg')->post('/audio/speech', $body))->body();
+
+        if ($audio === '') {
+            throw new AiRequestException(AiErrorType::InvalidResponse, 'No audio returned.');
+        }
+
+        return $audio;
+    }
+
+    /**
      * Model ids the key can use (connection test).
      *
      * @return list<string>
@@ -202,9 +243,24 @@ final class OpenAiCompatibleClient
      */
     private function send(callable $call): array
     {
+        $json = $this->dispatch($call, asJson: true)->json();
+
+        if (! is_array($json)) {
+            throw new AiRequestException(AiErrorType::InvalidResponse, 'Response is not JSON.');
+        }
+
+        return $json;
+    }
+
+    /**
+     * Sends with retries and maps failures to AiRequestException; the successful raw response.
+     *
+     * @param  callable(PendingRequest): Response  $call
+     */
+    private function dispatch(callable $call, bool $asJson = true): Response
+    {
         $request = Http::baseUrl($this->config->baseUrl)
             ->acceptJson()
-            ->asJson()
             ->timeout($this->config->timeout)
             ->retry(
                 count(self::RETRY_BACKOFF_MS) + 1,
@@ -215,6 +271,10 @@ final class OpenAiCompatibleClient
                         && $exception->response->json('error.code') !== 'insufficient_quota'),
                 throw: false,
             );
+
+        if ($asJson) {
+            $request = $request->asJson();
+        }
 
         if ($this->config->apiKey !== null) {
             $request = $request->withToken($this->config->apiKey);
@@ -235,13 +295,7 @@ final class OpenAiCompatibleClient
             );
         }
 
-        $json = $response->json();
-
-        if (! is_array($json)) {
-            throw new AiRequestException(AiErrorType::InvalidResponse, 'Response is not JSON.');
-        }
-
-        return $json;
+        return $response;
     }
 
     private function guardConfigured(): void

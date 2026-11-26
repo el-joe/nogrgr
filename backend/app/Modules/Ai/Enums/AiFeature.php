@@ -23,6 +23,7 @@ enum AiFeature: string
     case PriceFinder = 'price_finder';
     case SocialPost = 'social_post';
     case LogoGeneration = 'logo_generation';
+    case VideoAd = 'video_ad';
 
     /**
      * Monthly plan quota a call of this feature counts against (null = not metered:
@@ -34,6 +35,7 @@ enum AiFeature: string
             self::ImageSearch => PlanLimit::ImageSearches,
             self::PriceFinder, self::SocialPost => PlanLimit::AiCalls,
             self::LogoGeneration => PlanLimit::AiLogos,
+            self::VideoAd => PlanLimit::AiAds,
             default => null,
         };
     }

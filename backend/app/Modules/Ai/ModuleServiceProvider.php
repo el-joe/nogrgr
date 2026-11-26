@@ -19,15 +19,18 @@ use App\Modules\Ai\Repositories\Contracts\AdminTranslationRunRepositoryContract;
 use App\Modules\Ai\Repositories\Contracts\AiUsageLogRepositoryContract;
 use App\Modules\Ai\Repositories\Contracts\ImageEmbeddingRepositoryContract;
 use App\Modules\Ai\Repositories\Contracts\StoreTranslationItemRepositoryContract;
+use App\Modules\Ai\Repositories\Contracts\VideoAdRepositoryContract;
 use App\Modules\Ai\Repositories\Eloquent\AdminTranslationRunRepository;
 use App\Modules\Ai\Repositories\Eloquent\AiUsageLogRepository;
 use App\Modules\Ai\Repositories\Eloquent\ImageEmbeddingRepository;
 use App\Modules\Ai\Repositories\Eloquent\StoreTranslationItemRepository;
+use App\Modules\Ai\Repositories\Eloquent\VideoAdRepository;
 use App\Modules\Ai\Services\AdminTranslation\AdminTranslationRunService;
 use App\Modules\Ai\Services\Logo\LogoGeneratorService;
 use App\Modules\Ai\Services\Product\ProductAiTranslationService;
 use App\Modules\Ai\Services\Tools\OpenAiTools;
 use App\Modules\Ai\Services\Translation\TranslationClientFactory;
+use App\Modules\Ai\Services\VideoAds\VideoAdStudioService;
 use App\Modules\Ai\Support\ProductAiToolsPresenter;
 use App\Modules\Catalog\Events\ProductCreated;
 use App\Modules\Catalog\Events\ProductUpdated;
@@ -56,6 +59,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         AiUsageLogRepositoryContract::class => AiUsageLogRepository::class,
         AdminTranslationRunRepositoryContract::class => AdminTranslationRunRepository::class,
         ImageEmbeddingRepositoryContract::class => ImageEmbeddingRepository::class,
+        VideoAdRepositoryContract::class => VideoAdRepository::class,
     ];
 
     public function register(): void
@@ -121,6 +125,35 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
             ]);
         });
 
+        // VEN-010c AI Advertising Studio modal (dashboard, product pages, studio page) and the
+        // VEN-009e dashboard "Successful advertisements" widget: hidden without
+        // marketing.ads.view; the wizard needs marketing.ads.manage and an OpenAI key.
+        View::composer(['ai::vendor.ad-studio.modal', 'ai::vendor.ad-studio.dashboard-widget', 'ai::vendor.ad-studio.open-button'], static function (ViewInstance $view): void {
+            if (array_key_exists('adStudio', $view->getData())) {
+                return;
+            }
+
+            $staff = auth('vendor')->user();
+
+            if (! tenancy()->initialized || $staff === null || ! $staff->can('marketing.ads.view')) {
+                $view->with('adStudio', null);
+
+                return;
+            }
+
+            $tenantId = (int) tenant()?->getTenantKey();
+            $studio = app(VideoAdStudioService::class);
+            $canCreate = OpenAiTools::configured() && $staff->can('marketing.ads.manage');
+            $view->with('adStudio', [
+                'canCreate' => $canCreate,
+                'config' => $canCreate ? $studio->studio($tenantId) : null,
+                'options' => $canCreate ? $studio->options() : null,
+                'latest' => $view->name() === 'ai::vendor.ad-studio.dashboard-widget' ? $studio->latest(8, $canCreate) : [],
+                'library' => vendor_route('marketing.ads.index'),
+                'product' => $canCreate && ($view->getData()['product'] ?? null) instanceof StoreProduct ? $studio->productCard($view->getData()['product']->id) : null,
+            ]);
+        });
+
         // ADM-091b / ADM-092a: latest admin AI translation run of a page (pass 'kind', optional 'locale').
         View::composer('ai::admin.translation.banner', static function (ViewInstance $view): void {
             if (array_key_exists('latest', $view->getData())) {
@@ -149,6 +182,12 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
             && tenancy()->initialized
             && (string) tenant()?->getTenantKey() === $tenant
             && $user->can('settings.languages.view'), ['guards' => ['vendor']]);
+
+        // AI Advertising Studio: live ad progress for the store's staff who see the studio.
+        Broadcast::channel('tenant.{tenant}.video-ads', static fn (mixed $user, string $tenant): bool => $user instanceof VendorStaff
+            && tenancy()->initialized
+            && (string) tenant()?->getTenantKey() === $tenant
+            && $user->can('marketing.ads.view'), ['guards' => ['vendor']]);
 
         // Admin AI translation runs (ADM-091b / ADM-092a): live progress for admins who see either page.
         Gate::policy(AdminTranslationRun::class, AdminTranslationRunPolicy::class);

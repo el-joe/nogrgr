@@ -14,6 +14,7 @@ return [
         'ai_calls' => 'AI calls / month',
         'image_searches' => 'Image searches / month',
         'ai_logos' => 'AI logos',
+        'ai_ads' => 'AI video ads / month',
     ],
     'plan_feature' => [
         'ai_translation' => 'AI translation add-on included',

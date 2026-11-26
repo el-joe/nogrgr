@@ -179,6 +179,8 @@ final class PermissionCatalog
                 'support.view', 'support.manage',
                 // P9: partner program (VEN-055 / 055a)
                 'partner.view', 'partner.manage',
+                // P10: AI Advertising Studio (VEN-010c / VEN-009e)
+                'marketing.ads.view', 'marketing.ads.manage',
             ],
         ];
     }

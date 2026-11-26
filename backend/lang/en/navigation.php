@@ -139,6 +139,7 @@ return [
         'marketing' => 'Ads & Marketing',
         'coupons' => 'Coupons',
         'flash_sales' => 'Flash sales',
+        'ad_studio' => 'AI Advertising Studio',
         'purchases' => 'Purchases',
         'settlements' => 'Settlements',
         'payouts' => 'Payouts',

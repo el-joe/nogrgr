@@ -88,6 +88,7 @@ return [
         'support.tickets' => 'Support tickets',
         'support' => 'Support',
         'partner' => 'Partner program',
+        'marketing.ads' => 'AI Advertising Studio',
         'dashboard' => 'Dashboard',
         'horizon' => 'Queue monitor (Horizon)',
         'tenants' => 'Stores (sign in as vendor)',

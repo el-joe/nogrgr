@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 /**
  * Runner of every OpenAI-only AI tool (decision #43: image search, price finder, social
- * posts, logo generator): checks the store's monthly plan quota, builds an OpenAI client
+ * posts, logo generator, video ads): checks the store's monthly plan quota, builds an OpenAI client
  * from the DB settings (Admin › Integrations › AI), runs the call and writes exactly one
  * AI usage log row for it (the row the quota counts).
  */
@@ -93,6 +93,13 @@ class OpenAiTools
         $model = config('ai.providers.openai.image_model');
 
         return is_string($model) && $model !== '' ? $model : 'gpt-image-1';
+    }
+
+    public static function ttsModel(): string
+    {
+        $model = config('ai.providers.openai.tts_model');
+
+        return is_string($model) && $model !== '' ? $model : 'gpt-4o-mini-tts';
     }
 
     /**

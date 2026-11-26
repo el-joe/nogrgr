@@ -3,7 +3,8 @@
     store / View store), the store hero with "Store power" = setup progress and the
     readiness chips around the ring, the setup progress widget (VEN-008) and store status
     card, then the permission-aware widgets (VendorDashboardWidgetService): pay the
-    platform (009a), opportunities + flash-sale modal (009c), new-in products (009d), live
+    platform (009a), opportunities + flash-sale modal (009c), new-in products (009d), AI ads
+    "Successful advertisements" + AI Advertising Studio (009e / 010c), live
     store preview by country (009f) and the partner banner (009b).
 --}}
 @use('App\Modules\Platform\Enums\SetupStep')
@@ -114,6 +115,7 @@
     @include('platform::vendor.dashboard._pay-alert', ['owed' => $widgets->owed, 'failed' => $widgets->failed('owed')])
     @include('platform::vendor.dashboard._opportunities')
     @include('platform::vendor.dashboard._new-in')
+    @include('ai::vendor.ad-studio.dashboard-widget')
     @include('platform::vendor.dashboard._storefront')
 
     @include('affiliates::vendor._partner')
