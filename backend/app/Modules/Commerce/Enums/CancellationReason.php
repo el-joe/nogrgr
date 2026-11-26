@@ -53,6 +53,32 @@ enum CancellationReason: string
     }
 
     /**
+     * Reasons a customer picks when cancelling from the account / app ("other" needs a note).
+     *
+     * @return array<string, string>
+     */
+    public static function customerOptions(): array
+    {
+        $options = [];
+
+        foreach (self::cases() as $case) {
+            if (! $case->forStaff() || $case === self::Other) {
+                $options[$case->value] = $case->label();
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function customerValues(): array
+    {
+        return array_keys(self::customerOptions());
+    }
+
+    /**
      * @return list<string>
      */
     public static function staffValues(): array

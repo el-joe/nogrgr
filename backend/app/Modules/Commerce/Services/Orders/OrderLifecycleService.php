@@ -3,6 +3,7 @@
 namespace App\Modules\Commerce\Services\Orders;
 
 use App\Modules\Commerce\Enums\ActorType;
+use App\Modules\Commerce\Enums\CancellationReason;
 use App\Modules\Commerce\Enums\OrderStatus;
 use App\Modules\Commerce\Enums\PaymentStatus;
 use App\Modules\Commerce\Events\OrderCancelled;
@@ -111,9 +112,10 @@ class OrderLifecycleService extends BaseService
     }
 
     /**
-     * Customer cancellation from the account (before shipping).
+     * Customer cancellation from the account / app (before shipping), with an optional
+     * reason code of the customer list (stored on the order) and note.
      */
-    public function cancelByCustomer(Order $order, int $customerId, ?string $reason = null): Order
+    public function cancelByCustomer(Order $order, int $customerId, ?string $reason = null, ?CancellationReason $code = null): Order
     {
         if ($order->customer_id !== $customerId) {
             throw CommerceException::rule('order_not_found', 404);
@@ -123,7 +125,12 @@ class OrderLifecycleService extends BaseService
             throw CommerceException::rule('not_cancellable');
         }
 
-        return $this->cancel($order, ActorType::Customer, $customerId, $reason);
+        if ($code !== null) {
+            $order->forceFill(['cancel_reason_code' => $code]);
+            $reason = trim($code->label().($reason !== null && $reason !== '' ? ' — '.$reason : ''));
+        }
+
+        return $this->cancel($order, ActorType::Customer, $customerId, $reason !== null ? mb_substr($reason, 0, 500) : null);
     }
 
     /**

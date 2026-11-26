@@ -166,6 +166,34 @@ class StorefrontContext
     }
 
     /**
+     * JSON API request (Store API catalog, mobile app): shopping country from `X-Country` /
+     * `X-Country-Code` (ISO2, only a country the store sells in) and display currency from
+     * `X-Currency` (only one the store offers). Missing / unknown values fall back to the
+     * normal resolution (customer default address → visitor → store default).
+     */
+    public function useApiPreferences(?string $countryIso2, ?string $currencyCode): void
+    {
+        $this->countryResolved = false;
+        $this->currencyResolved = false;
+
+        if (is_string($countryIso2) && preg_match('/^[A-Za-z]{2}$/', $countryIso2) === 1 && ($country = $this->countries->findByIso2(strtoupper($countryIso2))) !== null) {
+            $this->country = $country;
+            $this->countryResolved = true;
+        }
+
+        if (is_string($currencyCode) && preg_match('/^[A-Za-z]{3}$/', $currencyCode) === 1) {
+            $currency = $this->currencies->findByCode(strtoupper($currencyCode));
+
+            if ($currency !== null && ($currency->isBase() || ($currency->is_active && $this->storeCurrencies->isAvailable($currency)))) {
+                $this->currency = $currency->isBase() ? null : $currency;
+                $this->currencyResolved = true;
+            }
+        }
+
+        $this->money->useDisplayCurrency($this->currency()?->code);
+    }
+
+    /**
      * Data island for the storefront JS (`<script type="application/json" id="sf-context">`).
      *
      * @return array<string, mixed>

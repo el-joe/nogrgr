@@ -2,6 +2,7 @@
 
 return [
     'errors' => [
+        'reorder_unavailable' => 'None of the items of this order can be added to the cart now.',
         'order_not_found' => 'Order not found.',
         'not_cancellable' => 'This order can no longer be cancelled.',
         'not_payable' => 'This order cannot be paid.',
@@ -27,6 +28,8 @@ return [
         'gateway_uses_platform' => 'This gateway uses the platform account; there is nothing to check.',
     ],
     'messages' => [
+        'reordered' => 'The available items were added to your cart.',
+        'invoice_ready' => 'Invoice link created.',
         'cancelled' => 'Your order has been cancelled.',
     ],
     'notes' => [

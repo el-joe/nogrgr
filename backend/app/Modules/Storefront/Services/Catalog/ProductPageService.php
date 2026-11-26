@@ -112,7 +112,7 @@ class ProductPageService
 
     /**
      * @param  array<int, array{price: int, regular: int, compare: int|null, stock: int|null}>  $prices
-     * @return list<array{id: int, label: string, options: array<int, int>, price: string, compare: string|null, discount: int|null, price_minor: int, in_stock: bool, image: string|null}>
+     * @return list<array{id: int, label: string, options: array<int, int>, price: string, compare: string|null, discount: int|null, price_minor: int, compare_minor: int|null, stock: int|null, in_stock: bool, image: string|null}>
      */
     private function variants(StoreProductView $view, array $prices): array
     {
@@ -149,7 +149,7 @@ class ProductPageService
     /**
      * @param  array<int, int>  $options
      * @param  array{price: int, regular: int, compare: int|null, stock: int|null}  $price
-     * @return array{id: int, label: string, options: array<int, int>, price: string, compare: string|null, discount: int|null, price_minor: int, in_stock: bool, image: string|null}
+     * @return array{id: int, label: string, options: array<int, int>, price: string, compare: string|null, discount: int|null, price_minor: int, compare_minor: int|null, stock: int|null, in_stock: bool, image: string|null}
      */
     private function variantRow(int $id, string $label, array $options, array $price, ?string $image): array
     {
@@ -163,6 +163,8 @@ class ProductPageService
             'compare' => $compare !== null ? $this->context->formatMoney($compare) : null,
             'discount' => $compare !== null ? (int) round(($compare - $price['price']) / $compare * 100) : null,
             'price_minor' => $price['price'],
+            'compare_minor' => $compare,
+            'stock' => $price['stock'],
             'in_stock' => $price['stock'] === null || $price['stock'] > 0,
             'image' => $image,
         ];

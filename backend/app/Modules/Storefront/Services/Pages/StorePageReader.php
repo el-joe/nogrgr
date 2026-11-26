@@ -21,6 +21,16 @@ class StorePageReader
     }
 
     /**
+     * Every published page in the store order (Store API page list).
+     *
+     * @return list<StorePage>
+     */
+    public function published(): array
+    {
+        return $this->pages->published()->values()->all();
+    }
+
+    /**
      * @return list<array{title: string, url: string, group: string}>
      */
     public function footerLinks(): array

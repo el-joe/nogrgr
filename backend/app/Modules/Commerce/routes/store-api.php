@@ -29,8 +29,11 @@ Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::cla
 
 Route::prefix('orders')->name('orders.')->controller(OrderController::class)->group(function (): void {
     Route::get('/', 'index')->name('index');
+    Route::get('cancellation-reasons', 'cancellationReasons')->name('cancellation-reasons');
     Route::get('{order}', 'show')->whereUuid('order')->name('show');
     Route::post('{order}/cancel', 'cancel')->whereUuid('order')->name('cancel');
+    Route::post('{order}/reorder', 'reorder')->whereUuid('order')->name('reorder');
+    Route::get('{order}/invoice', 'invoice')->whereUuid('order')->name('invoice');
 });
 
 Route::prefix('payments')->name('payments.')->controller(PaymentController::class)->group(function (): void {

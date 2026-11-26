@@ -14,7 +14,7 @@ final readonly class ProductPageData
      * @param  list<string>  $images
      * @param  list<Category>  $breadcrumbs
      * @param  list<array{id: int, name: string, swatch: bool, options: list<array{id: int, name: string, swatch: string|null}>}>  $attributes
-     * @param  list<array{id: int, label: string, options: array<int, int>, price: string, compare: string|null, discount: int|null, price_minor: int, in_stock: bool, image: string|null}>  $variants
+     * @param  list<array{id: int, label: string, options: array<int, int>, price: string, compare: string|null, discount: int|null, price_minor: int, compare_minor: int|null, stock: int|null, in_stock: bool, image: string|null}>  $variants
      * @param  array{label: string, min_date: string, max_date: string, company: string|null, cutoff_minutes: int|null, location: string|null}|null  $delivery
      * @param  list<array{day: int, percentage: int, date: string}>  $deliveryDays
      * @param  array{average: float, count: int, distribution: array<int, int>}  $reviews

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Http\Controllers\Storefront\Account;
 
+use App\Modules\Commerce\Services\Orders\CustomerOrderService;
 use App\Modules\Storefront\Http\Controllers\Storefront\Concerns\ServesCustomerPages;
 use App\Modules\Storefront\Services\Account\AccountOrderPages;
 use App\Modules\Storefront\Support\StorefrontView;
@@ -18,7 +19,10 @@ class OrderController extends Controller
 {
     use ServesCustomerPages;
 
-    public function __construct(private readonly AccountOrderPages $pages) {}
+    public function __construct(
+        private readonly AccountOrderPages $pages,
+        private readonly CustomerOrderService $orders,
+    ) {}
 
     public function index(Request $request): View
     {
@@ -55,6 +59,22 @@ class OrderController extends Controller
             'panel' => 'tracking',
             'customer' => $this->customer(),
             'seo' => $this->privateSeo(__st('orders.tracking_title', ['number' => $detail['number']])),
+        ]);
+    }
+
+    /**
+     * Printable invoice from a temporary signed link (Store API `orders/{order}/invoice`):
+     * the app opens it without a session; the signature covers the order.
+     */
+    public function signedInvoice(Request $request, string $order): View
+    {
+        $customer = $this->orders->ownerOf($order);
+        abort_if($customer === null, 404);
+        $detail = $this->orNotFound(fn (): array => $this->pages->detail($customer, $request, $order));
+
+        return StorefrontView::make('pages.orders.invoice', [
+            'detail' => $detail,
+            'seo' => $this->privateSeo(__st('orders.invoice_title', ['number' => $detail['number']])),
         ]);
     }
 
