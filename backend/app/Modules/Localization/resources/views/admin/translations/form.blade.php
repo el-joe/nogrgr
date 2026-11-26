@@ -25,8 +25,15 @@
     @if ($file->isStorefront())
         <p class="text-xs text-ink-secondary">{{ __('localization::translations.hints.storefront') }}</p>
     @endif
+    @php($canSuggest = $editing && ! ($entry['locked'] ?? false) && filled($entry['values']['en'] ?? null))
     @foreach ($locales as $code => $name)
         @php($disk = $entry['disk'][$code] ?? null)
+        @if ($canSuggest && $code !== 'en')
+            {{-- ADM-092a one-key AI suggestion (custom provider): fills the textarea below, nothing is saved. --}}
+            <div class="-mb-3 flex justify-end">
+                <x-ui::button size="sm" variant="ghost" icon="sparkles" data-ai-suggest :data-url="route('admin.localization.ai-translation.static-keys.suggest')" :data-file="$file->id" :data-key="$entry['key']" :data-locale="$code" :data-suggested="__('ai::admin_translation.actions.suggested')" :aria-label="__('ai::admin_translation.actions.suggest_label', ['language' => $name])">{{ __('ai::admin_translation.actions.suggest') }}</x-ui::button>
+            </div>
+        @endif
         <x-ui::textarea
             :name="'values['.$code.']'"
             :label="__('localization::translations.fields.value_in', ['language' => $name.' ('.$code.')'])"

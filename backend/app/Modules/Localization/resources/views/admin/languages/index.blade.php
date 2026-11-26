@@ -2,12 +2,16 @@
     Admin › Localization › Languages (ADM-091, Figma 79:81928): Active / All ISO tabs,
     server-side table with search + direction / status filters, active switch,
     edit and delete. Arabic and English are locked (always active and free).
+    ADM-091b: row action "Translate catalogue with AI" (active languages) starts an admin
+    AI run; its progress modal (live, retry / stop) and the latest-run banner come from
+    the Ai module (resources/js/panels/admin/ai-translation-runs.js).
 --}}
 @php
     $canManage = (bool) auth('admin')->user()?->can('localization.languages.manage');
     $tableUrl = route('admin.localization.languages.data', $tab === 'all' ? [] : ['status' => 'active']);
 @endphp
 <x-layouts.panel surface="admin" :title="__('localization::admin.languages.title')">
+    <div data-page="admin-languages" class="grid gap-6">
     <x-ui::page-header
         :title="__('localization::admin.languages.title')"
         :subtitle="__('localization::admin.languages.subtitle', ['count' => $counts['all']])"
@@ -26,6 +30,8 @@
             ])" />
         </x-slot:tabs>
     </x-ui::page-header>
+
+    @include('ai::admin.translation.banner', ['kind' => \App\Modules\Ai\Enums\AdminTranslationKind::Catalog])
 
     <x-ui::datatable
         id="languages"
@@ -57,4 +63,7 @@
             </x-slot:empty>
         @endif
     </x-ui::datatable>
+    </div>
+
+    @include('ai::admin.translation.progress-modal')
 </x-layouts.panel>

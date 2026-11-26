@@ -22,6 +22,7 @@ const pages = {
     'admin-branches': () => import('./branches.js'),
     'admin-shipping': () => import('./shipping.js'),
     'admin-translations': () => import('./translations.js'),
+    'admin-languages': () => import('./ai-translation-runs.js'),
     'admin-requests': () => import('./requests.js'),
     'admin-catalog-import': () => import('./catalog-import.js'),
     'admin-orders': () => import('./orders.js'),

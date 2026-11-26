@@ -11,7 +11,8 @@ use Illuminate\Foundation\Queue\Queueable;
 /**
  * Vendor "Translate missing with AI" (VEN-075): fills the store's empty static texts of
  * one language with the custom translation provider (decision #44 a). Locked and
- * manually edited rows are never touched.
+ * manually edited rows are never touched. Tokens are logged to the AI usage log (feature
+ * static_key_translation, the store as tenant).
  */
 class TranslateMissingStaticTexts implements ShouldBeUnique, ShouldQueue
 {

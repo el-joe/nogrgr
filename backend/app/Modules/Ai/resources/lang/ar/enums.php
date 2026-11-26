@@ -43,4 +43,23 @@ return [
         'static_key_translation' => 'ترجمة النصوص الثابتة (الإدارة)',
         'store_text_suggestion' => 'اقتراحات نصوص المتجر',
     ],
+    'admin_translation_kind' => [
+        'catalog' => 'الكتالوج',
+        'static_keys' => 'النصوص الثابتة',
+    ],
+    'admin_translation_run_status' => [
+        'queued' => 'في الانتظار',
+        'translating' => 'جارٍ الترجمة',
+        'completed' => 'مكتملة',
+        'failed' => 'فشلت',
+        'cancelled' => 'متوقفة',
+    ],
+    'catalog_translation_section' => [
+        'products' => 'المنتجات',
+        'categories' => 'التصنيفات',
+        'attributes' => 'الخصائص والخيارات',
+        'badges_labels' => 'الشارات والملصقات',
+        'promotions' => 'العروض السريعة والبانرات',
+        'branches' => 'الفروع',
+    ],
 ];

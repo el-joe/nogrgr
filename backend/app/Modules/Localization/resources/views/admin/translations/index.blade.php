@@ -3,7 +3,9 @@
     (ADM-093, the "Locked" tab + Lock column). File + language pickers, tabs All / Missing
     AR / Missing <lang> / Locked, server-side table (key, English, language value, lock,
     view / edit / revert), JSON export, add key and create file. Saves are central
-    overrides (deploy-safe); the AI translate modal (ADM-092a) arrives with P10.
+    overrides (deploy-safe). ADM-092a: "Translate with AI" (#ai-keys-modal, scope this
+    file / all missing keys) starts an admin AI run with a live progress modal
+    (retry / stop); the edit modal suggests one key (Ai module).
 --}}
 @php
     /** @var \App\Modules\Localization\Support\TranslationFile $file */
@@ -31,6 +33,9 @@
         >
             <x-slot:actions>
                 <x-ui::button variant="secondary" icon="download" :href="route('admin.localization.translations.export', $query())">{{ __('localization::translations.export') }}</x-ui::button>
+                @if ($canManage && $locale !== 'en')
+                    <x-ui::button variant="secondary" icon="sparkles" data-remote-modal="ai-keys-modal" :data-url="route('admin.localization.ai-translation.static-keys.create', ['file' => $file->id, 'locale' => $locale])">{{ __('ai::admin_translation.actions.translate_keys') }}</x-ui::button>
+                @endif
                 @if ($canManage)
                     <x-ui::button variant="secondary" icon="file" data-remote-modal="translation-modal" :data-url="route('admin.localization.translations.files.create')">{{ __('localization::translations.new_file') }}</x-ui::button>
                     <x-ui::button icon="plus" data-remote-modal="translation-modal" :data-url="route('admin.localization.translations.create', ['file' => $file->id])">{{ __('localization::translations.add_key') }}</x-ui::button>
@@ -49,6 +54,8 @@
             <x-ui::select name="locale" :label="__('localization::translations.language')" :options="$locales" :selected="$locale" class="w-full sm:w-56" />
             <x-ui::button type="submit" variant="secondary" data-scope-submit>{{ __('localization::translations.apply') }}</x-ui::button>
         </form>
+
+        @include('ai::admin.translation.banner', ['kind' => \App\Modules\Ai\Enums\AdminTranslationKind::StaticKeys])
 
         @if ($file->isStorefront())
             <div class="flex items-start gap-2 rounded-control bg-info-bg p-3 text-sm text-ink" role="note">
@@ -91,6 +98,18 @@
             <x-ui::button type="submit" form="translation-form" icon="check" data-remote-submit>{{ __('localization::translations.save') }}</x-ui::button>
         </x-slot:footer>
     </x-ui::modal>
+
+    @if ($canManage && $locale !== 'en')
+        <x-ui::modal id="ai-keys-modal" :title="__('ai::admin_translation.keys.title')" size="sm">
+            @include('identity::admin._remote-modal-states', ['error' => __('localization::translations.load_error')])
+            <x-slot:footer>
+                <x-ui::button variant="secondary" data-overlay-close>{{ __('ui.cancel') }}</x-ui::button>
+                <x-ui::button type="submit" form="ai-keys-form" icon="sparkles" data-remote-submit>{{ __('ai::admin_translation.actions.translate_keys') }}</x-ui::button>
+            </x-slot:footer>
+        </x-ui::modal>
+    @endif
+
+    @include('ai::admin.translation.progress-modal')
 
     <x-ui::modal id="translation-view-modal" :title="__('localization::translations.title')" size="lg">
         @include('identity::admin._remote-modal-states', ['error' => __('localization::translations.load_error')])

@@ -163,10 +163,14 @@ class StoreTranslationService
         $missing = $this->staticRows($locale, 'missing')
             ->reject(fn (array $row): bool => $row['platform_locked'] || $row['is_locked'] || $row['english'] === null || $row['english'] === '');
         $written = 0;
+        $client = $this->client();
+        $usage = app(AiUsageRecorder::class);
+        $context = new AiUsageContext(AiFeature::StaticKeyTranslation, null, 'store-static:'.$locale);
 
         foreach ($missing->chunk(self::CHUNK) as $chunk) {
             $sources = $chunk->mapWithKeys(fn (array $row): array => [$row['key'] => (string) $row['english']])->all();
-            $translated = $this->client()->translate($sources, StaticTextCatalog::FALLBACK, $locale);
+            // Tokens go to the AI usage log of the store (Admin › Reports › AI usage).
+            $translated = $usage->measure($client, $context, static fn (): array => $client->translate($sources, StaticTextCatalog::FALLBACK, $locale));
 
             foreach ($translated as $key => $value) {
                 $key = (string) $key;

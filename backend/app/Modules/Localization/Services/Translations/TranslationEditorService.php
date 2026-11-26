@@ -162,6 +162,46 @@ class TranslationEditorService extends BaseService
         $this->write($file, $data->key, $data->values, $adminId);
     }
 
+    /**
+     * Bulk fill of one file in one locale (admin AI translation, ADM-092a): only keys
+     * that are still empty and not locked are written; keys that got a value meanwhile
+     * are kept. Caches are flushed and stores synced once for the whole set.
+     *
+     * @param  array<string, string>  $values  key => value
+     * @return int keys written
+     */
+    public function putMany(string $fileId, string $locale, array $values, ?int $adminId = null): int
+    {
+        $file = $this->findFile($fileId);
+
+        if ($values === [] || ! array_key_exists($locale, $this->locales())) {
+            return 0;
+        }
+
+        $current = array_replace($this->registry->fileLines($file, $locale), $this->overrides->mapForFile($file->id)[$locale] ?? []);
+        $written = 0;
+
+        $this->transaction(function () use ($file, $locale, $values, $adminId, $current, &$written): void {
+            foreach ($values as $key => $value) {
+                $key = (string) $key;
+                $existing = $current[$key] ?? null;
+
+                if (trim($value) === '' || $this->locks->isLocked($file->id, $key) || (is_string($existing) && trim($existing) !== '')) {
+                    continue;
+                }
+
+                $this->overrides->put($file->id, $key, $locale, $value, $adminId);
+                $written++;
+            }
+        }, $this->overrides->query()->getModel()->getConnectionName());
+
+        if ($written > 0) {
+            $this->flushed($file);
+        }
+
+        return $written;
+    }
+
     public function addKey(TranslationValuesData $data, ?int $adminId = null): void
     {
         $file = $this->findFile($data->file);

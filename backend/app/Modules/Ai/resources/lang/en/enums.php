@@ -43,4 +43,23 @@ return [
         'static_key_translation' => 'Static texts translation (admin)',
         'store_text_suggestion' => 'Store text suggestions',
     ],
+    'admin_translation_kind' => [
+        'catalog' => 'Catalogue',
+        'static_keys' => 'Static keys',
+    ],
+    'admin_translation_run_status' => [
+        'queued' => 'Queued',
+        'translating' => 'Translating',
+        'completed' => 'Completed',
+        'failed' => 'Failed',
+        'cancelled' => 'Stopped',
+    ],
+    'catalog_translation_section' => [
+        'products' => 'Products',
+        'categories' => 'Categories',
+        'attributes' => 'Attributes & options',
+        'badges_labels' => 'Badges & labels',
+        'promotions' => 'Flash sales & banners',
+        'branches' => 'Branches',
+    ],
 ];
