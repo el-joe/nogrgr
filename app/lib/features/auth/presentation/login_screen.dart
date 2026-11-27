@@ -9,9 +9,10 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/app_widgets.dart';
 import '../data/session_controller.dart';
 import 'auth_form.dart';
+import 'social_buttons.dart';
 
-/// APP-020 sign in (Figma 149:104141). Google / Apple buttons are not shown: the API has
-/// no customer social sign-in yet (decision #104 c), and the app never shows a dead button.
+/// APP-020 sign in (Figma 149:104141). Google / Apple buttons appear only for the
+/// providers the store configured and this build can run (decision #108 e).
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -117,6 +118,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           loading: _busy,
           onPressed: _submit,
         ),
+        const SocialSignInButtons(),
         AppLink(
           label: texts.t('app.auth.create_link'),
           align: TextAlign.center,

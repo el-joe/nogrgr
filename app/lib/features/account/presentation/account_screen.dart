@@ -8,11 +8,13 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/app_widgets.dart';
 import '../../auth/data/session_controller.dart';
 import '../../bootstrap/data/startup_controller.dart';
+import '../../notifications/data/notifications_repository.dart';
+import '../../orders/data/orders_repository.dart';
+import '../../support/data/support_repository.dart';
 import '../../wishlist/data/wishlist_repository.dart';
 
-/// APP-024 account menu (Figma 149:104308) and guest state (149:104483). Rows are
-/// listed as their screens ship (orders, returns, addresses, notifications, help and
-/// policies arrive with the batch-2 endpoints): no row leads nowhere.
+/// APP-024 account menu (Figma 149:104308) and guest state (149:104483). Rows show
+/// their counts when known (orders, open tickets, unread notifications, wishlist).
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
 
@@ -49,6 +51,10 @@ class AccountScreen extends ConsumerWidget {
     final language = bootstrap?.languages.where((l) => l.code == ref.watch(localeCodeProvider)).firstOrNull?.name;
     final settingsValue = [?language, ?prefs.currency].join(' · ');
     final wishlistCount = session.signedIn ? ref.watch(wishlistProvider).value?.ids.length : null;
+    final orderCount = session.signedIn ? ref.watch(ordersProvider(allOrders)).value?.total : null;
+    final ticketCount = session.signedIn ? ref.watch(ticketsProvider('active')).value?.total : null;
+    final unread = session.signedIn ? ref.watch(unreadCountProvider).value : null;
+    String? count(int? value) => value == null || value == 0 ? null : '$value';
 
     return Scaffold(
       body: SafeArea(
@@ -111,10 +117,11 @@ class AccountScreen extends ConsumerWidget {
                     ),
                   const SizedBox(height: 16),
                   if (customer != null) ...[
-                    AccountRow(key: const ValueKey('account-orders'), icon: 'orders', label: texts.t('orders.title'), onTap: () => context.push(Routes.orders)),
+                    AccountRow(key: const ValueKey('account-orders'), icon: 'orders', label: texts.t('orders.title'), value: count(orderCount), onTap: () => context.push(Routes.orders)),
                     AccountRow(key: const ValueKey('account-returns'), icon: 'return', label: texts.t('returns.title'), onTap: () => context.push(Routes.returns)),
                     AccountRow(key: const ValueKey('account-addresses'), icon: 'map', label: texts.t('app.addresses.title'), onTap: () => context.push(Routes.addresses)),
-                    AccountRow(key: const ValueKey('account-inbox'), icon: 'bell', label: texts.t('app.inbox.title'), onTap: () => context.push(Routes.notifications)),
+                    AccountRow(key: const ValueKey('account-support'), icon: 'lifebuoy', label: texts.t('support.tickets.title'), value: count(ticketCount), onTap: () => context.push(Routes.support)),
+                    AccountRow(key: const ValueKey('account-inbox'), icon: 'bell', label: texts.t('app.inbox.title'), value: count(unread), onTap: () => context.push(Routes.notifications)),
                     AccountRow(key: const ValueKey('account-profile'), icon: 'user', label: texts.t('app.account.edit_profile'), onTap: () => context.push(Routes.profile)),
                     AccountRow(key: const ValueKey('account-password'), icon: 'lock', label: texts.t('app.account.change_password'), onTap: () => context.push(Routes.password)),
                   ],
@@ -122,7 +129,7 @@ class AccountScreen extends ConsumerWidget {
                     AccountRow(
                       icon: 'star',
                       label: texts.t('app.account.wishlist'),
-                      value: wishlistCount == null || wishlistCount == 0 ? null : '$wishlistCount',
+                      value: count(wishlistCount),
                       onTap: () => context.go(Routes.wishlist),
                     ),
                   AccountRow(

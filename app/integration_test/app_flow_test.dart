@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'package:app/core/auth/token_storage.dart';
+import 'package:app/core/push/push_service.dart';
+
+import '../test/features/support_tickets_test.dart' show ticketsHandler;
 import '../test/support/fake_api.dart';
 import '../test/support/harness.dart';
 
@@ -26,6 +30,8 @@ void main() {
     await tester.tap(find.text('Continue'));
     await Harness.settle(tester);
 
+    // Setup lands on Home (batch 2); sign in from the Account tab.
+    await Harness.openTab(tester, 'Account');
     await tester.tap(find.byKey(const ValueKey('account-sign-in')));
     await Harness.settle(tester);
     await tester.enterText(find.byKey(const ValueKey('login-email')), 'fatma@example.com');
@@ -39,5 +45,21 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Log out'));
     await Harness.settle(tester);
     expect(find.text('Sign in for the best experience'), findsOneWidget);
+  });
+
+  testWidgets('support push opens the ticket; the customer replies', (tester) async {
+    final harness = Harness(prefs: Harness.returning(), tokens: TokenPair.fromJson(tokensJson()), handler: ticketsHandler);
+    await harness.pump(tester);
+
+    harness.container.read(pushServiceProvider).emitOpened(const PushMessage(data: {'event': 'ticket_replied', 'ticket_id': '41'}));
+    await Harness.settle(tester);
+    expect(find.text('Where is my parcel?'), findsWidgets);
+
+    await tester.scrollUntilVisible(find.byKey(const ValueKey('ticket-reply')), 200, scrollable: find.byType(Scrollable).first);
+    await tester.enterText(find.byKey(const ValueKey('ticket-reply')), 'Thank you');
+    await tester.scrollUntilVisible(find.byKey(const ValueKey('ticket-reply-send')), 200, scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.byKey(const ValueKey('ticket-reply-send')));
+    await Harness.settle(tester);
+    expect(harness.adapter.to('store/support/tickets/41/messages'), hasLength(1));
   });
 }

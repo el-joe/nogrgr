@@ -6,6 +6,7 @@ import '../core/providers.dart';
 import '../core/theme/app_theme.dart';
 import '../core/theme/app_tokens.dart';
 import '../features/bootstrap/data/startup_controller.dart';
+import '../features/notifications/presentation/push_listener.dart';
 import 'router.dart';
 
 /// Root widget: theme from the store branding (family + brand colour, until bootstrap
@@ -38,7 +39,7 @@ class NogrgrApp extends ConsumerWidget {
       darkTheme: AppTheme.build(family: family, brightness: Brightness.dark, rtl: rtl, primary: primary),
       builder: (context, child) => Directionality(
         textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
-        child: child ?? const SizedBox.shrink(),
+        child: PushListener(child: child ?? const SizedBox.shrink()),
       ),
     );
   }

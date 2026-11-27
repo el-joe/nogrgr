@@ -26,6 +26,9 @@ tenants/<key>/
 | `default_locale` | `en` / `ar` before the store's default is known |
 | `version`, `build_number` | build name / number |
 | `icon`, `icon_foreground`, `splash_image` | file names inside the folder |
+| `google_server_client_id` | optional; Google "Web application" OAuth client id (`….apps.googleusercontent.com`). Android Google sign-in asks for an id_token with this audience |
+| `google_ios_client_id` | optional; Google iOS OAuth client id. Its reversed form becomes the iOS URL scheme (`GOOGLE_REVERSED_CLIENT_ID` in `Tenant.xcconfig`) |
+| `apple_sign_in` | optional `true` / `false`; the iOS build carries the "Sign in with Apple" capability (`CODE_SIGN_ENTITLEMENTS=Runner/Runner.entitlements`) |
 
 Nothing in `tenant.json` is secret. Signing keys and Firebase options stay on the build machine.
 
@@ -51,6 +54,22 @@ Icons and the native splash are generated into `android/app/src/main/res` and
 `ios/Runner/Assets.xcassets`; after building another store, rebuild `demo` (or discard those
 changes) before committing.
 
+## Google / Apple sign-in (shoppers)
+
+The buttons on sign in / sign up appear only when **both** hold: the store lists the provider in
+`GET bootstrap` → `auth.social_providers` (Admin › Integrations › Google / Apple, decision #108) and
+this build can run the native SDK:
+
+* Google on Android: `google_server_client_id` set; the Android OAuth client (package name +
+  signing SHA-1 of this build) must exist in the same Google Cloud project.
+* Google on iOS: `google_ios_client_id` set (the bundle id must match that client).
+* Apple: iOS only, `apple_sign_in: true`, the App ID has the capability enabled.
+
+Every id the app verifies against must also be listed in Admin › Integrations › Google / Apple ›
+*Shopper app client IDs / bundle IDs* (the server checks the id_token audience: the Google server
+client id / iOS client id, the iOS bundle id for Apple). These are public client ids, never secrets;
+no client secret is ever shipped in the app.
+
 ## Push (FCM)
 
 Push is optional per build. Without `firebase.env` the app never initialises Firebase and device
@@ -58,3 +77,7 @@ registration is a no-op. With it, the client options are passed as dart-defines
 (`FIREBASE_APP_ID`, `FIREBASE_API_KEY`, `FIREBASE_PROJECT_ID`, `FIREBASE_SENDER_ID`); no
 `google-services.json` / `GoogleService-Info.plist` is used or committed. The server side (service
 account, sending) is configured in Admin › Integrations › Firebase.
+
+Pushes carry `{notification_id, event, order_uuid, ticket_id}`: a tap opens the order, the support
+ticket or else the inbox (also from a cold start); a push received while the app is open shows an
+in-app banner and refreshes the bell badge. Per-type push switches are in Settings (signed in).

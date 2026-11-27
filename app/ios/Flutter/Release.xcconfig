@@ -2,5 +2,6 @@
 // from tenants/<key>/tenant.json, which overrides them.
 TENANT_BUNDLE_ID=com.nogrgr.app
 TENANT_APP_NAME=Nogrgr
+GOOGLE_REVERSED_CLIENT_ID=com.nogrgr.google-unset
 #include? "Tenant.xcconfig"
 #include "Generated.xcconfig"

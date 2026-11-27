@@ -6,7 +6,7 @@ import '../../../core/providers.dart';
 import '../../auth/data/session_controller.dart';
 
 class InboxItem {
-  const InboxItem({required this.id, required this.title, required this.body, required this.read, this.event, this.orderUuid, this.createdAt});
+  const InboxItem({required this.id, required this.title, required this.body, required this.read, this.event, this.orderUuid, this.ticketId, this.createdAt});
 
   factory InboxItem.fromJson(Map<String, dynamic> json) => InboxItem(
         id: '${json['id']}',
@@ -15,6 +15,7 @@ class InboxItem {
         read: json['read'] == true,
         event: jsonString(json['event']),
         orderUuid: jsonString(json['order_uuid']),
+        ticketId: jsonIntOrNull(json['ticket_id']),
         createdAt: jsonDate(json['created_at']),
       );
 
@@ -24,9 +25,10 @@ class InboxItem {
   final bool read;
   final String? event;
   final String? orderUuid;
+  final int? ticketId;
   final DateTime? createdAt;
 
-  InboxItem markRead() => InboxItem(id: id, title: title, body: body, read: true, event: event, orderUuid: orderUuid, createdAt: createdAt);
+  InboxItem markRead() => InboxItem(id: id, title: title, body: body, read: true, event: event, orderUuid: orderUuid, ticketId: ticketId, createdAt: createdAt);
 }
 
 class InboxPage {

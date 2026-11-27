@@ -15,6 +15,7 @@ class TenantConfig {
     required this.primaryColor,
     this.defaultLocale = 'en',
     this.firebase,
+    this.social = const SocialClientConfig(),
   });
 
   /// Values of the current build (`--dart-define`), with development defaults.
@@ -39,6 +40,11 @@ class TenantConfig {
               messagingSenderId: String.fromEnvironment('FIREBASE_SENDER_ID'),
               iosBundleId: String.fromEnvironment('IOS_BUNDLE_ID'),
             ),
+      social: const SocialClientConfig(
+        googleServerClientId: String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID'),
+        googleIosClientId: String.fromEnvironment('GOOGLE_IOS_CLIENT_ID'),
+        appleSignIn: bool.fromEnvironment('APPLE_SIGN_IN'),
+      ),
     );
   }
 
@@ -63,6 +69,9 @@ class TenantConfig {
   /// Firebase client options; null keeps push a no-op.
   final FirebaseClientConfig? firebase;
 
+  /// Public OAuth client ids of the native Google / Apple sign-in SDKs.
+  final SocialClientConfig social;
+
   String get mobileApiUrl => '${_trimmed(apiBaseUrl)}/api/mobile/v1';
 
   String get storeApiUrl => '${_trimmed(apiBaseUrl)}/store-api/v1';
@@ -84,4 +93,19 @@ class FirebaseClientConfig {
   final String projectId;
   final String messagingSenderId;
   final String iosBundleId;
+}
+
+/// Shopper social sign-in client ids of one build (`tenant.json`, all public values:
+/// the API verifies the id_token audience against Admin › Integrations).
+class SocialClientConfig {
+  const SocialClientConfig({this.googleServerClientId = '', this.googleIosClientId = '', this.appleSignIn = false});
+
+  /// Google "Web application" OAuth client id: the id_token audience on Android.
+  final String googleServerClientId;
+
+  /// Google iOS OAuth client id (its reversed form is the iOS URL scheme).
+  final String googleIosClientId;
+
+  /// The iOS build carries the "Sign in with Apple" capability.
+  final bool appleSignIn;
 }

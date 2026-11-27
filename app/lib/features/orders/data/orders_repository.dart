@@ -158,8 +158,9 @@ class OrdersRepository {
 
   final StoreApi _api;
 
-  Future<OrdersPage> page(int page, {String? status}) async {
-    final data = (await _api.get('orders', query: {'page': page, 'per_page': 20, 'status': ?status})).map;
+  /// [search] matches the order number, an item name or a tracking number (server side).
+  Future<OrdersPage> page(int page, {String? status, String? search}) async {
+    final data = (await _api.get('orders', query: {'page': page, 'per_page': 20, 'status': ?status, 'search': ?search})).map;
     final items = data['items'] ?? data['orders'];
 
     return OrdersPage(items: jsonList(items).map(Order.fromJson).toList(), meta: PageMeta.fromJson(data['meta']));
@@ -189,20 +190,31 @@ class OrdersRepository {
 
 final ordersRepositoryProvider = Provider<OrdersRepository>((ref) => OrdersRepository(ref.watch(storeApiProvider)));
 
+/// One orders list: status tab ('' = all) + search term ('' = none).
+typedef OrdersQuery = ({String status, String search});
+
+const allOrders = (status: '', search: '');
+
 class OrdersState {
-  const OrdersState({this.items = const [], this.page = 0, this.hasMore = false, this.loadingMore = false});
+  const OrdersState({this.items = const [], this.page = 0, this.total = 0, this.hasMore = false, this.loadingMore = false});
 
   final List<Order> items;
   final int page;
+
+  /// Orders matching the query (`meta.total`).
+  final int total;
   final bool hasMore;
   final bool loadingMore;
 }
 
 class OrdersController extends AsyncNotifier<OrdersState> {
-  OrdersController(this.status);
+  OrdersController(this.query);
 
-  /// Status tab ('' = all).
-  final String status;
+  final OrdersQuery query;
+
+  String? get _status => query.status.isEmpty ? null : query.status;
+
+  String? get _search => query.search.trim().isEmpty ? null : query.search.trim();
 
   @override
   Future<OrdersState> build() async {
@@ -211,9 +223,9 @@ class OrdersController extends AsyncNotifier<OrdersState> {
     }
 
     ref.watch(localeCodeProvider);
-    final first = await ref.read(ordersRepositoryProvider).page(1, status: status.isEmpty ? null : status);
+    final first = await ref.read(ordersRepositoryProvider).page(1, status: _status, search: _search);
 
-    return OrdersState(items: first.items, page: 1, hasMore: first.meta.hasMore);
+    return OrdersState(items: first.items, page: 1, total: first.meta.total, hasMore: first.meta.hasMore);
   }
 
   Future<void> loadMore() async {
@@ -223,18 +235,18 @@ class OrdersController extends AsyncNotifier<OrdersState> {
       return;
     }
 
-    state = AsyncData(OrdersState(items: current.items, page: current.page, hasMore: true, loadingMore: true));
+    state = AsyncData(OrdersState(items: current.items, page: current.page, total: current.total, hasMore: true, loadingMore: true));
 
     try {
-      final next = await ref.read(ordersRepositoryProvider).page(current.page + 1, status: status.isEmpty ? null : status);
-      state = AsyncData(OrdersState(items: [...current.items, ...next.items], page: current.page + 1, hasMore: next.meta.hasMore));
+      final next = await ref.read(ordersRepositoryProvider).page(current.page + 1, status: _status, search: _search);
+      state = AsyncData(OrdersState(items: [...current.items, ...next.items], page: current.page + 1, total: next.meta.total, hasMore: next.meta.hasMore));
     } catch (_) {
       state = AsyncData(current);
     }
   }
 }
 
-final ordersProvider = AsyncNotifierProvider.family<OrdersController, OrdersState, String>(OrdersController.new);
+final ordersProvider = AsyncNotifierProvider.family<OrdersController, OrdersState, OrdersQuery>(OrdersController.new);
 
 final orderProvider = FutureProvider.autoDispose.family<Order, String>((ref, uuid) {
   ref.watch(localeCodeProvider);

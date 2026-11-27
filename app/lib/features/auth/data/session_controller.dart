@@ -59,6 +59,14 @@ class SessionController extends Notifier<SessionState> {
     return customer;
   }
 
+  /// Google / Apple sign-in (APP-020 / 021) with the native SDK credential.
+  Future<SocialSession> social(String provider, {required String idToken, String? nonce, String? name}) async {
+    final session = await _auth.social(provider, idToken: idToken, nonce: nonce, name: name);
+    _signedIn(session.customer);
+
+    return session;
+  }
+
   Future<Customer> register({
     required String name,
     required String email,

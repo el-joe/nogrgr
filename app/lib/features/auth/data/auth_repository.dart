@@ -60,6 +60,16 @@ class Customer {
       );
 }
 
+class SocialSession {
+  const SocialSession({required this.customer, required this.created, this.message = ''});
+
+  final Customer customer;
+
+  /// True when the store created a new account (HTTP 201).
+  final bool created;
+  final String message;
+}
+
 class VerificationStatus {
   const VerificationStatus({required this.verified, required this.resendIn, this.message = '', this.expiresInMinutes});
 
@@ -109,6 +119,19 @@ class AuthRepository {
     );
 
     return _session(response.map);
+  }
+
+  /// `POST auth/social/{provider}` with the native SDK id_token: 201 = account created,
+  /// 200 = found by provider id / linked by verified e-mail; 404 provider not set up,
+  /// 422 token refused (both surface as [ApiException]).
+  Future<SocialSession> social(String provider, {required String idToken, String? nonce, String? name}) async {
+    final response = await _api.post(
+      'auth/social/$provider',
+      body: {'id_token': idToken, 'nonce': ?nonce, 'name': ?name, 'device_id': _deviceId},
+      auth: false,
+    );
+
+    return SocialSession(customer: await _session(response.map), created: response.statusCode == 201, message: response.message);
   }
 
   Future<Customer> me() async {

@@ -11,10 +11,11 @@ import '../../bootstrap/data/bootstrap.dart';
 import '../../bootstrap/data/startup_controller.dart';
 import '../data/session_controller.dart';
 import 'auth_form.dart';
+import 'social_buttons.dart';
 
 /// APP-021 create account (Figma 149:104186): full name, e-mail, phone (with the
 /// shopping country's dial code; ISO2 sent as `phone_country`), password. Then the
-/// 6-digit e-mail code screen.
+/// 6-digit e-mail code screen. Google / Apple sign-up below the form when offered.
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -194,6 +195,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           autofillHints: const [AutofillHints.newPassword],
         ),
         Text(texts.t('app.auth.terms'), style: text.bodyMedium?.copyWith(color: context.colors.muted)),
+        const SocialSignInButtons(),
       ],
     );
   }

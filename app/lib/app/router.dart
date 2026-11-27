@@ -35,6 +35,7 @@ import '../features/bootstrap/presentation/startup_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/onboarding/setup_screen.dart';
 import '../features/shell/shell_screen.dart';
+import '../features/support/presentation/tickets_screens.dart';
 import '../features/wishlist/presentation/wishlist_screen.dart';
 
 abstract final class Routes {
@@ -65,6 +66,8 @@ abstract final class Routes {
   static const deleteAccount = '/account/delete';
   static const notifications = '/notifications';
   static const pages = '/pages';
+  static const support = '/account/support';
+  static const newTicket = '/account/support/new';
 
   static String product(int id) => '/products/$id';
   static String reviews(int id) => '/products/$id/reviews';
@@ -73,6 +76,10 @@ abstract final class Routes {
   static String returnRequest(String uuid) => '/orders/$uuid/return';
   static String returnDetail(int id) => '/returns/$id';
   static String page(String slug) => '/pages/$slug';
+  static String ticket(int id) => '/account/support/$id';
+
+  /// New ticket about one of the customer's orders.
+  static String newTicketFor(String orderUuid) => Uri(path: newTicket, queryParameters: {'order': orderUuid}).toString();
 
   /// Product list: a kind (new_in, best_selling, top_rated, offers) or a category slug.
   static String listing({String? kind, String? category, String? title}) =>
@@ -187,6 +194,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: Routes.addresses, redirect: signedInOnly, builder: (_, _) => const AddressesScreen()),
       GoRoute(path: Routes.addressEdit, redirect: signedInOnly, builder: (_, state) => AddressEditScreen(address: state.extra is Address ? state.extra! as Address : null)),
+      GoRoute(
+        path: Routes.support,
+        redirect: signedInOnly,
+        builder: (_, _) => const TicketsScreen(),
+        routes: [
+          GoRoute(path: 'new', builder: (_, state) => NewTicketScreen(orderUuid: state.uri.queryParameters['order'])),
+          GoRoute(path: ':id', builder: (_, state) => TicketScreen(id: int.tryParse(state.pathParameters['id'] ?? '') ?? 0)),
+        ],
+      ),
       GoRoute(path: Routes.profile, redirect: signedInOnly, builder: (_, _) => const EditProfileScreen()),
       GoRoute(path: Routes.password, redirect: signedInOnly, builder: (_, _) => const ChangePasswordScreen()),
       GoRoute(path: Routes.deleteAccount, redirect: signedInOnly, builder: (_, _) => const DeleteAccountScreen()),

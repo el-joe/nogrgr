@@ -10,6 +10,34 @@ import '../network/api_client.dart';
 import '../network/api_exception.dart';
 import '../providers.dart';
 
+/// A received push: notification text + the data payload
+/// `{notification_id, event, order_uuid, ticket_id}` (decision #104 e / #108 c).
+class PushMessage {
+  const PushMessage({this.title, this.body, this.data = const {}});
+
+  factory PushMessage.fromRemote(RemoteMessage message) => PushMessage(
+        title: message.notification?.title,
+        body: message.notification?.body,
+        data: {for (final entry in message.data.entries) entry.key: '${entry.value}'},
+      );
+
+  final String? title;
+  final String? body;
+  final Map<String, String> data;
+
+  String? _value(String key) {
+    final value = data[key];
+
+    return value == null || value.isEmpty || value == 'null' ? null : value;
+  }
+
+  String? get notificationId => _value('notification_id');
+
+  String? get orderUuid => _value('order_uuid');
+
+  int? get ticketId => int.tryParse(_value('ticket_id') ?? '');
+}
+
 /// FCM device registration (`POST devices`). A no-op when the build has no Firebase
 /// client options (`FIREBASE_*` dart-defines) or the store has push switched off: the
 /// app never ships google-services files, the options come from the build.
@@ -32,8 +60,35 @@ class PushService {
   bool _enabled = false;
   String? _token;
   StreamSubscription<String>? _refresh;
+  final List<StreamSubscription<RemoteMessage>> _listeners = [];
+  final _foreground = StreamController<PushMessage>.broadcast();
+  final _opened = StreamController<PushMessage>.broadcast();
 
   bool get available => config.firebase != null && platform != null;
+
+  /// Null until asked; false when the user refused notifications in the OS.
+  bool? permissionGranted;
+
+  /// Pushes that arrive while the app is in the foreground (in-app banner).
+  Stream<PushMessage> get foreground => _foreground.stream;
+
+  /// Pushes the user tapped (background or from a cold start).
+  Stream<PushMessage> get opened => _opened.stream;
+
+  @visibleForTesting
+  void emitForeground(PushMessage message) => _foreground.add(message);
+
+  @visibleForTesting
+  void emitOpened(PushMessage message) => _opened.add(message);
+
+  void dispose() {
+    _refresh?.cancel();
+    for (final listener in _listeners) {
+      listener.cancel();
+    }
+    _foreground.close();
+    _opened.close();
+  }
 
   /// Asks permission, reads the FCM token and registers this install (guest installs are
   /// allowed; the API binds the install to the customer on sign-in).
@@ -47,6 +102,20 @@ class PushService {
       final settings = await messaging.requestPermission();
       _enabled = settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional;
+      permissionGranted = _enabled;
+
+      if (_listeners.isEmpty) {
+        _listeners
+          ..add(FirebaseMessaging.onMessage.listen((m) => _foreground.add(PushMessage.fromRemote(m))))
+          ..add(FirebaseMessaging.onMessageOpenedApp.listen((m) => _opened.add(PushMessage.fromRemote(m))));
+        final initial = await messaging.getInitialMessage();
+
+        // Cold start from a push: the coordinator (subscribed at app start) keeps
+        // the target until the start-up gates are passed.
+        if (initial != null) {
+          _opened.add(PushMessage.fromRemote(initial));
+        }
+      }
       // onRegistered emits the FCM token now and on every rotation.
       _refresh ??= messaging.onRegistered.listen((token) {
         _token = token;
@@ -115,7 +184,7 @@ final pushServiceProvider = Provider<PushService>((ref) {
     platform: ref.watch(appPlatformProvider),
     appVersion: ref.watch(appVersionProvider),
   );
-  ref.onDispose(() => service._refresh?.cancel());
+  ref.onDispose(service.dispose);
 
   return service;
 });

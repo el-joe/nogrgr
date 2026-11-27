@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../core/providers.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/app_widgets.dart';
 import '../../../core/widgets/catalog_widgets.dart';
 import '../../../core/widgets/paged_list.dart';
@@ -18,7 +21,8 @@ StateTone orderTone(String status) => switch (status) {
       _ => StateTone.info,
     };
 
-/// Orders (APP-013): status tabs, paged list, empty per tab.
+/// Orders (APP-013): search (number / item / tracking), status tabs, paged list, empty
+/// per tab and per search.
 class OrdersScreen extends ConsumerStatefulWidget {
   const OrdersScreen({super.key});
 
@@ -29,14 +33,47 @@ class OrdersScreen extends ConsumerStatefulWidget {
 class _OrdersScreenState extends ConsumerState<OrdersScreen> {
   static const _tabs = [('', 'all'), ('pending_payment', 'pending'), ('processing', 'processing'), ('shipped', 'shipped'), ('delivered', 'delivered'), ('cancelled', 'cancelled'), ('refunded', 'refunded')];
   String _status = '';
+  String _search = '';
+  final _searchField = TextEditingController();
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchField.dispose();
+    super.dispose();
+  }
+
+  void _onSearch(String value) {
+    setState(() {}); // Clear button follows the text.
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      if (mounted && value.trim() != _search) {
+        setState(() => _search = value.trim());
+      }
+    });
+  }
+
+  void _clearSearch() {
+    _debounce?.cancel();
+    _searchField.clear();
+    setState(() => _search = '');
+  }
 
   @override
   Widget build(BuildContext context) {
     final texts = ref.watch(textsProvider);
-    final provider = ordersProvider(_status);
+    final provider = ordersProvider((status: _status, search: _search));
     final orders = ref.watch(provider);
+    final colors = context.colors;
 
     final body = switch (orders) {
+      AsyncData(:final value) when value.items.isEmpty && _search.isNotEmpty => AsyncStateView.empty(
+          icon: 'search',
+          title: texts.t('app.orders.search_empty', {'term': _search}),
+          actionLabel: texts.t('app.orders.clear_search'),
+          onRetry: _clearSearch,
+        ),
       AsyncData(:final value) when value.items.isEmpty => AsyncStateView.empty(
           icon: 'orders',
           title: texts.t('orders.empty_title'),
@@ -63,6 +100,42 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
       title: texts.t('orders.title'),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Semantics(
+              textField: true,
+              label: texts.t('orders.search_label'),
+              child: TextField(
+                key: const ValueKey('orders-search'),
+                controller: _searchField,
+                onChanged: _onSearch,
+                onSubmitted: (value) {
+                  _debounce?.cancel();
+                  setState(() => _search = value.trim());
+                },
+                textInputAction: TextInputAction.search,
+                style: Theme.of(context).textTheme.bodyLarge,
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  fillColor: colors.surface,
+                  hintText: texts.t('orders.search_placeholder'),
+                  prefixIcon: Padding(padding: const EdgeInsets.all(12), child: AppIcon('search', size: 20, color: colors.muted)),
+                  suffixIcon: _searchField.text.isEmpty
+                      ? null
+                      : IconButton(
+                          key: const ValueKey('orders-search-clear'),
+                          tooltip: texts.t('app.orders.clear_search'),
+                          icon: Icon(Icons.close, size: 18, color: colors.muted),
+                          onPressed: _clearSearch,
+                        ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.input), borderSide: BorderSide(color: colors.border)),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.input), borderSide: BorderSide(color: colors.primary, width: 1.5)),
+                ),
+              ),
+            ),
+          ),
           SizedBox(
             height: 48,
             child: ListView.separated(

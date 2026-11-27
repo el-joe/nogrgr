@@ -93,7 +93,7 @@ void main() {
     await harness.pump(tester);
     await Harness.openTab(tester, 'Account');
 
-    for (final key in ['account-orders', 'account-returns', 'account-addresses', 'account-inbox', 'account-profile', 'account-password', 'account-pages', 'account-delete']) {
+    for (final key in ['account-orders', 'account-returns', 'account-addresses', 'account-support', 'account-inbox', 'account-profile', 'account-password', 'account-pages', 'account-delete']) {
       expect(find.byKey(ValueKey(key)), findsOneWidget, reason: key);
     }
   });

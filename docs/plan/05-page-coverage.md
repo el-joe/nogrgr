@@ -740,27 +740,30 @@
 | APP-012 | Checkout (address, shipping quote, gateway) | `/checkout` | quote errors | mobile.checkout.quote, .gateways, .store | design needed | P11 | done (address select/add, coupon, payment methods, idempotent place) |
 | APP-012a | ↳ Payment web view | `/checkout/pay` | cancel | mobile.orders.pay, mobile.payments.* | design needed | P11 | done (Stripe PaymentSheet via start client_secret/publishable_key → confirm; PayPal/redirect gateways in-app browser → confirm on resume) |
 | APP-012b | ↳ Payment result (success / failed) | `/checkout/result` | poll status | mobile.orders.payment-status | design needed | P11 | done (success / pending + status check / failed + retry) |
-| APP-013 | Orders | `/orders` | status tabs, empty | mobile.orders.index | design needed | P11 | done (status tabs, paging) |
-| APP-014 | Order details (cancel sheet, reorder, invoice) | `/orders/:uuid` | | mobile.orders.show, .cancel, .reorder, .invoice, .cancellation-reasons | design needed | P11 | done (cancel 2-step with reasons, reorder, signed invoice link, complete payment, request return) |
+| APP-013 | Orders | `/orders` | search, status tabs, empty | mobile.orders.index | design needed | P11 | done (search by number / item / tracking via store-api `orders?search=` with 400 ms debounce + no-match state, status tabs, paging) |
+| APP-014 | Order details (cancel sheet, reorder, invoice) | `/orders/:uuid` | | mobile.orders.show, .cancel, .reorder, .invoice, .cancellation-reasons | design needed | P11 | done (cancel 2-step with reasons, reorder, signed invoice link, complete payment, request return, "Contact the store" → new support ticket with the order pre-selected) |
 | APP-015 | Order tracking | `/orders/:uuid/tracking` | | mobile.orders.tracking | design needed | P11 | done (carrier/AWB, estimate, timeline) |
 | APP-016 | Request return | `/orders/:uuid/return` | media upload | mobile.returns.store, .options | design needed | P11 | done (items/qty, reason, refund/exchange, photos/video upload) |
 | APP-017 | Returns list | `/returns` | empty | mobile.returns.index | design needed | P11 | done |
 | APP-018 | Return detail | `/returns/:id` | | mobile.returns.show | design needed | P11 | done (steps, conversation + reply, evidence links, withdraw) |
 | APP-019 | Favorites | `/favorites` | empty | mobile.favorites.* | — | P11 | done (list/empty/remove + star toggle on every card / product) |
-| APP-020 | Login (+ Google / Apple) | `/auth/login` |  | mobile.auth.login | m 149:104141 | P11 | done — API: `auth/social/{google|apple}` + bootstrap `auth.social_providers` (decision #108); app buttons to be enabled by flutter |
-| APP-021 | Register | `/auth/register` |  | mobile.auth.register | m 149:104186 | P11 | done (+ e-mail code verify) |
+| APP-020 | Login (+ Google / Apple) | `/auth/login` |  | mobile.auth.login | m 149:104141 | P11 | done — Google / Apple buttons (`google_sign_in` / `sign_in_with_apple`) → `auth/social/{provider}` (id_token, raw nonce for Apple, name, device_id; 201/200 sign in, 404 unavailable notice, 422 API message, SDK failure notice); shown only when `bootstrap.auth.social_providers` lists the provider AND the build has its client id (tenant.json `google_server_client_id` / `google_ios_client_id` / `apple_sign_in`, decision #111) |
+| APP-021 | Register | `/auth/register` |  | mobile.auth.register | m 149:104186 | P11 | done (+ e-mail code verify; same Google / Apple sign-up buttons as APP-020) |
 | APP-022 | Forgot password | `/auth/forgot` |  | mobile.auth.forgot | m 149:104231 | P11 | done |
 | APP-023 | Reset password (code) | `/auth/reset` |  | mobile.auth.reset | m 149:104261 | P11 | done |
-| APP-024 | Account menu | `/account` | guest state | mobile.profile.show | m 149:104308 / 149:104483 | P11 | done (orders, returns, addresses, inbox, profile, password, help pages, delete rows) |
+| APP-024 | Account menu | `/account` | guest state | mobile.profile.show | m 149:104308 / 149:104483 | P11 | done (orders, returns, addresses, support tickets, inbox, profile, password, help pages, delete rows; counts on orders / open tickets / unread notifications / wishlist) |
 | APP-025 | Edit profile | `/account/profile` | | mobile.profile.update | design needed | P11 | done (m 149:104581; intl phone) |
 | APP-026 | Change password | `/account/password` | | mobile.profile.password | design needed | P11 | done (m 149:104651) |
 | APP-027 | Delete account (confirm) | `/account/delete` | | mobile.auth.account.delete | design needed | P11 | done (m 149:104690, password confirm sheet) |
 | APP-028 | Addresses list | `/account/addresses` | default, delete | mobile.addresses.index, .destroy, .default | design needed | P11 | done |
 | APP-028a | ↳ Address add / edit (map, intl phone) | `/account/addresses/edit` | | mobile.addresses.store, .update | design needed | P11 | done (intl phone with shopping country pre-selected; no map picker) |
-| APP-029 | Settings (language, currency, country, push toggles) | `/settings` | | mobile.preferences.options, mobile.device-tokens.* | design needed | P11 | partial (country/language/currency/appearance; push toggles todo) |
-| APP-030 | Notifications inbox (push history) | `/notifications` | empty | — (new, D10) | design needed | P11 | done (mark read / all read, swipe delete, order deep link) |
+| APP-029 | Settings (language, currency, country, push toggles) | `/settings` | | mobile.preferences.options, mobile.device-tokens.* | design needed | P11 | done (country/language/currency/appearance; signed-in + store push on: push switch per notification type via `account/notification-preferences` partial PUT, optimistic with revert, OS-permission-off notice) |
+| APP-030 | Notifications inbox (push history) | `/notifications` | empty | — (new, D10) | design needed | P11 | done (mark read / all read, swipe delete, order / ticket deep link; push tap → order_uuid → order, ticket_id → ticket, else inbox (cold start waits for the start-up gates) and marks the row read; foreground push = in-app banner + bell badge refresh, badge also refreshed on resume) |
 | APP-031 | CMS page / menus | `/pages/:slug` | | mobile.pages.show, mobile.menus | design needed | P11 | done (store-api `pages` list + HTML page) |
 | APP-032 | No connection / generic error / empty | component | retry | — | design needed | P11 | done (shared AsyncStateView / StateView: offline, error + retry, empty) |
+| APP-033 | Support tickets (Account › Support) | `/account/support` | active / closed tabs, unread mark, empty, paging | — (new, decision #108) | design needed | P11 | done (store-api `support/tickets?status=`; Ecommet account-page texts `support.tickets.*`) |
+| APP-033a | ↳ New ticket (topic, order, attachments) | `/account/support/new` | validation, file limits, 422 | — | design needed | P11 | done (options topics / own orders / max files + size + types; files via file picker or camera; multipart `files[]`; opens the thread) |
+| APP-033b | ↳ Ticket conversation (reply + files, close) | `/account/support/:id` | closed note, signed file links | — | design needed | P11 | done (messages with image thumbnails + file chips → 30-min signed links, reply with files, close confirm, closed → "new ticket"; push `ticket_id` opens it) |
 
 ## 9. Summary
 
@@ -777,7 +780,7 @@
 | Storefront — system pages | 6 | 0 | 5 | 0 | 0 |
 | Storefront — old path storefront | 11 | 0 | 0 | 11 | 0 |
 | Emails & printable docs | 47 | 0 | 47 | 0 | 0 |
-| Mobile app | 48 | 0 | 48 | 0 | 0 |
-| **Total** | **686** | **129** | **542** | **14** | **2** |
+| Mobile app | 51 | 0 | 51 | 0 | 0 |
+| **Total** | **689** | **129** | **545** | **14** | **2** |
 
 Rows = pages plus their modal/tab/state sub-rows. "With Figma" = row mapped to at least one node id (incl. dropped/post-launch rows); every top-level frame in `figma-metadata/*.xml` maps to a row. Old GET routes not listed by name are DataTables `*.data` JSON, gateway `success` callbacks, sitemap/robots, assets and broadcasting: actions of the page that owns them.

@@ -12,9 +12,10 @@ import '../../../core/widgets/paged_list.dart';
 import '../../auth/data/session_controller.dart';
 import '../../auth/presentation/auth_form.dart';
 import '../data/notifications_repository.dart';
+import '../data/push_coordinator.dart';
 
 /// Notifications inbox (APP-030): push history, unread dots, mark all read, swipe to
-/// delete, tap opens the order.
+/// delete, tap opens the order or the support ticket.
 class InboxScreen extends ConsumerWidget {
   const InboxScreen({super.key});
 
@@ -107,8 +108,8 @@ class _InboxTile extends ConsumerWidget {
       onTap: () {
         ref.read(inboxProvider.notifier).open(item).ignore();
 
-        if (item.orderUuid != null) {
-          context.push(Routes.order(item.orderUuid!));
+        if (item.orderUuid != null || item.ticketId != null) {
+          context.push(pushLocation(orderUuid: item.orderUuid, ticketId: item.ticketId));
         }
       },
       child: Row(
@@ -119,7 +120,7 @@ class _InboxTile extends ConsumerWidget {
             height: 40,
             decoration: BoxDecoration(color: colors.primarySubtle, shape: BoxShape.circle),
             alignment: Alignment.center,
-            child: AppIcon(item.orderUuid != null ? 'orders' : 'bell', size: 20, color: colors.primary),
+            child: AppIcon(item.orderUuid != null ? 'orders' : (item.ticketId != null ? 'lifebuoy' : 'bell'), size: 20, color: colors.primary),
           ),
           const SizedBox(width: 12),
           Expanded(

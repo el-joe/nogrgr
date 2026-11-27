@@ -144,6 +144,9 @@ class AppTextField extends StatefulWidget {
     this.hidePasswordLabel,
     this.prefix,
     this.fieldKey,
+    this.maxLines = 1,
+    this.minLines,
+    this.hint,
   });
 
   final String label;
@@ -158,6 +161,11 @@ class AppTextField extends StatefulWidget {
   final String? hidePasswordLabel;
   final Widget? prefix;
   final Key? fieldKey;
+
+  /// Multi-line message boxes (support, returns): `null` grows with the text.
+  final int? maxLines;
+  final int? minLines;
+  final String? hint;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -186,12 +194,15 @@ class _AppTextFieldState extends State<AppTextField> {
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           obscureText: _hidden,
+          maxLines: widget.obscure ? 1 : widget.maxLines,
+          minLines: widget.minLines,
           textInputAction: widget.textInputAction,
           autofillHints: widget.autofillHints,
           onSubmitted: widget.onSubmitted,
           style: text.bodyLarge,
           decoration: InputDecoration(
             isDense: true,
+            hintText: widget.hint,
             filled: true,
             fillColor: colors.surface,
             constraints: const BoxConstraints(minHeight: 50),

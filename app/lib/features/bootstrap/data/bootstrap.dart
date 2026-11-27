@@ -19,6 +19,7 @@ class Bootstrap {
     this.supportEmail,
     this.defaultCountryId,
     this.defaultLocale = 'en',
+    this.socialProviders = const [],
   });
 
   factory Bootstrap.fromJson(Map<String, dynamic> json) {
@@ -48,6 +49,9 @@ class Bootstrap {
       update: AppUpdate.fromJson(_map(app['update'])),
       maintenance: Maintenance.fromJson(_map(app['maintenance'])),
       textsVersion: '${_map(json['texts'])['version'] ?? ''}',
+      socialProviders: [
+        for (final provider in (_map(json['auth'])['social_providers'] as List?) ?? const []) '$provider',
+      ],
     );
   }
 
@@ -68,6 +72,9 @@ class Bootstrap {
   final AppUpdate update;
   final Maintenance maintenance;
   final String textsVersion;
+
+  /// Shopper social sign-in providers the store configured (`google`, `apple`).
+  final List<String> socialProviders;
 
   bool feature(String name) => features[name] ?? false;
 

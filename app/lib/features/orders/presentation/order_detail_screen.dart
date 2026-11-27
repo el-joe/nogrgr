@@ -125,6 +125,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
       AppButton(key: const ValueKey('order-track'), label: texts.t('orders.track'), style: AppButtonStyle.outline, onPressed: () => context.push(Routes.orderTracking(order.uuid))),
       AppButton(key: const ValueKey('order-reorder'), label: texts.t('orders.reorder'), style: AppButtonStyle.outline, onPressed: _busy ? null : _reorder),
       AppButton(key: const ValueKey('order-invoice'), label: texts.t('orders.download_invoice'), style: AppButtonStyle.outline, onPressed: _busy ? null : _invoice),
+      AppButton(key: const ValueKey('order-support'), label: texts.t('support.tickets.new_title'), style: AppButtonStyle.outline, onPressed: () => context.push(Routes.newTicketFor(order.uuid))),
       if (order.returnable)
         AppButton(key: const ValueKey('order-return'), label: texts.t('returns.request_title'), style: AppButtonStyle.outline, onPressed: () => context.push(Routes.returnRequest(order.uuid))),
       if (order.cancellable)

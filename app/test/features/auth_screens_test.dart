@@ -22,7 +22,7 @@ void main() {
 
     expect(find.byType(LoginScreen), findsOneWidget);
     expect(find.text('Welcome back'), findsOneWidget);
-    // No social sign-in: the API does not offer it, so no dead buttons.
+    // The store lists no social provider (bootstrap auth.social_providers): no dead buttons.
     expect(find.text('Continue with Google'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('login-submit')));
