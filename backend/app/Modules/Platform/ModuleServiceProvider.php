@@ -11,6 +11,7 @@ use App\Modules\Platform\Events\ComplianceReviewed;
 use App\Modules\Platform\Events\ComplianceSubmitted;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Modules\Platform\Events\TenantProvisioningFailed;
+use App\Modules\Platform\Legacy\Console\LegacyMigrateCommand;
 use App\Modules\Platform\Listeners\AdvanceRegistrationOnPayment;
 use App\Modules\Platform\Listeners\AlertProvisioningFailure;
 use App\Modules\Platform\Listeners\NotifyAdminsOfComplianceSubmission;
@@ -75,6 +76,10 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         $this->app->tag([SetupBadgeCounter::class], PanelBadgeCounter::TAG);
         Blade::anonymousComponentPath(__DIR__.'/resources/views/components/vendor', 'vendor');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([LegacyMigrateCommand::class]);
+        }
 
         Event::listen(MigrationStarted::class, [PartialMigrationCleaner::class, 'started']);
         Event::listen(MigrationFailed::class, [PartialMigrationCleaner::class, 'failed']);

@@ -7,6 +7,7 @@ use App\Modules\Notifications\Services\NotificationDispatcher;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Modules\Platform\Notifications\VendorProvisionedNotification;
 use App\Modules\Platform\Notifications\VendorWelcomeNotification;
+use App\Modules\Platform\Services\TenantProvisioningService;
 use App\Modules\Platform\Support\TenantSlug;
 use Illuminate\Support\Facades\Notification;
 
@@ -23,6 +24,11 @@ class WelcomeProvisionedVendor
     public function handle(TenantProvisioned $event): void
     {
         $tenant = $event->tenant;
+        $payload = $tenant->getAttribute(TenantProvisioningService::PAYLOAD);
+
+        if (is_array($payload) && isset($payload['legacy_id'])) {
+            return; // migrated from the old system (legacy:migrate): the store is not new, no welcome
+        }
 
         if ($tenant->owner_email !== null) {
             Notification::route('mail', $tenant->owner_email)->notify(new VendorWelcomeNotification(
