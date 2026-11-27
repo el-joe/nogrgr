@@ -27,7 +27,7 @@
 | D2 | The wallet was replaced by the double-entry ledger (01-modules). There is no wallet transaction to send a receipt for. | MAIL-025, MAIL-026 | Drop them, or send them on manual ledger adjustments (**S**). |
 | D3 | An attached PDF invoice needs a PDF engine (none is installed yet; invoices are printable HTML). | MAIL-020, MAIL-047 | Choose a PDF engine (e.g. dompdf or headless Chrome). Record it in decisions.md. |
 | D4 | Scope of the public API v1 for stores (which resources, rate limits, key scopes). | VEN-085 | Agree on the resource list before building. |
-| D5 | Is the internal vendor UI kit needed? The admin UI kit (`admin.ui-kit`) already shows every shared component. | VEN-093 | Drop it (internal page, not client-facing). |
+| D5 | Is the internal vendor UI kit needed? The admin UI kit (`admin.ui-kit`) already shows every shared component. | VEN-093 | **Decided: keep** (internal-only, decision #116). |
 
 ## P2 Foundation
 
@@ -37,7 +37,7 @@
 | 2 | Vendor panel error pages 403 / 404 / 419 / 500 | VEN-096…099 | S | — | Fixes QA-FINAL-010: today an unknown vendor record shows the **storefront** 404. Figma 82:102128…82:102194. |
 | 3 | Subscription expired / store suspended screen in the vendor panel (renew CTA) | VEN-095 | S | billing state (exists) | Figma 82:101634. The storefront already has the suspended page. |
 | 4 | Shared "plan limit reached / upgrade" modal | VEN-094 | S | — | Some features already show their own limit state (AI tools `_limit`, staff, banners). Add one shared modal and use it everywhere (Figma 82:102216). |
-| 5 | Vendor UI kit | VEN-093 | S | D5 | Probably drop. |
+| 5 | Vendor UI kit | VEN-093 | S | D5 | Keep — internal-only page (#116). |
 | 6 | Maintenance windows (schedule, message per language, central + per store) | ADM-113 | M | — | No route yet. |
 | 7 | Cache tools: main cache + tenants cache tabs | ADM-114, 114a, 114b | S | — | No route yet. Each action must be audited. |
 | 8 | Shared branded e-mail layout (central brand / store brand, en / ar RTL, plain-text alternative) | MAIL-001 | M | — | Today: admin templates use a basic layout. Support and affiliate mails have their own built-in layouts. Every other mail uses the stock Laravel `MailMessage` layout. Figma 129:10149. Every MAIL row depends on this item to match the design. |
