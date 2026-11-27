@@ -111,3 +111,6 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - Running: qa-final, p12-migrate2, neozena-cmd (3 briefly; p12-migrate2 narrowed).
 - Committed df802f8 + cf8cd73 (Neozena command + fixes), be5c277 (legacy batch 2), dd3dbfd (final QA fixes). Dev: all 189 products published, default branch seeded.
 - QUEUED after product-video: "product-form" — rebuild admin product form to old controller version (decision above), remove Countries & shipping tab.
+- Committed d3c8ed9 (product videos + media fix #114), 4b6c438 (coverage audit; 57 rows left, docs/plan/remaining-work.md), #116 keep vendor UI kit (internal).
+- Running: product-form (#115 admin product form = old controller version), twig-themes (custom Twig themes + security model + vendor docs; owns ADM-089).
+- QUEUED next slot: "admin-themes" — ADM-086/086a themes list/edit (old TemplateControlPage), ADM-087 home variants & sections (old HomeVariantsPage), ADM-088/088a template parts (old TemplatePartsPage/AddEditTemplatePart), per old project routes settings.templates/home-variants/template-parts.
