@@ -11,6 +11,7 @@ use Spatie\Permission\PermissionRegistrar;
 use Stancl\JobPipeline\JobPipeline;
 use Stancl\Tenancy\Contracts\Tenant;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
+use Stancl\Tenancy\Controllers\TenantAssetsController;
 use Stancl\Tenancy\DatabaseConfig;
 use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
@@ -140,6 +141,10 @@ class TenancyServiceProvider extends ServiceProvider
         Middleware\InitializeTenancyByDomain::$onFail = $notFound;
         Middleware\InitializeTenancyBySubdomain::$onFail = $notFound;
         Middleware\InitializeTenancyByRequestData::$onFail = static fn () => abort(404, 'Unknown tenant.');
+
+        // Stores live on `{slug}` sub-domains (domains.domain = slug), so the uploads route
+        // (/tenancy/assets) must resolve tenants by domain OR sub-domain like the rest of the app.
+        TenantAssetsController::$tenancyMiddleware = Middleware\InitializeTenancyByDomainOrSubdomain::class;
     }
 
     protected function makeTenancyMiddlewareHighestPriority(): void
