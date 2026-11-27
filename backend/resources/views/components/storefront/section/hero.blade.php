@@ -1,10 +1,15 @@
 {{--
     Hero banner slider (Ecommet 1:1004, 1440 × 279; m 375 × 73). Banners come from the
     merged BannerCatalog ('home.hero'); one banner = static, several = Swiper hero (fade,
-    Ken Burns, autoplay with progress + pause, swipe / drag, RTL). Hidden when empty.
+    Ken Burns, autoplay with progress + pause, swipe / drag, RTL). Without banners it shows the
+    old Ecommet fallback: a red brand band with the store name (pass `fallback`), else nothing.
 --}}
-@props(['banners' => [], 'class' => ''])
-@if ($banners !== [])
+@props(['banners' => [], 'class' => '', 'fallback' => null])
+@if ($banners === [] && $fallback)
+    <section {{ $attributes->class(['eco-hero-fallback']) }} aria-label="{{ __st('catalog.home.hero_label') }}">
+        <p class="eco-container text-center text-3xl font-bold tracking-wide text-white lg:text-5xl" data-reveal="fade-up">{{ $fallback }}</p>
+    </section>
+@elseif ($banners !== [])
     <section {{ $attributes->class(['relative']) }} aria-roledescription="carousel" aria-label="{{ __st('catalog.home.hero_label') }}">
         <div class="swiper mo-hero" @if (count($banners) > 1) data-hero='{"delay":6000}' @endif>
             <div class="swiper-wrapper">

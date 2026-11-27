@@ -1,6 +1,8 @@
 {{--
     Ecommet home (Figma 1:1002 desktop, 1:2656 phone; phone alt "Star" 1:2710 = the
-    5-Star Rated tab of the phone product tabs). Every section hides itself when empty;
+    5-Star Rated tab of the phone product tabs) with the old Ecommet home's sections and logic:
+    hero brand fallback, interests + best-selling always shown (empty states), promotion banner;
+    deals / flash band hide when empty;
     order / on-off from the store's page builder (VEN-032) or the theme's home sections (ADM-087).
 --}}
 <x-sf::layout :seo="$seo" nav="home" page="home">
@@ -9,6 +11,11 @@
         $store = \App\Modules\Storefront\Support\StorefrontTheme::storeName();
         /* Section order / visibility from the theme's home sections (ADM-087, decision #120);
            consecutive "why choose" + "deals" share one container as in the design. */
+        /* Best-selling "See More": the best-sellers listing, or, while the store has no sales yet
+           (HomeService fallback, old Ecommet behaviour), in-stock products in best-selling order. */
+        $bestMore = ($bestFallback ?? false)
+            ? route('storefront.new-in', ['page' => 2, 'per' => 15, 'ribbon' => 1, 'sort' => 'best_selling', 'in_stock' => 1])
+            : route('storefront.best-sellers', ['page' => 2, 'per' => 15, 'ribbon' => 1]);
         $homeSections ??= \App\Modules\Storefront\Support\ThemeSectionLibrary::sections(\App\Modules\Storefront\Enums\ThemeFamily::Ecommet, 1);
         $groups = [];
         foreach ($homeSections as $section) {
@@ -32,7 +39,7 @@
                 <x-sf::section.category-strip :tabs="$tabs" class="lg:hidden" />
                 @break
             @case('hero')
-                <x-sf::section.hero :banners="$section['banners'] ?? $hero" />
+                <x-sf::section.hero :banners="$section['banners'] ?? $hero" :fallback="$store" />
                 @break
             @case('pair')
                 <div class="eco-container mt-4 grid grid-cols-1 gap-6 max-lg:px-0 lg:mt-6">
@@ -46,17 +53,20 @@
                 </div>
                 @break
             @case('interests')
-                <x-sf::section.interests :tabs="$tabs" :result="$interests" :kicker="$flash?->title" class="eco-wide mt-16 hidden lg:grid" />
+                <x-sf::section.interests :tabs="$tabs" :result="$interests" :kicker="$flash?->title ?: __st('catalog.home.interests_kicker')" class="eco-wide mt-16 hidden lg:grid" />
                 @break
             @case('flash-band')
                 <x-sf::section.flash-band :sale="$flash" class="mt-6 lg:mx-auto lg:mt-10 lg:max-w-[1320px]" />
                 @break
             @case('best-grid')
-                <x-sf::section.product-grid :result="$best" id="sf-best-grid" :title="$section['title_text'] ?? __st('catalog.home.best_selling')" icon="award" ribbon :more-url="route('storefront.best-sellers', ['page' => 2, 'per' => 15, 'ribbon' => 1])" class="eco-wide mb-16 mt-10 hidden lg:grid" />
+                <x-sf::section.product-grid :result="$best" id="sf-best-grid" :title="$section['title_text'] ?? __st('catalog.home.best_selling')" icon="award" ribbon :more-url="$bestMore" :empty="__st('catalog.home.best_empty')" class="eco-wide mb-16 mt-10 hidden lg:grid" />
+                @break
+            @case('promos')
+                <x-sf::section.promo-banner :banners="$section['banners'] ?? $promo" class="mb-10 mt-2 lg:mb-16" />
                 @break
             @case('mobile-tabs')
                 <x-sf::section.mobile-tabs class="mb-6 mt-6 lg:hidden" :tabs="[
-                    ['key' => 'best', 'label' => __st('shell.nav.best_sellers'), 'icon' => 'award', 'result' => $best, 'more' => route('storefront.best-sellers', ['page' => 2, 'per' => 15, 'ribbon' => 1]), 'ribbon' => true],
+                    ['key' => 'best', 'label' => __st('shell.nav.best_sellers'), 'icon' => 'award', 'result' => $best, 'more' => $bestMore, 'ribbon' => true],
                     ['key' => 'rated', 'label' => __st('shell.nav.top_rated'), 'icon' => 'star', 'result' => $rated, 'more' => route('storefront.top-rated', ['page' => 2, 'per' => 15])],
                     ['key' => 'new', 'label' => __st('shell.nav.new_in'), 'icon' => 'sparkles', 'result' => $newest, 'more' => route('storefront.new-in', ['page' => 2, 'per' => 15]), 'tag' => 'new'],
                 ]" />
@@ -64,7 +74,7 @@
         @endswitch
     @endforeach
 
-    @if ($deals === [] && $clearance === [] && $interests->isEmpty() && $best->isEmpty() && $hero === [])
+    @if ($deals === [] && $clearance === [] && $interests->isEmpty() && $best->isEmpty() && $hero === [] && ($promo ?? []) === [])
         <section class="eco-container grid justify-items-center gap-4 py-24 text-center">
             <x-ui::icon name="store" :size="48" class="text-eco-semi" />
             <h2 class="text-xl font-medium">{{ __st('catalog.home.empty_title') }}</h2>

@@ -65,6 +65,15 @@ it('ships the Ecommet variant picker, its Store API product route and the card f
     expect($html)->toContain('class="eco-card-fav" data-favorite');
 });
 
+it('fills the Ecommet best-selling grid with in-stock products before the store has sales, like the old home', function (): void {
+    $shop = catalogShop();
+
+    $this->withSession(inSa($shop))->get($this->tenantUrl($shop->tenant, '/'))
+        ->assertOk()
+        ->assertSee('id="sf-best-grid"', false)
+        ->assertSee('Desk Lamp');
+});
+
 it('prices a central product like the cart in the shopping country', function (): void {
     $shop = catalogShop();
 

@@ -28,6 +28,7 @@ final class ThemeSectionLibrary
         ['type' => 'flash-band'],
         ['type' => 'best-grid'],
         ['type' => 'mobile-tabs'],
+        ['type' => 'promos'],
     ];
 
     /**

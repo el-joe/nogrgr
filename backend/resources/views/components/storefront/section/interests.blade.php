@@ -4,7 +4,7 @@
     home.tab fragment, "See More". Desktop / tablet layout of the home page.
 --}}
 @props(['tabs' => [], 'result', 'kicker' => null])
-@if (! $result->isEmpty())
+{{-- Always shown, as on the old Ecommet home: an empty-state line replaces the grid without products. --}}
     <section {{ $attributes->class(['grid gap-6']) }} aria-labelledby="sf-interests-title" data-home-tabs>
         <div class="grid gap-1 text-center" data-reveal="fade-up">
             @if ($kicker)<p class="text-2xl font-medium leading-[30px] text-eco-red">{{ $kicker }}</p>@endif
@@ -27,6 +27,6 @@
         <div id="sf-interests-grid" role="tabpanel" aria-live="polite" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4 lg:px-7" data-reveal-stagger>
             @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $result->cards])
         </div>
+        <p class="py-10 text-center text-sm text-eco-gray" data-interests-empty @unless ($result->isEmpty()) hidden @endunless>{{ __st('catalog.home.interests_empty') }}</p>
         <x-sf::section.load-more :url="$result->hasMore() ? route('storefront.home.tab', ['tab' => $tabs[0]['key'] ?? 'recommended', 'page' => 2]) : null" target="#sf-interests-grid" />
     </section>
-@endif

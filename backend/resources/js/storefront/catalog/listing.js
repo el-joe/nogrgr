@@ -113,6 +113,12 @@ function bindHomeTabs(section) {
 
         try {
             const next = await loadInto(grid, tab.dataset.tabUrl, { replace: true });
+            const empty = section.querySelector('[data-interests-empty]');
+
+            if (empty) {
+                empty.hidden = grid.children.length > 0;
+            }
+
             more = section.querySelector('[data-load-more]');
 
             if (more) {

@@ -41,7 +41,7 @@ class HomeService
     ) {}
 
     /**
-     * @return array{hero: list<BannerData>, promo: list<BannerData>, deals: list<ProductCardData>, clearance: list<ProductCardData>, tabs: list<array{key: string, label: string}>, interests: ListingResult, flash: PromotionFlashSale|null, best: ListingResult, rated: ListingResult, newest: ListingResult}
+     * @return array{hero: list<BannerData>, promo: list<BannerData>, deals: list<ProductCardData>, clearance: list<ProductCardData>, tabs: list<array{key: string, label: string}>, interests: ListingResult, flash: PromotionFlashSale|null, best: ListingResult, bestFallback: bool, rated: ListingResult, newest: ListingResult}
      */
     public function sections(): array
     {
@@ -53,7 +53,7 @@ class HomeService
             'tabs' => $this->tabs(),
             'interests' => $this->tab('recommended'),
             'flash' => $this->flashSale(),
-            'best' => $this->grid(ListingKind::BestSelling),
+            ...$this->bestSelling(),
             'rated' => $this->grid(ListingKind::TopRated),
             'newest' => $this->grid(ListingKind::NewIn),
         ];
@@ -111,6 +111,27 @@ class HomeService
         return $category instanceof Category
             ? $this->listing->listing(new ListingQuery(kind: ListingKind::Category, sort: ListingSort::Recommended, page: $page, perPage: self::GRID), $category)
             : null;
+    }
+
+    /**
+     * Best-selling grid of the home page. Like the old Ecommet home, a store without sales
+     * yet still shows its in-stock products here, ordered the best-selling way (sales, then
+     * rating, newest); `bestFallback` tells the view to page through that same order.
+     *
+     * @return array{best: ListingResult, bestFallback: bool}
+     */
+    public function bestSelling(int $page = 1): array
+    {
+        $best = $this->grid(ListingKind::BestSelling, $page);
+
+        if (! $best->isEmpty() || $page > 1) {
+            return ['best' => $best, 'bestFallback' => false];
+        }
+
+        return [
+            'best' => $this->listing->listing(new ListingQuery(kind: ListingKind::NewIn, sort: ListingSort::BestSelling, page: $page, perPage: self::GRID, period: SalesPeriod::Days30, inStockOnly: true)),
+            'bestFallback' => true,
+        ];
     }
 
     public function grid(ListingKind $kind, int $page = 1): ListingResult
