@@ -53,3 +53,4 @@ app.*.map.json
 /build/tenant/
 /tenants/*/firebase.env
 /dist/
+/android/.kotlin/

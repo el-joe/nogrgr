@@ -50,7 +50,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
       if (status.verified) {
         ref.read(sessionProvider.notifier).markVerified();
-        context.go(Routes.home);
+        context.go(Routes.account);
       } else {
         setState(() {
           _resendIn = status.resendIn;
@@ -79,7 +79,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
       if (mounted) {
         showAppMessage(context, texts.t('auth.verified'));
-        context.go(Routes.home);
+        context.go(Routes.account);
       }
     } on ApiException catch (error) {
       setState(() => _error = error.fieldError('code') ?? apiErrorMessage(texts, error));
@@ -100,7 +100,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
     return AuthScaffold(
       title: texts.t('auth.verify_title'),
-      onBack: () => context.go(Routes.home),
+      onBack: () => context.go(Routes.account),
       bottom: AppButton(
         key: const ValueKey('verify-submit'),
         label: texts.t('auth.verify_submit'),
@@ -152,7 +152,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
           label: texts.t('app.auth.verify_later'),
           muted: true,
           align: TextAlign.center,
-          onTap: () => context.go(Routes.home),
+          onTap: () => context.go(Routes.account),
         ),
       ],
     );

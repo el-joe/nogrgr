@@ -60,7 +60,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (!customer.emailVerified) {
         context.go(Routes.verify);
       } else {
-        context.go(Routes.home);
+        context.go(Routes.account);
       }
     } on ApiException catch (error) {
       setState(() {
@@ -126,7 +126,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           label: texts.t('app.auth.guest'),
           muted: true,
           align: TextAlign.center,
-          onTap: () => context.go(Routes.home),
+          onTap: () => context.go(Routes.account),
         ),
       ],
     );

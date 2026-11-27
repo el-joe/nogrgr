@@ -9,6 +9,7 @@ import '../support/fake_api.dart';
 import '../support/harness.dart';
 
 Future<void> openLogin(WidgetTester tester) async {
+  await Harness.openTab(tester, 'Account');
   await tester.tap(find.byKey(const ValueKey('account-sign-in')));
   await Harness.settle(tester);
 }
@@ -167,6 +168,7 @@ void main() {
       handler: (request) async => request.path == 'auth/logout' ? FakeReply.ok(null) : defaultHandler(request),
     );
     await harness.pump(tester);
+    await Harness.openTab(tester, 'Account');
 
     expect(find.text('Fatma Elsonny'), findsOneWidget);
 
@@ -183,6 +185,7 @@ void main() {
   testWidgets('Arabic runs right-to-left with Arabic texts', (tester) async {
     final harness = Harness(prefs: Harness.returning(locale: 'ar'), locale: 'ar');
     await harness.pump(tester);
+    await Harness.openTab(tester, 'حسابي');
 
     expect(find.text('سجّل الدخول لتجربة أفضل'), findsOneWidget);
     final direction = Directionality.of(tester.element(find.text('سجّل الدخول لتجربة أفضل')));

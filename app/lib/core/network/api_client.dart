@@ -93,11 +93,17 @@ class ApiClient {
   Future<ApiResponse> get(String path, {Map<String, dynamic>? query, Map<String, String>? headers, bool auth = true}) =>
       _send('GET', path, query: query, headers: headers, auth: auth);
 
-  Future<ApiResponse> post(String path, {Object? body, bool auth = true}) => _send('POST', path, body: body, auth: auth);
+  Future<ApiResponse> post(String path, {Object? body, Map<String, String>? headers, bool auth = true}) =>
+      _send('POST', path, body: body, headers: headers, auth: auth);
 
-  Future<ApiResponse> put(String path, {Object? body, bool auth = true}) => _send('PUT', path, body: body, auth: auth);
+  Future<ApiResponse> put(String path, {Object? body, Map<String, String>? headers, bool auth = true}) =>
+      _send('PUT', path, body: body, headers: headers, auth: auth);
 
-  Future<ApiResponse> delete(String path, {Object? body, bool auth = true}) => _send('DELETE', path, body: body, auth: auth);
+  Future<ApiResponse> patch(String path, {Object? body, Map<String, String>? headers, bool auth = true}) =>
+      _send('PATCH', path, body: body, headers: headers, auth: auth);
+
+  Future<ApiResponse> delete(String path, {Object? body, Map<String, String>? headers, bool auth = true}) =>
+      _send('DELETE', path, body: body, headers: headers, auth: auth);
 
   Future<ApiResponse> _send(
     String method,

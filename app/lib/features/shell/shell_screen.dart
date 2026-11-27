@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/providers.dart';
 import '../bootstrap/data/startup_controller.dart';
 import '../bootstrap/presentation/startup_screen.dart';
+import '../cart/data/cart_repository.dart';
 import 'app_tab_bar.dart';
 
 /// One bottom-nav destination. Tabs are listed here as their screens ship; the bar
@@ -17,9 +18,11 @@ class ShellTab {
   final String textKey;
 }
 
-/// Order of the Figma tab bar (Home, Categories, Cart, Wishlist, Account); Home,
-/// Categories and Cart join when the catalog / cart screens land (batch 2).
+/// Order of the Figma tab bar (Home, Categories, Cart, Wishlist, Account).
 const shellTabs = [
+  ShellTab(path: '/home', icon: 'home', textKey: 'mobile.tabs.home'),
+  ShellTab(path: '/categories', icon: 'grid', textKey: 'mobile.tabs.categories'),
+  ShellTab(path: '/cart', icon: 'cart', textKey: 'mobile.tabs.cart'),
   ShellTab(path: '/wishlist', icon: 'star', textKey: 'mobile.tabs.favorites'),
   ShellTab(path: '/account', icon: 'users', textKey: 'mobile.tabs.account'),
 ];
@@ -56,7 +59,10 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
       body: shell,
       bottomNavigationBar: AppTabBar(
         currentIndex: shell.currentIndex,
-        items: [for (final tab in shellTabs) AppTabItem(icon: tab.icon, label: ref.t(tab.textKey))],
+        items: [
+          for (final tab in shellTabs)
+            AppTabItem(icon: tab.icon, label: ref.t(tab.textKey), badge: tab.path == '/cart' ? ref.watch(cartCountProvider) : 0),
+        ],
         onTap: (index) => shell.goBranch(index, initialLocation: index == shell.currentIndex),
       ),
     );

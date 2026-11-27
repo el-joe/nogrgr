@@ -97,6 +97,7 @@ void main() {
       },
     );
     await harness.pump(tester);
+    await Harness.openTab(tester, 'Account');
 
     expect(await harness.storage.read(), isNull);
     expect(find.text('Sign in for the best experience'), findsOneWidget);

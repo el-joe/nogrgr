@@ -1,64 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/models/product_card.dart';
 import '../../../core/network/api_client.dart';
+
+export '../../../core/models/product_card.dart';
 import '../../../core/providers.dart';
 import '../../auth/data/session_controller.dart';
 
-/// Money of the API: USD cents + the display conversion (decision #87, display only).
-class Money {
-  const Money({required this.amount, required this.formatted, this.displayFormatted});
-
-  factory Money.fromJson(Map<String, dynamic> json) {
-    final display = json['display'];
-
-    return Money(
-      amount: json['amount'] as int? ?? 0,
-      formatted: '${json['formatted'] ?? ''}',
-      displayFormatted: display is Map<String, dynamic> ? display['formatted'] as String? : null,
-    );
-  }
-
-  final int amount;
-  final String formatted;
-  final String? displayFormatted;
-
-  /// What the customer sees: the display currency when converted, else USD.
-  String get label => displayFormatted ?? formatted;
-}
-
-/// Product card of `GET favorites` (ProductSummaryResource).
-class ProductSummary {
-  const ProductSummary({
-    required this.id,
-    required this.name,
-    required this.slug,
-    required this.price,
-    required this.inStock,
-    this.image,
-    this.comparePrice,
-    this.discountPercent,
-  });
-
-  factory ProductSummary.fromJson(Map<String, dynamic> json) => ProductSummary(
-        id: json['id'] as int,
-        name: '${json['name'] ?? ''}',
-        slug: '${json['slug'] ?? ''}',
-        image: json['image'] as String?,
-        price: Money.fromJson(json['price'] as Map<String, dynamic>? ?? const {}),
-        comparePrice: json['compare_price'] is Map<String, dynamic> ? Money.fromJson(json['compare_price'] as Map<String, dynamic>) : null,
-        discountPercent: json['discount_percent'] as int?,
-        inStock: json['in_stock'] != false,
-      );
-
-  final int id;
-  final String name;
-  final String slug;
-  final String? image;
-  final Money price;
-  final Money? comparePrice;
-  final int? discountPercent;
-  final bool inStock;
-}
+/// Favourite cards are the shared catalog cards.
+typedef ProductSummary = ProductCard;
 
 class WishlistPage {
   const WishlistPage({required this.items, required this.ids, required this.currentPage, required this.lastPage});
@@ -81,7 +31,7 @@ class WishlistRepository {
     final meta = data['meta'] as Map<String, dynamic>? ?? const {};
 
     return WishlistPage(
-      items: (data['items'] as List? ?? const []).whereType<Map<String, dynamic>>().map(ProductSummary.fromJson).toList(),
+      items: ProductCard.list(data['items']),
       ids: (data['ids'] as List? ?? const []).map((id) => id as int).toSet(),
       currentPage: meta['current_page'] as int? ?? page,
       lastPage: meta['last_page'] as int? ?? page,

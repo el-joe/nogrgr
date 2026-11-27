@@ -86,6 +86,20 @@ class SessionController extends Notifier<SessionState> {
     }
   }
 
+  /// Profile saved (APP-025): the screen hands back the fresh customer.
+  void updateCustomer(Customer customer) {
+    if (state.signedIn) {
+      state = SessionState(status: SessionStatus.signedIn, customer: customer);
+    }
+  }
+
+  /// Account deleted (APP-027): the server already revoked every token.
+  Future<void> forget() async {
+    await ref.read(tokenStorageProvider).clear();
+    state = const SessionState(status: SessionStatus.guest);
+    ref.read(pushServiceProvider).sync().ignore();
+  }
+
   Future<void> logout() async {
     try {
       await _auth.logout();

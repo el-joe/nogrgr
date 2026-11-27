@@ -96,7 +96,7 @@
 | ADM-041d | ↳ Tab: Profit % & affiliate commission | tab | edit | AddEditTenant | designed: Admin Panel 72:51480 | P2 | done |
 | ADM-041e | ↳ Tab: Stats & orders | tab | KPIs, orders table | — (new, A4) | designed: Admin Panel 72:51480 | P9 | done — P9 (decision #90): last-12-month tiles, orders by month, store orders table (`admin.vendors.stats.orders`) |
 | ADM-041f | ↳ Tab: Compliance | tab | verify / needs action | ComplianceDetailPage | designed: Admin Panel 72:51480 | P2 | done |
-| ADM-041g | ↳ Tab: Mobile app settings | tab | build config, flavor, store links | TenantMobileAppController | designed: Admin Panel 72:51480 | P11 | todo |
+| ADM-041g | ↳ Tab: Mobile app settings | tab | build config, flavor, store links | TenantMobileAppController | designed: Admin Panel 72:51480 | P11 | done — decision #108: vendor-profile tab `?tab=mobile-app` (shared form: versions + store URL per platform, maintenance per language, splash colour + logo, features; saved in the store's tenant context, vendors.manage) + Firebase integration state / link |
 | ADM-041h | ↳ Tab: Limit overrides (AI logo, image search, AI calls) | tab | per-tenant override | admin.settings.ai-logo-limit | designed: Admin Panel 72:51480 | P10 | todo |
 | ADM-041i | ↳ Impersonate confirm modal (audited) | modal | reason, opens vendor panel | admin.plans.users.impersonate | designed: Admin Panel 72:52459 | P2 | done |
 | ADM-042 | Pending registrations | `admin.vendors.pending` | Std; filter status/plan, delete, resend link | admin.plans.pending-registrations | designed: Admin Panel 73:51922 | P2 | done |
@@ -290,8 +290,8 @@
 | VEN-036 | Custom themes (Twig): upload ZIP, validation report, versions, submit, activate, delete | `vendor.store.custom-themes.index` | Std; rejected reason | tenant.store.blade-theme | designed: Vendor Panel (new screens) 200:36959 aligned to Tenant Panel (old 85:108862 superseded) | P7 | todo |
 | VEN-036a | ↳ Starter kit download | `vendor.store.custom-themes.starter-kit` | download | tenant.store.blade-theme.starter-kit | designed: Vendor Panel (new screens) 200:36959 aligned to Tenant Panel (old 85:108862 superseded) | P7 | todo |
 | VEN-036b | ↳ Theme settings (settings-schema form) | `vendor.store.custom-themes.settings` | | — (new, §D) | designed: Vendor Panel (new screens) 200:36959 aligned to Tenant Panel (old 85:108862 superseded) | P7 | todo |
-| VEN-037 | Mobile app settings | `vendor.store.mobile-app` | Std; build status | tenant.store.mobile-app | designed: Vendor Panel (new screens) 200:37622 aligned to Tenant Panel (old 85:109494 superseded) | P11 | todo |
-| VEN-037a | ↳ App theme & colors | `vendor.store.mobile-app.themes` | | tenant.store.mobile-themes | designed: Vendor Panel (new screens) 200:37622 aligned to Tenant Panel (old 85:109494 superseded) | P11 | todo |
+| VEN-037 | Mobile app settings | `vendor.store.mobile-app` | Std; build status | tenant.store.mobile-app | designed: Vendor Panel (new screens) 200:37622 aligned to Tenant Panel (old 85:109494 superseded) | P11 | done — decision #108: store links state, versions (forced / optional update), maintenance + message per store language, push status, splash preview; `store.mobile-app.view|manage` |
+| VEN-037a | ↳ App theme & colors | `vendor.store.mobile-app.themes` | | tenant.store.mobile-themes | designed: Vendor Panel (new screens) 200:37622 aligned to Tenant Panel (old 85:109494 superseded) | P11 | done — decision #108: same page — splash background + logo, feature switches (theme family / brand colour come from Your store › Themes / Appearance) |
 | VEN-040 | Coupons (own + read-only central tab) | `vendor.marketing.coupons.index` | Std; per country | tenant.store.coupons.index, tenant.store.coupons.list | designed: Vendor Panel (new screens) 199:31453 aligned to Tenant Panel, m 205:39102 (old 87:107268 superseded) | P5 | done |
 | VEN-040a | ↳ Coupon create / edit | modal | | tenant.store.coupons.show | designed: Vendor Panel (new screens) 206:39923 aligned to Tenant Panel (old 87:111915 superseded) | P5 | done |
 | VEN-041 | Flash sales (own + read-only central tab) | `vendor.marketing.flash-sales.index` | Std; per country | tenant.store.flash-sales.index, tenant.store.flash-sales | designed: Vendor Panel (new screens) 199:32265 aligned to Tenant Panel (old 87:108154 superseded) | P5 | done |
@@ -358,6 +358,7 @@
 | VEN-091 | Support tickets | `vendor.support.index` | Std | tenant.support.index | designed: Vendor Panel (new screens) 206:38046 aligned to Tenant Panel (old 88:111731 superseded) | P9 | done — P9 (decision #92): My tickets (server-side, search + status) beside the open thread, unread badge |
 | VEN-091a | ↳ New ticket | `vendor.support.create` | attach | tenant.support.create | designed: Vendor Panel (new screens) 206:40420 aligned to Tenant Panel (old 88:113398 superseded) | P9 | done — P9 (decision #92): modal + full page, subject / category / priority / message / up to 5 files |
 | VEN-091b | ↳ Ticket thread (live) | `vendor.support.show` | reply | tenant.support.show, tenant.support.thread | designed: Vendor Panel (new screens) 206:38046 aligned to Tenant Panel (old 88:111731 superseded) | P9 | done — P9 (decision #92): live thread, reply with files, close / reopen |
+| VEN-091c | ↳ Customers tab (customer ↔ store tickets) | `vendor.support.customers.index` | search, status, reply with files, resolve / close / reopen | — (new, P11) | new (VEN-091 layout, Tenant Panel kit) | P11 | done — decision #108: DataTable + shared thread (viewer `store`), support.view / support.manage, customer notified (inbox + mail + push) |
 | VEN-092 | Help center | `vendor.help.index` | search | tenant.help.index | designed: Vendor Panel (new screens) 206:38560 aligned to Tenant Panel (old 88:112298 superseded) | P9 | done — P9 (decision #92): 8 topics / 19 articles (en + ar), search, topic lists |
 | VEN-092a | ↳ Help article | `vendor.help.article` | | tenant.help.article | designed: Vendor Panel (new screens) 206:38560 aligned to Tenant Panel (old 88:112298 superseded) | P9 | done — P9 (decision #92): sections / steps / tips, read time, related, helpful vote, ticket CTA |
 | VEN-093 | UI kit / component gallery (internal) | `vendor.ui-kit` | | tenant.ui-kit, tenant.ui-kit.data | designed: Vendor Panel (new screens) 191:30163 aligned to Tenant Panel (old 92:130313 superseded) | P2 | todo |
@@ -528,6 +529,8 @@
 | SF-ECO-033 | Favorites | `store.favorites` | toggle, empty | tenant.storefront.favorites, tenant.storefront.favorites.ids, tenant.storefront.favorites.list, tenant.storefront.favorites.toggle | Storefront additions: wishlist 101:103953, m 101:104234 | P7 | todo |
 | SF-ECO-034 | CMS page | `store.page` | | tenant.storefront.page | designed: Storefront additions 114:107865 / m 114:108055 | P7 | todo |
 | SF-ECO-035 | Support request form / newsletter signup | component | success, error | SupportRequestForm | designed: Storefront additions 114:108109 / m 114:108353 (form + newsletter + success toast) | P7 | todo |
+| SF-ECO-035a | Account › Support tickets (list, new ticket sheet) | `storefront.support.index` | status chips, empty, order picker, files | — (new, P11) | new (account layout + shared sf components; no Figma frame) | P11 | done — decision #108: all three families (Elora / Souqify include the Ecommet template), posts to Store API `support/tickets` |
+| SF-ECO-035b | Account › Support ticket thread | `storefront.support.show` | reply with files, close (confirm sheet), closed note | — (new, P11) | new (pattern of SF-ECO-032 return thread) | P11 | done — decision #108 |
 | SF-ECO-036 | 404 (themed) | `store.not-found` | | tenant.storefront.not-found, tenant.storefront.404 | designed: Storefront additions 114:108479 / m 114:108666 | P7 | todo |
 
 ### 6.3 Elora shared pages
@@ -713,51 +716,51 @@
 | APP-001 | Splash / bootstrap | `/splash` | offline, tenant resolve fail | mobile.bootstrap, mobile.resolve | m 149:103879/103898/103917/103936/103956 | P11 | done |
 | APP-002 | Force update / maintenance / store unavailable | `/blocked` |  | mobile.bootstrap | m 149:103975/103995/104014 | P11 | done |
 | APP-003 | First-run: country, language, currency | `/preferences/setup` |  | mobile.preferences.options | m 149:104095 (+ onboarding 149:104033/104054/104075) | P11 | done |
-| APP-004 | Home — Ecommet skin | `/home` | sections, pull to refresh, skeletons | mobile.home.section | design needed (base m 1:2656) | P11 | todo |
-| APP-004a | ↳ Home — Elora v1 skin | `/home` | | mobile.home.section | design needed (base m 1:21125) | P11 | todo |
-| APP-004b | ↳ Home — Elora v2 skin | `/home` | | mobile.home.section | design needed (base m 1:24137) | P11 | todo |
-| APP-004c | ↳ Home — Elora v3 skin | `/home` | | mobile.home.section | design needed (base m 1:24477) | P11 | todo |
-| APP-004d | ↳ Home — Elora v4 skin | `/home` | | mobile.home.section | design needed (base m 1:24870) | P11 | todo |
-| APP-004e | ↳ Home — Elora v5 skin | `/home` | | mobile.home.section | design needed (base m 1:25467) | P11 | todo |
-| APP-004f | ↳ Home — Elora v6 skin | `/home` | | mobile.home.section | design needed (base m 1:25994) | P11 | todo |
-| APP-004g | ↳ Home — Souqify v1 skin | `/home` | | mobile.home.section | design needed (base m 1:77852) | P11 | todo |
-| APP-004h | ↳ Home — Souqify v2 skin | `/home` | | mobile.home.section | design needed (base m 1:78202) | P11 | todo |
-| APP-004i | ↳ Home — Souqify v3 skin | `/home` | | mobile.home.section | design needed (base m 1:78599) | P11 | todo |
-| APP-004j | ↳ Home — Souqify v4 skin | `/home` | | mobile.home.section | design needed (base m 1:78957) | P11 | todo |
-| APP-004k | ↳ Home — Souqify v5 skin | `/home` | | mobile.home.section | design needed (base m 1:79266) | P11 | todo |
-| APP-004l | ↳ Home — Souqify v6 skin | `/home` | | mobile.home.section | design needed (base m 1:79691) | P11 | todo |
-| APP-005 | Categories | `/categories` | | mobile.categories.index | design needed | P11 | todo |
-| APP-006 | Category products (filter sheet, sort sheet) | `/categories/:slug` | infinite scroll, empty | mobile.categories.show, mobile.products.index | design needed | P11 | todo |
-| APP-007 | Product lists (new in, best selling, top rated, offers) | `/lists/:list` | | mobile.lists | design needed | P11 | todo |
-| APP-008 | Search + autocomplete | `/search` | recent, no results | mobile.search, mobile.search.autocomplete | design needed | P11 | todo |
-| APP-009 | Image search (camera / gallery) | `/search/image` | quota error | — (A6c #9) | design needed | P11 | todo |
-| APP-010 | Product details (variants, delivery estimate, related) | `/products/:slug` | unavailable in country | mobile.products.show, .related | design needed | P11 | todo |
-| APP-010a | ↳ Reviews list + write review | `/products/:slug/reviews` | | mobile.reviews.index, mobile.reviews.store | design needed | P11 | todo |
-| APP-011 | Cart (coupon, free-shipping progress) | `/cart` | empty, stock error | mobile.cart.*, mobile.coupon.* | design needed | P11 | todo |
-| APP-012 | Checkout (address, shipping quote, gateway) | `/checkout` | quote errors | mobile.checkout.quote, .gateways, .store | design needed | P11 | todo |
-| APP-012a | ↳ Payment web view | `/checkout/pay` | cancel | mobile.orders.pay, mobile.payments.* | design needed | P11 | todo |
-| APP-012b | ↳ Payment result (success / failed) | `/checkout/result` | poll status | mobile.orders.payment-status | design needed | P11 | todo |
-| APP-013 | Orders | `/orders` | status tabs, empty | mobile.orders.index | design needed | P11 | todo |
-| APP-014 | Order details (cancel sheet, reorder, invoice) | `/orders/:uuid` | | mobile.orders.show, .cancel, .reorder, .invoice, .cancellation-reasons | design needed | P11 | todo |
-| APP-015 | Order tracking | `/orders/:uuid/tracking` | | mobile.orders.tracking | design needed | P11 | todo |
-| APP-016 | Request return | `/orders/:uuid/return` | media upload | mobile.returns.store, .options | design needed | P11 | todo |
-| APP-017 | Returns list | `/returns` | empty | mobile.returns.index | design needed | P11 | todo |
-| APP-018 | Return detail | `/returns/:id` | | mobile.returns.show | design needed | P11 | todo |
-| APP-019 | Favorites | `/favorites` | empty | mobile.favorites.* | — | P11 | partial (list/empty/remove; product link with catalog batch) |
-| APP-020 | Login (+ Google / Apple) | `/auth/login` |  | mobile.auth.login | m 149:104141 | P11 | done (social sign-in hidden: no customer social API, #104c) |
+| APP-004 | Home — Ecommet skin | `/home` | sections, pull to refresh, skeletons | mobile.home.section | design needed (base m 1:2656) | P11 | done (Ecommet skin, m 145:99798; sections from store-api `home`, rails swipe/drag + snap, pull to refresh, skeleton/error/empty) |
+| APP-004a | ↳ Home — Elora v1 skin | `/home` | | mobile.home.section | design needed (base m 1:21125) | P11 | done (skin config HomeSkin, m 145:100012) |
+| APP-004b | ↳ Home — Elora v2 skin | `/home` | | mobile.home.section | design needed (base m 1:24137) | P11 | done (m 145:100277) |
+| APP-004c | ↳ Home — Elora v3 skin | `/home` | | mobile.home.section | design needed (base m 1:24477) | P11 | done (m 145:100686) |
+| APP-004d | ↳ Home — Elora v4 skin | `/home` | | mobile.home.section | design needed (base m 1:24870) | P11 | done (m 145:101083) |
+| APP-004e | ↳ Home — Elora v5 skin | `/home` | | mobile.home.section | design needed (base m 1:25467) | P11 | done (m 145:101489) |
+| APP-004f | ↳ Home — Elora v6 skin | `/home` | | mobile.home.section | design needed (base m 1:25994) | P11 | done (m 145:101886) |
+| APP-004g | ↳ Home — Souqify v1 skin | `/home` | | mobile.home.section | design needed (base m 1:77852) | P11 | done (m 146:104020) |
+| APP-004h | ↳ Home — Souqify v2 skin | `/home` | | mobile.home.section | design needed (base m 1:78202) | P11 | done (m 146:104397) |
+| APP-004i | ↳ Home — Souqify v3 skin | `/home` | | mobile.home.section | design needed (base m 1:78599) | P11 | done (m 146:104804) |
+| APP-004j | ↳ Home — Souqify v4 skin | `/home` | | mobile.home.section | design needed (base m 1:78957) | P11 | done (m 146:105199) |
+| APP-004k | ↳ Home — Souqify v5 skin | `/home` | | mobile.home.section | design needed (base m 1:79266) | P11 | done (m 146:105605) |
+| APP-004l | ↳ Home — Souqify v6 skin | `/home` | | mobile.home.section | design needed (base m 1:79691) | P11 | done (m 146:106011) |
+| APP-005 | Categories | `/categories` | | mobile.categories.index | design needed | P11 | done (Categories tab: tree side list + children) |
+| APP-006 | Category products (filter sheet, sort sheet) | `/categories/:slug` | infinite scroll, empty | mobile.categories.show, mobile.products.index | design needed | P11 | done (store-api `products?category=`, facet filter sheet, sort sheet, infinite scroll, empty/filtered empty) |
+| APP-007 | Product lists (new in, best selling, top rated, offers) | `/lists/:list` | | mobile.lists | design needed | P11 | done (`/list?kind=` new_in/best_selling/top_rated/offers) |
+| APP-008 | Search + autocomplete | `/search` | recent, no results | mobile.search, mobile.search.autocomplete | design needed | P11 | done (autocomplete ≥2 chars, recent searches, results + popular fallback) |
+| APP-009 | Image search (camera / gallery) | `/search/image` | quota error | — (A6c #9) | design needed | P11 | done (store-api `search/image`, camera/gallery, quota/unavailable/empty) |
+| APP-010 | Product details (variants, delivery estimate, related) | `/products/:slug` | unavailable in country | mobile.products.show, .related | design needed | P11 | done (gallery, variants live price/stock, delivery estimate, flash countdown, reviews summary, related, add to cart, favourite, 404 not sold in country) |
+| APP-010a | ↳ Reviews list + write review | `/products/:slug/reviews` | | mobile.reviews.index, mobile.reviews.store | design needed | P11 | done (list + star filter + write review with eligibility) |
+| APP-011 | Cart (coupon, free-shipping progress) | `/cart` | empty, stock error | mobile.cart.*, mobile.coupon.* | design needed | P11 | done (guest X-Cart-Token, merge on sign-in, qty/remove/issues, coupon, free-shipping progress, USD charge note) |
+| APP-012 | Checkout (address, shipping quote, gateway) | `/checkout` | quote errors | mobile.checkout.quote, .gateways, .store | design needed | P11 | done (address select/add, coupon, payment methods, idempotent place) |
+| APP-012a | ↳ Payment web view | `/checkout/pay` | cancel | mobile.orders.pay, mobile.payments.* | design needed | P11 | done (Stripe PaymentSheet via start client_secret/publishable_key → confirm; PayPal/redirect gateways in-app browser → confirm on resume) |
+| APP-012b | ↳ Payment result (success / failed) | `/checkout/result` | poll status | mobile.orders.payment-status | design needed | P11 | done (success / pending + status check / failed + retry) |
+| APP-013 | Orders | `/orders` | status tabs, empty | mobile.orders.index | design needed | P11 | done (status tabs, paging) |
+| APP-014 | Order details (cancel sheet, reorder, invoice) | `/orders/:uuid` | | mobile.orders.show, .cancel, .reorder, .invoice, .cancellation-reasons | design needed | P11 | done (cancel 2-step with reasons, reorder, signed invoice link, complete payment, request return) |
+| APP-015 | Order tracking | `/orders/:uuid/tracking` | | mobile.orders.tracking | design needed | P11 | done (carrier/AWB, estimate, timeline) |
+| APP-016 | Request return | `/orders/:uuid/return` | media upload | mobile.returns.store, .options | design needed | P11 | done (items/qty, reason, refund/exchange, photos/video upload) |
+| APP-017 | Returns list | `/returns` | empty | mobile.returns.index | design needed | P11 | done |
+| APP-018 | Return detail | `/returns/:id` | | mobile.returns.show | design needed | P11 | done (steps, conversation + reply, evidence links, withdraw) |
+| APP-019 | Favorites | `/favorites` | empty | mobile.favorites.* | — | P11 | done (list/empty/remove + star toggle on every card / product) |
+| APP-020 | Login (+ Google / Apple) | `/auth/login` |  | mobile.auth.login | m 149:104141 | P11 | done — API: `auth/social/{google|apple}` + bootstrap `auth.social_providers` (decision #108); app buttons to be enabled by flutter |
 | APP-021 | Register | `/auth/register` |  | mobile.auth.register | m 149:104186 | P11 | done (+ e-mail code verify) |
 | APP-022 | Forgot password | `/auth/forgot` |  | mobile.auth.forgot | m 149:104231 | P11 | done |
 | APP-023 | Reset password (code) | `/auth/reset` |  | mobile.auth.reset | m 149:104261 | P11 | done |
-| APP-024 | Account menu | `/account` | guest state | mobile.profile.show | m 149:104308 / 149:104483 | P11 | partial (rows for orders/returns/addresses/inbox/help join with their screens) |
-| APP-025 | Edit profile | `/account/profile` | | mobile.profile.update | design needed | P11 | todo |
-| APP-026 | Change password | `/account/password` | | mobile.profile.password | design needed | P11 | todo |
-| APP-027 | Delete account (confirm) | `/account/delete` | | mobile.auth.account.delete | design needed | P11 | todo |
-| APP-028 | Addresses list | `/account/addresses` | default, delete | mobile.addresses.index, .destroy, .default | design needed | P11 | todo |
-| APP-028a | ↳ Address add / edit (map, intl phone) | `/account/addresses/edit` | | mobile.addresses.store, .update | design needed | P11 | todo |
+| APP-024 | Account menu | `/account` | guest state | mobile.profile.show | m 149:104308 / 149:104483 | P11 | done (orders, returns, addresses, inbox, profile, password, help pages, delete rows) |
+| APP-025 | Edit profile | `/account/profile` | | mobile.profile.update | design needed | P11 | done (m 149:104581; intl phone) |
+| APP-026 | Change password | `/account/password` | | mobile.profile.password | design needed | P11 | done (m 149:104651) |
+| APP-027 | Delete account (confirm) | `/account/delete` | | mobile.auth.account.delete | design needed | P11 | done (m 149:104690, password confirm sheet) |
+| APP-028 | Addresses list | `/account/addresses` | default, delete | mobile.addresses.index, .destroy, .default | design needed | P11 | done |
+| APP-028a | ↳ Address add / edit (map, intl phone) | `/account/addresses/edit` | | mobile.addresses.store, .update | design needed | P11 | done (intl phone with shopping country pre-selected; no map picker) |
 | APP-029 | Settings (language, currency, country, push toggles) | `/settings` | | mobile.preferences.options, mobile.device-tokens.* | design needed | P11 | partial (country/language/currency/appearance; push toggles todo) |
-| APP-030 | Notifications inbox (push history) | `/notifications` | empty | — (new, D10) | design needed | P11 | todo |
-| APP-031 | CMS page / menus | `/pages/:slug` | | mobile.pages.show, mobile.menus | design needed | P11 | todo |
-| APP-032 | No connection / generic error / empty | component | retry | — | design needed | P11 | todo |
+| APP-030 | Notifications inbox (push history) | `/notifications` | empty | — (new, D10) | design needed | P11 | done (mark read / all read, swipe delete, order deep link) |
+| APP-031 | CMS page / menus | `/pages/:slug` | | mobile.pages.show, mobile.menus | design needed | P11 | done (store-api `pages` list + HTML page) |
+| APP-032 | No connection / generic error / empty | component | retry | — | design needed | P11 | done (shared AsyncStateView / StateView: offline, error + retry, empty) |
 
 ## 9. Summary
 

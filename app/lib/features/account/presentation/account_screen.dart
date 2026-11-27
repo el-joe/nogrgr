@@ -110,6 +110,14 @@ class AccountScreen extends ConsumerWidget {
                       ),
                     ),
                   const SizedBox(height: 16),
+                  if (customer != null) ...[
+                    AccountRow(key: const ValueKey('account-orders'), icon: 'orders', label: texts.t('orders.title'), onTap: () => context.push(Routes.orders)),
+                    AccountRow(key: const ValueKey('account-returns'), icon: 'return', label: texts.t('returns.title'), onTap: () => context.push(Routes.returns)),
+                    AccountRow(key: const ValueKey('account-addresses'), icon: 'map', label: texts.t('app.addresses.title'), onTap: () => context.push(Routes.addresses)),
+                    AccountRow(key: const ValueKey('account-inbox'), icon: 'bell', label: texts.t('app.inbox.title'), onTap: () => context.push(Routes.notifications)),
+                    AccountRow(key: const ValueKey('account-profile'), icon: 'user', label: texts.t('app.account.edit_profile'), onTap: () => context.push(Routes.profile)),
+                    AccountRow(key: const ValueKey('account-password'), icon: 'lock', label: texts.t('app.account.change_password'), onTap: () => context.push(Routes.password)),
+                  ],
                   if (customer != null)
                     AccountRow(
                       icon: 'star',
@@ -123,6 +131,14 @@ class AccountScreen extends ConsumerWidget {
                     value: settingsValue.isEmpty ? null : settingsValue,
                     onTap: () => context.push(Routes.settings),
                   ),
+                  AccountRow(key: const ValueKey('account-pages'), icon: 'lifebuoy', label: texts.t('app.account.help'), onTap: () => context.push(Routes.pages)),
+                  if (customer != null)
+                    AccountRow(
+                      key: const ValueKey('account-delete'),
+                      icon: 'trash',
+                      label: texts.t('app.account.delete_account'),
+                      onTap: () => context.push(Routes.deleteAccount),
+                    ),
                   if (customer != null)
                     AccountRow(
                       key: const ValueKey('account-logout'),

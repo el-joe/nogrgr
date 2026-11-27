@@ -52,7 +52,7 @@ void leaveAuth(BuildContext context) {
   if (context.canPop()) {
     context.pop();
   } else {
-    context.go(Routes.home);
+    context.go(Routes.account);
   }
 }
 

@@ -21,6 +21,8 @@ Future<void> main() async {
 
   runApp(
     ProviderScope(
+      // Screens show an error state with their own retry button; no silent backoff loops.
+      retry: (_, _) => null,
       overrides: [
         tenantConfigProvider.overrideWithValue(config),
         sharedPreferencesProvider.overrideWithValue(prefs),

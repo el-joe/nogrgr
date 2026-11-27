@@ -1,5 +1,6 @@
 package com.nogrgr.app
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity()
+// FlutterFragmentActivity: required by flutter_stripe (PaymentSheet / CardField).
+class MainActivity : FlutterFragmentActivity()

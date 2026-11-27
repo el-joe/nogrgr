@@ -24,6 +24,9 @@ void main() {
     await tester.tap(find.text('Continue'));
     await Harness.settle(tester);
 
+    // Lands on the Home tab (catalog), the account tab offers sign in.
+    expect(find.text('Eau de parfum'), findsWidgets);
+    await Harness.openTab(tester, 'Account');
     expect(find.text('Sign in for the best experience'), findsOneWidget);
     // Store defaults were adopted from bootstrap.
     final prefs = harness.container.read(preferencesProvider);
@@ -55,7 +58,7 @@ void main() {
     await tester.tap(find.text('Try again'));
     await Harness.settle(tester);
 
-    expect(find.text('Sign in for the best experience'), findsOneWidget);
+    expect(find.text('Eau de parfum'), findsWidgets);
   });
 
   testWidgets('unknown store shows the can’t-reach state with TENANT_404', (tester) async {
