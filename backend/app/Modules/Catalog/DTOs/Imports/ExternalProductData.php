@@ -18,6 +18,7 @@ final class ExternalProductData extends BaseDTO
      * @param  array<string, string>  $metaDescription
      * @param  array<string, string>  $metaKeywords
      * @param  list<ExternalImageData>  $images
+     * @param  list<ExternalImageData>  $videos  gallery videos (#114)
      * @param  list<ExternalVariantData>  $variants
      * @param  list<ExternalCategoryData>  $categories
      */
@@ -39,6 +40,7 @@ final class ExternalProductData extends BaseDTO
         public readonly array $images = [],
         public readonly array $variants = [],
         public readonly array $categories = [],
+        public readonly array $videos = [],
     ) {}
 
     public function displayName(): string
@@ -60,12 +62,21 @@ final class ExternalProductData extends BaseDTO
      */
     public function toArray(): array
     {
-        return [
+        $data = [
             ...parent::toArray(),
             'images' => array_map(static fn (ExternalImageData $image): array => $image->toArray(), $this->images),
             'variants' => array_map(static fn (ExternalVariantData $variant): array => $variant->toArray(), $this->variants),
             'categories' => array_map(static fn (ExternalCategoryData $category): array => $category->toArray(), $this->categories),
+            'videos' => array_map(static fn (ExternalImageData $video): array => $video->toArray(), $this->videos),
         ];
+
+        // Products without videos keep the checksum they had before videos were imported
+        // (#114), so only products that have videos are re-imported on the next run.
+        if ($this->videos === []) {
+            unset($data['videos']);
+        }
+
+        return $data;
     }
 
     /**

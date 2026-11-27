@@ -30,6 +30,7 @@ use App\Modules\Catalog\Repositories\Contracts\ProductBadgeRepositoryContract;
 use App\Modules\Catalog\Repositories\Contracts\ProductRepositoryContract;
 use App\Modules\Catalog\Services\BadgeService;
 use App\Modules\Catalog\Services\ProductService;
+use App\Modules\Catalog\Support\GalleryMedia;
 use App\Modules\Catalog\Support\VariantMatrix;
 use App\Modules\Inventory\Services\BranchService;
 use DomainException;
@@ -39,7 +40,7 @@ use Illuminate\Http\UploadedFile;
  * Upserts one external product into the central catalog through ProductService (same
  * path as the admin editor: variants, gallery + queued conversions, stock, events).
  * Idempotent: the product is found by its external id (then by SKU), variants and
- * gallery images through catalog_import_links, attributes / options by
+ * gallery images and videos through catalog_import_links, attributes / options by
  * external_source + external_id. Admin-only data (labels, badges, tenants, countries,
  * extra categories and images) is kept on update. Unchanged payloads are skipped.
  */
@@ -111,12 +112,13 @@ class ExternalProductImporter
         }
 
         [$keepMediaIds, $downloads, $warnings, $linkedImages] = $this->gallery($driver, $product, $item);
+        $downloadedImages = count(array_filter($downloads, static fn (array $download): bool => ! str_starts_with($download['file']->getClientOriginalName(), 'video-')));
         $warnings = [...$categoryWarnings, ...$warnings];
         $stock = $this->stockCells($item, $variants, $warnings);
 
         try {
             $data = $this->productData($product, $item, array_values(array_filter($mapping)), $variants, $keepMediaIds, array_column($downloads, 'file'), $stock);
-            $mediaBefore = $product !== null ? array_map('intval', $product->media()->pluck('id')->all()) : [];
+            $mediaBefore = $product !== null ? array_map('intval', $product->gallery()->pluck('id')->all()) : [];
             $product = $product === null ? $this->productService->create($data) : $this->productService->update($product, $data);
         } finally {
             foreach ($downloads as $download) {
@@ -135,6 +137,11 @@ class ExternalProductImporter
         $this->imports->saveLink($driver, ImportLinkType::Product, $item->externalId, $product->id, $item->checksum());
 
         $summary = trans_choice('catalog::imports.messages.summary', count($variants), ['variants' => count($variants), 'images' => $images]);
+        $videos = count($item->videos);
+
+        if ($videos > 0) {
+            $summary .= ' · '.trans_choice('catalog::imports.messages.videos', $videos, ['count' => $videos]);
+        }
         $newPrice = $product->refresh()->costBasis();
 
         if (! $isNew && $previousPrice !== null && ! $previousPrice->equals($newPrice)) {
@@ -146,7 +153,7 @@ class ExternalProductImporter
             $summary,
             $product->id,
             $images,
-            $linkedImages + count($downloads),
+            min($images, $linkedImages + $downloadedImages),
             $warnings,
         );
     }
@@ -302,39 +309,43 @@ class ExternalProductImporter
     }
 
     /**
-     * Kept gallery ids (imported images still in the source first, then admin uploads),
-     * the new images to download, warnings and the number of images already present.
+     * Kept gallery ids (imported images still in the source first, then imported videos,
+     * then admin uploads), the new files to download (images, then videos), warnings and
+     * the number of images already present. Videos are matched by external id like
+     * images (same Media links), so a re-run never duplicates them (#114).
      *
      * @return array{0: list<int>, 1: list<array{external_id: int, file: UploadedFile}>, 2: list<string>, 3: int}
      */
     private function gallery(ImportDriver $driver, ?Product $product, ExternalProductData $item): array
     {
-        $own = $product !== null ? array_map('intval', $product->media()->orderBy('sort_order')->pluck('id')->all()) : [];
+        $own = $product !== null ? array_map('intval', $product->gallery()->pluck('id')->all()) : [];
         $linkedByLocal = $this->imports->externalIdsFor($driver, ImportLinkType::Media, $own);
         $localByExternal = array_flip($linkedByLocal);
         $keep = [];
         $downloads = [];
         $warnings = [];
+        $linkedKept = 0;
 
-        foreach ($item->images as $image) {
-            if (isset($localByExternal[$image->externalId])) {
-                $keep[] = $localByExternal[$image->externalId];
+        foreach ([[$item->images, false], [$item->videos, true]] as [$entries, $isVideo]) {
+            foreach ($entries as $entry) {
+                if (isset($localByExternal[$entry->externalId])) {
+                    $keep[] = $localByExternal[$entry->externalId];
+                    $linkedKept += $isVideo ? 0 : 1;
 
-                continue;
+                    continue;
+                }
+
+                $file = $isVideo ? $this->downloadVideo($entry) : $this->download($entry);
+
+                if ($file === null) {
+                    $warnings[] = $this->text($isVideo ? 'catalog::imports.messages.video_failed' : 'catalog::imports.messages.image_failed', ['url' => mb_substr($entry->url, 0, 200)]);
+
+                    continue;
+                }
+
+                $downloads[] = ['external_id' => $entry->externalId, 'file' => $file];
             }
-
-            $file = $this->download($image);
-
-            if ($file === null) {
-                $warnings[] = $this->text('catalog::imports.messages.image_failed', ['url' => mb_substr($image->url, 0, 200)]);
-
-                continue;
-            }
-
-            $downloads[] = ['external_id' => $image->externalId, 'file' => $file];
         }
-
-        $linkedKept = count($keep);
 
         foreach ($own as $mediaId) {
             if (! isset($linkedByLocal[$mediaId])) {
@@ -348,6 +359,11 @@ class ExternalProductImporter
     private function download(ExternalImageData $image): ?UploadedFile
     {
         return $this->downloader->download($image->url, 'image-'.$image->externalId);
+    }
+
+    private function downloadVideo(ExternalImageData $video): ?UploadedFile
+    {
+        return $this->downloader->downloadVideo($video->url, 'video-'.$video->externalId, GalleryMedia::videoMaxBytes());
     }
 
     /**
@@ -521,7 +537,7 @@ class ExternalProductImporter
             }
         }
 
-        $newMedia = $product->media()->whereNotIn('id', $mediaBefore)->orderBy('sort_order')->orderBy('id')->pluck('id')->map(static fn (mixed $id): int => (int) $id)->all();
+        $newMedia = $product->gallery()->whereNotIn('id', $mediaBefore)->orderBy('sort_order')->orderBy('id')->pluck('id')->map(static fn (mixed $id): int => (int) $id)->all();
 
         foreach ($downloadedExternalIds as $index => $externalId) {
             if (isset($newMedia[$index])) {

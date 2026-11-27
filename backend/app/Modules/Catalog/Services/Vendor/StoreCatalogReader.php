@@ -41,12 +41,14 @@ class StoreCatalogReader
         return [
             'centralProduct',
             'centralProduct.media',
+            'centralProduct.gallery',
             'centralProduct.categories',
             'centralProduct.badges',
             'centralProduct.variants' => static fn (Relation $query) => $query->where('status', RecordStatus::Active)->with('options'),
             'override',
             'variantOverrides',
             'media',
+            'gallery',
             'variants',
         ];
     }
@@ -94,9 +96,16 @@ class StoreCatalogReader
         $central = $product->centralProduct;
         $override = $product->override;
         $overrideImages = $override?->images;
-        $imageUrls = is_array($overrideImages) && $overrideImages !== []
+        $gallery = $central?->gallery ?? collect();
+        $centralImages = $gallery->reject(static fn (CatalogMedia $media): bool => $media->isVideo())->sortByDesc('is_primary')->map(static fn (CatalogMedia $media): string => $media->bestUrl())->values()->all();
+        $usesOverride = is_array($overrideImages) && $overrideImages !== [];
+        $imageUrls = $usesOverride
             ? array_map(static fn (string $path): string => Storage::disk(self::PUBLIC_DISK)->url($path), $overrideImages)
-            : ($central?->media->map(static fn (CatalogMedia $media): string => $media->url())->values()->all() ?? []);
+            : $centralImages;
+        // Override images replace the central images only; central videos always stay (#114).
+        $media = $usesOverride
+            ? [...array_map(static fn (string $url): array => ['type' => 'image', 'url' => $url, 'poster' => null], $imageUrls), ...self::videoItems($gallery, static fn (CatalogMedia $item): string => $item->bestUrl(), static fn (CatalogMedia $item): ?string => $item->posterUrl())]
+            : self::mediaItems($gallery, static fn (CatalogMedia $item): string => $item->bestUrl(), static fn (CatalogMedia $item): ?string => $item->posterUrl());
         /** @var \Illuminate\Support\Collection<int, VariantOverride> $variantOverrides */
         $variantOverrides = $product->variantOverrides->keyBy('variant_id');
         $variants = [];
@@ -143,6 +152,7 @@ class StoreCatalogReader
             badgeIds: $product->badge_ids !== null ? array_map('intval', $product->badge_ids) : ($central?->badges->pluck('id')->map(static fn (mixed $id): int => (int) $id)->unique()->values()->all() ?? []),
             variants: $variants,
             available: $central !== null && ! $central->trashed() && $central->status === ProductStatus::Published,
+            media: $media,
         );
     }
 
@@ -156,7 +166,7 @@ class StoreCatalogReader
             summary: $product->summary,
             description: $product->description,
             sku: $product->sku,
-            imageUrls: $product->media->map(static fn (CatalogMedia $media): string => OwnProductService::imageUrl($media))->values()->all(),
+            imageUrls: $product->gallery->reject(static fn (CatalogMedia $media): bool => $media->isVideo())->sortByDesc('is_primary')->map(static fn (CatalogMedia $media): string => OwnProductService::imageUrl($media))->values()->all(),
             stock: (int) $product->stock,
             weightGrams: (int) $product->weight_grams,
             weightOverridden: false,
@@ -164,6 +174,34 @@ class StoreCatalogReader
             badgeIds: [],
             variants: [],
             available: true,
+            media: self::mediaItems($product->gallery, static fn (CatalogMedia $item): string => OwnProductService::imageUrl($item), static fn (CatalogMedia $item): ?string => OwnProductService::posterUrl($item)),
         );
+    }
+
+    /**
+     * Gallery in order: the primary image first, then the rest (images and videos) by
+     * sort order — the same order the panels show.
+     *
+     * @param  \Illuminate\Support\Collection<int, CatalogMedia>  $gallery
+     * @param  callable(CatalogMedia): string  $url
+     * @param  callable(CatalogMedia): (string|null)  $poster
+     * @return list<array{type: string, url: string, poster: string|null}>
+     */
+    private static function mediaItems(\Illuminate\Support\Collection $gallery, callable $url, callable $poster): array
+    {
+        return $gallery->sortBy([['is_primary', 'desc'], ['sort_order', 'asc'], ['id', 'asc']])
+            ->map(static fn (CatalogMedia $item): array => ['type' => $item->type->value, 'url' => $url($item), 'poster' => $item->isVideo() ? $poster($item) : null])
+            ->values()->all();
+    }
+
+    /**
+     * @param  \Illuminate\Support\Collection<int, CatalogMedia>  $gallery
+     * @param  callable(CatalogMedia): string  $url
+     * @param  callable(CatalogMedia): (string|null)  $poster
+     * @return list<array{type: string, url: string, poster: string|null}>
+     */
+    private static function videoItems(\Illuminate\Support\Collection $gallery, callable $url, callable $poster): array
+    {
+        return self::mediaItems($gallery->filter(static fn (CatalogMedia $item): bool => $item->isVideo()), $url, $poster);
     }
 }

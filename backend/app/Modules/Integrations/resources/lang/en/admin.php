@@ -229,16 +229,18 @@ return [
         ],
         'commerce' => [
             'title' => 'Checkout & store API',
-            'description' => 'Stock reservation of unpaid orders and request limits of the storefront / mobile API.',
+            'description' => 'Stock reservation of unpaid orders, request limits of the storefront / mobile API and the product video size limit.',
             'fields' => [
                 'reservation_minutes' => 'Unpaid order reservation (minutes)',
                 'store_api_rate_limit' => 'Store API requests per minute',
                 'checkout_rate_limit' => 'Checkout attempts per minute',
+                'product_video_max_mb' => 'Product video size limit (MB)',
             ],
             'help' => [
                 'reservation_minutes' => 'An unpaid order releases its stock and is cancelled after this time.',
                 'store_api_rate_limit' => 'Per client, across cart, checkout, orders and payments.',
                 'checkout_rate_limit' => 'Per client, for placing orders and starting payments.',
+                'product_video_max_mb' => 'Largest gallery video (mp4, webm, mov) accepted on product forms and catalog imports.',
             ],
         ],
         'domains' => [

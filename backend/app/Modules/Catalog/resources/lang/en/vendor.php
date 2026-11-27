@@ -279,7 +279,7 @@ return [
         'remove_variant' => 'Remove variant',
         'no_variants' => 'This product has no variants.',
         'gallery' => 'Media gallery',
-        'gallery_hint' => 'The first image is the main image on listings and the product page. JPG, PNG, WEBP, GIF · max 10 MB.',
+        'gallery_hint' => 'The first image is the main image on listings and the product page. JPG, PNG, WEBP, GIF · max 10 MB. Videos: MP4, WEBM, MOV · max :mb MB (never the main item).',
         'created' => 'Product created.',
         'updated' => 'Product saved.',
         'delete' => 'Delete product',

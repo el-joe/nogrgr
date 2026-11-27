@@ -68,10 +68,12 @@ class ProductPageService
         $slug = $slug !== '' ? $slug : (Str::slug($view->name) ?: 'p');
         $flash = $priced['flash'] !== null ? $this->index->entry($view->id())?->flash : null;
         $images = $view->imageUrls;
+        $media = $view->media !== [] ? $view->media : array_map(static fn (string $url): array => ['type' => 'image', 'url' => $url, 'poster' => null], $images);
 
         foreach ($view->variants as $variantView) {
             if ($variantView->imageUrl !== null && ! in_array($variantView->imageUrl, $images, true)) {
                 $images[] = $variantView->imageUrl;
+                $media[] = ['type' => 'image', 'url' => $variantView->imageUrl, 'poster' => null];
             }
         }
 
@@ -107,6 +109,7 @@ class ProductPageService
             favorited: false,
             metaTitle: $view->product->meta_title ?: ($view->overrideText('meta_title') ?? $view->central->meta_title ?? null),
             metaDescription: $view->product->meta_description ?: ($view->overrideText('meta_description') ?? $view->central->meta_description ?? $view->summary),
+            media: $media,
         );
     }
 

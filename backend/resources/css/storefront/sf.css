@@ -764,3 +764,127 @@
         }
     }
 }
+
+/*
+ * Product gallery videos + the floating video popup (#114, core/video-pip.js). The popup
+ * sits in the bottom inline-end corner (left in RTL), above the phones' bottom nav.
+ */
+@layer components {
+    .sf-gallery-video {
+        background: #000;
+        display: block;
+    }
+
+    .sf-video-thumb {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .sf-video-thumb img,
+    .sf-video-thumb video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+    }
+
+    .sf-video-thumb-badge {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 9999px;
+        background: rgb(0 0 0 / 0.55);
+        color: #fff;
+    }
+
+    .sf-video-pip {
+        position: fixed;
+        inset-inline-end: 12px;
+        /* Phones: above the bottom nav + the product page's sticky add-to-cart bar. */
+        bottom: calc(140px + env(safe-area-inset-bottom, 0px));
+        z-index: 60;
+        width: 140px;
+        height: 190px;
+        overflow: hidden;
+        border-radius: 16px;
+        border: 1.5px solid rgb(255 255 255 / 0.18);
+        background: #111;
+        box-shadow: 0 8px 32px rgb(0 0 0 / 0.45);
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .sf-video-pip[data-shown] {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .sf-video-pip:focus-visible {
+        outline: 2px solid var(--sf-cta, #fff);
+        outline-offset: 2px;
+    }
+
+    .sf-video-pip video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+    }
+
+    .sf-video-pip-close {
+        position: absolute;
+        top: 6px;
+        inset-inline-end: 8px;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 0;
+        border-radius: 9999px;
+        background: rgb(0 0 0 / 0.5);
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .sf-video-pip-close:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 1px;
+    }
+
+    /* Family adapters: desktop has no bottom nav or sticky bar. */
+    @media (min-width: 1024px) {
+        .sf-video-pip {
+            bottom: 24px;
+            inset-inline-end: 24px;
+        }
+    }
+
+    /* Souqify's sticky bar is taller; Ecommet's back-to-top button sits in that corner. */
+    @media (max-width: 1023.98px) {
+        .sf-video-pip--ecommet {
+            bottom: calc(196px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .sf-video-pip--souqify {
+            bottom: calc(164px + env(safe-area-inset-bottom, 0px));
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sf-video-pip {
+            transition: none;
+            transform: none;
+        }
+    }
+}

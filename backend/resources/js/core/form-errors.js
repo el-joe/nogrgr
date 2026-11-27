@@ -1,6 +1,7 @@
 /**
  * Renders Laravel 422 `errors` onto a form.
- * Field "items.0.qty" ↔ input name "items[0][qty]".
+ * Field "items.0.qty" ↔ input name "items[0][qty]"; "images.2" (one file of
+ * <input name="images[]">) falls back to that input's field.
  * Message target: element with [data-error-for="items.0.qty"] (x-ui::* fields render
  * it hidden; created if absent). Sets aria-invalid on the input, which the
  * .ui-control / Select2 / checkbox styles turn into the Figma error state.
@@ -28,8 +29,20 @@ export function showErrors(form, errors = {}) {
 
     for (const [key, messages] of Object.entries(errors)) {
         const name = fieldName(key);
-        const input = form.querySelector(`[name="${CSS.escape(name)}"], [name="${CSS.escape(name)}[]"]`);
+        let input = form.querySelector(`[name="${CSS.escape(name)}"], [name="${CSS.escape(name)}[]"]`);
         let target = form.querySelector(`[data-error-for="${CSS.escape(key)}"]`);
+
+        /* A file of a multi-file input ("images.2" for <input name="images[]">): show it on that field. */
+        const parent = key.replace(/\.\d+$/, '');
+
+        if (!input && !target && parent !== key) {
+            input = form.querySelector(`[name="${CSS.escape(fieldName(parent))}[]"]`);
+            target = form.querySelector(`[data-error-for="${CSS.escape(parent)}"]`);
+
+            if (target && !target.hidden) {
+                continue;
+            }
+        }
 
         if (!target && input) {
             target = document.createElement('p');

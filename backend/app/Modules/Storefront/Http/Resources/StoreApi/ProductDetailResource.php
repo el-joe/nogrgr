@@ -44,6 +44,8 @@ class ProductDetailResource extends JsonResource
             'summary' => $page->summary,
             'description' => $page->description,
             'images' => $page->images,
+            // Whole gallery in order (#114): images and videos, poster only for videos.
+            'media' => array_map(static fn (array $item): array => ['type' => $item['type'], 'url' => $item['url'], 'poster' => $item['poster']], $page->media),
             'price' => $money->present($page->priceMinor),
             'compare_price' => $compare !== null && $compare > $page->priceMinor ? $money->present($compare) : null,
             'discount_percent' => $page->discount,

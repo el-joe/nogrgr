@@ -18,6 +18,7 @@ final readonly class StoreProductView
      * @param  list<int>  $categoryIds
      * @param  list<int>  $badgeIds
      * @param  list<StoreVariantView>  $variants  active central variants (empty for own products / simple products)
+     * @param  list<array{type: string, url: string, poster: string|null}>  $media  whole gallery in order: images + videos (#114)
      */
     public function __construct(
         public StoreProduct $product,
@@ -35,7 +36,18 @@ final readonly class StoreProductView
         public array $badgeIds,
         public array $variants,
         public bool $available,
+        public array $media = [],
     ) {}
+
+    /**
+     * Gallery videos only.
+     *
+     * @return list<array{type: string, url: string, poster: string|null}>
+     */
+    public function videos(): array
+    {
+        return array_values(array_filter($this->media, static fn (array $item): bool => $item['type'] === 'video'));
+    }
 
     public function id(): int
     {

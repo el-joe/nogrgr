@@ -180,6 +180,7 @@ return [
 
     'messages' => [
         'summary' => '{0} No variants · :images images|{1} 1 variant · :images images|[2,*] :variants variants · :images images',
+        'videos' => ':count video|:count videos',
         'price_changed' => 'price :from → :to',
         'category_unmapped' => 'category ":name" not mapped',
         'exists' => 'already imported (updates off)',
@@ -187,6 +188,7 @@ return [
         'duplicate_sku' => 'duplicate SKU in catalog (:sku)',
         'trashed' => 'product is in the trash; restore it to import again',
         'image_failed' => 'image could not be downloaded: :url',
+        'video_failed' => 'video could not be downloaded: :url',
         'no_branch' => 'stock not saved: no active branch',
         'page_failed' => 'page :page could not be read: :detail',
     ],

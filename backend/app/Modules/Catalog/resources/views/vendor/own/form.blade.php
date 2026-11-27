@@ -13,7 +13,7 @@
     $translation = fn (string $field, string $locale) => $editing ? $product->getTranslation($field, $locale, false) : null;
     $selectedCountries = $product->country_ids;
     $allCountries = $editing ? $selectedCountries === null : false;
-    $images = $editing ? $product->media->map(fn ($media) => ['id' => $media->id, 'url' => \App\Modules\Catalog\Services\Vendor\OwnProductService::imageUrl($media)])->all() : [];
+    $images = $editing ? $product->gallery->map(fn ($media) => ['id' => $media->id, 'type' => $media->type->value, 'url' => \App\Modules\Catalog\Services\Vendor\OwnProductService::imageUrl($media), 'poster' => \App\Modules\Catalog\Services\Vendor\OwnProductService::posterUrl($media)])->all() : [];
     $variants = $editing ? $product->variants : collect();
     $money = fn ($value) => $value?->toDecimal();
 @endphp
@@ -136,9 +136,9 @@
         <section class="grid gap-4 rounded-[24px] bg-surface p-4 sm:p-6">
             <div>
                 <h2 class="text-lg font-medium text-ink">{{ __('catalog::vendor.own.gallery') }}</h2>
-                <p class="text-xs text-ink-muted">{{ __('catalog::vendor.own.gallery_hint') }}</p>
+                <p class="text-xs text-ink-muted">{{ __('catalog::vendor.own.gallery_hint', ['mb' => \App\Modules\Catalog\Support\GalleryMedia::videoMaxMegabytes()]) }}</p>
             </div>
-            <x-ui::image-upload name="images" :images="$images" :max="12" accept="image/png,image/jpeg,image/webp,image/gif" />
+            <x-ui::image-upload name="images" videos :images="$images" :max="12" accept="image/png,image/jpeg,image/webp,image/gif" />
         </section>
     </form>
     @if ($editing)

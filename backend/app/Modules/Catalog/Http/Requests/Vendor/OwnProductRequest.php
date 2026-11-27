@@ -6,6 +6,7 @@ use App\Modules\Catalog\DTOs\Vendor\OwnProductData;
 use App\Modules\Catalog\DTOs\Vendor\OwnVariantData;
 use App\Modules\Catalog\Models\StoreCategory;
 use App\Modules\Catalog\Models\StoreProduct;
+use App\Modules\Catalog\Support\GalleryMedia;
 use App\Shared\Money\Money;
 use App\Shared\Support\Locale;
 use Closure;
@@ -68,7 +69,7 @@ class OwnProductRequest extends FormRequest
             'variants.*.stock' => ['required', 'integer', 'min:0', 'max:10000000'],
             'variants.*.is_active' => ['sometimes', 'boolean'],
             'images' => ['nullable', 'array', 'max:12'],
-            'images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
+            'images.*' => GalleryMedia::rules(['file', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240']),
             'images_keep' => ['nullable', 'array'],
             'images_keep.*' => ['integer', 'min:1'],
         ];

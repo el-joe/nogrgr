@@ -4,6 +4,7 @@ namespace App\Modules\Catalog\Models;
 
 use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\StoreProductFactory;
+use App\Modules\Catalog\Enums\MediaType;
 use App\Modules\Catalog\Enums\StoreProductSource;
 use App\Shared\Money\Money;
 use App\Shared\Money\MoneyCast;
@@ -181,7 +182,17 @@ class StoreProduct extends Model implements AiTranslatable
      */
     public function media(): MorphMany
     {
-        return $this->morphMany(CatalogMedia::class, 'mediable')->orderByDesc('is_primary')->orderBy('sort_order')->orderBy('id');
+        return $this->morphMany(CatalogMedia::class, 'mediable')->where('type', MediaType::Image->value)->orderByDesc('is_primary')->orderBy('sort_order')->orderBy('id');
+    }
+
+    /**
+     * Whole gallery (images + videos) in gallery order (#114).
+     *
+     * @return MorphMany<CatalogMedia, $this>
+     */
+    public function gallery(): MorphMany
+    {
+        return $this->morphMany(CatalogMedia::class, 'mediable')->orderBy('sort_order')->orderBy('id');
     }
 
     /**

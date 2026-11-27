@@ -3,11 +3,12 @@
  * (#sf-product: price, compare, discount, stock, image per variant), unavailable
  * combinations greyed out, ?variant= kept in the URL, gallery counter "2/8", and the
  * reviews preview + modal (sf-data Store API) with filters, sort, load more and the
- * write-a-review form.
+ * write-a-review form. Gallery videos + the floating video popup: core/video-pip.js.
  */
 import { http, HttpError } from '../../core/http';
 import { notify } from '../../core/notify';
 import { openSheet, closeSheet } from '../core/motion/index.js';
+import { initVideoPip } from '../core/video-pip.js';
 
 const STAR = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.5l2.94 6.08 6.56.95-4.75 4.63 1.12 6.54L12 17.6l-5.87 3.1 1.12-6.54L2.5 9.53l6.56-.95L12 2.5z"/></svg>';
 
@@ -74,7 +75,12 @@ function bindVariants(page, data) {
 
             if (variant.image) {
                 const gallery = page.querySelector('[data-gallery]')?.swiper;
-                const index = [...page.querySelectorAll('[data-gallery-main] img')].findIndex((img) => img.currentSrc === variant.image || img.src === variant.image);
+                /* Slide index (video slides included, #114) of the variant's image. */
+                const index = [...page.querySelectorAll('[data-gallery-main] .swiper-slide')].findIndex((slide) => {
+                    const img = slide.querySelector('img');
+
+                    return img && (img.currentSrc === variant.image || img.src === variant.image);
+                });
 
                 if (gallery && index >= 0) {
                     gallery.slideTo(index);
@@ -318,5 +324,6 @@ export function initProduct(root = document) {
     const data = readIsland();
     bindVariants(page, data);
     bindGalleryCounter(page);
+    initVideoPip(page);
     bindReviews(page, data);
 }

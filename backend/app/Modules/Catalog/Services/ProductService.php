@@ -8,12 +8,15 @@ use App\Modules\Catalog\DTOs\ProductVariantData;
 use App\Modules\Catalog\Enums\AssignmentScope;
 use App\Modules\Catalog\Enums\BadgeType;
 use App\Modules\Catalog\Enums\MediaConversionStatus;
+use App\Modules\Catalog\Enums\MediaType;
 use App\Modules\Catalog\Enums\ProductStatus;
 use App\Modules\Catalog\Enums\RecordStatus;
 use App\Modules\Catalog\Events\ProductCreated;
 use App\Modules\Catalog\Events\ProductUpdated;
 use App\Modules\Catalog\Jobs\ConvertCatalogMedia;
+use App\Modules\Catalog\Jobs\GenerateVideoPoster;
 use App\Modules\Catalog\Models\AttributeOption;
+use App\Modules\Catalog\Models\CatalogMedia;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Repositories\Contracts\ProductBadgeRepositoryContract;
@@ -307,38 +310,55 @@ class ProductService extends BaseService
     }
 
     /**
+     * Gallery order = kept items (images and videos) then the new uploads; the primary
+     * item is the first image, a video never is (#114).
+     *
      * @param  list<int>  $keepIds
-     * @param  list<UploadedFile>  $uploads
+     * @param  list<UploadedFile>  $uploads  images or videos (MediaType::fromUpload)
      */
     private function syncMedia(Product $product, array $keepIds, array $uploads): void
     {
-        $ownIds = array_map('intval', $product->media()->pluck('id')->all());
-        $keepIds = array_values(array_intersect($keepIds, $ownIds));
+        /** @var array<int, MediaType> $types */
+        $types = $product->gallery()->get(['id', 'type'])->mapWithKeys(static fn (CatalogMedia $media): array => [(int) $media->id => $media->type])->all();
+        $keepIds = array_values(array_intersect($keepIds, array_keys($types)));
         Storage::disk(self::MEDIA_DISK)->delete($this->products->pruneMedia($product, $keepIds));
 
         $changes = [];
+        $hasPrimary = false;
 
         foreach ($keepIds as $position => $id) {
-            $changes[$id] = ['sort_order' => $position, 'is_primary' => $position === 0];
+            $primary = ! $hasPrimary && $types[$id] === MediaType::Image;
+            $hasPrimary = $hasPrimary || $primary;
+            $changes[$id] = ['sort_order' => $position, 'is_primary' => $primary];
         }
 
         $this->products->updateMedia($product, $changes);
         $position = count($keepIds);
 
         foreach ($uploads as $upload) {
-            [$width, $height] = @getimagesize($upload->getRealPath()) ?: [null, null];
+            $type = MediaType::fromUpload($upload);
+            $video = $type === MediaType::Video;
+            [$width, $height] = $video ? [null, null] : (@getimagesize($upload->getRealPath()) ?: [null, null]);
+            $primary = ! $hasPrimary && ! $video;
+            $hasPrimary = $hasPrimary || $primary;
+            // Videos keep the declared container type (finfo reports some mp4 / mov as octet-stream).
+            $mime = $video && in_array($upload->getClientMimeType(), MediaType::VIDEO_MIMES, true) ? $upload->getClientMimeType() : ($upload->getMimeType() ?: $upload->getClientMimeType());
+            $path = $video
+                ? $upload->storeAs(self::MEDIA_DIRECTORY, Str::uuid()->toString().'.'.MediaType::videoExtension($mime), self::MEDIA_DISK)
+                : $upload->store(self::MEDIA_DIRECTORY, self::MEDIA_DISK);
             $media = $this->products->createMedia($product, [
+                'type' => $type,
                 'disk' => self::MEDIA_DISK,
-                'path' => $upload->store(self::MEDIA_DIRECTORY, self::MEDIA_DISK),
-                'mime_type' => $upload->getMimeType(),
+                'path' => $path,
+                'mime_type' => $mime,
                 'size' => (int) $upload->getSize(),
                 'width' => $width,
                 'height' => $height,
                 'conversion_status' => MediaConversionStatus::Pending,
-                'is_primary' => $position === 0,
+                'is_primary' => $primary,
                 'sort_order' => $position++,
             ]);
-            ConvertCatalogMedia::dispatch($media->id);
+            $video ? GenerateVideoPoster::dispatch($media->id) : ConvertCatalogMedia::dispatch($media->id);
         }
     }
 

@@ -295,7 +295,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryContr
     public function createMedia(Product $product, array $attributes): CatalogMedia
     {
         /** @var CatalogMedia $media */
-        $media = $product->media()->create($attributes);
+        $media = $product->gallery()->create($attributes);
 
         return $media;
     }
@@ -303,15 +303,15 @@ class ProductRepository extends BaseRepository implements ProductRepositoryContr
     public function updateMedia(Product $product, array $changes): void
     {
         foreach ($changes as $id => $attributes) {
-            $product->media()->whereKey($id)->update($attributes);
+            $product->gallery()->whereKey($id)->update($attributes);
         }
     }
 
     public function pruneMedia(Product $product, array $keepIds): array
     {
-        $removed = $product->media()->whereKeyNot($keepIds)->get();
-        $paths = $removed->flatMap(static fn (CatalogMedia $media): array => array_values(array_filter([$media->path, $media->webp_path, $media->avif_path])))->all();
-        $product->media()->whereKeyNot($keepIds)->delete();
+        $removed = $product->gallery()->whereKeyNot($keepIds)->get();
+        $paths = $removed->flatMap(static fn (CatalogMedia $media): array => $media->paths())->all();
+        $product->gallery()->whereKeyNot($keepIds)->delete();
 
         return $paths;
     }

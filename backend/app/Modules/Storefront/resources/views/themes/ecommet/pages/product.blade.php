@@ -11,6 +11,9 @@
     $store = \App\Modules\Storefront\Support\StorefrontTheme::storeName();
     $logo = \App\Modules\Storefront\Support\StorefrontTheme::logoUrl();
     $images = $page->images;
+    // Gallery slides: images and videos in order (#114); the video drives the floating popup.
+    $gallery = $page->media !== [] ? $page->media : array_map(fn ($url) => ['type' => 'image', 'url' => $url, 'poster' => null], $images);
+    $pipVideo = $page->firstVideo();
     $reviews = $page->reviews;
     $reviewsUrl = Route::has('store-api.v1.products.reviews.index') ? route('store-api.v1.products.reviews.index', ['storeProduct' => $page->view->id()]) : null;
     $favoriteUrl = Route::has('storefront.favorites.toggle') ? route('storefront.favorites.toggle') : null;
@@ -49,13 +52,13 @@
         <div class="grid gap-6 lg:grid-cols-[470px_minmax(0,1fr)] lg:gap-[52px]">
             {{-- Gallery + reviews + details (left column on desktop) --}}
             <div class="grid content-start gap-6 max-lg:contents">
-                <div class="relative -mx-4 flex gap-5 max-lg:order-1 lg:mx-0" data-gallery>
-                    @if (count($images) > 1)
+                <div class="relative -mx-4 flex gap-5 max-lg:order-1 lg:mx-0" data-gallery @if ($pipVideo) data-video-pip="{{ json_encode(['family' => 'ecommet', 'src' => $pipVideo['url'], 'poster' => $pipVideo['poster'], 'close' => __st('product.close_video'), 'open' => __st('product.open_video')], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}" @endif>
+                    @if (count($gallery) > 1)
                         <div class="swiper hidden h-[276px] w-[81px] shrink-0 lg:block" data-gallery-thumbs='{"direction":"vertical","spaceBetween":10}'>
                             <div class="swiper-wrapper">
-                                @foreach ($images as $index => $image)
+                                @foreach ($gallery as $index => $item)
                                     <div class="swiper-slide !h-[62px] cursor-pointer">
-                                        <span @class(['eco-thumb', 'is-active' => $index === 0])><img src="{{ $image }}" alt="" width="81" height="62" loading="lazy" decoding="async"></span>
+                                        @if ($item['type'] === 'video')<span @class(['eco-thumb', 'is-active' => $index === 0])><x-sf::gallery.video-thumb :item="$item" :width="81" :height="62" /></span>@else<span @class(['eco-thumb', 'is-active' => $index === 0])><img src="{{ $item['url'] }}" alt="" width="81" height="62" loading="lazy" decoding="async"></span>@endif
                                     </div>
                                 @endforeach
                             </div>
@@ -64,21 +67,25 @@
                     <div class="relative min-w-0 flex-1">
                         <div class="swiper aspect-[375/250] bg-eco-img lg:aspect-[367/276]" data-gallery-main>
                             <div class="swiper-wrapper">
-                                @forelse ($images as $index => $image)
-                                    <div class="swiper-slide grid place-items-center">
-                                        <div class="swiper-zoom-container">
-                                            <img src="{{ $image }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="734" height="552" class="size-full object-contain mix-blend-multiply" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
-                                        </div>
+                                @forelse ($gallery as $index => $item)
+                                    <div @if ($item['type'] === 'video') data-gallery-video-slide @endif class="swiper-slide grid place-items-center">
+                                        @if ($item['type'] === 'video')
+                                            <x-sf::gallery.video :item="$item" :index="$index" :name="$page->name" />
+                                        @else
+                                            <div class="swiper-zoom-container">
+                                                <img src="{{ $item['url'] }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="734" height="552" class="size-full object-contain mix-blend-multiply" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
+                                            </div>
+                                        @endif
                                     </div>
                                 @empty
                                     <div class="swiper-slide grid place-items-center text-eco-semi"><x-ui::icon name="image" :size="64" data-fly-image /></div>
                                 @endforelse
                             </div>
                         </div>
-                        @if (count($images) > 1)
+                        @if (count($gallery) > 1)
                             <button type="button" class="absolute start-4 top-1/2 z-10 hidden size-[30px] -translate-y-1/2 place-items-center rounded-full bg-white text-eco-black shadow lg:grid" data-motion-prev aria-label="{{ __st('catalog.rail.previous') }}"><x-ui::icon name="chevron-left" :size="18" class="rtl:-scale-x-100" /></button>
                             <button type="button" class="absolute end-4 top-1/2 z-10 hidden size-[30px] -translate-y-1/2 place-items-center rounded-full bg-white text-eco-black shadow lg:grid" data-motion-next aria-label="{{ __st('catalog.rail.next') }}"><x-ui::icon name="chevron-right" :size="18" class="rtl:-scale-x-100" /></button>
-                            <span class="absolute bottom-3 end-6 z-10 rounded-full bg-eco-black/20 px-3 py-0.5 text-sm text-white lg:hidden" data-gallery-counter aria-hidden="true">1/{{ count($images) }}</span>
+                            <span class="absolute bottom-3 end-6 z-10 rounded-full bg-eco-black/20 px-3 py-0.5 text-sm text-white lg:hidden" data-gallery-counter aria-hidden="true">1/{{ count($gallery) }}</span>
                         @endif
                     </div>
                 </div>

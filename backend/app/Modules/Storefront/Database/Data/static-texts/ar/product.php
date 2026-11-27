@@ -59,4 +59,9 @@ return [
         'submit' => 'إرسال التقييم',
         'sign_in_needed' => 'سجّل الدخول لكتابة تقييم.',
     ],
+    'video' => 'فيديو المنتج',
+    'video_label' => ':name — فيديو :index',
+    'video_fallback' => 'افتح فيديو المنتج',
+    'close_video' => 'إغلاق الفيديو',
+    'open_video' => 'العودة إلى فيديو المنتج',
 ];

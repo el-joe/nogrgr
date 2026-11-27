@@ -167,7 +167,7 @@
                 <x-ui::tab-panel tabs="product-tabs" key="media" :active="$tab === 'media'" class="pt-6">
                     <x-ui::card :title="__('catalog::products.sections.media')">
                         <div class="grid gap-4">
-                            <x-ui::image-upload name="images" :max="\App\Modules\Catalog\Http\Requests\Admin\ProductRequest::MAX_IMAGES" accept="image/jpeg,image/png,image/webp" :images="collect($gallery)->map(fn ($item) => ['id' => $item['id'], 'url' => $item['url']])->all()" :helper="__('catalog::products.fields.images_help')" :label="__('catalog::products.fields.images')" />
+                            <x-ui::image-upload name="images" videos :max="\App\Modules\Catalog\Http\Requests\Admin\ProductRequest::MAX_IMAGES" accept="image/jpeg,image/png,image/webp" :images="collect($gallery)->map(fn ($item) => ['id' => $item['id'], 'type' => $item['type'], 'url' => $item['url'], 'poster' => $item['poster']])->all()" :helper="__('catalog::products.fields.gallery_help', ['mb' => \App\Modules\Catalog\Support\GalleryMedia::videoMaxMegabytes()])" :label="__('catalog::products.fields.images')" />
                             <p class="flex items-center gap-2 rounded-control bg-info-bg px-3 py-2.5 text-[13px] text-info" role="status">
                                 <x-ui::icon name="info" :size="16" class="shrink-0" />
                                 {{ trans_choice('catalog::products.media_state', count($gallery), [

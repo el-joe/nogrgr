@@ -6,7 +6,8 @@
  *   the JSON `data.id` is stored in a hidden input named data-upload-name; failures show
  *   an error row with Retry. Without a URL the files stay in the <input type=file> and
  *   are submitted with the form.
- * Image upload: 96px tiles with previews, the first tile is "Main", tiles can be
+ * Image upload: 96px tiles with previews (videos: muted <video> preview, never
+ *   "Main"), the first image tile is "Main", tiles can be
  *   reordered by dragging (SortableJS, lazy) and deleted. Existing images keep their id
  *   in hidden inputs (<name>_keep[]) in the displayed order.
  */
@@ -160,9 +161,12 @@ function initFileUpload(root) {
 
 /* ---------------- Image upload ---------------- */
 
+/* The first IMAGE tile is "Main"; gallery videos never are (#114). */
 function refreshMain(grid) {
-    grid.querySelectorAll('[data-image-tile]').forEach((tile, index) => {
-        tile.querySelector('[data-main-badge]').hidden = index !== 0;
+    const tiles = [...grid.querySelectorAll('[data-image-tile]')];
+    const main = tiles.find((tile) => !tile.hasAttribute('data-video-tile'));
+    tiles.forEach((tile) => {
+        tile.querySelector('[data-main-badge]').hidden = tile !== main;
     });
 }
 
@@ -179,12 +183,21 @@ function syncImageInput(root) {
     add.hidden = max > 0 && tiles.length >= max;
 }
 
+function isVideo(file) {
+    return file.type.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(file.name);
+}
+
 function addImageTile(root, file) {
-    const template = root.querySelector('template[data-image-tile-template]');
+    const video = isVideo(file) && root.querySelector('template[data-video-tile-template]');
+    const template = root.querySelector(video ? 'template[data-video-tile-template]' : 'template[data-image-tile-template]');
     const tile = template.content.firstElementChild.cloneNode(true);
-    const image = tile.querySelector('img');
-    image.src = URL.createObjectURL(file);
-    image.alt = file.name;
+    const preview = tile.querySelector(video ? 'video' : 'img');
+    preview.src = URL.createObjectURL(file);
+
+    if (!video) {
+        preview.alt = file.name;
+    }
+
     tile.__file = file;
     root.querySelector('[data-image-grid]').insertBefore(tile, root.querySelector('[data-image-add]'));
 }
@@ -221,7 +234,7 @@ function initImageUpload(root) {
 
         if (tile.__file) {
             pendingFiles = pendingFiles.filter((file) => file !== tile.__file);
-            URL.revokeObjectURL(tile.querySelector('img')?.src ?? '');
+            URL.revokeObjectURL(tile.querySelector('img, video')?.src ?? '');
         }
 
         tile.remove();

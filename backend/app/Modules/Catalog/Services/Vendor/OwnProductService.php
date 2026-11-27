@@ -4,11 +4,13 @@ namespace App\Modules\Catalog\Services\Vendor;
 
 use App\Modules\Catalog\DTOs\Vendor\OwnProductData;
 use App\Modules\Catalog\Enums\MediaConversionStatus;
+use App\Modules\Catalog\Enums\MediaType;
 use App\Modules\Catalog\Enums\OwnProductSection;
 use App\Modules\Catalog\Enums\StoreProductChange;
 use App\Modules\Catalog\Enums\StoreProductSource;
 use App\Modules\Catalog\Events\Store\OwnProductSaved;
 use App\Modules\Catalog\Events\Store\StoreProductsChanged;
+use App\Modules\Catalog\Jobs\GenerateVideoPoster;
 use App\Modules\Catalog\Models\CatalogMedia;
 use App\Modules\Catalog\Models\StoreProduct;
 use App\Modules\Catalog\Models\StoreProductVariant;
@@ -116,11 +118,11 @@ class OwnProductService extends BaseService
 
     public function delete(StoreProduct $product): void
     {
-        $paths = $product->media()->get()->pluck('path')->all();
+        $paths = $product->gallery()->get()->flatMap(static fn (CatalogMedia $media): array => $media->paths())->all();
         $id = $product->id;
 
         $this->transaction(function () use ($product): void {
-            $product->media()->delete();
+            $product->gallery()->delete();
             $product->delete();
         });
 
@@ -171,6 +173,19 @@ class OwnProductService extends BaseService
         return $tenant instanceof Tenant
             ? StoreSettingsService::storeUrl($tenant).'/tenancy/assets/'.$media->path
             : $media->url();
+    }
+
+    public static function posterUrl(CatalogMedia $media): ?string
+    {
+        if ($media->poster_path === null) {
+            return null;
+        }
+
+        $tenant = tenant();
+
+        return $tenant instanceof Tenant
+            ? StoreSettingsService::storeUrl($tenant).'/tenancy/assets/'.$media->poster_path
+            : $media->posterUrl();
     }
 
     public static function primaryImageUrl(StoreProduct $product): ?string
@@ -240,35 +255,57 @@ class OwnProductService extends BaseService
      */
     private function syncImages(StoreProduct $product, array $keepIds, array $uploads): void
     {
-        $existing = $product->media()->get();
+        $existing = $product->gallery()->get();
         $removed = $existing->whereNotIn('id', $keepIds);
-        Storage::disk(self::DISK)->delete($removed->pluck('path')->all());
-        $product->media()->whereKey($removed->modelKeys())->delete();
+        Storage::disk(self::DISK)->delete($removed->flatMap(static fn (CatalogMedia $media): array => $media->paths())->all());
+        $product->gallery()->whereKey($removed->modelKeys())->delete();
 
+        $types = $existing->mapWithKeys(static fn (CatalogMedia $media): array => [(int) $media->id => $media->type])->all();
         $order = 0;
+        $hasPrimary = false;
 
+        // Primary = first image; videos keep their place but are never primary (#114).
         foreach ($keepIds as $id) {
-            $product->media()->whereKey($id)->update(['sort_order' => $order, 'is_primary' => $order === 0]);
+            if (! isset($types[$id])) {
+                continue;
+            }
+
+            $primary = ! $hasPrimary && $types[$id] === MediaType::Image;
+            $hasPrimary = $hasPrimary || $primary;
+            $product->gallery()->whereKey($id)->update(['sort_order' => $order, 'is_primary' => $primary]);
             $order++;
         }
 
         foreach ($uploads as $upload) {
-            $path = $upload->storeAs(self::IMAGE_DIRECTORY.'/'.$product->id, Str::uuid()->toString().'.'.strtolower($upload->guessExtension() ?: 'jpg'), self::DISK);
+            $type = MediaType::fromUpload($upload);
+            $video = $type === MediaType::Video;
+            // Videos keep the declared container type (finfo reports some mp4 / mov as octet-stream).
+            $mime = $video && in_array($upload->getClientMimeType(), MediaType::VIDEO_MIMES, true) ? $upload->getClientMimeType() : ($upload->getMimeType() ?: $upload->getClientMimeType());
+            $extension = $video ? MediaType::videoExtension($mime) : strtolower($upload->guessExtension() ?: 'jpg');
+            $path = $upload->storeAs(self::IMAGE_DIRECTORY.'/'.$product->id, Str::uuid()->toString().'.'.$extension, self::DISK);
 
             if (! is_string($path)) {
                 continue;
             }
 
-            $product->media()->create([
+            $primary = ! $hasPrimary && ! $video;
+            $hasPrimary = $hasPrimary || $primary;
+            /** @var CatalogMedia $media */
+            $media = $product->gallery()->create([
+                'type' => $type,
                 'disk' => self::DISK,
                 'path' => $path,
-                'mime_type' => $upload->getMimeType(),
+                'mime_type' => $mime,
                 'size' => (int) $upload->getSize(),
-                'conversion_status' => MediaConversionStatus::Skipped,
-                'is_primary' => $order === 0,
+                'conversion_status' => $video ? MediaConversionStatus::Pending : MediaConversionStatus::Skipped,
+                'is_primary' => $primary,
                 'sort_order' => $order,
             ]);
             $order++;
+
+            if ($video) {
+                GenerateVideoPoster::dispatch($media->id);
+            }
         }
     }
 

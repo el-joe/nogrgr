@@ -13,4 +13,7 @@ return [
 
     // Place-order / start-payment attempts per minute per client.
     'checkout_rate_limit' => 10,
+
+    // Largest product gallery video (MB) on admin / own-product uploads and imports (#114).
+    'product_video_max_mb' => 50,
 ];

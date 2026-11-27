@@ -61,7 +61,7 @@ class ProductFormService
     public function viewData(Product $product): array
     {
         if ($product->exists) {
-            $product->load(['variants.options', 'media', 'categories', 'labels', 'assignedTenants']);
+            $product->load(['variants.options', 'gallery', 'categories', 'labels', 'assignedTenants']);
         }
 
         $badgeTypes = [];
@@ -88,9 +88,11 @@ class ProductFormService
             'tenantOptions' => $product->exists ? $product->assignedTenants->pluck('name', 'id')->all() : [],
             'selectedBadges' => $badgeTypes,
             'countryMode' => $product->exists ? CountryAvailability::fromIds($product->allowed_country_ids) : CountryAvailability::All,
-            'gallery' => $product->exists ? $product->media->map(static fn (CatalogMedia $media): array => [
+            'gallery' => $product->exists ? $product->gallery->map(static fn (CatalogMedia $media): array => [
                 'id' => $media->id,
-                'url' => $media->url(),
+                'type' => $media->type->value,
+                'url' => $media->bestUrl(),
+                'poster' => $media->posterUrl(),
                 'status' => $media->conversion_status,
             ])->all() : [],
             'builder' => $this->builderState($product),

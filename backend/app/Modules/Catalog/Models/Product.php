@@ -6,6 +6,7 @@ use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Catalog\Database\Factories\ProductFactory;
 use App\Modules\Catalog\Enums\AssignmentScope;
 use App\Modules\Catalog\Enums\DeliveryScope;
+use App\Modules\Catalog\Enums\MediaType;
 use App\Modules\Catalog\Enums\ProductStatus;
 use App\Modules\Platform\Models\Tenant;
 use App\Shared\Money\Money;
@@ -190,7 +191,17 @@ class Product extends Model implements AiTranslatable
      */
     public function media(): MorphMany
     {
-        return $this->morphMany(CatalogMedia::class, 'mediable')->orderByDesc('is_primary')->orderBy('sort_order')->orderBy('id');
+        return $this->morphMany(CatalogMedia::class, 'mediable')->where('type', MediaType::Image->value)->orderByDesc('is_primary')->orderBy('sort_order')->orderBy('id');
+    }
+
+    /**
+     * Whole gallery (images + videos) in gallery order (#114).
+     *
+     * @return MorphMany<CatalogMedia, $this>
+     */
+    public function gallery(): MorphMany
+    {
+        return $this->morphMany(CatalogMedia::class, 'mediable')->orderBy('sort_order')->orderBy('id');
     }
 
     /**
@@ -225,7 +236,7 @@ class Product extends Model implements AiTranslatable
      */
     public function primaryImageUrl(): ?string
     {
-        return $this->media->first()?->url();
+        return $this->media->first()?->bestUrl();
     }
 
     /**

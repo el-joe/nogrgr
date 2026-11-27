@@ -59,4 +59,9 @@ return [
         'submit' => 'Submit review',
         'sign_in_needed' => 'Sign in to write a review.',
     ],
+    'video' => 'Product video',
+    'video_label' => ':name — video :index',
+    'video_fallback' => 'Open the product video',
+    'close_video' => 'Close video',
+    'open_video' => 'Back to the product video',
 ];

@@ -13,6 +13,9 @@
     /** @var \App\Modules\Storefront\DTOs\Catalog\ProductPageData $page */
     $store = \App\Modules\Storefront\Support\StorefrontTheme::storeName();
     $images = $page->images;
+    // Gallery slides: images and videos in order (#114); the video drives the floating popup.
+    $gallery = $page->media !== [] ? $page->media : array_map(fn ($url) => ['type' => 'image', 'url' => $url, 'poster' => null], $images);
+    $pipVideo = $page->firstVideo();
     $reviews = $page->reviews;
     $compact = $reviews['count'] === 0;
     $reviewsUrl = Route::has('store-api.v1.products.reviews.index') ? route('store-api.v1.products.reviews.index', ['storeProduct' => $page->view->id()]) : null;
@@ -76,15 +79,19 @@
         ])>
             {{-- Gallery + details + reviews --}}
             <div class="grid content-start gap-5 max-lg:contents">
-                <div class="grid gap-3 max-lg:order-1" data-gallery>
+                <div class="grid gap-3 max-lg:order-1" data-gallery @if ($pipVideo) data-video-pip="{{ json_encode(['family' => 'elora', 'src' => $pipVideo['url'], 'poster' => $pipVideo['poster'], 'close' => __st('product.close_video'), 'open' => __st('product.open_video')], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}" @endif>
                     <div class="relative">
                         <div class="swiper elo-gallery-main aspect-[492/280] max-lg:aspect-[343/215]" data-gallery-main>
                             <div class="swiper-wrapper">
-                                @forelse ($images as $index => $image)
-                                    <div class="swiper-slide">
-                                        <div class="swiper-zoom-container">
-                                            <img src="{{ $image }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="984" height="560" class="size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
-                                        </div>
+                                @forelse ($gallery as $index => $item)
+                                    <div @if ($item['type'] === 'video') data-gallery-video-slide @endif class="swiper-slide">
+                                        @if ($item['type'] === 'video')
+                                            <x-sf::gallery.video :item="$item" :index="$index" :name="$page->name" />
+                                        @else
+                                            <div class="swiper-zoom-container">
+                                                <img src="{{ $item['url'] }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="984" height="560" class="size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
+                                            </div>
+                                        @endif
                                     </div>
                                 @empty
                                     <div class="swiper-slide grid place-items-center text-elo-line"><x-ui::icon name="image" :size="64" data-fly-image /></div>
@@ -94,18 +101,18 @@
                         @if ($page->bestSelling)
                             <a href="{{ route('storefront.best-sellers') }}" class="elo-tag absolute start-0 top-2 z-10 rounded-e-sm rounded-s-none">{{ __st('catalog.card.best_selling_tag') }}</a>
                         @endif
-                        @if (count($images) > 1)
+                        @if (count($gallery) > 1)
                             <button type="button" class="elo-icon-btn absolute -start-4 top-1/2 z-10 hidden size-[30px] -translate-y-1/2 lg:grid" data-motion-prev aria-label="{{ __st('catalog.rail.previous') }}"><x-ui::icon name="chevron-left" :size="16" class="rtl:-scale-x-100" /></button>
                             <button type="button" class="elo-icon-btn absolute -end-4 top-1/2 z-10 hidden size-[30px] -translate-y-1/2 lg:grid" data-motion-next aria-label="{{ __st('catalog.rail.next') }}"><x-ui::icon name="chevron-right" :size="16" class="rtl:-scale-x-100" /></button>
-                            <span class="absolute bottom-2 end-2 z-10 rounded-md bg-black/60 px-2 py-0.5 text-xs text-white" data-gallery-counter aria-hidden="true">1/{{ count($images) }}</span>
+                            <span class="absolute bottom-2 end-2 z-10 rounded-md bg-black/60 px-2 py-0.5 text-xs text-white" data-gallery-counter aria-hidden="true">1/{{ count($gallery) }}</span>
                         @endif
                     </div>
-                    @if (count($images) > 1)
+                    @if (count($gallery) > 1)
                         <div class="swiper w-full" data-gallery-thumbs='{"slidesPerView":4.5,"spaceBetween":10,"breakpoints":{"640":{"slidesPerView":7}}}'>
                             <div class="swiper-wrapper">
-                                @foreach ($images as $index => $image)
+                                @foreach ($gallery as $index => $item)
                                     <div class="swiper-slide cursor-pointer @if ($index === 0) is-active @endif">
-                                        <span class="elo-thumb"><img src="{{ $image }}" alt="" width="126" height="112" loading="lazy" decoding="async"></span>
+                                        @if ($item['type'] === 'video')<span class="elo-thumb"><x-sf::gallery.video-thumb :item="$item" :width="126" :height="112" /></span>@else<span class="elo-thumb"><img src="{{ $item['url'] }}" alt="" width="126" height="112" loading="lazy" decoding="async"></span>@endif
                                     </div>
                                 @endforeach
                             </div>

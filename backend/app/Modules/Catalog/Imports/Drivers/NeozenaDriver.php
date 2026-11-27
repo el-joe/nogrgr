@@ -248,6 +248,7 @@ class NeozenaDriver implements ExternalCatalogDriver
             unlimitedStock: (bool) ($row['stock_unlimited'] ?? false),
             stock: is_numeric($row['stock'] ?? null) ? (int) $row['stock'] : null,
             images: $this->images($row['images'] ?? []),
+            videos: $this->images($row['images'] ?? [], true),
             variants: $variants,
             categories: $this->categories($row['categories'] ?? []),
         );
@@ -399,21 +400,24 @@ class NeozenaDriver implements ExternalCatalogDriver
     }
 
     /**
+     * Gallery items of one type: images (primary first) or, with `$videos`, the
+     * `type: video` items in source order (never primary, #114).
+     *
      * @return list<ExternalImageData>
      */
-    private function images(mixed $images): array
+    private function images(mixed $images, bool $videos = false): array
     {
         $result = [];
 
         foreach (is_array($images) ? $images : [] as $image) {
-            if (! is_array($image) || ($image['type'] ?? 'image') === 'video' || ! is_numeric($image['id'] ?? null)) {
+            if (! is_array($image) || (($image['type'] ?? 'image') === 'video') !== $videos || ! is_numeric($image['id'] ?? null)) {
                 continue;
             }
 
-            $url = $image['image_path'] ?? $image['url'] ?? null;
+            $url = $image['image_path'] ?? $image['url'] ?? $image['video_path'] ?? null;
 
             if (is_string($url) && filter_var($url, FILTER_VALIDATE_URL) !== false) {
-                $result[] = new ExternalImageData((int) $image['id'], $url, (bool) ($image['is_primary'] ?? false));
+                $result[] = new ExternalImageData((int) $image['id'], $url, ! $videos && (bool) ($image['is_primary'] ?? false));
             }
         }
 

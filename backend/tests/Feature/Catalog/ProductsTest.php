@@ -3,10 +3,12 @@
 use App\Modules\Catalog\Enums\AssignmentScope;
 use App\Modules\Catalog\Enums\BadgeType;
 use App\Modules\Catalog\Enums\MediaConversionStatus;
+use App\Modules\Catalog\Enums\MediaType;
 use App\Modules\Catalog\Enums\ProductStatus;
 use App\Modules\Catalog\Events\ProductCreated;
 use App\Modules\Catalog\Events\ProductUpdated;
 use App\Modules\Catalog\Jobs\ConvertCatalogMedia;
+use App\Modules\Catalog\Jobs\GenerateVideoPoster;
 use App\Modules\Catalog\Models\Attribute;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
@@ -15,6 +17,7 @@ use App\Modules\Catalog\Models\ProductBadgeAssignment;
 use App\Modules\Catalog\Models\ProductLabel;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Services\Media\ImageVariantConverter;
+use App\Modules\Catalog\Services\Media\VideoPosterGenerator;
 use App\Modules\Commerce\Pricing\CountryPriceTable;
 use App\Modules\Inventory\Events\StockChanged;
 use App\Modules\Inventory\Models\Branch;
@@ -403,4 +406,116 @@ it('assigns a product to badge lists from the form and removes it again', functi
 
     $this->putJson($this->centralUrl("/admin/catalog/products/{$product->id}"), productPayload(['badges' => []]))->assertOk();
     expect(ProductBadgeAssignment::query()->where('product_id', $product->id)->count())->toBe(0);
+});
+
+it('uploads gallery videos next to the images: never primary, kept on reorder, poster job, size limit from settings', function (): void {
+    Storage::fake('public');
+    Queue::fake();
+    $this->actingAs(catalogAdmin(), 'admin');
+
+    $this->post($this->centralUrl('/admin/catalog/products'), productPayload([
+        'images' => [UploadedFile::fake()->create('clip.mp4', 900, 'video/mp4'), UploadedFile::fake()->image('a.png', 400, 400)],
+    ]), ['Accept' => 'application/json'])->assertCreated();
+
+    $product = Product::query()->sole();
+    [$video, $image] = $product->gallery->all();
+    expect($video->type)->toBe(MediaType::Video)
+        ->and($video->is_primary)->toBeFalse()
+        ->and($video->path)->toEndWith('.mp4')
+        ->and($image->is_primary)->toBeTrue()
+        ->and($product->media->pluck('id')->all())->toBe([$image->id])
+        ->and($product->primaryImageUrl())->toBe($image->url());
+    Storage::disk('public')->assertExists($video->path);
+    Queue::assertPushed(GenerateVideoPoster::class, fn (GenerateVideoPoster $job): bool => $job->mediaId === $video->id);
+    Queue::assertPushed(ConvertCatalogMedia::class, 1);
+
+    $this->get($this->centralUrl("/admin/catalog/products/{$product->id}/edit"))->assertOk()
+        ->assertSee('data-video-tile', false)
+        ->assertSee($video->url(), false);
+
+    // Reorder: the video first is still not primary; removing it deletes the file.
+    $this->post($this->centralUrl("/admin/catalog/products/{$product->id}"), productPayload(['_method' => 'PUT', 'images_keep' => [$video->id, $image->id]]), ['Accept' => 'application/json'])->assertOk();
+    expect($video->refresh()->is_primary)->toBeFalse()->and($video->sort_order)->toBe(0)->and($image->refresh()->is_primary)->toBeTrue();
+
+    $this->post($this->centralUrl("/admin/catalog/products/{$product->id}"), productPayload(['_method' => 'PUT', 'images_keep' => [$image->id]]), ['Accept' => 'application/json'])->assertOk();
+    expect($product->gallery()->count())->toBe(1);
+    Storage::disk('public')->assertMissing($video->path);
+
+    // Wrong type and the DB size limit (Admin › Settings › Platform › Commerce).
+    config(['commerce.product_video_max_mb' => 1]);
+    $this->post($this->centralUrl('/admin/catalog/products'), productPayload([
+        'sku' => 'NG-V2',
+        'images' => [UploadedFile::fake()->create('big.mp4', 2048, 'video/mp4')],
+    ]), ['Accept' => 'application/json'])->assertJsonValidationErrors('images.0');
+    $this->post($this->centralUrl('/admin/catalog/products'), productPayload([
+        'sku' => 'NG-V3',
+        'images' => [UploadedFile::fake()->create('clip.avi', 100, 'video/x-msvideo')],
+    ]), ['Accept' => 'application/json'])->assertJsonValidationErrors('images.0');
+});
+
+it('writes a poster frame for a gallery video only when ffmpeg is available', function (): void {
+    Storage::fake('public');
+    $product = Product::factory()->create();
+    $media = $product->gallery()->create(['type' => MediaType::Video, 'disk' => 'public', 'path' => 'catalog/products/v.mp4', 'mime_type' => 'video/mp4', 'size' => 10]);
+    Storage::disk('public')->put('catalog/products/v.mp4', 'not-a-real-video');
+
+    $generator = Mockery::mock(VideoPosterGenerator::class);
+    $generator->shouldReceive('generate')->once()->with('public', 'catalog/products/v.mp4')->andReturn('catalog/products/v-poster.jpg');
+    (new GenerateVideoPoster($media->id))->handle($generator);
+    expect($media->refresh()->poster_path)->toBe('catalog/products/v-poster.jpg')->and($media->conversion_status)->toBe(MediaConversionStatus::Done);
+
+    $missing = Mockery::mock(VideoPosterGenerator::class);
+    $missing->shouldReceive('generate')->once()->andReturnNull();
+    $other = $product->gallery()->create(['type' => MediaType::Video, 'disk' => 'public', 'path' => 'catalog/products/w.mp4', 'size' => 10]);
+    (new GenerateVideoPoster($other->id))->handle($missing);
+    expect($other->refresh()->poster_path)->toBeNull()->and($other->conversion_status)->toBe(MediaConversionStatus::Skipped);
+});
+
+it('shows the original upload while its conversion is pending and the webp once it is done', function (): void {
+    Storage::fake('public');
+    Queue::fake();
+    $this->actingAs(catalogAdmin(), 'admin');
+
+    $this->post($this->centralUrl('/admin/catalog/products'), productPayload([
+        'images' => [UploadedFile::fake()->image('a.jpg', 400, 400)],
+    ]), ['Accept' => 'application/json'])->assertCreated();
+
+    $product = Product::query()->sole();
+    $media = $product->media->sole();
+    Storage::disk('public')->assertExists($media->path);
+    expect($media->conversion_status)->toBe(MediaConversionStatus::Pending)
+        ->and($media->bestUrl())->toBe($media->url())
+        ->and($product->primaryImageUrl())->toBe($media->url());
+
+    $this->get($this->centralUrl("/admin/catalog/products/{$product->id}/edit"))->assertOk()
+        ->assertSee('src="'.$media->url().'"', false);
+
+    (new ConvertCatalogMedia($media->id))->handle(app(ImageVariantConverter::class));
+    $media->refresh();
+    expect($media->bestUrl())->toBe(Storage::disk('public')->url($media->webp_path));
+
+    $this->get($this->centralUrl("/admin/catalog/products/{$product->id}/edit"))->assertOk()
+        ->assertSee('src="'.$media->bestUrl().'"', false);
+});
+
+it('saves a real image upload on edit and keeps the existing gallery', function (): void {
+    Storage::fake('public');
+    Queue::fake();
+    $this->actingAs(catalogAdmin(), 'admin');
+    $this->post($this->centralUrl('/admin/catalog/products'), productPayload(['images' => [UploadedFile::fake()->image('a.jpg', 400, 400)]]), ['Accept' => 'application/json'])->assertCreated();
+    $product = Product::query()->sole();
+    $first = $product->media->sole();
+
+    $this->post($this->centralUrl("/admin/catalog/products/{$product->id}"), productPayload([
+        '_method' => 'PUT',
+        'images_keep' => [$first->id],
+        'images' => [UploadedFile::fake()->image('b.png', 600, 600)],
+    ]), ['Accept' => 'application/json'])->assertOk();
+
+    $gallery = $product->gallery()->get();
+    expect($gallery)->toHaveCount(2)
+        ->and($gallery[0]->id)->toBe($first->id)
+        ->and($gallery[0]->is_primary)->toBeTrue()
+        ->and($gallery[1]->is_primary)->toBeFalse();
+    Storage::disk('public')->assertExists($gallery[1]->path);
 });

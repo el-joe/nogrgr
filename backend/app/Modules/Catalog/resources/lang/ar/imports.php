@@ -180,6 +180,7 @@ return [
 
     'messages' => [
         'summary' => '{0} بلا متغيرات · :images صور|{1} متغير واحد · :images صور|[2,*] :variants متغيرات · :images صور',
+        'videos' => '{1} فيديو واحد|{2} فيديوهان|[3,10] :count فيديوهات|[11,*] :count فيديو',
         'price_changed' => 'السعر :from ← :to',
         'category_unmapped' => 'التصنيف ":name" غير مربوط',
         'exists' => 'مستورد سابقًا (التحديث متوقف)',
@@ -187,6 +188,7 @@ return [
         'duplicate_sku' => 'SKU مكرر في الكتالوج (:sku)',
         'trashed' => 'المنتج في سلة المحذوفات؛ استعده لاستيراده مجددًا',
         'image_failed' => 'تعذّر تنزيل الصورة: :url',
+        'video_failed' => 'تعذّر تنزيل الفيديو: :url',
         'no_branch' => 'لم يُحفظ المخزون: لا يوجد فرع نشط',
         'page_failed' => 'تعذّرت قراءة الصفحة :page: :detail',
     ],

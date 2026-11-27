@@ -2,6 +2,7 @@
 
 use App\Modules\Catalog\Enums\ImportStatus;
 use App\Modules\Catalog\Jobs\ConvertCatalogMedia;
+use App\Modules\Catalog\Jobs\GenerateVideoPoster;
 use App\Modules\Catalog\Jobs\Imports\ImportCatalogPage;
 use App\Modules\Catalog\Models\Attribute;
 use App\Modules\Catalog\Models\AttributeOption;
@@ -100,6 +101,10 @@ function fakeNeozena(array $pages): void
     $png = UploadedFile::fake()->image('p.png', 8, 8)->getContent();
 
     Http::fake(function (Request $request) use ($png) {
+        if (str_starts_with($request->url(), 'https://cdn.neozena.test/') && str_ends_with($request->url(), '.mp4')) {
+            return Http::response('fake-mp4-bytes', 200, ['Content-Type' => 'video/mp4']);
+        }
+
         if (str_starts_with($request->url(), 'https://cdn.neozena.test/')) {
             return Http::response($png, 200, ['Content-Type' => 'image/png']);
         }
@@ -132,7 +137,7 @@ function runImport(array $payload = []): CatalogImportRun
 
 beforeEach(function (): void {
     Storage::fake('public');
-    Queue::fake([ConvertCatalogMedia::class]);
+    Queue::fake([ConvertCatalogMedia::class, GenerateVideoPoster::class]);
     Notification::fake();
 });
 
@@ -477,4 +482,76 @@ it('tests the Neozena integration card connection', function (): void {
         ->postJson($this->centralUrl('/admin/integrations/neozena/test'))
         ->assertOk()
         ->assertJsonPath('data.status', 'connected');
+});
+
+it('imports gallery videos next to the images, never primary, without duplicates on re-runs', function (): void {
+    configureNeozena();
+    mapNeozenaCategory();
+    Branch::factory()->create();
+    fakeNeozena([[neozenaProduct(1)]]);
+    $this->actingAs(catalogAdmin(), 'admin');
+
+    $run = runImport();
+    $product = Product::query()->where('external_id', 1)->firstOrFail();
+    $videos = $product->gallery()->where('type', 'video')->get();
+
+    expect($run->created_count)->toBe(1)
+        ->and($run->images_total)->toBe(2)
+        ->and($product->media()->count())->toBe(2)
+        ->and($videos)->toHaveCount(1)
+        ->and($videos->first()->is_primary)->toBeFalse()
+        ->and($videos->first()->mime_type)->toBe('video/mp4')
+        ->and($videos->first()->path)->toEndWith('.mp4')
+        ->and($product->gallery()->pluck('type')->map(fn ($type) => $type->value)->all())->toBe(['image', 'image', 'video'])
+        ->and(CatalogImportLog::query()->where('run_id', $run->id)->where('result', 'created')->value('message'))->toBe('2 variants · 2 images · 1 video');
+    Storage::disk('public')->assertExists($videos->first()->path);
+    Queue::assertPushed(GenerateVideoPoster::class, 1);
+    Queue::assertPushed(ConvertCatalogMedia::class, 2);
+
+    // Unchanged → skipped; a changed product is updated in place, the video kept (same row).
+    runImport();
+    fakeNeozena([[neozenaProduct(1, ['current_price' => '21.00'])]]);
+    $third = runImport();
+
+    expect($third->updated_count)->toBe(1)
+        ->and($product->gallery()->where('type', 'video')->pluck('id')->all())->toBe([$videos->first()->id])
+        ->and(CatalogMedia::query()->count())->toBe(3);
+    expect(array_values(array_filter(Storage::disk('public')->allFiles('catalog/products'), fn (string $path): bool => str_ends_with($path, '.mp4'))))->toBe([$videos->first()->path]);
+});
+
+it('pulls videos for products imported before videos were supported and keeps others unchanged', function (): void {
+    configureNeozena();
+    mapNeozenaCategory();
+    Branch::factory()->create();
+    $withoutVideo = fn (int $id): array => neozenaProduct($id, ['images' => array_slice(neozenaProduct($id)['images'], 0, 2)]);
+    fakeNeozena([[$withoutVideo(1), $withoutVideo(2)]]);
+    $this->actingAs(catalogAdmin(), 'admin');
+    runImport();
+    expect(CatalogMedia::query()->where('type', 'video')->count())->toBe(0);
+
+    // The source now lists a video for product 1 only: product 1 is updated, product 2 stays "unchanged".
+    fakeNeozena([[neozenaProduct(1), $withoutVideo(2)]]);
+    $run = runImport(['update_existing' => true]);
+
+    expect($run->only(['updated_count', 'skipped_count']))->toBe(['updated_count' => 1, 'skipped_count' => 1])
+        ->and(Product::query()->where('external_id', 1)->first()->gallery()->where('type', 'video')->count())->toBe(1)
+        ->and(CatalogImportLog::query()->where('run_id', $run->id)->where('result', 'updated')->value('message'))->toContain('1 video');
+});
+
+it('logs a warning and keeps the images when a video cannot be downloaded', function (): void {
+    configureNeozena();
+    mapNeozenaCategory();
+    Branch::factory()->create();
+    fakeNeozena([[neozenaProduct(1, ['images' => [
+        ['id' => 101, 'image_path' => 'https://cdn.neozena.test/1-1.png', 'type' => 'image', 'is_primary' => true],
+        ['id' => 103, 'image_path' => 'https://cdn.neozena.test/clip.txt', 'type' => 'video'],
+    ]])]]);
+    $this->actingAs(catalogAdmin(), 'admin');
+
+    $run = runImport();
+
+    expect($run->created_count)->toBe(1)
+        ->and(CatalogMedia::query()->where('type', 'video')->count())->toBe(0)
+        ->and(CatalogMedia::query()->where('type', 'image')->count())->toBe(1)
+        ->and(CatalogImportLog::query()->where('run_id', $run->id)->where('result', 'warning')->pluck('message')->all())->toContain(__('catalog::imports.messages.video_failed', ['url' => 'https://cdn.neozena.test/clip.txt']));
 });

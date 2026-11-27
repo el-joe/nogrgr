@@ -12,6 +12,7 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductLabel;
 use App\Modules\Catalog\Support\CatalogLocales;
+use App\Modules\Catalog\Support\GalleryMedia;
 use App\Modules\Catalog\Support\VariantMatrix;
 use App\Modules\Localization\Models\Country;
 use App\Modules\Platform\Models\Tenant;
@@ -90,7 +91,7 @@ class ProductRequest extends FormRequest
             'variants.*.image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'variants.*.remove_image' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array', 'max:'.self::MAX_IMAGES],
-            'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096', 'dimensions:min_width=300,min_height=300'],
+            'images.*' => GalleryMedia::rules(['image', 'mimes:jpg,jpeg,png,webp', 'max:4096', 'dimensions:min_width=300,min_height=300']),
             'images_keep' => ['nullable', 'array', 'max:'.self::MAX_IMAGES],
             'images_keep.*' => ['integer', 'min:1'],
             'stock' => ['nullable', 'array'],

@@ -205,6 +205,7 @@ enum IntegrationSection: string
                 new SettingField('reservation_minutes', SettingFieldType::Number, true, default: 30, min: 5, max: 1440),
                 new SettingField('store_api_rate_limit', SettingFieldType::Number, true, default: 120, min: 10, max: 10000),
                 new SettingField('checkout_rate_limit', SettingFieldType::Number, true, default: 10, min: 1, max: 1000),
+                new SettingField('product_video_max_mb', SettingFieldType::Number, default: 50, min: 1, max: 500),
             ],
             self::Domains => [
                 new SettingField('edge_ipv4', SettingFieldType::Ipv4, maxLength: 15),
@@ -311,6 +312,7 @@ enum IntegrationSection: string
                 'reservation_minutes' => ['commerce.reservation_minutes'],
                 'store_api_rate_limit' => ['commerce.store_api_rate_limit'],
                 'checkout_rate_limit' => ['commerce.checkout_rate_limit'],
+                'product_video_max_mb' => ['commerce.product_video_max_mb'],
             ],
             self::Domains => [],
             self::Affiliates => [],

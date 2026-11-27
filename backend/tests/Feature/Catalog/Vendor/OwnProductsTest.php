@@ -1,12 +1,15 @@
 <?php
 
+use App\Modules\Catalog\Enums\MediaType;
 use App\Modules\Catalog\Events\Store\OwnProductSaved;
+use App\Modules\Catalog\Jobs\GenerateVideoPoster;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\StoreProduct;
 use App\Shared\Money\Money;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
 require_once __DIR__.'/VendorCatalogHelpers.php';
@@ -122,4 +125,32 @@ it('renders the sections, the see-all page and the inventory grid; imported prod
     // An imported product id is not an own product.
     $central = $this->tenant->run(fn () => StoreProduct::query()->central()->sole());
     $this->actingAsVendor($this->owner, $this->tenant)->get(($this->url)("/{$central->id}/edit"))->assertNotFound();
+});
+
+it('stores own product gallery videos (never primary) and removes them with the product', function (): void {
+    Queue::fake([GenerateVideoPoster::class]);
+
+    $this->actingAsVendor($this->owner, $this->tenant)->post(($this->url)(), ($this->payload)([
+        'images' => [UploadedFile::fake()->create('demo.webm', 500, 'video/webm'), UploadedFile::fake()->image('mug.jpg')],
+    ]), ['Accept' => 'application/json'])->assertOk();
+
+    [$product, $gallery] = $this->tenant->run(function (): array {
+        $product = StoreProduct::query()->own()->sole();
+
+        return [$product, $product->gallery()->get()];
+    });
+
+    expect($gallery)->toHaveCount(2)
+        ->and($gallery[0]->type)->toBe(MediaType::Video)
+        ->and($gallery[0]->is_primary)->toBeFalse()
+        ->and($gallery[0]->path)->toEndWith('.webm')
+        ->and($gallery[1]->is_primary)->toBeTrue();
+    Queue::assertPushed(GenerateVideoPoster::class, 1);
+
+    $this->actingAsVendor($this->owner, $this->tenant)->get(($this->url)('/'.$product->id.'/edit'))->assertOk()->assertSee('data-video-tile', false);
+
+    $this->actingAsVendor($this->owner, $this->tenant)->postJson(($this->url)(), ($this->payload)([
+        'sku' => 'MUG-002',
+        'images' => [UploadedFile::fake()->create('demo.mkv', 100, 'video/x-matroska')],
+    ]))->assertUnprocessable()->assertJsonValidationErrors('images.0');
 });
