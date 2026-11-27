@@ -44,6 +44,9 @@ class BillingAlertNotification extends PanelNotification
             'subscription_cancelled' => EmailTemplateEvent::AdminBillingAlert,
             'subscription_renewed' => EmailTemplateEvent::AdminBillingAlert,
             'settlement_received' => EmailTemplateEvent::AdminBillingAlert,
+            'renewal_reminder' => EmailTemplateEvent::AdminBillingAlert,
+            'gateway_limit_warning' => EmailTemplateEvent::AdminGatewayLimitWarning,
+            'gateway_limit_block' => EmailTemplateEvent::AdminGatewayLimitBlock,
         ];
     }
 

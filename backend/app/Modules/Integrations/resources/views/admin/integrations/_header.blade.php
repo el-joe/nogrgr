@@ -1,10 +1,13 @@
 {{--
-    Admin › Integrations header + tab bar (Figma Admin Panel 51:17971). Tabs of later
-    phases (gateway limits, OpenAI tools, FCM, tracking defaults) are added when built.
+    Admin › Integrations header + tab bar (Figma Admin Panel 51:17971). Gateway limits
+    (ADM-100c) follow the gateways tab.
     @param string $active  tab key (gateways | IntegrationSection value)
 --}}
 @php
-    $tabs = ['gateways' => ['label' => __('integrations::admin.tabs.gateways'), 'href' => route('admin.integrations.gateways.index')]];
+    $tabs = [
+        'gateways' => ['label' => __('integrations::admin.tabs.gateways'), 'href' => route('admin.integrations.gateways.index')],
+        'limits' => ['label' => __('integrations::admin.tabs.limits'), 'href' => route('admin.integrations.gateways.limits')],
+    ];
 
     foreach (\App\Modules\Integrations\Enums\IntegrationSection::integrations() as $tabSection) {
         $tabs[$tabSection->value] = ['label' => $tabSection->label(), 'href' => route('admin.integrations.show', $tabSection)];

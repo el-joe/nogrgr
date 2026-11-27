@@ -4,14 +4,17 @@ namespace App\Modules\Billing\Services\Reminders;
 
 use App\Modules\Billing\Enums\SubscriptionStatus;
 use App\Modules\Billing\Models\Subscription;
+use App\Modules\Billing\Notifications\BillingAlertNotification;
 use App\Modules\Billing\Notifications\VendorBillingMail;
 use App\Modules\Billing\Repositories\Contracts\LedgerRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\SubscriptionRepositoryContract;
 use App\Modules\Billing\Services\Finance\StoreFinanceNotifier;
+use App\Modules\Identity\Repositories\Contracts\AdminRepositoryContract;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\OwnerInboxNotification;
 use App\Modules\Notifications\Repositories\Contracts\SentReminderRepositoryContract;
+use App\Modules\Notifications\Services\NotificationDispatcher;
 use App\Modules\Notifications\Services\OwnerInboxService;
 use App\Modules\Platform\Enums\TenantStatus;
 use App\Modules\Platform\Models\Tenant;
@@ -28,6 +31,7 @@ use Throwable;
  *   renewal  — owner e-mail `vendor.subscription_renewal_reminder` + owner-portal inbox
  *              7, 3 and 1 days before an active (or trial) subscription's period ends;
  *              period key = "<end date>:<days>d", so a renewed period reminds again;
+ *              admins with subscriptions.view get the admin alert (MAIL-009);
  *   settlement due — weekly (ISO week) to the store owners when the ledger says the
  *              store owes the platform (receivable > payable): inbox + Reverb + mail
  *              `vendor.settlement_due` (VEN-087 topic "settlement_due").
@@ -46,6 +50,8 @@ class BillingReminderService extends BaseService
         private readonly SentReminderRepositoryContract $sent,
         private readonly OwnerInboxService $ownerInbox,
         private readonly StoreFinanceNotifier $finance,
+        private readonly AdminRepositoryContract $admins,
+        private readonly NotificationDispatcher $dispatcher,
     ) {}
 
     /**
@@ -136,6 +142,18 @@ class BillingReminderService extends BaseService
                 ['days' => $days, 'plan' => $plan, 'store' => (string) $tenant->name, 'date' => $date],
                 $renewUrl,
             ));
+
+            // MAIL-009: admins who follow subscriptions get the same reminder (inbox + mail per preferences).
+            $admins = $this->admins->activeWithPermission('subscriptions.view');
+
+            if ($admins->isNotEmpty()) {
+                $this->dispatcher->send($admins, new BillingAlertNotification(
+                    NotificationCategory::Vendors,
+                    'renewal_reminder',
+                    ['days' => $days, 'plan' => $plan, 'store' => (string) $tenant->name, 'date' => $date],
+                    rescue(static fn (): string => route('admin.billing.subscriptions.index'), null, false),
+                ));
+            }
         } catch (Throwable $exception) {
             // Let the next run try again.
             $this->sent->release('renewal_reminder', 'subscription:'.$subscription->id, $date.':'.$days.'d');

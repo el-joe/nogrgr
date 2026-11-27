@@ -18,6 +18,7 @@ use App\Modules\Integrations\Payments\PaypalCheckoutDriver;
 use App\Modules\Integrations\Payments\StripeCheckoutDriver;
 use App\Modules\Integrations\Payments\StripePaymentIntentDriver;
 use App\Modules\Integrations\Repositories\Contracts\PaymentGatewayRepositoryContract;
+use App\Modules\Integrations\Services\Limits\GatewayLimitService;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
 
@@ -28,6 +29,7 @@ use Illuminate\Support\Collection;
  *   active with its vendor-payments config enabled) → with a storefront driver → ready:
  *     own keys (use_own): connection "connected" + every required credential present;
  *     central fallback:   the central config connected + every required credential present;
+ *   central fallback blocked by the store's monthly gateway limit (ADM-100c) → hidden;
  *   → sorted alphabetically by name, nothing pre-selected. COD is never listed (hidden at
  *   checkout, client 2026-11-25); it stays a server-side method for manual orders.
  * The effective config (own keys + mode, or the central config) is what the drivers get.
@@ -68,6 +70,7 @@ class StorefrontGatewayService
         private readonly StorePaymentGatewayRepositoryContract $storeGateways,
         private readonly PaymentGatewayRepositoryContract $centralGateways,
         private readonly Container $container,
+        private readonly GatewayLimitService $limits,
     ) {}
 
     /**
@@ -103,6 +106,11 @@ class StorefrontGatewayService
         $connected = $row->use_own ? $row->connection_status === GatewayConnection::Connected : $config->status() === ConnectionStatus::Connected;
 
         if (! $connected || ! $this->hasRequiredKeys($row->code, $config)) {
+            return null;
+        }
+
+        // Gateway limits (ADM-100c): a store at 100 % of its monthly platform-account limit loses the gateway.
+        if (! $row->use_own && ($tenant = tenant()) !== null && $this->limits->isBlocked((int) $tenant->getTenantKey(), $row->code)) {
             return null;
         }
 

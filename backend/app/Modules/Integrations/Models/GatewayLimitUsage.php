@@ -19,6 +19,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int $volume_minor
  * @property Carbon|null $warned_at
  * @property Carbon|null $blocked_at
+ * @property Carbon|null $unblocked_at an admin lifted this month's block (no re-block)
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Tenant|null $tenant
@@ -32,7 +33,7 @@ class GatewayLimitUsage extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['tenant_id', 'gateway', 'period', 'volume_minor', 'warned_at', 'blocked_at'];
+    protected $fillable = ['tenant_id', 'gateway', 'period', 'volume_minor', 'warned_at', 'blocked_at', 'unblocked_at'];
 
     /**
      * @return array<string, string>
@@ -44,6 +45,7 @@ class GatewayLimitUsage extends Model
             'volume_minor' => 'integer',
             'warned_at' => 'datetime',
             'blocked_at' => 'datetime',
+            'unblocked_at' => 'datetime',
         ];
     }
 

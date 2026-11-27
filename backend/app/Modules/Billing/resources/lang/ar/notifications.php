@@ -68,4 +68,12 @@ return [
         'title' => 'التجديد بعد :days أيام',
         'body' => 'تنتهي باقة :plan لمتجر :store في :date.',
     ],
+    'gateway_limit_warning' => [
+        'title' => 'متجر :store عند :percent% من حد :gateway',
+        'body' => 'استقبل متجر :store مبلغ :volume من أصل :limit هذا الشهر عبر حساب :gateway الخاص بالمنصة.',
+    ],
+    'gateway_limit_block' => [
+        'title' => 'بلغ متجر :store حد :gateway',
+        'body' => 'استقبل متجر :store مبلغ :volume هذا الشهر (الحد :limit)؛ تم إخفاء :gateway من صفحة الدفع حتى الشهر القادم أو إلغاء الإيقاف.',
+    ],
 ];

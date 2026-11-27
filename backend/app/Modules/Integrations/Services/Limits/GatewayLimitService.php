@@ -18,7 +18,8 @@ use Carbon\CarbonInterface;
  *   usage += paid order total (OrderPaid, payment_source central) per store × month;
  *   usage ≥ warn % (default 80) of the limit → GatewayLimitWarning once a month;
  *   usage ≥ the limit → GatewayLimitBlocked once a month and the gateway leaves the
- *   store's checkout (StorefrontGatewayService) until next month or an admin unblock;
+ *   store's checkout (StorefrontGatewayService) until next month or an admin unblock
+ *   (which holds for the rest of that month);
  * stores using their own keys are never counted. No limit = volume only recorded.
  */
 class GatewayLimitService extends BaseService
@@ -43,13 +44,13 @@ class GatewayLimitService extends BaseService
             return $usage;
         }
 
-        if ($usage->volume_minor >= $limit) {
+        if ($usage->volume_minor >= $limit && $usage->unblocked_at === null) {
             $this->usages->mark($usage, 'warned_at');
 
             if ($this->usages->mark($usage, 'blocked_at')) {
                 $this->dispatchAfterCommit(new GatewayLimitBlocked($usage->refresh(), $limit));
             }
-        } elseif ($usage->volume_minor * 100 >= $limit * self::warnPercent($gateway) && $this->usages->mark($usage, 'warned_at')) {
+        } elseif ($usage->volume_minor < $limit && $usage->volume_minor * 100 >= $limit * self::warnPercent($gateway) && $this->usages->mark($usage, 'warned_at')) {
             $this->dispatchAfterCommit(new GatewayLimitWarning($usage->refresh(), $limit));
         }
 

@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
 |                                              gateway (null = no limit);
 |   payment_gateways.limit_warn_percent         warning level (default 80 %); the block is 100 %;
 |   gateway_limit_usages                         volume per store × gateway × month ("2026-12")
-|                                              with the one-time warned_at / blocked_at marks.
+|                                              with the one-time warned_at / blocked_at marks;
+|                                              unblocked_at = an admin lifted the block for the month.
 | Stores using their own gateway keys are never counted.
 */
 return new class extends Migration
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->unsignedBigInteger('volume_minor')->default(0);
             $table->timestamp('warned_at')->nullable();
             $table->timestamp('blocked_at')->nullable();
+            $table->timestamp('unblocked_at')->nullable();
             $table->timestamps();
             $table->unique(['tenant_id', 'gateway', 'period']);
             $table->index(['period', 'gateway']);

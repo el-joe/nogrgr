@@ -25,6 +25,9 @@ interface GatewayLimitUsageRepositoryContract extends RepositoryContract
 
     public function isBlocked(int $tenantId, string $gateway, string $period): bool;
 
+    /**
+     * Lifts the block for the rest of the month (unblocked_at: no re-block this month).
+     */
     public function unblock(GatewayLimitUsage $usage): void;
 
     /**

@@ -47,7 +47,7 @@ class GatewayLimitUsageRepository extends BaseRepository implements GatewayLimit
 
     public function unblock(GatewayLimitUsage $usage): void
     {
-        $this->query()->whereKey($usage->id)->update(['blocked_at' => null, 'updated_at' => now()]);
+        $this->query()->whereKey($usage->id)->update(['blocked_at' => null, 'unblocked_at' => now(), 'updated_at' => now()]);
     }
 
     public function listing(string $period, array $filters = []): Builder

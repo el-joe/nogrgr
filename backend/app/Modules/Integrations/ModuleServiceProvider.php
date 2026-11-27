@@ -2,6 +2,8 @@
 
 namespace App\Modules\Integrations;
 
+use App\Modules\Commerce\Events\OrderPaid;
+use App\Modules\Integrations\Listeners\RecordGatewayVolume;
 use App\Modules\Integrations\Payments\PaymentDriverRegistry;
 use App\Modules\Integrations\Repositories\Contracts\GatewayCheckoutRouteRepositoryContract;
 use App\Modules\Integrations\Repositories\Contracts\GatewayLimitUsageRepositoryContract;
@@ -54,5 +56,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         // queued job, so long-running workers pick up changes made in the panel).
         $this->app->booted(static fn ($app) => $app->make(IntegrationConfigOverlay::class)->apply());
         Event::listen(JobProcessing::class, static fn () => app(IntegrationConfigOverlay::class)->apply());
+
+        // Gateway limits (ADM-100c): platform-account volume per store and month.
+        Event::listen(OrderPaid::class, RecordGatewayVolume::class);
     }
 }

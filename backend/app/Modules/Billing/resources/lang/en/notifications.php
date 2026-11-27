@@ -68,4 +68,12 @@ return [
         'title' => 'Renewal in :days days',
         'body' => 'The :plan plan of :store ends on :date.',
     ],
+    'gateway_limit_warning' => [
+        'title' => ':store is at :percent% of its :gateway limit',
+        'body' => ':store took :volume of :limit this month through the platform :gateway account.',
+    ],
+    'gateway_limit_block' => [
+        'title' => ':store reached its :gateway limit',
+        'body' => ':store took :volume this month (limit :limit); :gateway is hidden at its checkout until next month or an unblock.',
+    ],
 ];

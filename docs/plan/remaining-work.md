@@ -40,18 +40,18 @@
 | 5 | ~~Vendor UI kit~~ | VEN-093 | S | D5 | **Coded, untested (2026-11-27, #125):** `vendor.ui-kit`, gate = impersonating admin / internal `ui-kit.view`. Final test cycle pending. |
 | 6 | ~~Maintenance windows~~ | ADM-113 | M | — | **Coded, untested (2026-11-27, #125):** windows platform / storefronts / one store, message en/ar, allowed IPs; mobile API not covered (own per-store maintenance). |
 | 7 | ~~Cache tools~~ | ADM-114, 114a, 114b | S | — | **Coded, untested (2026-11-27, #125):** audited, last cleared at / by; no CDN purge (no CDN). |
-| 8 | Shared branded e-mail layout (central brand / store brand, en / ar RTL, plain-text alternative) | MAIL-001 | M | — | **Done (#124):** every e-mail renders through the MAIL-001 layout (EmailTemplateRenderer); admin Email layout page; editable registry templates. Plain-text alternative not built (HTML only). |
+| 8 | Shared branded e-mail layout (central brand / store brand, en / ar RTL, plain-text alternative) | MAIL-001 | M | — | **Done (#124):** every e-mail renders through the MAIL-001 layout (EmailTemplateRenderer); admin Email layout page; editable registry templates. Plain-text alternative coded 2026-11-27 (#124 h, MailPlainText; untested). |
 | 9 | Vendor welcome mail: add a test | MAIL-003 | S | — | VendorWelcomeNotification is already sent on TenantProvisioned. Only a test asserting the send is missing. |
-| 10 | Renewal reminder mails (store owner + admins) | MAIL-007, MAIL-009 | M | scheduler | Needs a daily command that finds subscriptions N days before renewal, plus the two templates. |
-| 11 | Admin mail: subscription cancelled; store mail: domain connected / DNS failed | MAIL-010, MAIL-032 | S | — | The `SubscriptionCancelled` event exists but has no listener. The DNS check job does not notify yet. |
+| 10 | Renewal reminder mails (store owner + admins) | MAIL-007, MAIL-009 | M | scheduler | **Coded, untested (#124 h):** `billing:renewal-reminders` (daily, 7 / 3 / 1 days, idempotent) → owner `vendor.subscription_renewal_reminder` + owner inbox, admins BillingAlert `renewal_reminder`. |
+| 11 | Admin mail: subscription cancelled; store mail: domain connected / DNS failed | MAIL-010, MAIL-032 | S | — | **Coded (#124 g/h):** SubscriptionCancelled listener; DomainConnected mail; DNS failed = DomainDnsFailed event → owner `vendor.domain_dns_failed` + owner inbox + admin inbox (untested). |
 
 ## P5 Orders, payments, finance
 
 | # | Work item | Rows | Size | Depends on | Notes |
 |---|---|---|---|---|---|
-| 12 | Gateway limits tab (notify / block thresholds per gateway) + the two admin mails | ADM-100c, MAIL-023, MAIL-024 | M | payment logs (exist) | Needs a threshold model, a volume check on capture, and blocking of the gateway at checkout. Figma 79:86634. |
-| 13 | Admin shipping-escalation mail | MAIL-022 | S–M | shipping queue (exists) | Define the rule first (e.g. paid order not shipped within the max delivery days). |
-| 14 | Admin mail when a store settles its balance itself | MAIL-028 | S | — | `vendor.finance.settle.pay` has no admin notification. Manual settlements already notify the store (MAIL-027). |
+| 12 | Gateway limits tab (notify / block thresholds per gateway) + the two admin mails | ADM-100c, MAIL-023, MAIL-024 | M | payment logs (exist) | **Coded, untested (#124 h):** limit per store / month + warn % per gateway, usage table + unblock, OrderPaid volume, checkout hides blocked gateway, admin + store mails. Figma 79:86634 not re-checked. |
+| 13 | Admin shipping-escalation mail | MAIL-022 | S–M | shipping queue (exists) | **Coded, untested (#124 h):** rule = fulfilment marked delayed → admins with shipping-queue.view (`admin.shipping_escalation`). |
+| 14 | Admin mail when a store settles its balance itself | MAIL-028 | S | — | **Coded, untested (#124 h):** SettlementPaid (gateway) → admin `settlement_received` + owners `vendor.settlement_receipt`; weekly `billing:settlement-reminders` → `vendor.settlement_due`. |
 | 15 | Vendor order receipt (print) + test | MAIL-044 | S | — | The admin receipt is done. The vendor side only has `vendor.sales.orders.invoice`, with no test. |
 | 16 | Shipping label (A6 / A4, barcode): admin GET test + vendor route | MAIL-045 | S | — | The admin view `commerce::admin.shipping.label` exists but has no test. There is no vendor route. |
 | 17 | Payout / settlement receipt PDF | MAIL-047 | S–M | D3 | |
