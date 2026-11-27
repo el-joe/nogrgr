@@ -19,7 +19,7 @@ final readonly class ListingQuery
     /**
      * Allowed ?per= sizes (home grids page by 15 = 5 × 3).
      */
-    public const PAGE_SIZES = [15, 20];
+    public const PAGE_SIZES = [10, 15, 20];
 
     /**
      * @param  list<int>  $categoryIds  extra category filter (any of)

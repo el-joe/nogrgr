@@ -14,6 +14,7 @@ use App\Modules\Storefront\Enums\ListingSort;
 use App\Modules\Storefront\Enums\SalesPeriod;
 use App\Modules\Storefront\Services\Banners\BannerCatalog;
 use App\Modules\Storefront\Services\StorefrontContext;
+use Illuminate\Support\Collection;
 
 /**
  * Data of the Ecommet home sections (1:1002 / m 1:2656). Every section is optional: an
@@ -24,6 +25,12 @@ class HomeService
     public const RAIL = 12;
 
     public const GRID = 15;
+
+    /** Ecommet home page size: 10 cards per grid page and per "See More", as the old Ecommet home. */
+    public const ECOMMET_PAGE = 10;
+
+    /** Ecommet lightning deals: up to 5 products per live flash sale, as the old Ecommet home. */
+    public const ECOMMET_DEALS_PER_SALE = 5;
 
     public const TABS = 10;
 
@@ -43,19 +50,21 @@ class HomeService
     /**
      * @return array{hero: list<BannerData>, promo: list<BannerData>, deals: list<ProductCardData>, clearance: list<ProductCardData>, tabs: list<array{key: string, label: string}>, interests: ListingResult, flash: PromotionFlashSale|null, best: ListingResult, bestFallback: bool, rated: ListingResult, newest: ListingResult}
      */
-    public function sections(): array
+    public function sections(int $perPage = self::GRID, ?int $dealsPerSale = null, ?ListingSort $interestsSort = null): array
     {
+        $dealsLimit = $dealsPerSale !== null ? $dealsPerSale * max(1, $this->liveFlashSales()->count()) : self::RAIL;
+
         return [
             'hero' => $this->banners('home.hero'),
             'promo' => $this->banners('home.promo'),
-            'deals' => $this->cards->make($this->listing->flashDeals(self::RAIL)),
+            'deals' => $this->cards->make($this->listing->flashDeals($dealsLimit)),
             'clearance' => $this->cards->make($this->listing->clearance(self::RAIL)),
             'tabs' => $this->tabs(),
-            'interests' => $this->tab('recommended'),
+            'interests' => $this->tab('recommended', 1, $perPage, $interestsSort),
             'flash' => $this->flashSale(),
-            ...$this->bestSelling(),
-            'rated' => $this->grid(ListingKind::TopRated),
-            'newest' => $this->grid(ListingKind::NewIn),
+            ...$this->bestSelling(1, $perPage),
+            'rated' => $this->grid(ListingKind::TopRated, 1, $perPage),
+            'newest' => $this->grid(ListingKind::NewIn, 1, $perPage),
         ];
     }
 
@@ -100,16 +109,16 @@ class HomeService
     /**
      * One page of a home tab (Recommended or a category slug); null for an unknown tab.
      */
-    public function tab(string $key, int $page = 1): ?ListingResult
+    public function tab(string $key, int $page = 1, int $perPage = self::GRID, ?ListingSort $recommendedSort = null): ?ListingResult
     {
         if ($key === 'recommended') {
-            return $this->listing->listing(new ListingQuery(kind: ListingKind::NewIn, sort: ListingSort::Recommended, page: $page, perPage: self::GRID));
+            return $this->listing->listing(new ListingQuery(kind: ListingKind::NewIn, sort: $recommendedSort ?? ListingSort::Recommended, page: $page, perPage: $perPage));
         }
 
         $category = $this->categories->findBySlug($key);
 
         return $category instanceof Category
-            ? $this->listing->listing(new ListingQuery(kind: ListingKind::Category, sort: ListingSort::Recommended, page: $page, perPage: self::GRID), $category)
+            ? $this->listing->listing(new ListingQuery(kind: ListingKind::Category, sort: ListingSort::Recommended, page: $page, perPage: $perPage), $category)
             : null;
     }
 
@@ -120,23 +129,23 @@ class HomeService
      *
      * @return array{best: ListingResult, bestFallback: bool}
      */
-    public function bestSelling(int $page = 1): array
+    public function bestSelling(int $page = 1, int $perPage = self::GRID): array
     {
-        $best = $this->grid(ListingKind::BestSelling, $page);
+        $best = $this->grid(ListingKind::BestSelling, $page, $perPage);
 
         if (! $best->isEmpty() || $page > 1) {
             return ['best' => $best, 'bestFallback' => false];
         }
 
         return [
-            'best' => $this->listing->listing(new ListingQuery(kind: ListingKind::NewIn, sort: ListingSort::BestSelling, page: $page, perPage: self::GRID, period: SalesPeriod::Days30, inStockOnly: true)),
+            'best' => $this->listing->listing(new ListingQuery(kind: ListingKind::NewIn, sort: ListingSort::BestSelling, page: $page, perPage: $perPage, period: SalesPeriod::Days30, inStockOnly: true)),
             'bestFallback' => true,
         ];
     }
 
-    public function grid(ListingKind $kind, int $page = 1): ListingResult
+    public function grid(ListingKind $kind, int $page = 1, int $perPage = self::GRID): ListingResult
     {
-        return $this->listing->listing(new ListingQuery(kind: $kind, sort: $kind->defaultSort(), page: $page, perPage: self::GRID, period: SalesPeriod::Days30));
+        return $this->listing->listing(new ListingQuery(kind: $kind, sort: $kind->defaultSort(), page: $page, perPage: $perPage, period: SalesPeriod::Days30));
     }
 
     /**
@@ -150,10 +159,27 @@ class HomeService
             return null;
         }
 
-        return $this->flashSales->all($countryId, liveOnly: true)
-            ->filter(static fn (PromotionFlashSale $sale): bool => $sale->isLive())
+        return $this->liveFlashSales()
             ->sortBy(static fn (PromotionFlashSale $sale): int => $sale->endsAt->getTimestamp())
             ->first();
+    }
+
+    /**
+     * Live flash sales of the shopping country.
+     *
+     * @return Collection<int, PromotionFlashSale>
+     */
+    private function liveFlashSales(): Collection
+    {
+        $countryId = $this->context->countryId();
+
+        if ($countryId === null) {
+            return new Collection;
+        }
+
+        return $this->flashSales->all($countryId, liveOnly: true)
+            ->filter(static fn (PromotionFlashSale $sale): bool => $sale->isLive())
+            ->values();
     }
 
     /**

@@ -14,8 +14,8 @@
         /* Best-selling "See More": the best-sellers listing, or, while the store has no sales yet
            (HomeService fallback, old Ecommet behaviour), in-stock products in best-selling order. */
         $bestMore = ($bestFallback ?? false)
-            ? route('storefront.new-in', ['page' => 2, 'per' => 15, 'ribbon' => 1, 'sort' => 'best_selling', 'in_stock' => 1])
-            : route('storefront.best-sellers', ['page' => 2, 'per' => 15, 'ribbon' => 1]);
+            ? route('storefront.new-in', ['page' => 2, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::ECOMMET_PAGE, 'ribbon' => 1, 'sort' => 'best_selling', 'in_stock' => 1])
+            : route('storefront.best-sellers', ['page' => 2, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::ECOMMET_PAGE, 'ribbon' => 1]);
         $homeSections ??= \App\Modules\Storefront\Support\ThemeSectionLibrary::sections(\App\Modules\Storefront\Enums\ThemeFamily::Ecommet, 1);
         $groups = [];
         foreach ($homeSections as $section) {
@@ -67,8 +67,8 @@
             @case('mobile-tabs')
                 <x-sf::section.mobile-tabs class="mb-6 mt-6 lg:hidden" :tabs="[
                     ['key' => 'best', 'label' => __st('shell.nav.best_sellers'), 'icon' => 'award', 'result' => $best, 'more' => $bestMore, 'ribbon' => true],
-                    ['key' => 'rated', 'label' => __st('shell.nav.top_rated'), 'icon' => 'star', 'result' => $rated, 'more' => route('storefront.top-rated', ['page' => 2, 'per' => 15])],
-                    ['key' => 'new', 'label' => __st('shell.nav.new_in'), 'icon' => 'sparkles', 'result' => $newest, 'more' => route('storefront.new-in', ['page' => 2, 'per' => 15]), 'tag' => 'new'],
+                    ['key' => 'rated', 'label' => __st('shell.nav.top_rated'), 'icon' => 'star', 'result' => $rated, 'more' => route('storefront.top-rated', ['page' => 2, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::ECOMMET_PAGE])],
+                    ['key' => 'new', 'label' => __st('shell.nav.new_in'), 'icon' => 'sparkles', 'result' => $newest, 'more' => route('storefront.new-in', ['page' => 2, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::ECOMMET_PAGE]), 'tag' => 'new'],
                 ]" />
                 @break
         @endswitch

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Http\Controllers\Storefront;
 
+use App\Modules\Storefront\Enums\ListingSort;
 use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Services\Catalog\HomeService;
 use App\Modules\Storefront\Services\Layouts\HomeSectionHydrator;
@@ -28,8 +29,13 @@ class HomeController extends Controller
     {
         $theme = app(StorefrontContext::class)->theme();
         $extra = in_array($theme->family, [ThemeFamily::Elora, ThemeFamily::Souqify], true) ? $this->home->elora() + ['variant' => $theme->variant] : [];
+        /* Ecommet keeps the old Ecommet home's counts: 10 cards per grid page / "See More",
+           5 lightning deals per live flash sale, newest products under "Explore your interests". */
+        $sections = $theme->family === ThemeFamily::Ecommet
+            ? $this->home->sections(HomeService::ECOMMET_PAGE, HomeService::ECOMMET_DEALS_PER_SALE, ListingSort::Newest)
+            : $this->home->sections();
 
-        return StorefrontView::make('pages.home', $this->home->sections() + $extra + [
+        return StorefrontView::make('pages.home', $sections + $extra + [
             'seo' => $this->seo->home(),
             // Home sections: the store's published page-builder layout (VEN-032) or the theme's admin
             // order (ADM-087, decision #120), disabled / hidden-in-country ones removed, settings applied.
@@ -43,7 +49,10 @@ class HomeController extends Controller
     public function tab(Request $request, string $tab): JsonResponse
     {
         $page = max(1, min(100, $request->integer('page', 1)));
-        $result = $this->home->tab($tab, $page);
+        $ecommet = app(StorefrontContext::class)->theme()->family === ThemeFamily::Ecommet;
+        $result = $ecommet
+            ? $this->home->tab($tab, $page, HomeService::ECOMMET_PAGE, ListingSort::Newest)
+            : $this->home->tab($tab, $page);
         abort_if($result === null, 404);
 
         return new JsonResponse([
