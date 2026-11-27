@@ -631,6 +631,8 @@ Generated from `ThemeFixtures` (sample data run through the real presenters), so
 | `home.new_in[].sold_count` | int | `240` |
 | `home.new_in[].low_stock` | int | `6` |
 | `home.new_in[].badge` | string | `Best seller` |
+| `home.layout` | list |  |
+| `home.sections` | list |  |
 | `seo` | object |  |
 | `seo.title` | string |  |
 | `seo.description` | null |  |
@@ -1097,6 +1099,7 @@ Generated from `ThemeFixtures` (sample data run through the real presenters), so
 | `cms_page.menu[].title` | string | `About us` |
 | `cms_page.menu[].url` | string | `https://your-store.com/pages/about` |
 | `cms_page.menu[].current` | bool | `true` |
+| `cms_page.sections` | list |  |
 | `seo` | object |  |
 | `seo.title` | string |  |
 | `seo.description` | null |  |

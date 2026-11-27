@@ -15,10 +15,12 @@ use App\Modules\Storefront\Enums\CustomThemeTemplate;
 use App\Modules\Storefront\Enums\ListingKind;
 use App\Modules\Storefront\Enums\ListingSort;
 use App\Modules\Storefront\Models\StorePage;
+use App\Modules\Storefront\Services\StorefrontContext;
 use BackedEnum;
 use DateTimeInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
+use Throwable;
 use Twig\Markup;
 
 /**
@@ -31,6 +33,12 @@ use Twig\Markup;
  */
 class ThemeViewModels
 {
+    /** Page builder (VEN-032) home layout reader: build(ResolvedThemeData, Request): array{layout, sections}. */
+    private const HOME_SECTIONS = 'App\\Modules\\Storefront\\Services\\Themes\\HomeSectionPayloads';
+
+    /** Page builder store-page sections reader: pageSections(StorePage): list<array>. */
+    private const PAGE_SECTIONS = 'App\\Modules\\Storefront\\Services\\Layouts\\StoreLayoutService';
+
     /**
      * The template and variables for a storefront view, or null when the view always
      * renders with the built-in theme (checkout, payment, sign-in, order detail, …).
@@ -111,7 +119,55 @@ class ThemeViewModels
             'best_sellers' => $this->cards($this->listCards($data['best'] ?? null)),
             'top_rated' => $this->cards($this->listCards($data['rated'] ?? null)),
             'new_in' => $this->cards($this->listCards($data['newest'] ?? null)),
-        ]];
+        ] + $this->homeLayout()];
+    }
+
+    /**
+     * The store's published home layout from the page builder (VEN-032, the signed draft in
+     * builder preview): enabled section keys + section payloads as plain arrays. Empty
+     * when the builder is not installed or fails (the theme lays out the rails itself).
+     *
+     * @return array{layout: list<string>, sections: list<array<string, mixed>>}
+     */
+    private function homeLayout(): array
+    {
+        $empty = ['layout' => [], 'sections' => []];
+        $builder = self::HOME_SECTIONS;
+
+        if (! tenancy()->initialized || ! class_exists($builder)) {
+            return $empty;
+        }
+
+        try {
+            $payload = (array) app($builder)->build(app(StorefrontContext::class)->theme(), request());
+        } catch (Throwable) {
+            return $empty;
+        }
+
+        return [
+            'layout' => array_values(array_map('strval', array_filter((array) ($payload['layout'] ?? []), 'is_scalar'))),
+            'sections' => array_values(array_filter((array) ($payload['sections'] ?? []), 'is_array')),
+        ];
+    }
+
+    /**
+     * Page-builder sections of a store page (VEN-032) as plain arrays; empty without the builder.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function pageSections(StorePage $page): array
+    {
+        $layouts = self::PAGE_SECTIONS;
+
+        if (! tenancy()->initialized || ! class_exists($layouts)) {
+            return [];
+        }
+
+        try {
+            return array_values(array_filter((array) app($layouts)->pageSections($page), 'is_array'));
+        } catch (Throwable) {
+            return [];
+        }
     }
 
     /**
@@ -318,6 +374,7 @@ class ThemeViewModels
             'is_contact' => (bool) ($data['showSupportForm'] ?? false),
             'support_url' => route('storefront.support.index'),
             'menu' => array_map(static fn (array $link): array => ['title' => (string) $link['title'], 'url' => (string) $link['url'], 'current' => ($link['url'] ?? null) === ($data['currentUrl'] ?? null)], array_values(array_filter((array) ($data['menu'] ?? []), 'is_array'))),
+            'sections' => $this->pageSections($page),
         ] : null];
     }
 
