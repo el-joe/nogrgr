@@ -114,3 +114,4 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - Committed d3c8ed9 (product videos + media fix #114), 4b6c438 (coverage audit; 57 rows left, docs/plan/remaining-work.md), #116 keep vendor UI kit (internal).
 - Running: product-form (#115 admin product form = old controller version), twig-themes (custom Twig themes + security model + vendor docs; owns ADM-089).
 - QUEUED next slot: "admin-themes" — ADM-086/086a themes list/edit (old TemplateControlPage), ADM-087 home variants & sections (old HomeVariantsPage), ADM-088/088a template parts (old TemplatePartsPage/AddEditTemplatePart), per old project routes settings.templates/home-variants/template-parts.
+- Decision #117: WEB-004 central theme preview (demo store, device frame, EN/AR, CTA to registration) + VEN-032 page builder (section layouts per store, versioned JSON, live signed preview, shared with app/Twig). QUEUE: admin-themes → page-builder; central-preview in the next free slot.
