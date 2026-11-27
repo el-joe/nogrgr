@@ -485,6 +485,48 @@
         transition: background-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
     }
 
+    /* Favourite heart on cards (behaviour of the old Ecommet card): kept out of the
+       resting Figma look; it fades in on hover / keyboard focus and stays once saved. */
+    .eco-card-fav {
+        position: absolute;
+        inset-block-start: 8px;
+        inset-inline-end: 8px;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: #fff;
+        color: var(--eco-black);
+        box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+        opacity: 0;
+        transform: scale(0.85);
+        transition: opacity var(--motion-fast) ease-out, transform var(--motion-fast) ease-out, color var(--motion-fast) ease-out;
+    }
+
+    .eco-card:hover .eco-card-fav,
+    .eco-card:focus-within .eco-card-fav,
+    .eco-card-fav[aria-pressed='true'] {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .eco-card-fav[aria-pressed='true'] {
+        color: var(--eco-red);
+    }
+
+    .eco-card-fav[aria-pressed='true'] svg {
+        fill: currentColor;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .eco-card-fav {
+            transform: none;
+            transition: opacity var(--motion-fast) linear;
+        }
+    }
+
     .eco-card-cart:hover {
         background: var(--eco-black);
         color: #fff;

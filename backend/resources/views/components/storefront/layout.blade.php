@@ -30,6 +30,7 @@
             'autocomplete' => Route::has('storefront.search.autocomplete') ? route('storefront.search.autocomplete') : null,
             'search' => Route::has('storefront.search') ? route('storefront.search') : null,
             'favorite_toggle' => Route::has('storefront.favorites.toggle') ? route('storefront.favorites.toggle') : null,
+            'product' => Route::has('store-api.v1.products.show') ? route('store-api.v1.products.show', ['product' => 0]) : null,
             'login' => Route::has('storefront.account.login') ? route('storefront.account.login') : null,
         ]),
     ];

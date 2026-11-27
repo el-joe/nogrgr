@@ -53,3 +53,5 @@
     @endif
     <p class="bg-sf-footer-bottom py-4 text-center text-xs text-white/80 lg:text-sm lg:text-white">{{ $copyright ?? __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
 </footer>
+{{-- One variant picker per Ecommet page, shared by every card's cart button. --}}
+<x-sf::variant-picker />

@@ -22,7 +22,7 @@ async function add(button) {
         throw new Error('cart unavailable');
     }
 
-    const scope = button.closest('[data-product-page]');
+    const scope = button.closest('[data-product-page], [data-cart-scope]');
     const quantity = Number(scope?.querySelector('[data-qty]')?.value || 1);
     const payload = { store_product_id: Number(button.dataset.productId), quantity };
 

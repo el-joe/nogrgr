@@ -4,7 +4,7 @@
     or variant="deal" (1:1067 lightning deals: red price, compare, -% chip, flash-sale
     progress + countdown, stars + review count).
     The cart button posts to the Store API (storefront/catalog/cart.js); products with
-    variants link to the product page instead. tag: best|new|rating|discount|null.
+    variants open the variant picker modal (storefront/ecommet/variant-picker.js). tag: best|new|rating|discount|null.
 --}}
 @props(['card', 'variant' => 'grid', 'ribbon' => false, 'tag' => null, 'rank' => null, 'eager' => false])
 @if (\App\Modules\Storefront\Support\StorefrontTheme::family() === 'elora')
@@ -18,6 +18,7 @@
     /** @var \App\Modules\Storefront\DTOs\Catalog\ProductCardData $card */
     $deal = $variant === 'deal';
     $stars = (int) round($card->rating);
+    $favoriteUrl = \Illuminate\Support\Facades\Route::has('storefront.favorites.toggle') ? route('storefront.favorites.toggle') : null;
     $tagText = match ($tag) {
         'best' => __st('catalog.card.best_selling_tag'),
         'new' => __st('catalog.card.new'),
@@ -38,6 +39,10 @@
             @endif
         @else
             <x-ui::icon name="image" :size="40" class="text-eco-semi" data-fly-image />
+        @endif
+        @if ($favoriteUrl)
+            {{-- Favourite toggle (old Ecommet card heart): revealed on hover / focus, always shown once saved. --}}
+            <button type="button" class="eco-card-fav" data-favorite data-favorite-url="{{ $favoriteUrl }}" data-product-id="{{ $card->id }}" aria-pressed="{{ $card->favorited ? 'true' : 'false' }}" aria-label="{{ __st('catalog.card.favorite', ['name' => $card->name]) }}"><x-ui::icon name="heart" :size="18" /></button>
         @endif
         @unless ($card->inStock)
             <span class="absolute inset-x-0 bottom-0 bg-eco-black/75 py-1 text-center text-xs text-white">{{ __st('catalog.card.out_of_stock') }}</span>
@@ -84,7 +89,12 @@
                         <span class="eco-star-seller w-fit"><x-ui::icon name="star" :size="10" class="fill-current" />{{ __st('catalog.card.star_seller') }}</span>
                     @endif
                 </div>
-                @if ($card->hasVariants || ! $card->inStock)
+                @if ($card->hasVariants && $card->inStock)
+                    {{-- Variant products open the option picker (x-sf::variant-picker, ecommet/variant-picker.js); the link is the no-JS fallback. --}}
+                    <a href="{{ $card->url }}" class="eco-card-cart" data-variant-picker data-product-id="{{ $card->id }}" role="button" aria-haspopup="dialog" aria-label="{{ __st('catalog.card.choose_options', ['name' => $card->name]) }}">
+                        <x-ui::icon name="cart-add" :size="24" />
+                    </a>
+                @elseif (! $card->inStock)
                     <a href="{{ $card->url }}" class="eco-card-cart mo-press" aria-label="{{ $card->inStock ? __st('catalog.card.choose_options', ['name' => $card->name]) : __st('catalog.card.view', ['name' => $card->name]) }}">
                         <x-ui::icon name="cart-add" :size="24" />
                     </a>
