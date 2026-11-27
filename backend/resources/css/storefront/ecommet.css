@@ -416,9 +416,13 @@
         aspect-ratio: 224 / 185;
     }
 
+    /* Images sit inside the padded box (absolute, so a square photo cannot grow the
+       aspect-ratio box and get cropped) and always fit whole: contain, never cover. */
     .eco-card-img img {
-        width: 100%;
-        height: 100%;
+        position: absolute;
+        inset: 8px;
+        width: calc(100% - 16px);
+        height: calc(100% - 16px);
         object-fit: contain;
         mix-blend-mode: multiply;
         transition: transform var(--motion-slow) var(--ease-out), opacity var(--motion-base) var(--ease-out);
