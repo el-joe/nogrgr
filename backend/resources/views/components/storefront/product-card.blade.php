@@ -34,9 +34,6 @@
     <div class="eco-card-img">
         @if ($card->image)
             <img src="{{ $card->image }}" alt="{{ $card->name }}" width="222" height="164" loading="{{ $eager ? 'eager' : 'lazy' }}" @if ($eager) fetchpriority="high" @endif decoding="async" data-fly-image>
-            @if ($card->image2 && ! $deal)
-                <img src="{{ $card->image2 }}" alt="" width="222" height="164" loading="lazy" decoding="async" aria-hidden="true">
-            @endif
         @else
             <x-ui::icon name="image" :size="40" class="text-eco-semi" data-fly-image />
         @endif
