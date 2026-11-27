@@ -22,6 +22,8 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property bool $is_active
  * @property int $fee_percent_bps
  * @property int $fee_fixed_minor
+ * @property int|null $monthly_store_limit_minor per-store monthly volume through the platform account (ADM-100c)
+ * @property int $limit_warn_percent
  * @property int $sort_order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -39,7 +41,7 @@ class PaymentGateway extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['code', 'is_active', 'fee_percent_bps', 'fee_fixed_minor', 'sort_order'];
+    protected $fillable = ['code', 'is_active', 'fee_percent_bps', 'fee_fixed_minor', 'monthly_store_limit_minor', 'limit_warn_percent', 'sort_order'];
 
     /**
      * @return array<string, string>
@@ -51,6 +53,8 @@ class PaymentGateway extends Model
             'is_active' => 'boolean',
             'fee_percent_bps' => 'integer',
             'fee_fixed_minor' => 'integer',
+            'monthly_store_limit_minor' => 'integer',
+            'limit_warn_percent' => 'integer',
             'sort_order' => 'integer',
         ];
     }

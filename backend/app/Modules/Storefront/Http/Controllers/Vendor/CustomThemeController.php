@@ -111,7 +111,7 @@ class CustomThemeController extends Controller
         $active = $request->boolean('active');
         $this->service->setActive($active);
 
-        return JsonResponder::success(__($active ? 'content::custom_themes.switched_on' : 'content::custom_themes.switched_off'), redirect: vendor_route('store.custom-themes.index'));
+        return JsonResponder::success(__($active ? 'content::custom_themes.switched_on' : 'content::custom_themes.switched_off'), redirect: $request->input('return') === 'themes' ? vendor_route('store.themes.index') : vendor_route('store.custom-themes.index'));
     }
 
     /**

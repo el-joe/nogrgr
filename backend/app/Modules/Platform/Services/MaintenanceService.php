@@ -66,8 +66,9 @@ class MaintenanceService extends BaseService
 
         /** @var MaintenanceWindow $window */
         $window = $this->windows->update($window, [
-            // a scheduled window that is cancelled ends at its start (status "cancelled")
-            'ended_at' => $wasScheduled ? $window->starts_at : $now,
+            // a scheduled window that is cancelled ends at its start (status "cancelled");
+            // an ended one always ends after its start (status "completed")
+            'ended_at' => $wasScheduled ? $window->starts_at : $now->max($window->starts_at->copy()->addSecond()),
             'ended_by' => $adminId,
         ]);
         $this->auditor->record($wasScheduled ? 'system.maintenance.cancelled' : 'system.maintenance.ended', $window, ['title' => $window->title]);

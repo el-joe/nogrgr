@@ -8,6 +8,7 @@ use App\Modules\Storefront\Models\CustomThemeVersion;
 use App\Modules\Storefront\Repositories\Contracts\CustomThemeRepositoryContract;
 use App\Modules\Storefront\Services\Checkout\StorefrontCart;
 use App\Modules\Storefront\Services\StorefrontContext;
+use App\Modules\Storefront\Services\Tracking\TrackingPixelService;
 use App\Modules\Storefront\Support\CustomThemes\CustomThemeCsp;
 use App\Modules\Storefront\Support\CustomThemes\ThemeManifest;
 use App\Modules\Storefront\Support\CustomThemes\ThemeUrls;
@@ -45,7 +46,15 @@ class CustomTwigThemeRenderer
         private readonly ThemeShell $shell,
         private readonly CustomThemeCsp $csp,
         private readonly StorefrontContext $context,
+        private readonly TrackingPixelService $tracking,
     ) {}
+
+    /**
+     * Tracking pixels config of this request (null = none on), see prepareTracking().
+     *
+     * @var array{pixels: array<string, string>, cookie: string, reload_on_consent?: bool}|null
+     */
+    private ?array $trackingConfig = null;
 
     public function version(int $versionId): ?CustomThemeVersion
     {
@@ -89,6 +98,7 @@ class CustomTwigThemeRenderer
         $context = $this->shell->current(['name' => $version->name, 'version' => $version->version], $settings, $this->cartCount($vars));
 
         $this->csp->markUsed();
+        $this->prepareTracking();
 
         return ThemeTwigFactory::render($twig, $template->value.'.twig', ThemeViewModels::plain($context + $vars + ['template' => $template->value]));
     }
@@ -184,7 +194,7 @@ class CustomTwigThemeRenderer
     private function scripts(): string
     {
         Vite::useCspNonce($this->csp->nonce());
-        $html = (string) $this->vite([self::RUNTIME_ENTRY]);
+        $html = $this->trackingHtml().(string) $this->vite([self::RUNTIME_ENTRY]);
         $preview = $this->context->preview();
 
         if ($preview !== null && $preview->isCustom()) {
@@ -195,6 +205,37 @@ class CustomTwigThemeRenderer
         }
 
         return $html;
+    }
+
+    /**
+     * Store tracking pixels on custom theme pages (decision #91 + #121): the #sf-tracking
+     * island + consent notice like the built-in themes; the CSP only opens the pixel hosts
+     * once the shopper accepted (first-party consent cookie). On "Accept" the runtime reloads
+     * the page so the pixels load under the widened policy.
+     */
+    private function prepareTracking(): void
+    {
+        $config = $this->tracking->storefrontConfig();
+        $this->trackingConfig = $config !== null ? $config + ['reload_on_consent' => true] : null;
+
+        if ($config !== null && request()->cookie(TrackingPixelService::CONSENT_COOKIE) === 'granted') {
+            $this->csp->allowTracking(array_keys($config['pixels']));
+        }
+    }
+
+    private function trackingHtml(): string
+    {
+        if ($this->trackingConfig === null) {
+            return '';
+        }
+
+        try {
+            return view('storefront::custom-themes.tracking-consent', ['config' => $this->trackingConfig])->render();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return '';
+        }
     }
 
     /**

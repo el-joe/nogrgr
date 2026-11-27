@@ -52,6 +52,18 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
             ->lazyById();
     }
 
+    public function endingBetween(Carbon $from, Carbon $to): LazyCollection
+    {
+        return Subscription::withoutTenantScope()
+            ->with('plan')
+            ->where(function (Builder $query) use ($from, $to): void {
+                $query->where(fn (Builder $trial) => $trial->where('status', SubscriptionStatus::Trial->value)->where('trial_ends_at', '>=', $from)->where('trial_ends_at', '<', $to))
+                    ->orWhere(fn (Builder $active) => $active->where('status', SubscriptionStatus::Active->value)->where('current_period_ends_at', '>=', $from)->where('current_period_ends_at', '<', $to));
+            })
+            ->orderBy('id')
+            ->lazyById();
+    }
+
     public function countsByStatus(): array
     {
         /** @var array<string, int> $counts */

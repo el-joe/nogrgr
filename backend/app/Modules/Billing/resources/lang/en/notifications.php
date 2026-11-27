@@ -57,4 +57,15 @@ return [
         'vendor_subject' => 'Your subscription has expired',
         'vendor_body' => 'The :plan_name plan of :store_name has expired. Renew it to reactivate your store.',
     ],
+    'settlement_received' => [
+        'title' => 'Settlement :reference received',
+        'body' => ':store paid a settlement of :amount for order :order.',
+    ],
+    'owner' => [
+        'renewal_reminder' => ['title' => 'Plan renews in :days days', 'body' => 'The :plan plan of :store ends on :date. Renew it to keep the store online.'],
+    ],
+    'renewal_reminder' => [
+        'title' => 'Renewal in :days days',
+        'body' => 'The :plan plan of :store ends on :date.',
+    ],
 ];

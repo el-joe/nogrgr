@@ -10,6 +10,7 @@ use App\Modules\Platform\Contracts\DnsResolver;
 use App\Modules\Platform\Events\ComplianceReviewed;
 use App\Modules\Platform\Events\ComplianceSubmitted;
 use App\Modules\Platform\Events\DomainConnected;
+use App\Modules\Platform\Events\DomainDnsFailed;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Modules\Platform\Events\TenantProvisioningFailed;
 use App\Modules\Platform\Legacy\Console\LegacyMigrateCommand;
@@ -17,10 +18,12 @@ use App\Modules\Platform\Legacy\Console\LegacyReconcileCommand;
 use App\Modules\Platform\Listeners\AdvanceRegistrationOnPayment;
 use App\Modules\Platform\Listeners\AlertProvisioningFailure;
 use App\Modules\Platform\Listeners\NotifyAdminsOfComplianceSubmission;
+use App\Modules\Platform\Listeners\NotifyOfDomainDnsFailed;
 use App\Modules\Platform\Listeners\NotifyOwnerOfComplianceDecision;
 use App\Modules\Platform\Listeners\NotifyOwnerOfDomainConnected;
 use App\Modules\Platform\Listeners\WelcomeProvisionedVendor;
 use App\Modules\Platform\Policies\OwnerStorePolicy;
+use App\Modules\Platform\Policies\VendorUiKitPolicy;
 use App\Modules\Platform\Repositories\Contracts\AuditEventRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\CacheClearRunRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\ComplianceProfileRepositoryContract;
@@ -94,6 +97,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Event::listen(MigrationFailed::class, [PartialMigrationCleaner::class, 'failed']);
         Event::listen(TenantProvisioned::class, WelcomeProvisionedVendor::class);
         Event::listen(DomainConnected::class, NotifyOwnerOfDomainConnected::class);
+        Event::listen(DomainDnsFailed::class, NotifyOfDomainDnsFailed::class);
         Event::listen(TenantProvisioningFailed::class, AlertProvisioningFailure::class);
         Event::listen(ComplianceReviewed::class, NotifyOwnerOfComplianceDecision::class);
         Event::listen(ComplianceSubmitted::class, NotifyAdminsOfComplianceSubmission::class);
@@ -105,5 +109,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Gate::define('owner.portal', [OwnerStorePolicy::class, 'portal']);
         Gate::define('owner.stores.manage', [OwnerStorePolicy::class, 'manageStore']);
         Gate::define('owner.domains.manage', [OwnerStorePolicy::class, 'manageDomain']);
+
+        // Vendor UI kit (VEN-093, #116): impersonating admins + the internal ui-kit.view.
+        Gate::define(VendorUiKitPolicy::ABILITY, [VendorUiKitPolicy::class, 'view']);
     }
 }

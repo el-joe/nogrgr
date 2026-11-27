@@ -4,6 +4,7 @@ return [
     'store_new_order' => ['title' => 'طلب جديد :number', 'body' => 'قام :customer بتقديم الطلب :number (:total).'],
     'store_order_cancelled' => ['title' => 'تم إلغاء الطلب :number', 'body' => 'تم إلغاء الطلب :number (:total).'],
     'admin_order_paid' => ['title' => 'تم دفع الطلب :number', 'body' => 'استلم متجر :store طلباً مدفوعاً :number (:total).'],
+    'admin_shipping_escalation' => ['title' => 'تصعيد شحن: الطلب :number', 'body' => 'تأخر توصيل الطلب :number في متجر :store مع :company ويحتاج إلى متابعة.'],
     'admin_order_cancelled' => ['title' => 'تم إلغاء الطلب :number', 'body' => 'تم إلغاء الطلب :number (:total) في متجر :store.'],
     'store_return_opened' => ['title' => 'تم فتح المرتجع :reference', 'body' => 'تم فتح مرتجع للمنتج :product في الطلب :number.'],
     'store_return_updated' => ['title' => 'المرتجع :reference: :status', 'body' => 'حالة المرتجع :reference للطلب :number الآن :status.'],

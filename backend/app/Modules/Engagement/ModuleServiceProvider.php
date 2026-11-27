@@ -2,6 +2,7 @@
 
 namespace App\Modules\Engagement;
 
+use App\Modules\Engagement\Events\ReviewModerated;
 use App\Modules\Engagement\Events\ReviewSubmitted;
 use App\Modules\Engagement\Events\SupportRequestReceived;
 use App\Modules\Engagement\Listeners\SendEngagementNotifications;
@@ -39,6 +40,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         Event::listen(SupportRequestReceived::class, [SendEngagementNotifications::class, 'handleSupportRequest']);
         Event::listen(ReviewSubmitted::class, [SendEngagementNotifications::class, 'handleReview']);
+        Event::listen(ReviewModerated::class, [SendEngagementNotifications::class, 'handleModeration']);
 
         /* Storefront forms: per visitor IP and store host. */
         RateLimiter::for('storefront-forms', static fn (Request $request): Limit => Limit::perMinute(5)->by('sf-forms:'.$request->getHost().':'.$request->ip()));

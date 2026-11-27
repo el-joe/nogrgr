@@ -16,9 +16,9 @@ use Illuminate\Notifications\Notification;
 
 /**
  * Order e-mail + account notification for the customer (order confirmation, shipped,
- * delivered, cancelled, shipping steps, refunds, returns). The mail uses the admin's active template of the event
- * (EmailTemplateEvent, Admin › Email templates; none for shipping steps and returns) and falls back to the built-in
- * commerce::notifications.customer.<event> texts. E-mail follows the customer's
+ * delivered, cancelled, shipping steps, refunds, returns). The mail renders the registry template of the event
+ * (order.shipping_update for shipping steps, order.return_update for returns) with the
+ * commerce::notifications.customer.<event> texts as alert title / body. E-mail follows the customer's
  * "order updates" / "shipping updates" e-mail preference; the account inbox always gets it.
  */
 class OrderCustomerNotification extends Notification implements ShouldQueue, TemplatedMailNotification
@@ -63,15 +63,20 @@ class OrderCustomerNotification extends Notification implements ShouldQueue, Tem
      */
     public static function mailTemplates(): array
     {
-        return [EmailTemplateEvent::OrderConfirmation, EmailTemplateEvent::OrderShipped, EmailTemplateEvent::OrderDelivered, EmailTemplateEvent::OrderCancelled, EmailTemplateEvent::OrderRefundProcessed, EmailTemplateEvent::OrderUpdate];
+        return [EmailTemplateEvent::OrderConfirmation, EmailTemplateEvent::OrderShipped, EmailTemplateEvent::OrderDelivered, EmailTemplateEvent::OrderCancelled, EmailTemplateEvent::OrderRefundProcessed, EmailTemplateEvent::OrderShippingUpdate, EmailTemplateEvent::OrderReturnUpdate, EmailTemplateEvent::OrderUpdate];
     }
 
     /**
-     * Order events without their own template (shipping_* / return_*) use order.update.
+     * Shipping steps (shipping_*) use order.shipping_update, return events (return_*)
+     * order.return_update (decision #124); anything else without a template order.update.
      */
     public function mailTemplate(object $notifiable): EmailTemplateEvent
     {
-        return $this->template ?? EmailTemplateEvent::OrderUpdate;
+        return $this->template ?? match (true) {
+            str_starts_with($this->eventName, 'shipping_') => EmailTemplateEvent::OrderShippingUpdate,
+            str_starts_with($this->eventName, 'return_') => EmailTemplateEvent::OrderReturnUpdate,
+            default => EmailTemplateEvent::OrderUpdate,
+        };
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -81,6 +81,8 @@ return [
                 ['key' => 'settings.roles', 'label' => 'navigation.vendor.roles', 'route' => 'vendor.settings.roles.index', 'permission' => 'settings.roles.view', 'active' => 'vendor.settings.roles.*'],
                 ['key' => 'settings.audit', 'label' => 'navigation.vendor.audit', 'route' => 'vendor.settings.audit', 'permission' => 'settings.audit.view', 'active' => 'vendor.settings.audit*'],
                 ['key' => 'settings.notifications', 'label' => 'navigation.vendor.notification_preferences', 'route' => 'vendor.settings.notifications', 'permission' => 'notifications.view', 'active' => 'vendor.settings.notifications*'],
+                // Internal (VEN-093, #116): impersonating admins / internal ui-kit.view only.
+                ['key' => 'settings.ui-kit', 'label' => 'navigation.vendor.ui_kit', 'route' => 'vendor.ui-kit', 'permission' => 'vendor.ui-kit.view', 'active' => 'vendor.ui-kit*'],
                 ['key' => 'finance.subscription', 'label' => 'navigation.vendor.subscription', 'route' => 'vendor.finance.subscription', 'permission' => 'finance.subscription.view', 'active' => 'vendor.finance.subscription*'],
                 ['key' => 'finance.invoices', 'label' => 'navigation.vendor.invoices', 'route' => 'vendor.finance.invoices.index', 'permission' => 'finance.invoices.view', 'active' => 'vendor.finance.invoices.*'],
                 ['key' => 'finance.purchases', 'label' => 'navigation.vendor.purchases', 'route' => 'vendor.finance.purchases.index', 'permission' => 'finance.purchases.view'],

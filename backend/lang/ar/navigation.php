@@ -132,6 +132,7 @@ return [
         'mail' => 'البريد (SMTP)',
         'tracking' => 'بكسلات التتبع',
         'audit' => 'سجل التدقيق',
+        'ui_kit' => 'مكتبة المكونات',
         'notification_preferences' => 'الإشعارات',
         // P8: store banners, invoices
         'store_design' => 'متجرك',

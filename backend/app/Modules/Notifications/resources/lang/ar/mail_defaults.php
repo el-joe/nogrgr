@@ -122,6 +122,30 @@ return [
             'subject' => 'تم ربط {{ domain.name }} بمتجر {{ store.name }}',
             'body' => '<h2>نطاقك يعمل الآن</h2><p>مرحبًا {{ vendor.name }}،</p><p>تم التحقق من النطاق <strong>{{ domain.name }}</strong> وأصبح يفتح {{ store.name }} بشهادة آمنة.</p><p><a href="{{ login.url }}">افتح لوحة متجرك</a></p>',
         ],
+        'domain_dns_failed' => [
+            'subject' => 'تعذر التحقق من {{ domain.name }}',
+            'body' => '<h2>نطاقك يحتاج إلى مراجعة</h2><p>مرحبًا {{ vendor.name }}،</p><p>لم نجد في آخر فحص سجلات DNS الخاصة بالنطاق <strong>{{ domain.name }}</strong> لمتجر {{ store.name }}. قد لا يتمكن الزوار من فتح متجرك على هذا النطاق حتى تعود السجلات.</p><p>افتح الإعدادات › النطاقات في لوحة متجرك وقارن السجلات مع مزود DNS ثم أعد الفحص.</p><p><a href="{{ login.url }}">افتح لوحة متجرك</a></p>',
+        ],
+        'low_stock' => [
+            'subject' => '{{ alert.title }} · {{ store.name }}',
+            'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><table><tbody><tr><td>المنتج</td><td>{{ product.name }}</td></tr><tr><td>المتوفر</td><td>{{ product.stock }}</td></tr><tr><td>حد التنبيه</td><td>{{ product.threshold }}</td></tr></tbody></table><p><a href="{{ action.url }}">افتح المنتج</a></p>',
+        ],
+        'settlement_due' => [
+            'subject' => '{{ alert.title }} · {{ store.name }}',
+            'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><table><tbody><tr><td>المبلغ المستحق</td><td>{{ settlement.amount }}</td></tr></tbody></table><p><a href="{{ action.url }}">ادفع للمنصة</a></p>',
+        ],
+        'settlement_receipt' => [
+            'subject' => '{{ alert.title }} · {{ store.name }}',
+            'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><table><tbody><tr><td>المبلغ</td><td>{{ settlement.amount }}</td></tr><tr><td>المرجع</td><td>{{ settlement.reference }}</td></tr><tr><td>الطلب</td><td>{{ order.number }}</td></tr></tbody></table><p><a href="{{ action.url }}">افتح المالية</a></p>',
+        ],
+        'gateway_limit' => [
+            'subject' => '{{ alert.title }} · {{ store.name }}',
+            'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><p>اربط مفاتيح بوابة الدفع الخاصة بك من الإعدادات › المدفوعات لتواصل استقبال المدفوعات الإلكترونية دون حدود.</p><p><a href="{{ action.url }}">افتح إعدادات الدفع</a></p>',
+        ],
+        'subscription_renewal_reminder' => [
+            'subject' => 'تجديد باقة {{ plan.name }} بعد {{ reminder.days }} أيام',
+            'body' => '<p>مرحبًا {{ vendor.name }}،</p><p>تنتهي باقة <strong>{{ plan.name }}</strong> لمتجر {{ store.name }} في {{ subscription.ends_at }}، أي بعد {{ reminder.days }} أيام. جدّدها في الوقت المناسب ليبقى متجرك متاحًا.</p><p><a href="{{ renew.url }}">جدّد باقتك</a></p>',
+        ],
     ],
     'order' => [
         'confirmation' => [
@@ -148,6 +172,14 @@ return [
             'subject' => '{{ alert.title }}',
             'body' => '<p>مرحبًا {{ customer.first_name }}،</p><p>{{ alert.body }}</p><p><a href="{{ order.url }}">عرض طلبك</a></p>',
         ],
+        'shipping_update' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>مرحبًا {{ customer.first_name }}،</p><p>{{ alert.body }}</p><table><tbody><tr><td>الطلب</td><td>{{ order.number }}</td></tr><tr><td>شركة الشحن</td><td>{{ shipment.company }}</td></tr><tr><td>رقم التتبع</td><td>{{ shipment.tracking_no }}</td></tr></tbody></table><p><a href="{{ order.url }}">اعرض طلبك</a></p>',
+        ],
+        'return_update' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>مرحبًا {{ customer.first_name }}،</p><p>{{ alert.body }}</p><table><tbody><tr><td>المرتجع</td><td>{{ return.reference }}</td></tr><tr><td>الحالة</td><td>{{ return.status }}</td></tr><tr><td>الطلب</td><td>{{ order.number }}</td></tr></tbody></table><p>{{ return.message }}</p><p><a href="{{ order.url }}">اعرض طلبك</a></p>',
+        ],
     ],
     'customer' => [
         'password_reset' => [
@@ -169,6 +201,14 @@ return [
         'welcome' => [
             'subject' => 'مرحبًا بك في {{ store.name }}',
             'body' => '<h2>أهلًا {{ customer.first_name }}!</h2><p>حسابك في {{ store.name }} جاهز. تابع طلباتك واحفظ عناوينك وأتمم الشراء أسرع في المرة القادمة.</p><p><a href="{{ store.url }}">ابدأ التسوق</a></p>',
+        ],
+        'back_in_stock' => [
+            'subject' => '{{ product.name }} متوفر من جديد',
+            'body' => '<h2>عاد من جديد!</h2><p>خبر سار: <strong>{{ product.name }}</strong> متوفر الآن في {{ store.name }}. الكميات قد تكون محدودة، فاطلبه قريبًا.</p><p><a href="{{ product.url }}">تسوّق الآن</a></p><p>تصلك هذه الرسالة مرة واحدة لأنك طلبت إشعارك عند توفره.</p>',
+        ],
+        'review_published' => [
+            'subject' => 'تقييمك لـ {{ product.name }} منشور الآن',
+            'body' => '<p>مرحبًا {{ customer.first_name }}،</p><p>شكرًا لك! تقييمك ({{ review.rating }} نجوم) لـ <strong>{{ product.name }}</strong> منشور الآن في {{ store.name }}.</p><p><a href="{{ product.url }}">شاهد تقييمك</a></p>',
         ],
     ],
     'affiliate' => [
@@ -257,6 +297,22 @@ return [
         'vendor_alert' => [
             'subject' => '{{ alert.title }}',
             'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">فتح المتجر</a></p>',
+        ],
+        'shipping_escalation' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">افتح قائمة الشحن</a></p>',
+        ],
+        'gateway_limit_warning' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">افتح حدود البوابات</a></p>',
+        ],
+        'gateway_limit_block' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">افتح حدود البوابات</a></p>',
+        ],
+        'affiliate_payout_request' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>مرحبًا {{ recipient.name }}،</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">راجع طلبات الصرف</a></p>',
         ],
     ],
     'support' => [

@@ -9,6 +9,7 @@ import { http, HttpError } from '../../core/http';
 import { notify } from '../../core/notify';
 import { openSheet, closeSheet } from '../core/motion/index.js';
 import { initVideoPip } from '../core/video-pip.js';
+import { initStockAlert } from './stock-alert.js';
 
 const STAR = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.5l2.94 6.08 6.56.95-4.75 4.63 1.12 6.54L12 17.6l-5.87 3.1 1.12-6.54L2.5 9.53l6.56-.95L12 2.5z"/></svg>';
 
@@ -326,4 +327,5 @@ export function initProduct(root = document) {
     bindGalleryCounter(page);
     initVideoPip(page);
     bindReviews(page, data);
+    initStockAlert(page);
 }

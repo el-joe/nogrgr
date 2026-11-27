@@ -51,7 +51,7 @@ class RoleRequest extends FormRequest
                     ->ignore($role instanceof Role ? $role->getKey() : (is_numeric($role) ? (int) $role : null)),
             ],
             'permissions' => ['array'],
-            'permissions.*' => ['string', 'distinct', Rule::in(PermissionCatalog::forGuard($this->guard()))],
+            'permissions.*' => ['string', 'distinct', Rule::in(PermissionCatalog::assignable($this->guard()))],
         ];
     }
 

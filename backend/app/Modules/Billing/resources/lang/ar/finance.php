@@ -230,5 +230,9 @@ return [
         'payout_paid' => ['title' => 'تم دفع الدفعة :reference', 'body' => 'أُرسل إليك مبلغ :amount.'],
         'payout_cancelled' => ['title' => 'أُلغيت الدفعة :reference', 'body' => 'أُلغيت دفعة بمبلغ :amount.'],
         'settlement_confirmed' => ['title' => 'تم تأكيد التسوية :reference', 'body' => 'أكدت المنصة تسويتك بمبلغ :amount.'],
+        'settlement_paid' => ['title' => 'تم استلام التسوية :reference', 'body' => 'استلمنا تسويتك بمبلغ :amount للطلب :order. شكرًا لك!'],
+        'settlement_due' => ['title' => 'تسوية مستحقة: :amount', 'body' => 'على متجرك للمنصة :amount عن طلبات حصّلتها بنفسك. يرجى سدادها من المالية › الدفع للمنصة.'],
+        'gateway_limit_warning' => ['title' => 'اقتربت من حد :gateway', 'body' => 'استقبل متجرك :volume من أصل :limit هذا الشهر عبر حساب :gateway الخاص بالمنصة (:percent%). تتوقف مدفوعات :gateway عند بلوغ الحد.'],
+        'gateway_limit_block' => ['title' => 'تم بلوغ حد :gateway', 'body' => 'بلغ متجرك الحد الشهري :limit لحساب :gateway الخاص بالمنصة. تم إخفاء :gateway من صفحة الدفع حتى الشهر القادم أو حتى تربط مفاتيحك الخاصة.'],
     ],
 ];

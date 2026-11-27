@@ -30,6 +30,7 @@ class NotificationResource extends JsonResource
             'body' => self::text($data, 'body'),
             'order_uuid' => is_string($data['order_uuid'] ?? null) ? $data['order_uuid'] : null,
             'ticket_id' => is_int($data['ticket_id'] ?? null) ? $data['ticket_id'] : null,
+            'store_product_id' => is_int($data['store_product_id'] ?? null) ? $data['store_product_id'] : null,
             'read' => $this->read_at !== null,
             'read_at' => $this->read_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),

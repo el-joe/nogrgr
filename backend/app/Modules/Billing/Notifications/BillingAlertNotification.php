@@ -43,6 +43,7 @@ class BillingAlertNotification extends PanelNotification
             'subscription_expired' => EmailTemplateEvent::AdminBillingAlert,
             'subscription_cancelled' => EmailTemplateEvent::AdminBillingAlert,
             'subscription_renewed' => EmailTemplateEvent::AdminBillingAlert,
+            'settlement_received' => EmailTemplateEvent::AdminBillingAlert,
         ];
     }
 

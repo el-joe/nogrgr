@@ -42,4 +42,10 @@ return [
     'confirm' => ['url' => 'Confirmation link'],
     'unsubscribe' => ['url' => 'Unsubscribe link'],
     'domain' => ['name' => 'Domain name'],
+    'product' => ['name' => 'Product name', 'stock' => 'Units in stock', 'threshold' => 'Low-stock alert threshold', 'url' => 'Product page link'],
+    'settlement' => ['amount' => 'Settlement amount', 'reference' => 'Settlement reference'],
+    'reminder' => ['days' => 'Days left before the renewal date'],
+    'renew' => ['url' => 'Renew plan link'],
+    'return' => ['reference' => 'Return reference', 'status' => 'Return status', 'message' => 'Message from the store (may be empty)'],
+    'review' => ['rating' => 'Review rating (1-5)'],
 ];

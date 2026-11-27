@@ -57,4 +57,15 @@ return [
         'vendor_subject' => 'انتهى اشتراكك',
         'vendor_body' => 'انتهت باقة :plan_name لمتجر :store_name. جدّدها لإعادة تفعيل متجرك.',
     ],
+    'settlement_received' => [
+        'title' => 'تم استلام التسوية :reference',
+        'body' => 'دفع متجر :store تسوية بمبلغ :amount للطلب :order.',
+    ],
+    'owner' => [
+        'renewal_reminder' => ['title' => 'تجديد الباقة بعد :days أيام', 'body' => 'تنتهي باقة :plan لمتجر :store في :date. جدّدها ليبقى المتجر متاحًا.'],
+    ],
+    'renewal_reminder' => [
+        'title' => 'التجديد بعد :days أيام',
+        'body' => 'تنتهي باقة :plan لمتجر :store في :date.',
+    ],
 ];

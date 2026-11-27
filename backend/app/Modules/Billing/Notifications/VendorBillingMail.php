@@ -50,6 +50,7 @@ class VendorBillingMail extends Notification implements ShouldQueue, TemplatedMa
             EmailTemplateEvent::VendorInvoiceIssued, EmailTemplateEvent::VendorInvoicePaid, EmailTemplateEvent::VendorPaymentFailed, EmailTemplateEvent::VendorPaymentRefunded,
             EmailTemplateEvent::VendorSubscriptionActivated, EmailTemplateEvent::VendorSubscriptionPastDue, EmailTemplateEvent::VendorSubscriptionExpired,
             EmailTemplateEvent::VendorSubscriptionCancelled, EmailTemplateEvent::VendorSubscriptionRenewed, EmailTemplateEvent::VendorInvoiceVoided,
+            EmailTemplateEvent::VendorSubscriptionRenewalReminder,
         ];
     }
 

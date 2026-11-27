@@ -6,7 +6,9 @@ use App\Modules\Commerce\Services\Promotions\StoreContext;
 use App\Modules\Localization\Services\StoreCountries;
 use App\Modules\Storefront\DTOs\ThemePageActivationData;
 use App\Modules\Storefront\DTOs\ThemePageRowData;
+use App\Modules\Storefront\Enums\CustomThemeVersionStatus;
 use App\Modules\Storefront\Models\Theme;
+use App\Modules\Storefront\Repositories\Contracts\CustomThemeRepositoryContract;
 use App\Modules\Storefront\Services\StoreThemeService;
 use App\Shared\Services\BaseService;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,7 +38,36 @@ class ThemePageService extends BaseService
         private readonly StoreThemeService $themes,
         private readonly StoreCountries $countries,
         private readonly ThemePreviewService $previews,
+        private readonly CustomThemeRepositoryContract $customThemes,
     ) {}
+
+    /**
+     * The store's custom Twig theme as an extra entry of the theme list (#119 / #121 seam):
+     * only once a version was published (approved + live). `active` = the custom theme
+     * switch: on, it renders the pages it supports in every country on top of the
+     * built-in theme chosen below (which keeps checkout / account / fallback pages).
+     *
+     * @return array{name: string, version: string, version_id: int, active: bool, published_at: string|null, approved_count: int}|null
+     */
+    public function customTheme(): ?array
+    {
+        $tenantId = (int) tenant()?->getTenantKey();
+        $theme = $tenantId > 0 ? $this->customThemes->forTenant($tenantId) : null;
+        $live = $theme?->live_version_id !== null ? $this->customThemes->findVersion((int) $theme->live_version_id) : null;
+
+        if ($theme === null || $live === null || $live->status !== CustomThemeVersionStatus::Approved || (int) $live->tenant_id !== $tenantId) {
+            return null;
+        }
+
+        return [
+            'name' => (string) ($live->name ?: $theme->name),
+            'version' => (string) $live->version,
+            'version_id' => (int) $live->id,
+            'active' => (bool) $theme->is_active,
+            'published_at' => ($live->published_at ?? $live->reviewed_at)?->locale(app()->getLocale())->translatedFormat('j M Y'),
+            'approved_count' => $this->customThemes->approvedForTenant($tenantId)->count(),
+        ];
+    }
 
     /**
      * The store's selling countries (id => name, sorted by name).

@@ -6,7 +6,8 @@
  * island ({pixels: {meta|tiktok|snap|ga4: id}, cookie}), asks for consent with the
  * [data-tracking-consent] notice and loads the enabled pixels only after "Accept"
  * (answer kept 180 days in a first-party cookie). Events: page view, product view,
- * add to cart (sf:cart-updated), checkout and purchase (data-sf-page).
+ * add to cart (sf:cart-updated), checkout and purchase (data-sf-page). Also imported by the
+ * custom Twig theme runtime (storefront/custom-theme.js), whose island sets reload_on_consent.
  */
 const PIXEL_SOURCES = {
     meta: 'https://connect.facebook.net/en_US/fbevents.js',
@@ -218,6 +219,14 @@ export function initTracking() {
         writeConsent(config.cookie, value === 'granted' ? 'granted' : 'denied');
 
         if (value === 'granted') {
+            // Custom Twig theme pages (#121) only open the pixel hosts in their CSP once
+            // consent is stored, so they reload to load the pixels under the new policy.
+            if (config.reload_on_consent) {
+                window.location.reload();
+
+                return;
+            }
+
             start(pixels);
         }
     });

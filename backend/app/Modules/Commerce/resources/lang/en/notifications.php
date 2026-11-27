@@ -4,6 +4,7 @@ return [
     'store_new_order' => ['title' => 'New order :number', 'body' => ':customer placed order :number (:total).'],
     'store_order_cancelled' => ['title' => 'Order :number cancelled', 'body' => 'Order :number (:total) was cancelled.'],
     'admin_order_paid' => ['title' => 'Order :number paid', 'body' => ':store received a paid order :number (:total).'],
+    'admin_shipping_escalation' => ['title' => 'Shipping escalation: order :number', 'body' => 'Delivery of order :number at :store with :company is delayed and needs attention.'],
     'admin_order_cancelled' => ['title' => 'Order :number cancelled', 'body' => 'Order :number (:total) at :store was cancelled.'],
     'store_return_opened' => ['title' => 'Return :reference opened', 'body' => 'A return was opened for :product on order :number.'],
     'store_return_updated' => ['title' => 'Return :reference: :status', 'body' => 'Return :reference on order :number is now :status.'],

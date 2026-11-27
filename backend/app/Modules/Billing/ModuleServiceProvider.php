@@ -3,6 +3,11 @@
 namespace App\Modules\Billing;
 
 use App\Modules\Billing\Console\BackfillLedgerCommand;
+use App\Modules\Billing\Console\SendRenewalRemindersCommand;
+use App\Modules\Billing\Console\SendSettlementDueRemindersCommand;
+use App\Modules\Billing\Listeners\SendSettlementReceipt;
+use App\Modules\Commerce\Events\SettlementPaid;
+use Illuminate\Console\Scheduling\Schedule;
 use App\Modules\Billing\Events\InvoicePaid;
 use App\Modules\Billing\Events\PaymentCaptured;
 use App\Modules\Billing\Listeners\PostLedgerEntries;
@@ -65,13 +70,20 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Event::subscribe(SendBillingNotifications::class);
         Event::subscribe(PostLedgerEntries::class);
         Event::listen(PaymentCaptured::class, RenewSubscriptionOnPayment::class);
+        Event::listen(SettlementPaid::class, SendSettlementReceipt::class);
 
         // Owner portal: only subscriptions / invoices of the owner's own stores.
         Gate::define('owner.subscriptions.manage', [OwnerBillingPolicy::class, 'subscription']);
         Gate::define('owner.invoices.view', [OwnerBillingPolicy::class, 'invoice']);
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillLedgerCommand::class]);
+            $this->commands([BackfillLedgerCommand::class, SendRenewalRemindersCommand::class, SendSettlementDueRemindersCommand::class]);
         }
+
+        // Scheduled reminders (decision #124); both are idempotent per period (sent_reminders).
+        $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
+            $schedule->command('billing:renewal-reminders')->dailyAt('09:00')->name('billing:renewal-reminders')->onOneServer()->withoutOverlapping();
+            $schedule->command('billing:settlement-reminders')->weeklyOn(1, '10:00')->name('billing:settlement-reminders')->onOneServer()->withoutOverlapping();
+        });
     }
 }

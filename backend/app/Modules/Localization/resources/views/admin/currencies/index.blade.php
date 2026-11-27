@@ -46,6 +46,13 @@
         @endif
     </div>
 
+    @if ($unsynced !== [])
+        <div class="flex items-start gap-2.5 rounded-control bg-warning-bg px-4 py-3 text-[13px] text-ink" role="alert" data-unsynced-currencies>
+            <x-ui::icon name="alert-triangle" :size="18" class="mt-0.5 shrink-0 text-warning" />
+            <span>{{ trans_choice('localization::admin.currencies.unsynced_warning', count($unsynced), ['codes' => implode(', ', $unsynced), 'count' => count($unsynced)]) }}</span>
+        </div>
+    @endif
+
     <x-ui::datatable
         id="currencies"
         :url="$tableUrl"

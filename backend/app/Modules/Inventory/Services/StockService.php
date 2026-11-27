@@ -160,9 +160,10 @@ class StockService extends BaseService
         }
 
         $total = $variantTotals === [] ? max(0, (int) $product->stock + $delta) : array_sum($variantTotals);
+        $previous = $this->storedTotal($product);
         $this->products->saveStockTotals($product, $total, $variantTotals);
 
-        StockChanged::dispatch($product->id, $total, null);
+        StockChanged::dispatch($product->id, $total, null, $previous);
     }
 
     /**
@@ -178,9 +179,18 @@ class StockService extends BaseService
         }
 
         $total = $variantTotals === [] ? ($totals[0] ?? 0) : array_sum($variantTotals);
+        $previous = $this->storedTotal($product);
         $this->products->saveStockTotals($product, $total, $variantTotals);
 
-        StockChanged::dispatch($product->id, $total, $branchId);
+        StockChanged::dispatch($product->id, $total, $branchId, $previous);
+    }
+
+    /**
+     * Total stock as stored before this change (stock alerts compare before / after).
+     */
+    private function storedTotal(Product $product): int
+    {
+        return (int) $product->newQuery()->whereKey($product->id)->value('stock');
     }
 
     private function connection(): ?string

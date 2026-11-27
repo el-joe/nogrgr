@@ -237,6 +237,9 @@
                 </div>
                 @unless ($page->inStock)
                     <p class="rounded-lg bg-sf-danger-bg px-3 py-2 text-sm text-sf-danger" role="status">{{ __st('product.out_of_stock_note') }}</p>
+                    @if (Route::has('store-api.v1.products.stock-alerts.store'))
+                        @include('storefront::partials.stock-alert', ['productId' => $page->view->id(), 'buttonClass' => 'elo-btn h-10 bg-elo-ink px-5 text-sm text-white hover:bg-black'])
+                    @endif
                 @endunless
 
                 @if ($weight)

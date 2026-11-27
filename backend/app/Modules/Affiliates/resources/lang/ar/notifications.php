@@ -40,4 +40,7 @@ return [
         'cta_dashboard' => 'افتح لوحة المسوّق',
         'footer' => 'وصلتك هذه الرسالة لأن لديك حساب مسوّق لدى :platform.',
     ],
+    'admin' => [
+        'payout_requested' => ['title' => 'طلب صرف :reference', 'body' => 'طلب :name صرف مبلغ :amount.'],
+    ],
 ];

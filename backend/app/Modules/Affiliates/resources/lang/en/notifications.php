@@ -40,4 +40,7 @@ return [
         'cta_dashboard' => 'Open affiliate dashboard',
         'footer' => 'You received this email because you have an affiliate account with :platform.',
     ],
+    'admin' => [
+        'payout_requested' => ['title' => 'Payout request :reference', 'body' => ':name asked for a payout of :amount.'],
+    ],
 ];

@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 
 /**
  * Store finance alerts (decision #72): payout scheduled / paid / cancelled, settlement
- * confirmed. Store owners get the panel inbox + live push (Reverb) + mail.
+ * confirmed / paid (receipt), settlement due reminder, platform gateway limit warning / block. Store owners get the panel inbox + live push (Reverb) + mail.
  */
 class FinanceAlertNotification extends PanelNotification
 {
@@ -53,7 +53,11 @@ class FinanceAlertNotification extends PanelNotification
             'payout_scheduled' => EmailTemplateEvent::VendorPayoutUpdate,
             'payout_paid' => EmailTemplateEvent::VendorPayoutUpdate,
             'payout_cancelled' => EmailTemplateEvent::VendorPayoutUpdate,
-            'settlement_confirmed' => EmailTemplateEvent::VendorPayoutUpdate,
+            'settlement_confirmed' => EmailTemplateEvent::VendorSettlementReceipt,
+            'settlement_paid' => EmailTemplateEvent::VendorSettlementReceipt,
+            'settlement_due' => EmailTemplateEvent::VendorSettlementDue,
+            'gateway_limit_warning' => EmailTemplateEvent::VendorGatewayLimit,
+            'gateway_limit_block' => EmailTemplateEvent::VendorGatewayLimit,
         ];
     }
 
@@ -88,6 +92,20 @@ class FinanceAlertNotification extends PanelNotification
     protected function url(): ?string
     {
         return $this->link;
+    }
+
+    /**
+     * Settlement templates also get the amount / reference / order (decision #124).
+     *
+     * @return array<string, string>
+     */
+    protected function alertVariables(object $notifiable): array
+    {
+        return parent::alertVariables($notifiable) + [
+            'settlement.amount' => (string) ($this->parameters['amount'] ?? ''),
+            'settlement.reference' => (string) ($this->parameters['reference'] ?? ''),
+            'order.number' => (string) ($this->parameters['order'] ?? ''),
+        ];
     }
 
     public function toBroadcast(object $notifiable): BroadcastMessage

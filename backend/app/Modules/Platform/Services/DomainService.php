@@ -10,6 +10,7 @@ use App\Modules\Platform\Enums\DomainRequestStatus;
 use App\Modules\Platform\Enums\DomainType;
 use App\Modules\Platform\Enums\SslStatus;
 use App\Modules\Platform\Events\DomainConnected;
+use App\Modules\Platform\Events\DomainDnsFailed;
 use App\Modules\Platform\Exceptions\PlatformRuleException;
 use App\Modules\Platform\Jobs\CheckDomainDns;
 use App\Modules\Platform\Models\DnsRecordTemplate;
@@ -210,6 +211,7 @@ class DomainService extends BaseService
             default => DnsCheckStatus::Missing,
         };
         $validUntil = $this->certificates->validUntil($request->host);
+        $before = $request->dns_status;
 
         $this->requests->update($request, [
             'dns_status' => $status,
@@ -218,6 +220,12 @@ class DomainService extends BaseService
             'ssl_expires_at' => $validUntil,
             'last_checked_at' => now(),
         ]);
+
+        // Records that worked before (or of a connected domain) are gone: tell owner + admins once per transition.
+        if ($status === DnsCheckStatus::Missing && $before !== DnsCheckStatus::Missing
+            && ($before === DnsCheckStatus::Ok || $request->status === DomainRequestStatus::Connected)) {
+            $this->dispatchAfterCommit(new DomainDnsFailed($request));
+        }
 
         return $request;
     }

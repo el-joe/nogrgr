@@ -14,8 +14,9 @@ final class UiKitProductsDataTable
 {
     /**
      * @param  array<string, mixed>  $filters
+     * @param  string  $actionsView  row actions partial (admin kit or vendor kit, VEN-093)
      */
-    public function toJson(array $filters = []): JsonResponse
+    public function toJson(array $filters = [], string $actionsView = 'platform::admin.ui-kit._actions-cell'): JsonResponse
     {
         $filters = DataTableFilters::sanitize($filters);
         $rows = UiKitSamples::products();
@@ -33,7 +34,7 @@ final class UiKitProductsDataTable
             ->editColumn('name', fn (array $row): string => view('platform::admin.ui-kit._product-cell', ['row' => $row])->render())
             ->editColumn('status', fn (array $row): string => view('platform::admin.ui-kit._status-cell', ['row' => $row])->render())
             ->editColumn('price', fn (array $row): string => '<bdi dir="ltr">USD '.e($row['price']).'</bdi>')
-            ->addColumn('actions', fn (array $row): string => view('platform::admin.ui-kit._actions-cell', ['row' => $row])->render())
+            ->addColumn('actions', fn (array $row): string => view($actionsView, ['row' => $row])->render())
             ->rawColumns(['name', 'status', 'price', 'actions'])
             ->toJson();
     }

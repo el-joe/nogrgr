@@ -29,7 +29,8 @@ use Illuminate\Support\Facades\Notification;
  *   shipped   → customer (order.shipped, tracking number);
  *   delivered → customer (order.delivered);
  *   cancelled → customer (order.cancelled), store owners, admins;
- *   out for delivery / delayed → customer (shipping updates preference).
+ *   out for delivery / delayed → customer (shipping updates preference, order.shipping_update);
+ *   delayed → admins with shipping-queue.view (shipping escalation, MAIL-022).
  * The public notify* helpers are reused by AfterSales (returns, refunds) in the store's
  * tenant context.
  */
@@ -58,6 +59,13 @@ class SendOrderNotifications
                 'shipment.company' => (string) $event->order->shipping_company_name,
                 'shipment.tracking_no' => (string) $event->order->tracking_number,
             ]);
+        }
+
+        // MAIL-022: a delayed delivery escalates to the admins of the shipping queue.
+        if ($event->status === FulfilmentStatus::Delayed) {
+            $this->notifyAdmins($event->order, 'admin_shipping_escalation', 'shipping-queue.view', [
+                'company' => (string) ($event->order->shipping_company_name ?? '—'),
+            ], rescue(static fn (): string => route('admin.shipping-queue.index'), null, false));
         }
     }
 
@@ -150,9 +158,9 @@ class SendOrderNotifications
     /**
      * @param  array<string, string|int>  $extra
      */
-    public function notifyAdmins(Order $order, string $name, string $permission = 'orders.view', array $extra = []): void
+    public function notifyAdmins(Order $order, string $name, string $permission = 'orders.view', array $extra = [], ?string $link = null): void
     {
-        $notification = new OrderAlertNotification($name, $this->params($order) + $extra);
+        $notification = new OrderAlertNotification($name, $this->params($order) + $extra, link: $link);
         $send = function () use ($notification, $permission): void {
             $admins = $this->admins->activeWithPermission($permission);
 

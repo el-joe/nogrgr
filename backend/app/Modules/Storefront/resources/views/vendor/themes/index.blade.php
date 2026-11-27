@@ -3,7 +3,8 @@
     one card per theme the store may use (active + allowed in at least one selling
     country) — preview, name, description, Default / "Active in: …" chips, Activate as
     store default, "Use in countries" (VEN-030a modal 85:110108), Preview (signed).
-    "Current themes" shows the theme of the store default and of each selling country
+    The store's published custom Twig theme is listed first as its own entry (#121, use /
+    stop with the custom theme switch). "Current themes" shows the theme of the store default and of each selling country
     (full table + per-country actions on Themes by country, VEN-031).
 --}}
 @php
@@ -86,6 +87,10 @@
                         </div>
                     @endif
                 </x-ui::card>
+            @endif
+
+            @if ($customTheme ?? null)
+                @include('storefront::vendor.themes._custom-theme-card')
             @endif
 
             <section aria-labelledby="vendor-theme-list-title" class="grid gap-4">

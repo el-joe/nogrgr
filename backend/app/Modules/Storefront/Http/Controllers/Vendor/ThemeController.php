@@ -55,6 +55,8 @@ class ThemeController extends Controller
             'countries' => $countries,
             'platformDefault' => $this->pages()->platformDefault(),
             'canManage' => $this->canManage($request),
+            'customTheme' => $this->can($request, 'store.custom-themes.view') ? $this->pages()->customTheme() : null,
+            'canManageCustom' => $this->can($request, 'store.custom-themes.manage'),
             'countriesUrl' => $this->can($request, 'onboarding.manage') ? vendor_route('onboarding.setup', ['step' => 'countries']) : null,
         ]);
     }

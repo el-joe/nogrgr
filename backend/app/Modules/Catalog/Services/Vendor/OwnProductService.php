@@ -10,6 +10,7 @@ use App\Modules\Catalog\Enums\StoreProductChange;
 use App\Modules\Catalog\Enums\StoreProductSource;
 use App\Modules\Catalog\Events\Store\OwnProductSaved;
 use App\Modules\Catalog\Events\Store\StoreProductsChanged;
+use App\Modules\Inventory\Events\StoreStockChanged;
 use App\Modules\Catalog\Jobs\GenerateVideoPoster;
 use App\Modules\Catalog\Models\CatalogMedia;
 use App\Modules\Catalog\Models\StoreProduct;
@@ -96,6 +97,7 @@ class OwnProductService extends BaseService
     public function update(StoreProduct $product, OwnProductData $data): StoreProduct
     {
         $changed = [];
+        $previous = (int) $product->stock;
 
         $this->transaction(function () use ($product, $data, &$changed): void {
             $product->fill($this->attributes($data, $product));
@@ -112,8 +114,10 @@ class OwnProductService extends BaseService
 
         $this->dispatchAfterCommit(new OwnProductSaved(StoreCatalogService::tenantId(), $product->id, false, $changed));
         $this->dispatchAfterCommit(new StoreProductsChanged(StoreCatalogService::tenantId(), StoreProductChange::Updated, [$product->id]));
+        $product->refresh();
+        $this->stockChanged($product, $previous);
 
-        return $product->refresh();
+        return $product;
     }
 
     public function delete(StoreProduct $product): void
@@ -145,6 +149,8 @@ class OwnProductService extends BaseService
      */
     public function updateStock(StoreProduct $product, ?int $stock, array $variantStock = []): StoreProduct
     {
+        $previous = (int) $product->stock;
+
         $this->transaction(function () use ($product, $stock, $variantStock): void {
             $variants = $product->variants()->get();
 
@@ -162,8 +168,20 @@ class OwnProductService extends BaseService
         });
 
         event(new StoreProductsChanged(StoreCatalogService::tenantId(), StoreProductChange::Updated, [$product->id]));
+        $product->refresh();
+        $this->stockChanged($product, $previous);
 
-        return $product->refresh();
+        return $product;
+    }
+
+    /**
+     * Stock alerts (decision #124): low / out of stock to the team, back in stock to subscribers.
+     */
+    private function stockChanged(StoreProduct $product, int $previous): void
+    {
+        if ((int) $product->stock !== $previous) {
+            $this->dispatchAfterCommit(new StoreStockChanged(StoreCatalogService::tenantId(), $product->id, $previous, (int) $product->stock));
+        }
     }
 
     public static function imageUrl(CatalogMedia $media): string

@@ -13,6 +13,7 @@ use App\Modules\Notifications\Repositories\Contracts\CustomerDeviceRepositoryCon
 use App\Modules\Notifications\Repositories\Contracts\EmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\NotificationPreferenceRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\PanelNotificationRepositoryContract;
+use App\Modules\Notifications\Repositories\Contracts\SentReminderRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\StoreEmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\TenantNotificationRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\VendorNotificationPreferenceRepositoryContract;
@@ -20,6 +21,7 @@ use App\Modules\Notifications\Repositories\Eloquent\CustomerDeviceRepository;
 use App\Modules\Notifications\Repositories\Eloquent\EmailTemplateRepository;
 use App\Modules\Notifications\Repositories\Eloquent\NotificationPreferenceRepository;
 use App\Modules\Notifications\Repositories\Eloquent\PanelNotificationRepository;
+use App\Modules\Notifications\Repositories\Eloquent\SentReminderRepository;
 use App\Modules\Notifications\Repositories\Eloquent\StoreEmailTemplateRepository;
 use App\Modules\Notifications\Repositories\Eloquent\TenantNotificationRepository;
 use App\Modules\Notifications\Repositories\Eloquent\VendorNotificationPreferenceRepository;
@@ -45,6 +47,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
      */
     public $bindings = [
         PanelNotificationRepositoryContract::class => PanelNotificationRepository::class,
+        SentReminderRepositoryContract::class => SentReminderRepository::class,
         NotificationPreferenceRepositoryContract::class => NotificationPreferenceRepository::class,
         PanelNotificationFeed::class => SurfacePanelNotificationFeed::class,
         TenantNotificationRepositoryContract::class => TenantNotificationRepository::class,

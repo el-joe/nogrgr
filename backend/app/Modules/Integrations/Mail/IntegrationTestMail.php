@@ -4,6 +4,7 @@ namespace App\Modules\Integrations\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use App\Modules\Notifications\Support\MailPlainText;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -24,6 +25,8 @@ class IntegrationTestMail extends Mailable
 
     public function content(): Content
     {
-        return new Content(view: 'integrations::mail.test', with: ['platformName' => $this->platformName]);
+        $text = MailPlainText::fromHtml(view('integrations::mail.test', ['platformName' => $this->platformName])->render());
+
+        return new Content(view: 'integrations::mail.test', text: 'notifications::mail.rendered-text', with: ['platformName' => $this->platformName, 'text' => $text]);
     }
 }

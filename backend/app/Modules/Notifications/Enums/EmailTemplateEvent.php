@@ -46,17 +46,27 @@ enum EmailTemplateEvent: string
     case VendorSubscriptionRenewed = 'vendor.subscription_renewed';
     case VendorInvoiceVoided = 'vendor.invoice_voided';
     case VendorDomainConnected = 'vendor.domain_connected';
+    case VendorDomainDnsFailed = 'vendor.domain_dns_failed';
+    case VendorLowStock = 'vendor.low_stock';
+    case VendorSettlementDue = 'vendor.settlement_due';
+    case VendorSettlementReceipt = 'vendor.settlement_receipt';
+    case VendorGatewayLimit = 'vendor.gateway_limit';
+    case VendorSubscriptionRenewalReminder = 'vendor.subscription_renewal_reminder';
     case OrderConfirmation = 'order.confirmation';
     case OrderShipped = 'order.shipped';
     case OrderDelivered = 'order.delivered';
     case OrderCancelled = 'order.cancelled';
     case OrderRefundProcessed = 'order.refund_processed';
     case OrderUpdate = 'order.update';
+    case OrderShippingUpdate = 'order.shipping_update';
+    case OrderReturnUpdate = 'order.return_update';
     case CustomerPasswordReset = 'customer.password_reset';
     case CustomerPasswordResetCode = 'customer.password_reset_code';
     case CustomerEmailCode = 'customer.email_code';
     case CustomerTicketUpdate = 'customer.ticket_update';
     case CustomerWelcome = 'customer.welcome';
+    case CustomerBackInStock = 'customer.back_in_stock';
+    case CustomerReviewPublished = 'customer.review_published';
     case AffiliateWelcome = 'affiliate.welcome';
     case AffiliatePayoutSent = 'affiliate.payout_sent';
     case AffiliateActivated = 'affiliate.activated';
@@ -78,6 +88,10 @@ enum EmailTemplateEvent: string
     case AdminRequestAlert = 'admin.request_alert';
     case AdminBillingAlert = 'admin.billing_alert';
     case AdminVendorAlert = 'admin.vendor_alert';
+    case AdminShippingEscalation = 'admin.shipping_escalation';
+    case AdminGatewayLimitWarning = 'admin.gateway_limit_warning';
+    case AdminGatewayLimitBlock = 'admin.gateway_limit_block';
+    case AdminAffiliatePayoutRequest = 'admin.affiliate_payout_request';
     case SupportTicketReply = 'support.ticket_reply';
     case CentralNewsletterConfirmation = 'central.newsletter_confirmation';
 
@@ -101,6 +115,7 @@ enum EmailTemplateEvent: string
             || in_array($this, [
                 self::VendorAlert, self::VendorStaffInvitation, self::VendorNewOrder, self::VendorOrderCancelled, self::VendorReturnUpdate,
                 self::VendorRefundUpdate, self::VendorPayoutUpdate, self::VendorReviewUpdate, self::VendorContactMessage, self::VendorTeamUpdate,
+                self::VendorLowStock, self::VendorSettlementDue, self::VendorSettlementReceipt, self::VendorGatewayLimit,
             ], true);
     }
 
@@ -160,9 +175,15 @@ enum EmailTemplateEvent: string
             self::VendorStaffInvitation => $store + ['inviter.name' => 'Mona Khaled', 'role.name' => 'Store manager', 'invitation.url' => 'https://megz.example.com/admin/invitation/abc', 'invitation.expires_minutes' => '4320'],
             self::VendorAlert, self::VendorNewOrder, self::VendorOrderCancelled, self::VendorReturnUpdate, self::VendorRefundUpdate,
             self::VendorPayoutUpdate, self::VendorReviewUpdate, self::VendorContactMessage, self::VendorRequestUpdate, self::VendorThemeUpdate,
-            self::VendorTeamUpdate => $alert + $store,
+            self::VendorTeamUpdate, self::VendorGatewayLimit => $alert + $store,
+            self::VendorLowStock => $alert + $store + ['product.name' => 'Linen summer shirt', 'product.stock' => '3', 'product.threshold' => '5'],
+            self::VendorSettlementDue => $alert + $store + ['settlement.amount' => '$86.40'],
+            self::VendorSettlementReceipt => $alert + $store + ['settlement.amount' => '$86.40', 'settlement.reference' => 'ST-2026-0412', 'order.number' => 'ORD-10431'],
+            self::VendorSubscriptionRenewalReminder => $vendor + $subscription + ['reminder.days' => '7', 'renew.url' => 'https://nogrgr.example.com/owner/subscriptions'],
+            self::VendorDomainDnsFailed => $vendor + ['domain.name' => 'shop.megz.com', 'login.url' => 'https://nogrgr.example.com/tenant/login'],
             self::AdminAlert, self::AffiliateAlert, self::AdminWelcome, self::AdminPasswordChanged, self::AdminTeamUpdate, self::AdminOrderAlert,
-            self::AdminReturnAlert, self::AdminRequestAlert, self::AdminBillingAlert, self::AdminVendorAlert, self::AdminNewVendor, self::AdminPaymentFailed => $alert,
+            self::AdminReturnAlert, self::AdminRequestAlert, self::AdminBillingAlert, self::AdminVendorAlert, self::AdminNewVendor, self::AdminPaymentFailed,
+            self::AdminShippingEscalation, self::AdminGatewayLimitWarning, self::AdminGatewayLimitBlock, self::AdminAffiliatePayoutRequest => $alert,
             self::VendorSubscriptionCancelled, self::VendorSubscriptionRenewed => $vendor + $subscription,
             self::VendorInvoiceVoided => $vendor + $invoice,
             self::VendorDomainConnected => $vendor + ['domain.name' => 'shop.megz.com', 'login.url' => 'https://nogrgr.example.com/tenant/login'],
@@ -172,6 +193,10 @@ enum EmailTemplateEvent: string
             self::OrderShipped => $customer + $order + ['shipment.company' => 'Aramex', 'shipment.tracking_no' => '3482 9910 22', 'shipment.tracking_url' => 'https://www.aramex.com/track'],
             self::OrderRefundProcessed => $customer + $order + ['refund.amount' => '$29.00'],
             self::OrderUpdate => $customer + $order + ['alert.title' => 'Order ORD-10431 is out for delivery', 'alert.body' => 'Your order ORD-10431 is out for delivery with Aramex today.'],
+            self::OrderShippingUpdate => $customer + $order + ['alert.title' => 'Order ORD-10431 is out for delivery', 'alert.body' => 'Your order ORD-10431 is out for delivery with Aramex today.', 'shipment.company' => 'Aramex', 'shipment.tracking_no' => '3482 9910 22'],
+            self::OrderReturnUpdate => $customer + $order + ['alert.title' => 'Return R-2041 approved', 'alert.body' => 'Your return R-2041 was approved. Please hand the parcel to the courier.', 'return.reference' => 'R-2041', 'return.status' => 'Approved', 'return.message' => ''],
+            self::CustomerBackInStock => $customer + ['product.name' => 'Linen summer shirt', 'product.url' => 'https://megz.example.com/products/42/linen-summer-shirt'],
+            self::CustomerReviewPublished => $customer + ['product.name' => 'Linen summer shirt', 'product.url' => 'https://megz.example.com/products/42/linen-summer-shirt', 'review.rating' => '5'],
             self::CustomerPasswordReset => $customer + ['reset.url' => 'https://megz.example.com/reset-password', 'reset.expires_minutes' => '60'],
             self::CustomerPasswordResetCode, self::CustomerEmailCode => $code,
             self::CustomerTicketUpdate => $customer + ['ticket.reference' => 'C-1042', 'ticket.subject' => 'Where is my order?', 'alert.title' => 'New reply on C-1042', 'alert.body' => 'The store replied to your ticket “Where is my order?”.', 'reply.excerpt' => 'Your parcel left our warehouse today.', 'ticket.url' => 'https://megz.example.com/account/support/1042'],

@@ -83,6 +83,8 @@ return [
         'last_sync' => 'Last sync: :date · next run :next',
         'never_synced_banner' => 'Rates have not been synced yet · next run :next',
         'never_synced' => 'Never',
+        'unsynced_warning' => '{1} :codes has no synced rate yet, so shoppers do not see it in the currency switcher. Run "Sync rates now" or wait for the next sync.|[2,*] :codes have no synced rate yet, so shoppers do not see them in the currency switcher. Run "Sync rates now" or wait for the next sync.',
+        'never_synced_hint' => 'Hidden from shoppers until the rate is synced.',
         'search' => 'Search currency',
         'base' => 'Base',
         'columns' => [

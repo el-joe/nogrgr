@@ -64,4 +64,17 @@ return [
     'video_fallback' => 'Open the product video',
     'close_video' => 'Close video',
     'open_video' => 'Back to the product video',
+    'stock_alert' => [
+        'title' => 'Get notified when it is back',
+        'help' => 'We will e-mail you once as soon as this item is back in stock.',
+        'help_signed_in' => 'We will tell you once (app, inbox and e-mail) as soon as this item is back in stock.',
+        'email' => 'E-mail address',
+        'email_placeholder' => 'you@example.com',
+        'submit' => 'Notify me',
+        'subscribed' => 'Done! We will notify :email when it is back in stock.',
+        'already' => 'You will be notified when this item is back in stock.',
+        'in_stock' => 'This item is in stock, you can order it now.',
+        'unavailable' => 'This product is not available.',
+        'email_required' => 'Enter your e-mail address.',
+    ],
 ];

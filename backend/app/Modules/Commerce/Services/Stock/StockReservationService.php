@@ -8,6 +8,7 @@ use App\Modules\Commerce\Enums\CheckoutBlock;
 use App\Modules\Commerce\Enums\StockReservationStatus;
 use App\Modules\Commerce\Exceptions\CommerceException;
 use App\Modules\Commerce\Repositories\Contracts\StockReservationRepositoryContract;
+use App\Modules\Inventory\Events\StoreStockChanged;
 use App\Shared\Services\BaseService;
 use Carbon\CarbonInterface;
 
@@ -77,8 +78,16 @@ class StockReservationService extends BaseService
     {
         foreach ($this->reservations->forGroup($checkoutGroup, StockReservationStatus::Reserved) as $reservation) {
             if ($reservation->product_source === StoreProductSource::Own) {
+                $previous = $this->reservations->ownStock($reservation->product_id);
                 $this->reservations->decrementOwnStock($reservation->product_id, $reservation->variant_key, $reservation->quantity);
                 $this->reservations->setStatus($reservation, StockReservationStatus::Deducted);
+                $current = $this->reservations->ownStock($reservation->product_id);
+                $tenant = tenant();
+
+                // Stock alerts of the store (low / out of stock, decision #124).
+                if ($previous !== null && $current !== null && $current !== $previous && $tenant !== null) {
+                    $this->dispatchAfterCommit(new StoreStockChanged((int) $tenant->getTenantKey(), $reservation->product_id, $previous, $current));
+                }
 
                 continue;
             }

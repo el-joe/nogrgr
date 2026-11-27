@@ -224,6 +224,9 @@
                 <p class="text-sm text-sq-green" data-added-label hidden>{{ __st('product.added') }}</p>
                 @unless ($page->inStock)
                     <p class="rounded-lg bg-sf-danger-bg px-3 py-2 text-sm text-sf-danger" role="status">{{ __st('product.out_of_stock_note') }}</p>
+                    @if (Route::has('store-api.v1.products.stock-alerts.store'))
+                        @include('storefront::partials.stock-alert', ['productId' => $page->view->id(), 'buttonClass' => 'sq-buy mo-press h-10! px-5 text-sm'])
+                    @endif
                 @endunless
                 <button type="button" class="hidden w-fit items-center gap-2 text-sm text-sf-muted hover:text-sq-ink lg:inline-flex" data-sq-share data-share-title="{{ $page->name }}" data-share-url="{{ $page->url }}" data-share-done="{{ __st('souqify_pages.product.link_copied') }}"><x-ui::icon name="upload" :size="16" />{{ __st('souqify_pages.product.share') }}</button>
             </div>

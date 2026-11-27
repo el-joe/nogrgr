@@ -114,10 +114,10 @@ class StoreCurrencyService extends BaseService
     public function switcherCurrencies(): Collection
     {
         if (! $this->inStore()) {
-            return collect($this->currencies->active()->all());
+            return collect($this->currencies->active()->all())->filter(static fn (Currency $currency): bool => $currency->hasUsableRate())->values();
         }
 
-        return collect($this->rows())->filter(static fn (array $row): bool => $row['active'])->map(static fn (array $row): Currency => $row['currency'])->values();
+        return collect($this->rows())->filter(static fn (array $row): bool => $row['active'] && $row['currency']->hasUsableRate())->map(static fn (array $row): Currency => $row['currency'])->values();
     }
 
     /**
@@ -129,7 +129,8 @@ class StoreCurrencyService extends BaseService
             return true;
         }
 
-        if (! $currency->is_active) {
+        // Never-synced rate (QA-FINAL-009): hidden from shoppers until the sync ran.
+        if (! $currency->is_active || ! $currency->hasUsableRate()) {
             return false;
         }
 

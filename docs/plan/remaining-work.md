@@ -37,9 +37,9 @@
 | 2 | Vendor panel error pages 403 / 404 / 419 / 500 | VEN-096…099 | S | — | Fixes QA-FINAL-010: today an unknown vendor record shows the **storefront** 404. Figma 82:102128…82:102194. |
 | 3 | Subscription expired / store suspended screen in the vendor panel (renew CTA) | VEN-095 | S | billing state (exists) | Figma 82:101634. The storefront already has the suspended page. |
 | 4 | Shared "plan limit reached / upgrade" modal | VEN-094 | S | — | Some features already show their own limit state (AI tools `_limit`, staff, banners). Add one shared modal and use it everywhere (Figma 82:102216). |
-| 5 | Vendor UI kit | VEN-093 | S | D5 | Keep — internal-only page (#116). |
-| 6 | Maintenance windows (schedule, message per language, central + per store) | ADM-113 | M | — | No route yet. |
-| 7 | Cache tools: main cache + tenants cache tabs | ADM-114, 114a, 114b | S | — | No route yet. Each action must be audited. |
+| 5 | ~~Vendor UI kit~~ | VEN-093 | S | D5 | **Coded, untested (2026-11-27, #125):** `vendor.ui-kit`, gate = impersonating admin / internal `ui-kit.view`. Final test cycle pending. |
+| 6 | ~~Maintenance windows~~ | ADM-113 | M | — | **Coded, untested (2026-11-27, #125):** windows platform / storefronts / one store, message en/ar, allowed IPs; mobile API not covered (own per-store maintenance). |
+| 7 | ~~Cache tools~~ | ADM-114, 114a, 114b | S | — | **Coded, untested (2026-11-27, #125):** audited, last cleared at / by; no CDN purge (no CDN). |
 | 8 | Shared branded e-mail layout (central brand / store brand, en / ar RTL, plain-text alternative) | MAIL-001 | M | — | **Done (#124):** every e-mail renders through the MAIL-001 layout (EmailTemplateRenderer); admin Email layout page; editable registry templates. Plain-text alternative not built (HTML only). |
 | 9 | Vendor welcome mail: add a test | MAIL-003 | S | — | VendorWelcomeNotification is already sent on TenantProvisioned. Only a test asserting the send is missing. |
 | 10 | Renewal reminder mails (store owner + admins) | MAIL-007, MAIL-009 | M | scheduler | Needs a daily command that finds subscriptions N days before renewal, plus the two templates. |
@@ -66,7 +66,7 @@
 | 21 | Admin › Storefront › Themes (list of 13, edit metadata / preview image / countries) | ADM-086, ADM-086a | M | — | No admin route yet. Stores already pick themes (VEN-030). |
 | 22 | Admin home variants and sections config + template parts CRUD | ADM-087, ADM-088, ADM-088a | M | 21 | The vendor side (VEN-031) reads the variant config. |
 | 23 | Vendor page builder (section order / visibility, preview) | VEN-032 | M–L | 22 | Figma 200:33486. |
-| 24 | ~~Custom Twig themes~~ **done** (decision #121): vendor upload / validation report / versions / preview / submit / publish / roll back / on-off, starter kit, settings form from theme.json; admin review queue + detail with diff; reviewed / submitted / render-failed notifications; sandboxed render engine with CSP and fallback; docs (docs/themes/README.md + in-panel guide) | VEN-036, 036a, 036b, ADM-089, 089a, MAIL-034, SF-ALL-006 | — | — | Done 2026-11-27 (tests/Feature/Storefront/CustomThemes). Left for later: tracking pixels on custom theme pages (need CSP allowances), custom-theme entries in the 13-theme catalogue UI (#119, admin-themes uses `CustomThemeRepositoryContract::approvedForTenant`). |
+| 24 | ~~Custom Twig themes~~ **done** (decision #121): vendor upload / validation report / versions / preview / submit / publish / roll back / on-off, starter kit, settings form from theme.json; admin review queue + detail with diff; reviewed / submitted / render-failed notifications; sandboxed render engine with CSP and fallback; docs (docs/themes/README.md + in-panel guide) | VEN-036, 036a, 036b, ADM-089, 089a, MAIL-034, SF-ALL-006 | — | — | Done 2026-11-27 (tests/Feature/Storefront/CustomThemes). Tracking pixels on custom theme pages + the custom theme entry on Vendor › Themes coded 2026-11-27 (#125, untested). |
 | 25 | Central theme preview `/preview/{slug}` (country switch, exit) | WEB-004 | M | demo store data | Fix QA-FINAL-007 (demo banner category links) at the same time. Figma 127:11426 / 127:11559. |
 | 26 | Customer welcome mail on storefront sign-up | MAIL-042 | S | 8 | |
 
@@ -74,7 +74,7 @@
 
 | # | Work item | Rows | Size | Depends on | Notes |
 |---|---|---|---|---|---|
-| 27 | Vendor dashboard KPIs, period selector, latest orders / top customers / top products | VEN-009 | M | Reporting facts (exist) | Widgets 009a–f are done. First check Figma 12:11267: if the client frame has no KPI block, change the row scope and mark it done. |
+| 27 | Vendor dashboard KPIs, period selector, latest orders / top customers / top products | VEN-009 | M | Reporting facts (exist) | **Coded, untested (2026-11-27, #125):** client frame 12:11267 performance block (period, 4 KPIs, gross vs collected, status mix) + latest orders; top customers / products stay on Analytics. |
 | 28 | Product share modal (copy, share links) | VEN-010d | S | — | |
 | 29 | Settings › API keys (create, revoke, copy once) for the public API v1 | VEN-085 | M–L | D4 | |
 | 30 | Admin integrations › Tracking defaults tab | ADM-100k | S | — | Stores already save their own pixels (VendorTrackingPixelsTest). |
@@ -84,7 +84,7 @@
 | # | Work item | Rows | Size | Depends on | Notes |
 |---|---|---|---|---|---|
 | 31 | Admin products: image-search modal | ADM-010a | S | image search service (exists) | Reuse ImageSearch on the central catalog index. Figma 65:29682. |
-| 32 | Vendor profile › Limit overrides tab (AI logo, image search, AI calls, video ads per store) | ADM-041h | M | AiQuotaService, plan limits | |
+| 32 | Vendor profile › Limit overrides tab (AI logo, image search, AI calls, video ads per store) | ADM-041h | M | AiQuotaService, plan limits | **Coded, untested (2026-11-27, #125):** EffectivePlanLimits used by every existing quota check; products / categories / languages / countries / orders quotas still not enforced anywhere. |
 
 ## P11 Mobile
 
@@ -99,3 +99,7 @@ QA-FINAL-007 (demo banner links), 008 (absolute notification URLs), 009 (currenc
 ## Estimate
 
 About **18 S + 3 S–M + 9 M + 2 M–L + 1 L items**. That is roughly 7–9 developer-weeks for one developer, or 4–5 weeks with two in parallel. Items 21–24 (themes) and 10–12 (scheduler / gateway limits) are the longest chains.
+
+## Leftovers batch (2026-11-27, decision #125) — coded, tests written, NOT run
+
+Final test cycle must run: VendorUiKitTest, VendorDashboardPerformanceTest, PlanLimitOverridesTest, MaintenanceWindowsTest, CacheToolsTest, CustomThemeCatalogEntryTest, NotificationRelativeLinksTest, RelativeUrlTest (Unit/Shared), UnsyncedCurrencyRatesTest, AuditEventLabelsTest, plus Architecture / PanelRoutes / role-matrix tests (PermissionCatalog `ui-kit.view` + INTERNAL), and `php artisan permissions:sync` on QA. Also fixed: QA-FINAL-008 (notification links stored relative, old absolute panel links resolved on the reader's host), QA-FINAL-009 (never-synced currencies hidden from shoppers + admin warning), QA-FINAL-011 (audit event filter shows translated "<resource>: <verb>" labels). Browser checks of the new vendor pages (UI kit, dashboard performance, custom theme entry) not done yet.

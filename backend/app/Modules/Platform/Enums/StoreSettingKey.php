@@ -61,4 +61,7 @@ enum StoreSettingKey: string
 
     /** Mobile app (Api\Services\MobileAppSettingsService): releases per platform (min / latest version, store URL), maintenance + message, splash, feature switches. */
     case MobileApp = 'mobile_app';
+
+    /** Settings › Notifications (Inventory\Services\Alerts\StockAlertService): store-wide low-stock alert threshold (units) for products without their own minimum. */
+    case LowStockThreshold = 'low_stock_threshold';
 }

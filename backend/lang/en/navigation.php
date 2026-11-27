@@ -132,6 +132,7 @@ return [
         'mail' => 'Mail (SMTP)',
         'tracking' => 'Tracking pixels',
         'audit' => 'Audit log',
+        'ui_kit' => 'UI kit',
         'notification_preferences' => 'Notifications',
         // P8: store banners, invoices
         'store_design' => 'Your Store',

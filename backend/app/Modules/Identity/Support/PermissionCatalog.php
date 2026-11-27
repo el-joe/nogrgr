@@ -194,6 +194,8 @@ final class PermissionCatalog
                 'store.mobile-app.view', 'store.mobile-app.manage',
                 // P12: page builder (VEN-032, decision #117 b)
                 'store.design.view', 'store.design.manage',
+                // Internal: vendor UI kit (VEN-093, decision #116) — see INTERNAL
+                'ui-kit.view',
             ],
         ];
     }
@@ -206,6 +208,27 @@ final class PermissionCatalog
     public static function forGuard(string $guard): array
     {
         return self::central()[$guard] ?? self::tenant()[$guard] ?? [];
+    }
+
+    /**
+     * Internal permissions: they exist in the catalog (so a platform operator can grant
+     * them to a specific role by hand) but are never given to system roles (store owner)
+     * and are not offered in the role editors (decision #116).
+     *
+     * @var array<string, list<string>>
+     */
+    public const INTERNAL = [
+        Guard::Vendor->value => ['ui-kit.view'],
+    ];
+
+    /**
+     * Permissions a role editor may offer / a system role receives (catalog minus INTERNAL).
+     *
+     * @return list<string>
+     */
+    public static function assignable(string $guard): array
+    {
+        return array_values(array_diff(self::forGuard($guard), self::INTERNAL[$guard] ?? []));
     }
 
     /**

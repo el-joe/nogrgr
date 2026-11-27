@@ -50,6 +50,11 @@ interface StockReservationRepositoryContract extends RepositoryContract
     public function stockLevels(StoreProductSource $source, array $productIds): array;
 
     /**
+     * On-hand stock of a store-own product (null = not tracked).
+     */
+    public function ownStock(int $storeProductId): ?int;
+
+    /**
      * Subtracts sold units from an own product (variant) stock.
      */
     public function decrementOwnStock(int $storeProductId, int $variantKey, int $quantity): void;

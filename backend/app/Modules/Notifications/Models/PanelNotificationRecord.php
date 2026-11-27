@@ -3,6 +3,7 @@
 namespace App\Modules\Notifications\Models;
 
 use App\Modules\Notifications\Enums\NotificationCategory;
+use App\Shared\Support\RelativeUrl;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
@@ -40,11 +41,15 @@ class PanelNotificationRecord extends DatabaseNotification
         return $this->translated('body');
     }
 
+    /**
+     * The notification link resolved on the reader's host: rows store a relative path
+     * (QA-FINAL-008); older rows with an absolute panel URL are shortened the same way.
+     */
     public function targetUrl(): ?string
     {
         $url = $this->data['url'] ?? null;
 
-        return is_string($url) && $url !== '' ? $url : null;
+        return is_string($url) && $url !== '' ? RelativeUrl::of($url) : null;
     }
 
     private function translated(string $field): string

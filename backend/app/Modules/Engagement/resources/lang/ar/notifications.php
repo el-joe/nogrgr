@@ -13,4 +13,8 @@ return [
         'title' => 'تقييم منتج جديد',
         'body' => 'قيّم :author المنتج ":product" بـ :rating/5.',
     ],
+    'customer' => [
+        'review_published' => ['title' => 'تقييمك منشور الآن', 'body' => 'شكرًا لك! تقييمك لـ :product منشور الآن في :store.'],
+        'review_rejected' => ['title' => 'لم يتم نشر تقييمك', 'body' => 'تقييمك لـ :product لا يتوافق مع إرشادات التقييم في :store.'],
+    ],
 ];

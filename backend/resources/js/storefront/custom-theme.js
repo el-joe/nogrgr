@@ -15,10 +15,14 @@
  *       from <script type="application/json" data-nt-variants> (product.variants)
  *   form[data-nt-newsletter-form] (name=email) newsletter sign-up
  *   [data-nt-status]                           aria-live status line (optional data-msg-* texts)
+ *
+ * Store tracking pixels: when the store has pixels on, scripts() prints the #sf-tracking
+ * island + consent notice and this runtime loads core/tracking.js (consent-gated, #91).
  */
 import { http } from '../core/http';
 import { cartApi } from './commerce/api';
 import { context } from './catalog/context';
+import '../../css/storefront/custom-theme-consent.css';
 
 const status = () => document.querySelector('[data-nt-status]');
 let statusTimer = null;
@@ -279,6 +283,11 @@ function selectVariant(select) {
 /* ---------- Wiring (event delegation, works for markup added later) ---------- */
 
 function init() {
+    // Store tracking pixels, consent first (decisions #91 + #121): same loader as the built-in themes.
+    if (document.getElementById('sf-tracking')) {
+        import('./core/tracking.js').then(({ initTracking }) => initTracking());
+    }
+
     if (status()) {
         /* Theme shows its own status line: keep the platform toasts out of the theme's layout. */
         const region = document.getElementById('ui-toasts') ?? Object.assign(document.createElement('div'), { id: 'ui-toasts' });

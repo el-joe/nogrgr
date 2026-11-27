@@ -33,6 +33,14 @@ interface SubscriptionRepositoryContract extends RepositoryContract
     public function lapsedBefore(Carbon $now): LazyCollection;
 
     /**
+     * Active / trial subscriptions whose current period (trial: trial end) ends inside
+     * [$from, $to) (renewal reminder input), with their plan.
+     *
+     * @return LazyCollection<int, Subscription>
+     */
+    public function endingBetween(Carbon $from, Carbon $to): LazyCollection;
+
+    /**
      * @return array<string, int> status value => count
      */
     public function countsByStatus(): array;

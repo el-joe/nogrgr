@@ -7,6 +7,7 @@ use App\Modules\Localization\Exceptions\LockedRecordException;
 use App\Modules\Localization\Models\Currency;
 use App\Modules\Localization\Repositories\Contracts\CountryRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract;
+use App\Shared\Money\Money;
 use DomainException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
@@ -128,6 +129,25 @@ class CurrencyService
             'active' => $this->currencies->query()->where('is_active', true)->count(),
             'all' => $this->currencies->query()->count(),
         ];
+    }
+
+    /**
+     * Active non-base currencies whose rate was never synced (QA-FINAL-009): shoppers do
+     * not see them until the sync runs; the admin list warns about them.
+     *
+     * @return list<string> currency codes
+     */
+    public function unsyncedActiveCodes(): array
+    {
+        return $this->currencies->query()
+            ->where('is_active', true)
+            ->where('is_base', false)
+            ->where('code', '!=', Money::BASE_CURRENCY)
+            ->whereNull('rate_synced_at')
+            ->orderBy('code')
+            ->pluck('code')
+            ->map(static fn ($code): string => (string) $code)
+            ->all();
     }
 
     public function lastSyncedAt(): ?Carbon

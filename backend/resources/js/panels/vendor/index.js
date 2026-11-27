@@ -35,6 +35,7 @@ const pages = {
     'vendor-ai-translation': () => import('./ai-translation.js'),
     'vendor-translations': () => import('./translations.js'),
     'vendor-ad-studio': () => import('./ad-studio.js'),
+    'vendor-ui-kit': () => import('./ui-kit.js'),
 };
 
 export function initVendor() {

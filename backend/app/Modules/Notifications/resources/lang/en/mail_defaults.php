@@ -125,6 +125,30 @@ return [
             'subject' => '{{ domain.name }} is connected to {{ store.name }}',
             'body' => '<h2>Your domain is live</h2><p>Hi {{ vendor.name }},</p><p>The domain <strong>{{ domain.name }}</strong> is verified and now opens {{ store.name }} with a secure certificate.</p><p><a href="{{ login.url }}">Open your store panel</a></p>',
         ],
+        'domain_dns_failed' => [
+            'subject' => 'We could not verify {{ domain.name }}',
+            'body' => '<h2>Your domain needs attention</h2><p>Hi {{ vendor.name }},</p><p>Our last check could not find the DNS records of <strong>{{ domain.name }}</strong> for {{ store.name }}. Visitors may not reach your store on this domain until the records are back.</p><p>Open Settings › Domains in your store panel, compare the records with your DNS provider and run the check again.</p><p><a href="{{ login.url }}">Open your store panel</a></p>',
+        ],
+        'low_stock' => [
+            'subject' => '{{ alert.title }} · {{ store.name }}',
+            'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><table><tbody><tr><td>Product</td><td>{{ product.name }}</td></tr><tr><td>In stock</td><td>{{ product.stock }}</td></tr><tr><td>Alert threshold</td><td>{{ product.threshold }}</td></tr></tbody></table><p><a href="{{ action.url }}">Open the product</a></p>',
+        ],
+        'settlement_due' => [
+            'subject' => '{{ alert.title }} · {{ store.name }}',
+            'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><table><tbody><tr><td>Amount due</td><td>{{ settlement.amount }}</td></tr></tbody></table><p><a href="{{ action.url }}">Pay the platform</a></p>',
+        ],
+        'settlement_receipt' => [
+            'subject' => '{{ alert.title }} · {{ store.name }}',
+            'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><table><tbody><tr><td>Amount</td><td>{{ settlement.amount }}</td></tr><tr><td>Reference</td><td>{{ settlement.reference }}</td></tr><tr><td>Order</td><td>{{ order.number }}</td></tr></tbody></table><p><a href="{{ action.url }}">Open finance</a></p>',
+        ],
+        'gateway_limit' => [
+            'subject' => '{{ alert.title }} · {{ store.name }}',
+            'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><p>Connect your own payment gateway keys in Settings › Payments to keep taking online payments without limits.</p><p><a href="{{ action.url }}">Open payment settings</a></p>',
+        ],
+        'subscription_renewal_reminder' => [
+            'subject' => 'Your {{ plan.name }} plan renews in {{ reminder.days }} days',
+            'body' => '<p>Hi {{ vendor.name }},</p><p>The <strong>{{ plan.name }}</strong> plan of {{ store.name }} ends on {{ subscription.ends_at }}, in {{ reminder.days }} days. Renew it in time to keep your store online.</p><p><a href="{{ renew.url }}">Renew your plan</a></p>',
+        ],
     ],
     'order' => [
         'confirmation' => [
@@ -151,6 +175,14 @@ return [
             'subject' => '{{ alert.title }}',
             'body' => '<p>Hi {{ customer.first_name }},</p><p>{{ alert.body }}</p><p><a href="{{ order.url }}">View your order</a></p>',
         ],
+        'shipping_update' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>Hi {{ customer.first_name }},</p><p>{{ alert.body }}</p><table><tbody><tr><td>Order</td><td>{{ order.number }}</td></tr><tr><td>Shipping company</td><td>{{ shipment.company }}</td></tr><tr><td>Tracking number</td><td>{{ shipment.tracking_no }}</td></tr></tbody></table><p><a href="{{ order.url }}">View your order</a></p>',
+        ],
+        'return_update' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>Hi {{ customer.first_name }},</p><p>{{ alert.body }}</p><table><tbody><tr><td>Return</td><td>{{ return.reference }}</td></tr><tr><td>Status</td><td>{{ return.status }}</td></tr><tr><td>Order</td><td>{{ order.number }}</td></tr></tbody></table><p>{{ return.message }}</p><p><a href="{{ order.url }}">View your order</a></p>',
+        ],
     ],
     'customer' => [
         'password_reset' => [
@@ -172,6 +204,14 @@ return [
         'welcome' => [
             'subject' => 'Welcome to {{ store.name }}',
             'body' => '<h2>Welcome, {{ customer.first_name }}!</h2><p>Your {{ store.name }} account is ready. Track your orders, save your addresses and check out faster next time.</p><p><a href="{{ store.url }}">Start shopping</a></p>',
+        ],
+        'back_in_stock' => [
+            'subject' => '{{ product.name }} is back in stock',
+            'body' => '<h2>It is back!</h2><p>Good news: <strong>{{ product.name }}</strong> is back in stock at {{ store.name }}. Quantities can be limited, so order soon.</p><p><a href="{{ product.url }}">Shop now</a></p><p>You get this e-mail once because you asked to be told when it returns.</p>',
+        ],
+        'review_published' => [
+            'subject' => 'Your review of {{ product.name }} is live',
+            'body' => '<p>Hi {{ customer.first_name }},</p><p>Thank you! Your {{ review.rating }}-star review of <strong>{{ product.name }}</strong> is now published on {{ store.name }}.</p><p><a href="{{ product.url }}">See your review</a></p>',
         ],
     ],
     'affiliate' => [
@@ -260,6 +300,22 @@ return [
         'vendor_alert' => [
             'subject' => '{{ alert.title }}',
             'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">Open the store</a></p>',
+        ],
+        'shipping_escalation' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">Open the shipping queue</a></p>',
+        ],
+        'gateway_limit_warning' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">Open gateway limits</a></p>',
+        ],
+        'gateway_limit_block' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">Open gateway limits</a></p>',
+        ],
+        'affiliate_payout_request' => [
+            'subject' => '{{ alert.title }}',
+            'body' => '<p>Hi {{ recipient.name }},</p><p>{{ alert.body }}</p><p><a href="{{ action.url }}">Review payout requests</a></p>',
         ],
     ],
     'support' => [

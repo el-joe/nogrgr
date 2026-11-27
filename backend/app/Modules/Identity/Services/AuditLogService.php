@@ -16,6 +16,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 /**
  * Admin › Audit log (ADM-112 / 112a) over Platform's central `audit_events` (decision
@@ -81,7 +82,8 @@ class AuditLogService extends BaseService
     }
 
     /**
-     * Distinct actions for the "Event" filter, labelled.
+     * Distinct actions for the "Event" filter, labelled (translated, never the raw action
+     * or route name — QA-FINAL-011).
      *
      * @return array<string, string>
      */
@@ -90,8 +92,19 @@ class AuditLogService extends BaseService
         $options = [];
 
         foreach ($this->events->query()->distinct()->orderBy('action')->limit(500)->pluck('action') as $action) {
-            $options[(string) $action] = AuditPresenter::actionLabel((string) $action).' · '.$action;
+            $options[(string) $action] = AuditPresenter::actionLabel((string) $action);
         }
+
+        // Same label for two actions (e.g. a request and its model event): add the area.
+        $counts = array_count_values($options);
+
+        foreach ($options as $action => $label) {
+            if ($counts[$label] > 1) {
+                $options[$action] = $label.' ('.Str::headline(Str::before(Str::after($action, 'http.'), '.')).')';
+            }
+        }
+
+        asort($options);
 
         return $options;
     }

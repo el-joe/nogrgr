@@ -144,6 +144,13 @@ class StockReservationRepository extends BaseRepository implements StockReservat
         return $levels;
     }
 
+    public function ownStock(int $storeProductId): ?int
+    {
+        $row = StoreProduct::query()->whereKey($storeProductId)->first(['id', 'stock', 'manage_stock']);
+
+        return $row !== null && $row->manage_stock ? (int) $row->stock : null;
+    }
+
     public function decrementOwnStock(int $storeProductId, int $variantKey, int $quantity): void
     {
         if ($variantKey > 0) {

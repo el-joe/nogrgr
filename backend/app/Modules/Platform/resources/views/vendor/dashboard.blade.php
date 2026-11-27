@@ -4,7 +4,8 @@
     readiness chips around the ring, the setup progress widget (VEN-008) and store status
     card, then the permission-aware widgets (VendorDashboardWidgetService): pay the
     platform (009a), opportunities + flash-sale modal (009c), new-in products (009d), AI ads
-    "Successful advertisements" + AI Advertising Studio (009e / 010c), live
+    "Successful advertisements" + AI Advertising Studio (009e / 010c), "Your store's
+    performance" KPIs / period / charts / latest orders (009, analytics.view), live
     store preview by country (009f) and the partner banner (009b).
 --}}
 @use('App\Modules\Platform\Enums\SetupStep')
@@ -85,6 +86,10 @@
             </div>
         </div>
     </section>
+
+    @if ($performance !== null)
+        @include('platform::vendor.dashboard._performance')
+    @endif
 
     <div class="grid items-start gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
         <x-vendor::setup-progress :progress="$progress" />

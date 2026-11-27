@@ -4,6 +4,7 @@ namespace App\Modules\Affiliates\Services;
 
 use App\Modules\Affiliates\DTOs\PayoutRequestData;
 use App\Modules\Affiliates\Enums\PayoutRequestStatus;
+use App\Modules\Affiliates\Events\AffiliatePayoutRequested;
 use App\Modules\Affiliates\Models\AffiliatePayoutRequest;
 use App\Modules\Affiliates\Repositories\Contracts\AffiliateRepositoryContract;
 use App\Modules\Affiliates\Repositories\Contracts\PayoutRequestRepositoryContract;
@@ -76,6 +77,7 @@ class PayoutRequestService extends BaseService
                 'status' => PayoutRequestStatus::Pending,
                 'note' => $data->note,
             ]);
+            $this->dispatchAfterCommit(new AffiliatePayoutRequested($request));
 
             return $request;
         }, (new AffiliatePayoutRequest)->getConnectionName());

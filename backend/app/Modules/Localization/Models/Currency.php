@@ -67,6 +67,16 @@ class Currency extends Model
         ];
     }
 
+    /**
+     * May shoppers see prices in this currency? The base always; any other currency only
+     * once its rate was synced (QA-FINAL-009: a never-synced row keeps the seeded 1.0 and
+     * would show USD amounts under another symbol).
+     */
+    public function hasUsableRate(): bool
+    {
+        return $this->isBase() || ($this->rate_synced_at !== null && (float) $this->rate > 0);
+    }
+
     public function isBase(): bool
     {
         return $this->is_base || $this->code === Money::BASE_CURRENCY;

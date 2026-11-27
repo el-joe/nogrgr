@@ -64,7 +64,9 @@ final class CurrenciesDataTable extends BaseDataTable
                 : '<span class="text-ink-muted">—</span>')
             ->editColumn('rate_synced_at', fn (Currency $currency): string => $currency->rate_synced_at !== null
                 ? '<time datetime="'.e($currency->rate_synced_at->toIso8601String()).'">'.e($currency->rate_synced_at->translatedFormat('d M Y, H:i')).'</time>'
-                : '<span class="text-ink-muted">'.e(__('localization::admin.currencies.never_synced')).'</span>')
+                : ($currency->isBase()
+                    ? '<span class="text-ink-muted">'.e(__('localization::admin.currencies.never_synced')).'</span>'
+                    : '<span class="inline-flex items-center gap-1 rounded-full bg-warning-bg px-2 py-0.5 text-xs font-medium text-warning" title="'.e(__('localization::admin.currencies.never_synced_hint')).'">'.e(__('localization::admin.currencies.never_synced')).'</span>'))
             ->editColumn('is_active', fn (Currency $currency): string => view('localization::admin.currencies._status-cell', ['currency' => $currency])->render())
             ->addColumn('actions', fn (Currency $currency): string => view('localization::admin.currencies._actions-cell', ['currency' => $currency])->render())
             ->rawColumns(['name', 'symbol', 'rate', 'countries_count', 'rate_synced_at', 'is_active', 'actions']);

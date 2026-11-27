@@ -3,6 +3,7 @@
 namespace App\Modules\Notifications\Http\Controllers\Vendor;
 
 use App\Modules\Identity\Models\VendorStaff;
+use App\Modules\Inventory\Services\Alerts\StockAlertService;
 use App\Modules\Notifications\Enums\NotificationChannel;
 use App\Modules\Notifications\Enums\VendorNotificationTopic;
 use App\Modules\Notifications\Http\Requests\Vendor\UpdateNotificationPreferencesRequest;
@@ -15,11 +16,15 @@ use Illuminate\Http\Request;
 
 /**
  * Vendor › Settings › Notifications (VEN-087, Figma Vendor Panel new screens 91:119215):
- * the signed-in member's own event × channel switches (in-app, e-mail, push).
+ * the signed-in member's own event × channel switches (in-app, e-mail, push), plus the
+ * store-wide low-stock threshold card (catalog.products.manage).
  */
 class NotificationPreferenceController extends Controller
 {
-    public function __construct(private readonly VendorNotificationPreferenceService $preferences) {}
+    public function __construct(
+        private readonly VendorNotificationPreferenceService $preferences,
+        private readonly StockAlertService $stockAlerts,
+    ) {}
 
     public function edit(Request $request): View
     {
@@ -27,6 +32,8 @@ class NotificationPreferenceController extends Controller
             'topics' => VendorNotificationTopic::cases(),
             'channels' => NotificationChannel::cases(),
             'matrix' => $this->preferences->matrix($this->staff($request)),
+            'stockThreshold' => $this->stockAlerts->storeThreshold(),
+            'canManageStock' => $this->staff($request)->can('catalog.products.manage'),
         ]);
     }
 

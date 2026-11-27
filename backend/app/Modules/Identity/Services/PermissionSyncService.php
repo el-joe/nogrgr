@@ -98,7 +98,7 @@ class PermissionSyncService extends BaseService
         }
 
         foreach ($systemRoles as [$role, $guard]) {
-            $granted += $this->roles->syncRole($role, $guard, $catalog[$guard] ?? []);
+            $granted += $this->roles->syncRole($role, $guard, array_values(array_diff($catalog[$guard] ?? [], PermissionCatalog::INTERNAL[$guard] ?? [])));
         }
 
         $this->registrar->forgetCachedPermissions();

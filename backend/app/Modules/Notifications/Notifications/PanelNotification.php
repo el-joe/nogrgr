@@ -13,6 +13,7 @@ use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Models\PanelNotificationRecord;
 use App\Modules\Notifications\Services\NotificationInboxService;
 use App\Modules\Notifications\Services\NotificationPreferenceService;
+use App\Shared\Support\RelativeUrl;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -105,7 +106,8 @@ abstract class PanelNotification extends Notification implements ShouldQueue, Te
             'title_params' => $this->params(),
             'body_key' => $this->bodyKey(),
             'body_params' => $this->params(),
-            'url' => $this->url(),
+            // Stored host-independent (QA-FINAL-008); mails keep the absolute url().
+            'url' => RelativeUrl::of($this->url()),
         ];
     }
 

@@ -7,9 +7,13 @@ use App\Modules\Affiliates\Events\AffiliateActivated;
 use App\Modules\Affiliates\Events\AffiliateConversionApproved;
 use App\Modules\Affiliates\Events\AffiliateConversionReversed;
 use App\Modules\Affiliates\Events\AffiliatePayoutPaid;
+use App\Modules\Affiliates\Events\AffiliatePayoutRequested;
 use App\Modules\Affiliates\Events\AffiliatePayoutRequestRejected;
 use App\Modules\Affiliates\Models\AffiliateConversion;
+use App\Modules\Affiliates\Notifications\AffiliateAdminNotification;
 use App\Modules\Affiliates\Notifications\AffiliateNotification;
+use App\Modules\Identity\Repositories\Contracts\AdminRepositoryContract;
+use App\Modules\Notifications\Services\NotificationDispatcher;
 use App\Modules\Billing\Models\Subscription;
 use App\Modules\Identity\Models\Affiliate;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
@@ -30,6 +34,7 @@ class SendAffiliateNotifications
         $events->listen(AffiliateConversionReversed::class, [self::class, 'conversionReversed']);
         $events->listen(AffiliatePayoutPaid::class, [self::class, 'payoutPaid']);
         $events->listen(AffiliatePayoutRequestRejected::class, [self::class, 'payoutRejected']);
+        $events->listen(AffiliatePayoutRequested::class, [self::class, 'payoutRequested']);
     }
 
     public function activated(AffiliateActivated $event): void
@@ -134,6 +139,26 @@ class SendAffiliateNotifications
             'note' => $request->admin_note,
             'cta' => (string) __('affiliates::notifications.mail.cta_dashboard'),
         ], route('affiliate.dashboard')));
+    }
+
+    /**
+     * A payout was requested → admins who can pay it (decision #124).
+     */
+    public function payoutRequested(AffiliatePayoutRequested $event): void
+    {
+        $request = $event->payoutRequest;
+        $affiliate = $this->affiliate($request->affiliate_id);
+        $admins = app(AdminRepositoryContract::class)->activeWithPermission('affiliates.payouts.manage');
+
+        if ($affiliate === null || $admins->isEmpty()) {
+            return;
+        }
+
+        app(NotificationDispatcher::class)->send($admins, new AffiliateAdminNotification('payout_requested', [
+            'reference' => $request->reference(),
+            'name' => $affiliate->name,
+            'amount' => Money::ofMinor($request->amount)->format(),
+        ], rescue(static fn (): string => route('admin.affiliates.payouts.index'), null, false)));
     }
 
     private function conversion(AffiliateConversion $conversion, string $eventName): void

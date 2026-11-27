@@ -13,4 +13,8 @@ return [
         'title' => 'New product review',
         'body' => ':author rated ":product" :rating/5.',
     ],
+    'customer' => [
+        'review_published' => ['title' => 'Your review is live', 'body' => 'Thank you! Your review of :product is now published on :store.'],
+        'review_rejected' => ['title' => 'Your review was not published', 'body' => 'Your review of :product did not meet the review guidelines of :store.'],
+    ],
 ];

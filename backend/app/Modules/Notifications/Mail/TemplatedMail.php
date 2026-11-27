@@ -3,13 +3,15 @@
 namespace App\Modules\Notifications\Mail;
 
 use App\Modules\Notifications\DTOs\RenderedEmailData;
+use App\Modules\Notifications\Support\MailPlainText;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
 /**
- * An e-mail built from an admin template (already rendered + sanitised).
+ * An e-mail built from an admin template (already rendered + sanitised), with its
+ * plain-text alternative.
  */
 class TemplatedMail extends Mailable
 {
@@ -24,6 +26,6 @@ class TemplatedMail extends Mailable
 
     public function content(): Content
     {
-        return new Content(htmlString: $this->email->html);
+        return new Content(text: 'notifications::mail.rendered-text', with: ['text' => MailPlainText::fromHtml($this->email->html)], htmlString: $this->email->html);
     }
 }

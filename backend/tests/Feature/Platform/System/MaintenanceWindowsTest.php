@@ -110,7 +110,7 @@ it('creates, edits, ends and deletes windows with audit entries', function (): v
 
     $this->deleteJson($this->centralUrl("/admin/system/maintenance/{$window->id}"))->assertOk();
     expect(MaintenanceWindow::query()->count())->toBe(0)
-        ->and(AuditEvent::query()->where('action', 'like', 'system.maintenance.%')->pluck('action')->all())
+        ->and(AuditEvent::query()->where('action', 'like', 'system.maintenance.%')->orderBy('id')->pluck('action')->all())
         ->toEqual(['system.maintenance.created', 'system.maintenance.updated', 'system.maintenance.ended', 'system.maintenance.deleted']);
 });
 

@@ -7,6 +7,7 @@ use App\Modules\Platform\Http\Controllers\Vendor\DomainSettingsController;
 use App\Modules\Platform\Http\Controllers\Vendor\GeneralSettingsController;
 use App\Modules\Platform\Http\Controllers\Vendor\OnboardingController;
 use App\Modules\Platform\Http\Controllers\Vendor\SetupWizardController;
+use App\Modules\Platform\Http\Controllers\Vendor\UiKitController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -96,4 +97,14 @@ Route::middleware('auth:vendor')->prefix('settings/domains')->name('settings.dom
         Route::post('primary/{domain}', 'primary')->whereNumber('domain')->middleware('throttle:20,1')->name('primary');
         Route::delete('{domain}', 'destroy')->whereNumber('domain')->middleware('throttle:20,1')->name('destroy');
     });
+});
+
+/*
+| Vendor UI kit (VEN-093, decision #116): vendor.ui-kit* — internal page, gate
+| vendor.ui-kit.view (impersonating platform admins / the internal ui-kit.view).
+*/
+Route::middleware(['auth:vendor', 'can:vendor.ui-kit.view'])->prefix('ui-kit')->name('ui-kit')->controller(UiKitController::class)->group(function (): void {
+    Route::get('/', 'show');
+    Route::get('table', 'table')->name('.table');
+    Route::post('form', 'submit')->middleware('throttle:30,1')->name('.form');
 });

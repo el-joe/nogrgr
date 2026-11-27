@@ -20,7 +20,9 @@ use App\Modules\Billing\Notifications\VendorBillingMail;
 use App\Modules\Identity\Repositories\Contracts\AdminRepositoryContract;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
+use App\Modules\Notifications\Notifications\OwnerInboxNotification;
 use App\Modules\Notifications\Services\NotificationDispatcher;
+use App\Modules\Notifications\Services\OwnerInboxService;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Repositories\Contracts\TenantRepositoryContract;
 use Illuminate\Events\Dispatcher;
@@ -29,7 +31,8 @@ use Illuminate\Support\Facades\Notification;
 /**
  * Billing events → notifications (decision #46 follow-up): admins who can see the
  * record get a panel notification (database + mail + Reverb, per their category
- * preferences); the store owner gets an e-mail (admin template when active).
+ * preferences); the store owner gets the templated e-mail plus a copy in the
+ * owner-portal inbox (database + Reverb, decision #124).
  */
 class SendBillingNotifications
 {
@@ -37,6 +40,7 @@ class SendBillingNotifications
         private readonly NotificationDispatcher $dispatcher,
         private readonly AdminRepositoryContract $admins,
         private readonly TenantRepositoryContract $tenants,
+        private readonly OwnerInboxService $ownerInbox,
     ) {}
 
     public function subscribe(Dispatcher $events): void
@@ -116,6 +120,8 @@ class SendBillingNotifications
             route('admin.finance.invoices.show', $invoice->id),
         ));
 
+        $this->copyToOwnerInbox($tenant, NotificationCategory::Payments, $name, ['number' => $invoice->number, 'store' => $store, 'total' => $total], 'owner.invoices.index');
+
         $this->mailOwner($tenant, $invoice->bill_to_email, $template, $name, [
             'invoice.number' => (string) $invoice->number,
             'invoice.total' => $total,
@@ -135,6 +141,8 @@ class SendBillingNotifications
             ['reference' => $log->reference(), 'store' => $tenant->name ?? '—', 'amount' => $amount, 'gateway' => $log->gateway->label()],
             route('admin.finance.payment-logs.show', $log->id),
         ));
+
+        $this->copyToOwnerInbox($tenant, NotificationCategory::Payments, $name, ['reference' => $log->reference(), 'store' => $tenant->name ?? '—', 'amount' => $amount, 'gateway' => $log->gateway->label()], 'owner.invoices.index');
 
         $this->mailOwner($tenant, $invoice?->bill_to_email, $template, $name, [
             'invoice.number' => (string) $invoice?->number,
@@ -156,6 +164,8 @@ class SendBillingNotifications
             ['store' => $tenant->name ?? '—', 'plan' => $plan, 'date' => $endsAt],
             route('admin.billing.subscriptions.index'),
         ));
+
+        $this->copyToOwnerInbox($tenant, NotificationCategory::Vendors, $name, ['store' => $tenant->name ?? '—', 'plan' => $plan, 'date' => $endsAt], 'owner.subscriptions.index');
 
         $this->mailOwner($tenant, null, $template, $name, [
             'plan.name' => $plan,
@@ -193,6 +203,21 @@ class SendBillingNotifications
             ],
             (string) config('app.locale', 'en'),
             route('central.tenant.login'),
+        ));
+    }
+
+    /**
+     * @param  array<string, string|int>  $params
+     */
+    private function copyToOwnerInbox(?Tenant $tenant, NotificationCategory $category, string $name, array $params, string $route): void
+    {
+        $this->ownerInbox->send($tenant, new OwnerInboxNotification(
+            $category,
+            $name,
+            'billing::notifications.'.$name.'.title',
+            'billing::notifications.'.$name.'.body',
+            $params,
+            rescue(static fn (): string => route($route), null, false),
         ));
     }
 

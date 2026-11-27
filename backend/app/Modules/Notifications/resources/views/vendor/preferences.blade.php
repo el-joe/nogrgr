@@ -61,4 +61,24 @@
             @endforeach
         </ul>
     </form>
+
+    @if ($canManageStock)
+        {{-- Store-wide low-stock threshold (decision #124): products without their own minimum stock alert at this level. --}}
+        <form id="vendor-stock-threshold" method="POST" action="{{ vendor_route('settings.notifications.stock-threshold') }}" data-ajax novalidate class="mt-6">
+            @csrf
+            @method('PUT')
+            <x-ui::card>
+                <div class="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+                    <div class="grid gap-1">
+                        <h2 class="text-base font-semibold text-ink">{{ __('inventory::alerts.threshold.title') }}</h2>
+                        <p class="text-xs text-ink-secondary">{{ __('inventory::alerts.threshold.help') }}</p>
+                        <div class="mt-2 max-w-48">
+                            <x-ui::input name="low_stock_threshold" id="vendor-low-stock-threshold" type="number" min="0" :max="\App\Modules\Inventory\Services\Alerts\StockAlertService::MAX_THRESHOLD" :label="__('inventory::alerts.threshold.label')" :value="$stockThreshold" dir="ltr" inputmode="numeric" />
+                        </div>
+                    </div>
+                    <x-ui::button type="submit" variant="secondary" icon="check">{{ __('inventory::alerts.threshold.save') }}</x-ui::button>
+                </div>
+            </x-ui::card>
+        </form>
+    @endif
 </x-vendor::layout>

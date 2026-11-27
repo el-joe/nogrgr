@@ -21,6 +21,7 @@ class OrderAlertNotification extends PanelNotification
         public readonly string $eventName,
         public readonly array $parameters,
         public readonly bool $forStore = false,
+        public readonly ?string $link = null,
     ) {
         parent::__construct();
     }
@@ -70,6 +71,7 @@ class OrderAlertNotification extends PanelNotification
             'admin_return_message' => EmailTemplateEvent::AdminReturnAlert,
             'admin_refund_completed' => EmailTemplateEvent::AdminReturnAlert,
             'admin_refund_failed' => EmailTemplateEvent::AdminReturnAlert,
+            'admin_shipping_escalation' => EmailTemplateEvent::AdminShippingEscalation,
         ];
     }
 
@@ -99,6 +101,11 @@ class OrderAlertNotification extends PanelNotification
     protected function params(): array
     {
         return $this->parameters;
+    }
+
+    protected function url(): ?string
+    {
+        return $this->link;
     }
 
     public function toBroadcast(object $notifiable): BroadcastMessage

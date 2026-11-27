@@ -2,6 +2,7 @@
 
 namespace App\Modules\Notifications\Mail;
 
+use App\Modules\Notifications\Support\MailPlainText;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -24,6 +25,8 @@ class StoreTestMail extends Mailable
 
     public function content(): Content
     {
-        return new Content(view: 'notifications::mail.store-test', with: ['storeName' => $this->storeName]);
+        $text = MailPlainText::fromHtml(view('notifications::mail.store-test', ['storeName' => $this->storeName])->render());
+
+        return new Content(view: 'notifications::mail.store-test', text: 'notifications::mail.rendered-text', with: ['storeName' => $this->storeName, 'text' => $text]);
     }
 }

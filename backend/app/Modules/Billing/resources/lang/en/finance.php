@@ -230,5 +230,9 @@ return [
         'payout_paid' => ['title' => 'Payout :reference paid', 'body' => ':amount was sent to you.'],
         'payout_cancelled' => ['title' => 'Payout :reference cancelled', 'body' => 'The payout of :amount was cancelled.'],
         'settlement_confirmed' => ['title' => 'Settlement :reference confirmed', 'body' => 'Your settlement of :amount was confirmed by the platform.'],
+        'settlement_paid' => ['title' => 'Settlement :reference received', 'body' => 'We received your settlement of :amount for order :order. Thank you!'],
+        'settlement_due' => ['title' => 'Settlement due: :amount', 'body' => 'Your store owes the platform :amount for orders you collected. Please pay it from Finance › Pay platform.'],
+        'gateway_limit_warning' => ['title' => ':gateway limit almost reached', 'body' => 'Your store took :volume of :limit this month through the platform :gateway account (:percent%). Online payments with :gateway stop at the limit.'],
+        'gateway_limit_block' => ['title' => ':gateway limit reached', 'body' => 'Your store reached the monthly :limit limit of the platform :gateway account. :gateway is hidden at checkout until next month or until you connect your own keys.'],
     ],
 ];

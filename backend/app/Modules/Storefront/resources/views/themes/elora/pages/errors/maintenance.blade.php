@@ -9,7 +9,7 @@
     <span class="grid size-[72px] place-items-center rounded-full bg-[#fff3cd] text-[#b7791f]" aria-hidden="true"><x-ui::icon name="settings" :size="32" /></span>
     <h1 class="mt-2 text-2xl font-semibold text-sf-ink lg:text-[28px]">{{ __st('errors.maintenance.title') }}</h1>
     <p class="text-sm leading-6 text-sf-muted">
-        {{ __st('errors.maintenance.body') }}
+        {{ filled($maintenanceMessage ?? null) ? $maintenanceMessage : __st('errors.maintenance.body') }}
         @if ($back)
             {{ __st('errors.maintenance.back_at', ['time' => $back->translatedFormat('H:i').' ('.$back->format('T').')']) }}
         @endif

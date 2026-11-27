@@ -34,6 +34,7 @@ class CurrencyController extends Controller
             'counts' => $this->currencies->counts(),
             'lastSyncedAt' => $this->currencies->lastSyncedAt(),
             'nextSyncAt' => $this->currencies->nextSyncAt(),
+            'unsynced' => $this->currencies->unsyncedActiveCodes(),
         ]);
     }
 

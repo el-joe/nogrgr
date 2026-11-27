@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
  * Human labels and the before/after diff of audit events (ADM-112 / 112a).
  *  - translated identity::audit.actions.<action> (nested keys), else AuditAction label
  *  - "<model>.created|updated|deleted"   → "Admin updated"
- *  - "http.<route name>"                 → "Request: <route name>"
+ *  - "http.<route name>"                 → "<Resource>: <verb>" (QA-FINAL-011, never the raw name)
  *  - anything else                       → translated key or headline
  */
 final class AuditPresenter
@@ -31,7 +31,7 @@ final class AuditPresenter
         }
 
         if (Str::startsWith($action, 'http.')) {
-            return (string) __('identity::audit.http', ['route' => Str::after($action, 'http.')]);
+            return self::requestLabel(Str::after($action, 'http.'));
         }
 
         if (preg_match('/^([a-z0-9_]+)\.(created|updated|deleted|restored)$/', $action, $matches) === 1) {
@@ -42,6 +42,67 @@ final class AuditPresenter
         }
 
         return Str::headline(str_replace('.', ' ', $action));
+    }
+
+    /** Panel route-name prefixes dropped from request labels. */
+    private const ROUTE_PREFIXES = ['vendor-central.', 'vendor.', 'admin.', 'owner.', 'affiliate.', 'store-api.v1.', 'storefront.'];
+
+    /**
+     * Human label of an HTTP fallback event: "admin.catalog.products.store" → "Products:
+     * created". The resource is the segment before the controller action (resourceLabel); the verb comes from
+     * identity::audit.http_verbs.<action> (store / update / destroy …), else headline.
+     */
+    public static function requestLabel(string $route): string
+    {
+        $name = $route;
+
+        foreach (self::ROUTE_PREFIXES as $prefix) {
+            if (Str::startsWith($name, $prefix)) {
+                $name = Str::after($name, $prefix);
+
+                break;
+            }
+        }
+
+        $segments = array_values(array_filter(explode('.', $name), static fn (string $segment): bool => $segment !== ''));
+
+        if ($segments === []) {
+            return (string) __('identity::audit.request');
+        }
+
+        $verb = count($segments) > 1 ? array_pop($segments) : 'visit';
+        $resource = (string) end($segments);
+
+        return (string) __('identity::audit.http_label', [
+            'resource' => self::resourceLabel($resource),
+            'verb' => self::translatedOr('identity::audit.http_verbs.'.str_replace('-', '_', $verb), Str::lower(Str::headline($verb))),
+        ]);
+    }
+
+    /**
+     * identity::audit.resources.<key>, else the panel menu label (navigation.admin / vendor),
+     * else the headline of the segment.
+     */
+    private static function resourceLabel(string $segment): string
+    {
+        $key = str_replace('-', '_', $segment);
+
+        foreach (['identity::audit.resources.'.$key, 'navigation.admin.'.$key, 'navigation.vendor.'.$key] as $candidate) {
+            $translated = __($candidate);
+
+            if (is_string($translated) && $translated !== $candidate) {
+                return $translated;
+            }
+        }
+
+        return Str::headline($segment);
+    }
+
+    private static function translatedOr(string $key, string $fallback): string
+    {
+        $translated = __($key);
+
+        return is_string($translated) && $translated !== $key ? $translated : $fallback;
     }
 
     public static function subjectLabel(?string $type): string

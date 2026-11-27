@@ -66,7 +66,7 @@ final class PermissionMatrix
         $modules = array_fill_keys([...array_keys($map), 'other'], []);
         $abilities = [];
 
-        foreach (PermissionCatalog::forGuard($guard) as $permission) {
+        foreach (PermissionCatalog::assignable($guard) as $permission) {
             $resource = Str::beforeLast($permission, '.');
             $ability = Str::afterLast($permission, '.');
             $modules[self::moduleOf($resource, $guard)][$resource][$ability] = $permission;

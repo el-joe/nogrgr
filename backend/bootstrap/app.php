@@ -10,6 +10,7 @@ use App\Modules\Platform\Http\Middleware\AuditRequests;
 use App\Modules\Platform\Http\Middleware\EnforceMaintenanceWindows;
 use App\Modules\Platform\Http\Middleware\InitializeTenancyByStoreSlug;
 use App\Modules\Storefront\Http\Middleware\GuardDemoStore;
+use App\Modules\Storefront\Services\Tracking\TrackingPixelService;
 use App\Shared\Http\GuardRedirector;
 use App\Shared\Http\JsonResponder;
 use App\Shared\Http\Middleware\SetLocale;
@@ -63,7 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         /* `theme` (dark/light) and `locale` are written by JS / ?lang= and read on render. */
-        $middleware->encryptCookies(except: ['theme', SetLocale::COOKIE]);
+        $middleware->encryptCookies(except: ['theme', SetLocale::COOKIE, TrackingPixelService::CONSENT_COOKIE]);
         /* GuardDemoStore: the platform demo store (WEB-004) is read-only; a no-op everywhere else. */
         $middleware->web(append: [SetLocale::class, GuardDemoStore::class]);
 

@@ -129,7 +129,7 @@ class RoleService extends BaseService
      */
     private function normalize(array $permissions, string $guard): array
     {
-        $known = PermissionCatalog::forGuard($guard);
+        $known = PermissionCatalog::assignable($guard);
         $names = PermissionCatalog::withImplied(array_values(array_intersect($permissions, $known)), $guard);
         sort($names);
         $this->roles->ensurePermissions($names, $guard);
