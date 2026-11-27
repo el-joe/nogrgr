@@ -4,7 +4,12 @@
     the columns with dividers.
 --}}
 @props(['columns' => [], 'legal' => [], 'name', 'copyright' => null])
-@php($badges = app(\App\Modules\Storefront\Services\Catalog\StorefrontShell::class)->paymentBadges())
+@php
+    $badges = app(\App\Modules\Storefront\Services\Catalog\StorefrontShell::class)->paymentBadges(wallets: true);
+    $appearance = app(\App\Modules\Storefront\Services\Appearance\StorefrontAppearance::class);
+    $about = $appearance->aboutText();
+    $social = $appearance->socialLinks();
+@endphp
 <footer class="eco-footer mt-auto" aria-label="{{ __st('shell.footer.label') }}">
     <div class="eco-container grid gap-6 pb-8 pt-8 lg:grid-cols-[minmax(0,1013px)_auto] lg:justify-between lg:gap-[70px] lg:pb-10 lg:pt-[49px]">
         <div class="grid content-start gap-5 lg:gap-12">
@@ -31,6 +36,7 @@
                                 @switch($badge)
                                     @case('visa')<span class="italic tracking-tight text-[#1a1f71]">VISA</span>@break
                                     @case('mastercard')<span class="relative flex" aria-hidden="true"><span class="size-4 rounded-full bg-[#eb001b]"></span><span class="-ms-1.5 size-4 rounded-full bg-[#f79e1b]/90"></span></span><span class="sr-only">Mastercard</span>@break
+                                    @case('applepay')<span class="inline-flex items-center gap-0.5 text-[13px] font-semibold text-black"><x-ui::icon name="apple" :size="16" />Pay</span>@break
                                     @case('paypal')<span class="text-[#003087]">Pay<span class="text-[#009cde]">Pal</span></span>@break
                                     @default<span class="line-clamp-2 max-w-full overflow-hidden break-words px-0.5 text-center text-[9px] leading-[1.1]">{{ __st('shell.payments.'.$badge) }}</span>
                                 @endswitch
@@ -42,8 +48,23 @@
         </div>
         <div class="grid content-start gap-4 border-t border-white/20 pt-5 lg:min-w-[190px] lg:gap-8 lg:border-0 lg:pt-0" data-reveal="fade-up">
             <x-sf::logo tone="light" />
-            <x-sf::footer.social />
-            <x-sf::locale-button class="w-fit" />
+            @if ($about)
+                <p class="max-w-[320px] text-sm leading-6 tracking-[0.5px] text-white/80">{{ $about }}</p>
+            @endif
+            @if ($social)
+                <div class="grid gap-4">
+                    <h2 class="text-base font-medium leading-[normal]">{{ __st('shell.footer.connect', ['name' => $name]) }}</h2>
+                    <ul class="flex flex-wrap items-center gap-4" role="list" aria-label="{{ __st('appearance.follow_us') }}">
+                        @foreach ($social as $profile)
+                            <li>
+                                <a href="{{ $profile['url'] }}" target="_blank" rel="noopener me" class="eco-social grid size-6 place-items-center" aria-label="{{ $profile['label'] }}" title="{{ $profile['label'] }}">
+                                    <x-ui::icon :name="$profile['icon']" :size="24" />
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </div>
     </div>
     @if ($legal)

@@ -38,6 +38,38 @@ return [
             'title' => 'FAQs',
             'body' => '<h2>How do I track my order?</h2><p>Open My orders in your account: every order shows its current status and tracking number once shipped.</p><h2>Which payment methods do you accept?</h2><p>The available payment methods for your country are shown at checkout.</p><h2>Can I change or cancel my order?</h2><p>You can cancel an order from My orders until it is shipped.</p><h2>How do I return a product?</h2><p>Start a return from My orders within 14 days of delivery. See our return policy for details.</p>',
         ],
+        'careers' => [
+            'title' => 'Careers',
+            'body' => '<p>Want to build the future of online shopping with :store? We are always glad to hear from curious, hands-on people.</p><h2>How we work</h2><p>Small teams, clear ownership and customers at the centre of every decision.</p><h2>How to apply</h2><p>Send us a message from the contact page with your CV and the role you are interested in. We read every application and reply by email.</p>',
+        ],
+        'press' => [
+            'title' => 'Press',
+            'body' => '<p>Journalists and bloggers: this page is the starting point for anything you need to write about :store.</p><h2>Press enquiries</h2><p>Send your questions, interview requests or product-sample requests from the contact page. We reply within two business days.</p><h2>Brand assets</h2><p>Ask us for our logo and brand guidelines and we will share them by email.</p>',
+        ],
+        'intellectual_property_policy' => [
+            'title' => 'Intellectual property policy',
+            'body' => '<p>:store respects the intellectual property rights of brands, designers and creators, and expects the same from everyone who sells or shops here.</p><h2>1. What we do not allow</h2><p>Counterfeit goods, unauthorised copies of protected designs and listings that use another party\'s trademarks or images without permission.</p><h2>2. Reporting an infringement</h2><p>If you believe a product infringes your rights, contact us with your name, proof of ownership, the product link and a short description. We review every notice and remove infringing items.</p><h2>3. Repeat infringers</h2><p>Sellers who repeatedly infringe intellectual property rights are removed from the store.</p>',
+        ],
+        'report_suspicious_activity' => [
+            'title' => 'Report suspicious activity',
+            'body' => '<p>Your safety matters to us. If something on :store looks wrong, tell us.</p><h2>What to report</h2><ul><li>Messages or emails asking for your password, card details or one-time codes.</li><li>Orders or payments you did not make.</li><li>Fake products, fake reviews or misleading offers.</li></ul><h2>What to do</h2><p>Do not share your details. Send us a message from the contact page with what happened, the order number if any and screenshots. Our team investigates every report and replies by email.</p>',
+        ],
+        'safety_center' => [
+            'title' => 'Safety center',
+            'body' => '<p>Shopping at :store should always feel safe. Here is how we protect you and how you can protect yourself.</p><h2>How we protect you</h2><p>Payments are processed by trusted payment providers over encrypted connections. We never store your full card number.</p><h2>How you can stay safe</h2><ul><li>Use a strong, unique password for your account.</li><li>Only pay on the checkout page of this store.</li><li>Never share one-time codes with anyone.</li></ul><h2>Need help?</h2><p>Contact our support team from the contact page and we will reply within 24 hours.</p>',
+        ],
+        'purchase_protection' => [
+            'title' => 'Purchase protection',
+            'body' => '<p>Every order placed on :store is covered by our purchase protection.</p><h2>What is covered</h2><ul><li>Your order never arrives.</li><li>The product arrives damaged or not as described.</li><li>You are charged incorrectly.</li></ul><h2>How it works</h2><p>Open My orders and start a return or contact support within 14 days of delivery. Once we confirm the problem, you get a replacement or a refund to your original payment method.</p>',
+        ],
+        'partner_with_us' => [
+            'title' => 'Partner with us',
+            'body' => '<p>Do you make or sell great products? Partner with :store and reach new customers.</p><h2>Why partner with us</h2><p>A ready storefront, secure payments and delivery tracking, so you can focus on your products.</p><h2>Get started</h2><p>Tell us about your business and products from the contact page. Our team will get back to you by email within a few business days.</p>',
+        ],
+        'privacy_choices' => [
+            'title' => 'Your privacy choices',
+            'body' => '<p>You decide how :store uses your data.</p><h2>Marketing messages</h2><p>You can stop receiving offers at any time with the unsubscribe link in every email, or from your account.</p><h2>Cookies</h2><p>You can accept or refuse optional cookies from the cookie banner, and change your mind by clearing the cookies of this site in your browser.</p><h2>Your data</h2><p>You can view, correct or delete your personal data from your account, or ask us to do it from the contact page. See our privacy policy for details.</p>',
+        ],
     ],
     // Page-builder sections of a store page (VEN-032).
     'sections' => [

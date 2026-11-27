@@ -419,15 +419,15 @@
         position: relative;
         display: grid;
         place-items: center;
-        aspect-ratio: 240 / 136;
+        aspect-ratio: 1 / 1;
         overflow: hidden;
-        padding: 8px;
+        padding: 0;
         border-radius: 8px 8px 0 0;
         background: var(--eco-img-bg);
     }
 
     .eco-card-deal .eco-card-img {
-        aspect-ratio: 224 / 185;
+        aspect-ratio: 1 / 1;
     }
 
     /* The image fills the whole image box (absolute, so a square photo cannot grow the
@@ -832,7 +832,7 @@
         }
 
         .eco-card-img {
-            aspect-ratio: 166 / 110;
+            aspect-ratio: 1 / 1;
             border-radius: 6px 6px 0 0;
         }
 
@@ -935,6 +935,16 @@
     .eco-footer a:hover {
         opacity: 0.75;
         text-decoration: underline;
+    }
+
+    .eco-footer a.eco-social:hover {
+        opacity: 1;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .eco-footer .eco-social {
+        transition: transform var(--motion-fast) ease-out;
     }
 
     .eco-pay-badge {

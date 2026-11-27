@@ -384,10 +384,29 @@ class ProductIndex
         return $ttl;
     }
 
+    /**
+     * Bumps the cache version of one store (or of every store without an id), so the next read
+     * rebuilds the index: a created / edited flash sale shows at once instead of after the TTL.
+     */
+    public static function bump(?int $tenantId = null): void
+    {
+        $key = 'sf:index:ver:'.($tenantId ?? 'all');
+        $cache = app('cache')->store();
+
+        $cache->put($key, ((int) $cache->get($key, 0)) + 1, 86400 * 30);
+    }
+
+    private static function version(string $tenant): string
+    {
+        $cache = app('cache')->store();
+
+        return ((int) $cache->get('sf:index:ver:all', 0)).'.'.((int) $cache->get('sf:index:ver:'.$tenant, 0));
+    }
+
     private function key(): string
     {
         $tenant = tenancy()->initialized ? (string) tenant()?->getTenantKey() : 'central';
 
-        return 'sf:index:v2:'.$tenant.':'.($this->context->countryId() ?? 0).':'.app()->getLocale();
+        return 'sf:index:v2:'.self::version($tenant).':'.$tenant.':'.($this->context->countryId() ?? 0).':'.app()->getLocale();
     }
 }

@@ -20,10 +20,10 @@
                 @foreach ($banners as $index => $banner)
                     <div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="{{ $index + 1 }} / {{ count($banners) }}">
                         @php($tag = $banner->url ? 'a' : 'div')
-                        <{{ $tag }} @if ($banner->url) href="{{ $banner->url }}" @endif class="block aspect-[375/73] w-full overflow-hidden bg-eco-img lg:aspect-[1440/279]">
+                        <{{ $tag }} @if ($banner->url) href="{{ $banner->url }}" @endif class="block aspect-[375/73] w-full overflow-hidden bg-eco-img lg:aspect-auto lg:h-[279px]">
                             <picture>
                                 @if ($banner->mobileImageUrl)<source media="(max-width: 767px)" srcset="{{ $banner->mobileImageUrl }}">@endif
-                                <img src="{{ $banner->imageUrl ?: $banner->mobileImageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? '' }}" width="{{ $banner->width ?? 1440 }}" height="{{ $banner->height ?? 279 }}" class="mo-kenburns size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif decoding="async">
+                                <img src="{{ $banner->imageUrl ?: $banner->mobileImageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? '' }}" width="{{ $banner->width ?? 1440 }}" height="{{ $banner->height ?? 279 }}" class="mo-kenburns size-full object-fill" @if ($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif decoding="async">
                             </picture>
                             @if ($banner->title || $banner->ctaLabel)
                                 <span class="sr-only">{{ $banner->title }} {{ $banner->subtitle }} {{ $banner->ctaLabel }}</span>

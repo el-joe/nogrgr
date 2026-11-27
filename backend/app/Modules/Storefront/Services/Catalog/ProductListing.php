@@ -74,8 +74,9 @@ class ProductListing
      */
     public function flashDeals(int $limit): array
     {
-        $entries = array_values(array_filter($this->index->entries(), static fn (IndexEntry $entry): bool => $entry->flash !== null && $entry->inStock));
-        usort($entries, static fn (IndexEntry $a, IndexEntry $b): int => [$a->flash['ends_at'] ?? '', -$a->soldCount] <=> [$b->flash['ends_at'] ?? '', -$b->soldCount]);
+        $entries = array_values(array_filter($this->index->entries(), static fn (IndexEntry $entry): bool => $entry->flash !== null));
+        // A live sale always shows its products: sold-out ones go last (their card says so).
+        usort($entries, static fn (IndexEntry $a, IndexEntry $b): int => [! $a->inStock, $a->flash['ends_at'] ?? '', -$a->soldCount] <=> [! $b->inStock, $b->flash['ends_at'] ?? '', -$b->soldCount]);
 
         return array_slice($entries, 0, $limit);
     }

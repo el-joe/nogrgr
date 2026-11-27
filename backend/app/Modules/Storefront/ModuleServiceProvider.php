@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront;
 
+use App\Modules\Commerce\Events\PromotionsChanged;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Modules\Storefront\Console\DemoStoreCommand;
 use App\Modules\Storefront\Console\SyncStorePagesCommand;
@@ -9,6 +10,7 @@ use App\Modules\Storefront\Console\ThemeDocsCommand;
 use App\Modules\Storefront\Http\Middleware\ApplyCustomThemeSecurityHeaders;
 use App\Modules\Storefront\Http\Middleware\EnsureStoreAvailable;
 use App\Modules\Storefront\Listeners\EnsureStorePages;
+use App\Modules\Storefront\Listeners\ForgetProductIndex;
 use App\Modules\Storefront\Repositories\Contracts\BannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\CustomThemeRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\HiddenBannerRepositoryContract;
@@ -116,6 +118,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         // System CMS pages for every new store (sf-data).
         Event::listen(TenantProvisioned::class, EnsureStorePages::class);
+        Event::listen(PromotionsChanged::class, ForgetProductIndex::class);
 
         // Not-launched / suspended store gate for `storefront.*` routes (sf-checkout).
         $this->app['router']->pushMiddlewareToGroup('web', EnsureStoreAvailable::class);

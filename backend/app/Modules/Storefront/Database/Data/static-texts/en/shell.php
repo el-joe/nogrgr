@@ -58,6 +58,9 @@ return [
         'terms' => 'Terms of use',
         'privacy' => 'Privacy policy',
         'copyright' => 'Copyright ©:year :name. All Rights Reserved.',
+        'sitemap' => 'Sitemap',
+        'support' => 'Support',
+        'connect' => 'Connect with :name',
         'we_accept' => 'We accept',
         'all_categories' => 'All categories',
     ],
@@ -89,6 +92,7 @@ return [
     'payments' => [
         'visa' => 'Visa',
         'mastercard' => 'Mastercard',
+        'applepay' => 'Apple Pay',
         'paypal' => 'PayPal',
         'cod' => 'Cash on delivery',
         'tabby' => 'Tabby',

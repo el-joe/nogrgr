@@ -58,6 +58,9 @@ return [
         'terms' => 'شروط الاستخدام',
         'privacy' => 'سياسة الخصوصية',
         'copyright' => 'حقوق النشر ©:year :name. جميع الحقوق محفوظة.',
+        'sitemap' => 'خريطة الموقع',
+        'support' => 'الدعم',
+        'connect' => 'تواصل مع :name',
         'we_accept' => 'نقبل الدفع بـ',
         'all_categories' => 'كل الأقسام',
     ],
@@ -89,6 +92,7 @@ return [
     'payments' => [
         'visa' => 'فيزا',
         'mastercard' => 'ماستركارد',
+        'applepay' => 'أبل باي',
         'paypal' => 'باي بال',
         'cod' => 'الدفع عند الاستلام',
         'tabby' => 'تابي',

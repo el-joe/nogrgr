@@ -31,7 +31,7 @@ class StorePageReader
     }
 
     /**
-     * @return list<array{title: string, url: string, group: string}>
+     * @return list<array{title: string, url: string, group: string, slug: string}>
      */
     public function footerLinks(): array
     {
@@ -40,6 +40,7 @@ class StorePageReader
                 'title' => (string) $page->title,
                 'url' => route('storefront.pages.show', $page->slug),
                 'group' => SystemStorePage::tryFrom($page->slug)?->footerGroup() ?? 'company',
+                'slug' => (string) $page->slug,
             ])
             ->values()
             ->all();

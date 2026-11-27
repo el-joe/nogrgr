@@ -7,7 +7,7 @@
 --}}
 @props(['family'])
 @php
-    $links = app(\App\Modules\Storefront\Services\Catalog\StorefrontShell::class)->footerLinks();
+    $links = app(\App\Modules\Storefront\Services\Catalog\StorefrontShell::class)->footerLinks($family === 'ecommet');
     $columns = array_map(fn (array $items) => array_map(fn (array $link) => ['url' => $link['url'], 'title' => $link['title']], $items), $links['columns']);
     $name = \App\Modules\Storefront\Support\StorefrontTheme::storeName();
     $copyright = app(\App\Modules\Storefront\Services\Appearance\StorefrontAppearance::class)->copyright();
