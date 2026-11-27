@@ -59,12 +59,12 @@
                                     <h3 class="font-semibold text-ink">{{ __('content::custom_themes.review.'.$kind) }}</h3>
                                     <ul class="grid gap-1" dir="ltr">
                                         @foreach ($diff[$kind] as $path)
-                                            <li class="flex items-center gap-2 font-mono text-[13px]">
+                                            <li class="flex min-w-0 items-center gap-2 font-mono text-[13px]">
                                                 <x-ui::badge :tone="$tone">{{ __('content::custom_themes.review.'.$kind) }}</x-ui::badge>
                                                 @if ($kind === 'added' && $textFile($path))
-                                                    <a href="{{ $source($path) }}" target="_blank" rel="noopener" class="text-ink hover:text-primary hover:underline">{{ $path }}</a>
+                                                    <a href="{{ $source($path) }}" target="_blank" rel="noopener" class="min-w-0 break-all text-ink hover:text-primary hover:underline" data-review-path>{{ $path }}</a>
                                                 @else
-                                                    <span class="text-ink">{{ $path }}</span>
+                                                    <span class="min-w-0 break-all text-ink" data-review-path>{{ $path }}</span>
                                                 @endif
                                             </li>
                                         @endforeach
@@ -76,9 +76,9 @@
                             <details class="rounded-card border border-line" open>
                                 <summary class="flex cursor-pointer flex-wrap items-center gap-2 px-3 py-2 font-mono text-[13px] text-ink" dir="ltr">
                                     <x-ui::badge tone="warning">{{ __('content::custom_themes.review.changed') }}</x-ui::badge>
-                                    <span>{{ $path }}</span>
+                                    <span class="min-w-0 break-all" data-review-path>{{ $path }}</span>
                                     @if ($textFile($path))
-                                        <a href="{{ $source($path) }}" target="_blank" rel="noopener" class="ms-auto text-xs text-primary hover:underline">{{ __('content::custom_themes.review.view_source') }}</a>
+                                        <a href="{{ $source($path) }}" target="_blank" rel="noopener" class="ms-auto shrink-0 text-xs text-primary hover:underline">{{ __('content::custom_themes.review.view_source') }}</a>
                                     @endif
                                 </summary>
                                 @if ($lines === null)
@@ -104,7 +104,7 @@
                             <tbody>
                                 @foreach ($version->files() as $path => $file)
                                     <tr class="border-t border-line">
-                                        <td class="px-5 py-2 font-mono text-[13px]">
+                                        <td class="break-all px-5 py-2 font-mono text-[13px]">
                                             @if ($textFile($path))
                                                 <a href="{{ $source($path) }}" target="_blank" rel="noopener" class="text-ink hover:text-primary hover:underline">{{ $path }}</a>
                                             @else

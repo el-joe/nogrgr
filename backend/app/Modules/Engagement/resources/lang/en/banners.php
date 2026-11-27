@@ -7,6 +7,7 @@ return [
     'all_countries' => 'All countries',
     'list_title' => ':placement — drag to sort',
     'drag' => 'Drag to sort',
+    'drag_named' => 'Drag :name to sort',
     'search' => 'Search banners…',
     'columns' => [
         'banner' => 'Banner',

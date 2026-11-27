@@ -35,7 +35,7 @@
                                 <x-ui::badge :tone="$stateTone[$current->state] ?? 'neutral'">{{ __('commerce::gateways.states.'.$current->state) }}</x-ui::badge>
                             </div>
                         </div>
-                        <form id="gateway-form" method="POST" action="{{ vendor_route('settings.payment-gateways.update', ['code' => $current->code->value]) }}" data-ajax class="grid gap-4" x-data="{ own: {{ $row->use_own ? 'true' : 'false' }} }">
+                        <form id="gateway-form" method="POST" action="{{ vendor_route('settings.payment-gateways.update', ['code' => $current->code->value]) }}" data-ajax novalidate class="grid gap-4" x-data="{ own: {{ $row->use_own ? 'true' : 'false' }} }">
                             @csrf
                             @method('PUT')
                             <fieldset class="grid gap-2" @disabled(! $canManage)>

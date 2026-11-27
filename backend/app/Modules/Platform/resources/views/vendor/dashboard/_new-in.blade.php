@@ -16,7 +16,9 @@
                 <h2 id="new-in-title" class="text-[22px] font-bold leading-[1.4] text-ink sm:text-[26px]">{{ __('platform::dashboard_vendor.new_in.title') }}</h2>
                 <p class="text-sm leading-[1.5] text-ink-muted">{{ __('platform::dashboard_vendor.new_in.subtitle') }}</p>
             </div>
-            <a href="{{ vendor_route('catalog.products.new') }}" class="inline-flex items-center gap-1 text-base text-ink-secondary hover:text-ink">{{ __('platform::dashboard_vendor.widgets.see_all') }}<x-ui::icon name="chevron-right" :size="20" data-flip /></a>
+            @if (auth('vendor')->user()?->can('catalog.products.manage'))
+                <a href="{{ vendor_route('catalog.products.new') }}" class="inline-flex items-center gap-1 text-base text-ink-secondary hover:text-ink">{{ __('platform::dashboard_vendor.widgets.see_all') }}<x-ui::icon name="chevron-right" :size="20" data-flip /></a>
+            @endif
         </div>
 
         @if ($products === [])

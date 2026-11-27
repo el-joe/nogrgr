@@ -13,7 +13,7 @@
     $canManage = $tab === 'categories' ? (bool) $staff?->can('catalog.categories.manage') : (bool) $staff?->can('catalog.products.manage');
     $hasRows = $tab === 'categories' ? $categoryRows !== [] : $views !== [];
     $tabs = array_filter([
-        'products' => $staff?->can('catalog.products.view') ? ['label' => __('catalog::taxonomy.sort.tabs.products'), 'href' => vendor_route('catalog.products.sort')] : null,
+        'products' => $staff?->can('catalog.products.manage') ? ['label' => __('catalog::taxonomy.sort.tabs.products'), 'href' => vendor_route('catalog.products.sort')] : null,
         'categories' => $staff?->can('catalog.categories.view') ? ['label' => __('catalog::taxonomy.sort.tabs.categories'), 'href' => vendor_route('catalog.categories.sort')] : null,
     ]);
     $number = fn (int $value) => \Illuminate\Support\Number::format($value, locale: \App\Shared\Support\Locale::numberLocale());

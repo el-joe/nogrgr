@@ -69,7 +69,7 @@
                         </section>
                         @foreach ($pages as $page)
                             <section class="grid gap-2" id="doc-vars-{{ $page['template']->value }}">
-                                <h3 class="text-base font-semibold text-ink"><span dir="ltr" class="font-mono">{{ $page['template']->file() }}</span> · {{ $page['template']->label() }}</h3>
+                                <h3 class="text-base font-semibold text-ink"><span dir="ltr" class="break-all font-mono">{{ $page['template']->file() }}</span> · {{ $page['template']->label() }}</h3>
                                 {!! $table($page['rows']) !!}
                             </section>
                         @endforeach

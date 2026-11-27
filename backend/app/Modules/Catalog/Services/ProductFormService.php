@@ -247,6 +247,7 @@ class ProductFormService
             'data' => $paginator->getCollection()->map(static fn (Product $product): array => [
                 'id' => $product->id,
                 'name' => (string) $product->name,
+                'handle_label' => __('catalog::common.drag_handle', ['name' => (string) $product->name]),
                 'subtitle' => trim(($product->categories->first()?->name ? $product->categories->first()->name.' · ' : '').$product->costBasis()->format()),
                 'image' => $product->primaryImageUrl(),
                 'status' => $product->manage_stock && $product->stock <= 0 ? 'out_of_stock' : $product->status->value,

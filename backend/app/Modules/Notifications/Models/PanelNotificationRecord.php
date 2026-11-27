@@ -3,6 +3,7 @@
 namespace App\Modules\Notifications\Models;
 
 use App\Modules\Notifications\Enums\NotificationCategory;
+use App\Modules\Notifications\Support\InboxText;
 use App\Shared\Support\RelativeUrl;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Carbon;
@@ -54,15 +55,15 @@ class PanelNotificationRecord extends DatabaseNotification
 
     private function translated(string $field): string
     {
-        $key = $this->data[$field.'_key'] ?? null;
-        $params = $this->data[$field.'_params'] ?? [];
+        $data = is_array($this->data) ? $this->data : [];
+        $key = $data[$field.'_key'] ?? null;
 
-        if (! is_string($key) || $key === '') {
-            return (string) ($this->data[$field] ?? '');
+        if (is_string($key) && $key !== '') {
+            $text = InboxText::render($data, $field);
+
+            return $text !== '' ? $text : $key;
         }
 
-        $text = __($key, is_array($params) ? $params : []);
-
-        return is_string($text) ? $text : $key;
+        return InboxText::render($data, $field);
     }
 }

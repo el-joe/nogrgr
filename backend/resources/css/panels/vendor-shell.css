@@ -1273,18 +1273,19 @@ html[data-sidebar-mode='collapsed'] .vnd-sidebar .vnd-store-card {
     color: var(--vnd-text-faint);
 }
 
-:root[data-surface='vendor'] .ui-datatable:not(.vnd-card-grid) table.dataTable tbody td:not(.dt-empty) :is(.font-medium, .font-semibold, strong):not(.ui-badge, .ui-badge *, .ui-btn, .ui-btn *) {
+:root[data-surface='vendor'] .ui-datatable:not(.vnd-card-grid) table.dataTable tbody td:not(.dt-empty) :is(.font-medium, .font-semibold, strong):not(.ui-badge, .ui-badge *, .ui-btn, .ui-btn *, .ui-avatar, .ui-avatar *) {
     color: var(--vnd-text-faint);
     font-weight: 400;
 }
 
 /* Plain dark text in body cells (e.g. translation values) is TP/Table cell "Text" grey too. */
-:root[data-surface='vendor'] .ui-datatable:not(.vnd-card-grid) table.dataTable tbody td:not(.dt-empty) .text-ink:not(.ui-badge, .ui-badge *, .ui-btn, .ui-btn *) {
+:root[data-surface='vendor'] .ui-datatable:not(.vnd-card-grid) table.dataTable tbody td:not(.dt-empty) .text-ink:not(.ui-badge, .ui-badge *, .ui-btn, .ui-btn *, .ui-avatar, .ui-avatar *) {
     color: var(--vnd-text-faint);
 }
 
-/* The lead column (code / order / name) keeps the dark 14 Medium of TP/Table cell "Text + sub". */
-:root[data-surface='vendor'] .ui-datatable:not(.vnd-card-grid) table.dataTable tbody td:not(.dt-empty):is(:first-child, :has(> .ui-check):first-child + td) :is(.font-medium, .font-semibold, strong, a, .text-ink) {
+/* The lead column (code / order / name) keeps the dark 14 Medium of TP/Table cell "Text + sub".
+   Avatar initials keep their own on-inverse / on-primary ink (RQA-VEN-004). */
+:root[data-surface='vendor'] .ui-datatable:not(.vnd-card-grid) table.dataTable tbody td:not(.dt-empty):is(:first-child, :has(> .ui-check):first-child + td) :is(.font-medium, .font-semibold, strong, a, .text-ink):not(.ui-avatar, .ui-avatar *) {
     color: var(--vnd-title);
     font-weight: 500;
 }
@@ -1724,7 +1725,7 @@ html[data-sidebar-mode='collapsed'] .vnd-sidebar .vnd-store-card {
         font-size: 12px;
     }
 
-    :root[data-surface='vendor'] .ui-datatable[data-stack]:not(.vnd-card-grid) table.dataTable tbody td:not(.dt-empty) :is(.font-medium, .font-semibold, strong, .text-ink):not(.ui-badge, .ui-badge *, .ui-btn, .ui-btn *) {
+    :root[data-surface='vendor'] .ui-datatable[data-stack]:not(.vnd-card-grid) table.dataTable tbody td:not(.dt-empty) :is(.font-medium, .font-semibold, strong, .text-ink):not(.ui-badge, .ui-badge *, .ui-btn, .ui-btn *, .ui-avatar, .ui-avatar *) {
         color: var(--vnd-title);
     }
 

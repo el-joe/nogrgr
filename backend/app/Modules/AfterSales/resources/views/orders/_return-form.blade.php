@@ -6,7 +6,7 @@
     }
     $max = max(1, (int) collect($lines)->max('available'));
 @endphp
-<form id="order-return-form" method="POST" action="{{ $action }}" data-ajax class="grid gap-4" data-modal-title="{{ __('after-sales::returns.create_title') }}">
+<form id="order-return-form" method="POST" action="{{ $action }}" data-ajax novalidate class="grid gap-4" data-modal-title="{{ __('after-sales::returns.create_title') }}">
     @csrf
     @if ($lines === [])
         <x-ui::empty-state compact icon="box" :title="__('after-sales::returns.nothing_returnable')" />

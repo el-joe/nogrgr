@@ -14,7 +14,7 @@
  *   import { http } from '@/core/http';
  *   const { data } = await http.post('/admin/products', formData, { form });
  */
-import { notify } from './notify';
+import { notify, queueToast } from './notify';
 import { showErrors, clearErrors } from './form-errors';
 import { t } from './i18n';
 
@@ -30,6 +30,23 @@ export class HttpError extends Error {
 }
 
 const csrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+
+/**
+ * Language the page is shown in (<html lang>). Sent as `X-Locale` so the Store API
+ * (cart, checkout, returns, reviews, ... called from a storefront page) answers in the
+ * page language instead of the browser's Accept-Language. Web routes ignore it.
+ */
+export const pageLocale = () => {
+    const lang = (document.documentElement.lang || '').toLowerCase().slice(0, 2);
+
+    return ['ar', 'en'].includes(lang) ? lang : '';
+};
+
+const localeHeader = () => {
+    const locale = pageLocale();
+
+    return locale ? { 'X-Locale': locale } : {};
+};
 
 function buildBody(data, headers) {
     if (data === undefined || data === null) {
@@ -105,6 +122,7 @@ export async function request(method, url, options = {}) {
         Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-TOKEN': csrfToken(),
+        ...localeHeader(),
         ...(options.headers ?? {}),
     };
 
@@ -145,8 +163,15 @@ export async function request(method, url, options = {}) {
         throw new HttpError(response.status, payload, response);
     }
 
+    const navigates = Boolean(payload?.redirect) && options.followRedirect !== false && !isHashOnlyMove(payload.redirect);
+
     if (options.toast !== false && payload?.message && !options.silent) {
-        notify.success(payload.message);
+        // RQA-VEN-013: shown on the page the redirect opens (it would be lost here).
+        if (navigates) {
+            queueToast('success', payload.message);
+        } else {
+            notify.success(payload.message);
+        }
     }
 
     if (payload?.redirect && options.followRedirect !== false) {
@@ -155,6 +180,18 @@ export async function request(method, url, options = {}) {
 
     return payload;
 }
+
+/** A redirect that only changes the #hash does not load a new page. */
+const isHashOnlyMove = (target) => {
+    try {
+        const next = new URL(target, window.location.href);
+        const here = window.location;
+
+        return next.hash !== '' && next.origin === here.origin && next.pathname === here.pathname && next.search === here.search;
+    } catch {
+        return false;
+    }
+};
 
 const withQuery = (url, params) => {
     if (!params) {

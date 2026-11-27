@@ -169,7 +169,7 @@
                 <x-ui::card>
                     <h2 class="mb-3 font-semibold text-ink">{{ __('commerce::orders_admin.notes.title') }}</h2>
                     @if ($admin?->can('orders.manage'))
-                        <form method="POST" action="{{ route('admin.orders.notes.store', $fact->id) }}" data-ajax class="grid gap-2">
+                        <form method="POST" action="{{ route('admin.orders.notes.store', $fact->id) }}" data-ajax novalidate class="grid gap-2">
                             @csrf
                             <x-ui::textarea name="note" :label="__('commerce::orders_admin.notes.field')" :placeholder="__('commerce::orders_admin.notes.placeholder')" rows="3" maxlength="2000" />
                             <p class="text-xs text-ink-secondary">{{ __('commerce::orders_admin.notes.hint') }}</p>

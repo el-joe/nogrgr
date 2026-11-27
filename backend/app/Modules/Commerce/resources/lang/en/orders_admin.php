@@ -28,8 +28,15 @@ return [
     'revenue_split' => 'Revenue split',
     'split_vendor' => 'Store :amount (:percent%)',
     'split_platform' => 'Platform :amount (:percent%)',
+    'line_parts' => [
+        'fixed_shipping' => 'Fixed shipping',
+        'discount' => 'Flash discount',
+        'tax' => 'Tax',
+        'shipping_fee' => 'Shipping',
+    ],
     'totals' => [
-        'subtotal' => 'Subtotal (:count items)',
+        'subtotal' => 'Subtotal (:count item)|Subtotal (:count items)',
+        'subtotal_with_fixed' => 'Subtotal (:count item, incl. fixed shipping)|Subtotal (:count items, incl. fixed shipping)',
         'flash' => 'Flash sale discount',
         'shipping' => 'Shipping · :company · :weight g',
         'coupon_central' => 'Platform coupon :code (from platform share)',

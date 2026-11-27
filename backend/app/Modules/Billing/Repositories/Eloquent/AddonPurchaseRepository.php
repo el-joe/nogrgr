@@ -35,6 +35,22 @@ class AddonPurchaseRepository extends BaseRepository implements AddonPurchaseRep
             ->first();
     }
 
+    public function paidItemCodes(int $tenantId, AddonType $type): array
+    {
+        /** @var list<string> $codes */
+        $codes = AddonPurchase::query()
+            ->forTenant($tenantId)
+            ->where('type', $type->value)
+            ->where('status', AddonPurchaseStatus::Paid->value)
+            ->distinct()
+            ->pluck('item_code')
+            ->map(static fn ($code): string => strtolower((string) $code))
+            ->values()
+            ->all();
+
+        return $codes;
+    }
+
     public function forTenant(int $tenantId): Collection
     {
         return AddonPurchase::query()->forTenant($tenantId)->latest('id')->get();

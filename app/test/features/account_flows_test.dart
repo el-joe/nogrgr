@@ -130,6 +130,8 @@ void main() {
     await harness.pump(tester);
     await go(harness, tester, Routes.order(uuid));
 
+    // The full shipping address card pushes the actions below the fold.
+    await tester.dragUntilVisible(find.byKey(const ValueKey('order-invoice')), find.byType(ListView).last, const Offset(0, -200));
     await tester.ensureVisible(find.byKey(const ValueKey('order-invoice')));
     await Harness.settle(tester);
     await tester.tap(find.byKey(const ValueKey('order-invoice')));

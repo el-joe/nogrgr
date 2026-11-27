@@ -108,6 +108,11 @@ class PlatformRuleException extends DomainException
         return new self(__('platform::setup.errors.language_not_purchasable'));
     }
 
+    public static function languageAlreadyPurchased(): self
+    {
+        return new self(__('localization::vendor_languages.errors.already_purchased'));
+    }
+
     public static function launchNeedsCountries(): self
     {
         return new self(__('platform::setup.errors.launch_needs_countries'));

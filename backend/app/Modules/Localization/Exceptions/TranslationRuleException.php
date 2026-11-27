@@ -45,6 +45,11 @@ final class TranslationRuleException extends DomainException
         return new self(__('localization::vendor_languages.errors.not_purchasable'));
     }
 
+    public static function languageAlreadyPurchased(): self
+    {
+        return new self(__('localization::vendor_languages.errors.already_purchased'));
+    }
+
     public static function defaultMustBeEnabled(): self
     {
         return new self(__('localization::vendor_languages.errors.default_disabled'));

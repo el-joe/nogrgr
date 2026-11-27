@@ -61,6 +61,8 @@ return [
         'impersonate' => 'الدخول كتاجر',
     ],
     'modules' => [
+        'shipping' => 'الشحن',
+        'storefront' => 'واجهة المتجر والقوالب',
         'affiliates' => 'التسويق بالعمولة',
         'overview' => 'نظرة عامة',
         'catalog' => 'الكتالوج',
@@ -80,6 +82,11 @@ return [
         'settings' => 'الإعدادات',
     ],
     'resources' => [
+        'reports' => 'التقارير',
+        'vendors.shoppers' => 'المتسوقون في جميع المتاجر',
+        'system.docs' => 'وثائق المطورين',
+        'storefront.theme-reviews' => 'مراجعة القوالب المخصصة',
+        'store.custom-themes' => 'القوالب المخصصة (Twig)',
         'affiliates' => 'حسابات المسوقين',
         'affiliates.conversions' => 'تحويلات المسوقين',
         'affiliates.payouts' => 'مدفوعات المسوقين',

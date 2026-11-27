@@ -1,5 +1,5 @@
 {{-- ADM-021d reassign shipping company (Figma 70:41386): company picker + live new estimate. --}}
-<form id="order-company-form" method="POST" action="{{ $action }}" data-ajax class="grid gap-4"
+<form id="order-company-form" method="POST" action="{{ $action }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('commerce::fulfilment.reassign.title') }}">
     @csrf
     @method('PUT')

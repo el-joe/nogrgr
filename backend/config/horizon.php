@@ -200,7 +200,9 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection' => 'redis',
-            'queue' => ['default'],
+            /* Every queue the app dispatches to, highest priority first (RQA-VEN-002,
+               guarded by tests/Unit/Architecture/HorizonQueuesTest.php). */
+            'queue' => ['provisioning', 'default', 'notifications', 'mail'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,

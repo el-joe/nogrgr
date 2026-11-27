@@ -50,7 +50,7 @@
     @else
         <div @class(['flex flex-col gap-6 sm:flex-row sm:items-center' => $isDonut])>
             <div class="relative" @style(['height: '.(int) $height.'px', 'width: '.(int) $height.'px' => $isDonut, 'flex-shrink: 0' => $isDonut]) dir="ltr">
-                <canvas data-chart="{{ $id }}" role="img" aria-label="{{ $title }}"></canvas>
+                <canvas data-chart="{{ $id }}" class="max-w-full" role="img" aria-label="{{ $title }}"></canvas>
                 @if ($isDonut && $total !== null)
                     <p class="pointer-events-none absolute inset-0 grid place-items-center text-xl font-semibold text-ink"><bdi>{{ $total }}</bdi></p>
                 @endif

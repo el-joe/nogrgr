@@ -33,6 +33,26 @@
     [dir='rtl'] .ui-icon[data-flip] {
         transform: scaleX(-1);
     }
+
+    /*
+     * RQA-ADM-001: grid tracks inside the panel content never grow past their box.
+     * An implicit (`grid` with no grid-cols-*) track is `auto` and grid items keep
+     * min-width:auto, so one wide child (nowrap text, a tab strip, a 7-column calendar,
+     * a canvas) widened the page past 343px at 375 and the overflow was clipped
+     * (cut on the left in RTL, on the right in LTR). Zero specificity and the base
+     * layer: any grid-cols-* / min-w-* utility or component rule still wins.
+     */
+    :where(#main .grid:not([class*='grid-flow-col'], [class*='auto-cols'])) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    :where(#main .grid > *) {
+        min-width: 0;
+    }
+
+    :where(#main canvas) {
+        max-width: 100%;
+    }
 }
 
 @layer components {

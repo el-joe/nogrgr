@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Api\Http\Middleware\EnsureSignedStoreLink;
 use App\Modules\Support\Http\Controllers\StoreApi\CustomerTicketController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,5 +17,5 @@ Route::prefix('support/tickets')->name('support.tickets.')->controller(CustomerT
     Route::get('{ticket}', 'show')->whereNumber('ticket')->name('show');
     Route::post('{ticket}/messages', 'reply')->whereNumber('ticket')->middleware('throttle:30,1')->name('reply');
     Route::post('{ticket}/close', 'close')->whereNumber('ticket')->name('close');
-    Route::get('{ticket}/attachments/{attachment}', 'attachment')->whereNumber(['ticket', 'attachment'])->middleware('signed:relative')->name('attachments');
+    Route::get('{ticket}/attachments/{attachment}', 'attachment')->whereNumber(['ticket', 'attachment'])->middleware(['signed:relative', EnsureSignedStoreLink::class])->name('attachments');
 });

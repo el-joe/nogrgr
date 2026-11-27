@@ -22,6 +22,7 @@ import { bindUnsavedForms } from './unsaved-form.js';
 import { collectFilters } from '../ui/filters';
 import { fieldName } from '../../core/form-errors';
 import { http } from '../../core/http';
+import { numberLocale } from '../../core/i18n';
 
 const keyOf = (ids) => [...ids].map(Number).sort((a, b) => a - b).join('-');
 
@@ -398,7 +399,7 @@ function initBuilder(form) {
         stockHost?.querySelectorAll('tr').forEach((row) => {
             const input = row.querySelector('input');
             const sum = (Number.parseInt(input.value, 10) || 0) + (Number(input.dataset.other) || 0);
-            row.querySelector('[data-total]').textContent = sum.toLocaleString();
+            row.querySelector('[data-total]').textContent = sum.toLocaleString(numberLocale());
         });
     };
 
@@ -611,7 +612,8 @@ function initSortPage(root) {
             item.dataset.id = String(row.id);
             item.querySelector('[data-field="name"]').textContent = row.name;
             item.querySelector('[data-field="subtitle"]').textContent = row.subtitle;
-            item.querySelector('[data-drag-handle]').setAttribute('aria-label', `${item.querySelector('[data-drag-handle]').getAttribute('aria-label')} ${row.name}`);
+            /* RQA-ADM-009: the server sends the translated "Drag <name> (arrow keys move it)". */
+            item.querySelector('[data-drag-handle]').setAttribute('aria-label', row.handle_label ?? row.name);
             const status = item.querySelector('[data-field="status"]');
             status.textContent = row.status_label;
             status.dataset.status = row.status;

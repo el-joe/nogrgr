@@ -4,7 +4,7 @@
 --}}
 <x-sf::account.layout :title="__('identity::account.notifications.title')" active="notifications" page="notifications">
     <p class="text-sm text-sf-muted">{{ __('identity::account.notifications.intro') }}</p>
-    <form method="POST" action="{{ route('storefront.account.notifications.update') }}" class="grid gap-5" data-ajax data-notification-preferences-form>
+    <form method="POST" action="{{ route('storefront.account.notifications.update') }}" class="grid gap-5" data-ajax novalidate data-notification-preferences-form>
         @csrf
         @method('PUT')
         <div class="sf-card overflow-x-auto px-5 py-3">

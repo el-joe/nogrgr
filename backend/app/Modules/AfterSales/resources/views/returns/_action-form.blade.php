@@ -9,7 +9,7 @@
     $noteRequired = in_array($action, [ReturnAction::Reject, ReturnAction::RequestInfo], true);
     $noteLabel = $action === ReturnAction::RequestInfo ? __('after-sales::returns.fields.message') : __('after-sales::returns.fields.note');
 @endphp
-<form id="return-action-form" method="POST" action="{{ $formAction }}" data-ajax enctype="multipart/form-data" class="grid gap-4"
+<form id="return-action-form" method="POST" action="{{ $formAction }}" data-ajax novalidate enctype="multipart/form-data" class="grid gap-4"
     data-modal-title="{{ $action->label() }} · {{ $return->reference }}"
     x-data="{ result: 'accepted', refundNow: {{ $canRefundNow ? 'true' : 'false' }} }">
     @csrf

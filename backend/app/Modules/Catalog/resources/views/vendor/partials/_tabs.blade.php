@@ -7,7 +7,7 @@
     $tabs = array_filter([
         'products' => $staff?->can('catalog.products.view') ? [__('catalog::vendor.tabs.products'), vendor_route('catalog.products.index')] : null,
         'own' => $staff?->can('catalog.own-products.view') ? [__('catalog::vendor.tabs.own'), vendor_route('catalog.own-products.index')] : null,
-        'new' => $staff?->can('catalog.products.view') ? [__('catalog::vendor.tabs.new'), vendor_route('catalog.products.new')] : null,
+        'new' => $staff?->can('catalog.products.manage') ? [__('catalog::vendor.tabs.new'), vendor_route('catalog.products.new')] : null,
         'categories' => $staff?->can('catalog.categories.view') ? [__('catalog::taxonomy.tab'), vendor_route('catalog.categories.index')] : null,
     ]);
 @endphp

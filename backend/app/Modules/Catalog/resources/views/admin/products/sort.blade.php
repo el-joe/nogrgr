@@ -41,7 +41,7 @@
                 <p data-sort-dirty hidden class="mt-4 text-[13px] text-warning" role="status">{{ __('catalog::products.sort.unsaved') }}</p>
                 <template data-sort-row>
                     <li data-sort-item class="flex items-center gap-3 rounded-control border border-line bg-surface px-3 py-2.5 transition-colors focus-within:border-primary hover:bg-subtle">
-                        <button type="button" data-drag-handle class="grid size-7 shrink-0 cursor-grab place-items-center rounded-chip text-ink-muted hover:bg-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-primary" aria-label="{{ __('catalog::common.drag_handle', ['name' => '']) }}" title="{{ __('catalog::common.drag_hint') }}">
+                        <button type="button" data-drag-handle class="grid size-7 shrink-0 cursor-grab place-items-center rounded-chip text-ink-muted hover:bg-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-primary" title="{{ __('catalog::common.drag_hint') }}">
                             <x-ui::icon name="menu" :size="16" />
                         </button>
                         <span data-position class="w-6 shrink-0 text-center text-xs text-ink-secondary" dir="ltr"></span>

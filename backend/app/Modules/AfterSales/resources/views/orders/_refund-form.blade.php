@@ -1,5 +1,5 @@
 {{-- ADM-021b / VEN-021b refund modal (Figma 70:41386 / 84:107236): amount ≤ refundable, reason, restock. --}}
-<form id="order-refund-form" method="POST" action="{{ $action }}" data-ajax class="grid gap-4"
+<form id="order-refund-form" method="POST" action="{{ $action }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('after-sales::refunds.issue_title') }}" data-modal-subtitle="{{ __('after-sales::refunds.refundable', ['amount' => $remaining->format()]) }}">
     @csrf
     @if (! $remaining->isPositive())

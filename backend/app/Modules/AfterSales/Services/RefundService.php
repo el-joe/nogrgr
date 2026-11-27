@@ -20,6 +20,7 @@ use App\Modules\AfterSales\Repositories\Contracts\RefundRepositoryContract;
 use App\Modules\AfterSales\Repositories\Contracts\ReturnRequestRepositoryContract;
 use App\Modules\Commerce\Enums\OrderStatus;
 use App\Modules\Commerce\Enums\PaymentSource;
+use App\Modules\Commerce\Enums\PaymentStatus;
 use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Pricing\RefundBreakdown;
 use App\Modules\Commerce\Pricing\RefundCalculator;
@@ -384,24 +385,27 @@ class RefundService extends BaseService
     }
 
     /**
-     * Every unit came back → returned; everything refunded → refunded.
+     * Every unit came back → returned; everything refunded → refunded. RQA-VEN-009: once
+     * the completed refunds cover the whole amount charged, the payment reads Refunded
+     * (with refunded_at) whichever order status applies; a partial refund keeps Paid.
      */
     private function settleOrderStatus(Order $order, Refund $refund, Actor $actor): void
     {
+        $refunded = $this->refunds->sumForOrder($refund->tenant_id, $order->uuid, [RefundStatus::Completed->value]);
+        $fullyRefunded = $refunded > 0 && $refunded >= $order->grand_total;
+
         $returnedUnits = $this->returns->forOrder($refund->tenant_id, $order->uuid)
             ->filter(static fn (ReturnRequest $return): bool => in_array($return->status, [ReturnStatus::Refunded, ReturnStatus::Closed], true) && $return->refunded_at !== null)
             ->sum('quantity');
 
         if ($returnedUnits > 0 && $returnedUnits >= $order->items->sum('quantity') && $order->status->canTransitionTo(OrderStatus::Returned)) {
             $this->lifecycle->transition($order, OrderStatus::Returned, $actor->type, $actor->id, $refund->reference);
-
-            return;
+        } elseif ($fullyRefunded && $order->status->canTransitionTo(OrderStatus::Refunded)) {
+            $this->lifecycle->transition($order, OrderStatus::Refunded, $actor->type, $actor->id, $refund->reference);
         }
 
-        $refunded = $this->refunds->sumForOrder($refund->tenant_id, $order->uuid, [RefundStatus::Completed->value]);
-
-        if ($refunded >= $order->grand_total && $order->status->canTransitionTo(OrderStatus::Refunded)) {
-            $this->lifecycle->transition($order, OrderStatus::Refunded, $actor->type, $actor->id, $refund->reference);
+        if ($fullyRefunded && ($order->payment_status !== PaymentStatus::Refunded || $order->refunded_at === null)) {
+            $order->forceFill(['payment_status' => PaymentStatus::Refunded, 'refunded_at' => $order->refunded_at ?? now()])->save();
         }
     }
 

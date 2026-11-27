@@ -61,6 +61,8 @@ return [
         'impersonate' => 'Impersonate',
     ],
     'modules' => [
+        'shipping' => 'Shipping',
+        'storefront' => 'Storefront & themes',
         'affiliates' => 'Affiliates',
         'overview' => 'Overview',
         'catalog' => 'Catalog',
@@ -80,6 +82,11 @@ return [
         'settings' => 'Settings',
     ],
     'resources' => [
+        'reports' => 'Reports',
+        'vendors.shoppers' => 'Shoppers across stores',
+        'system.docs' => 'Developer docs',
+        'storefront.theme-reviews' => 'Custom theme reviews',
+        'store.custom-themes' => 'Custom (Twig) themes',
         'affiliates' => 'Affiliate accounts',
         'affiliates.conversions' => 'Affiliate conversions',
         'affiliates.payouts' => 'Affiliate payouts',

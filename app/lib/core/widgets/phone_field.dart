@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_tokens.dart';
 import 'app_widgets.dart';
 
 typedef PhoneCountry = ({String iso2, String name, String flag, String phoneCode});
@@ -87,7 +88,13 @@ class IntlPhoneField extends StatelessWidget {
                   padding: const EdgeInsetsDirectional.only(start: 14, end: 8),
                   child: Directionality(
                     textDirection: TextDirection.ltr,
-                    child: Text('${country.flag} +${country.phoneCode} ▾', style: Theme.of(context).textTheme.bodyLarge),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('${country.flag} +${country.phoneCode}', style: Theme.of(context).textTheme.bodyLarge),
+                        if (countries.length > 1) Icon(Icons.keyboard_arrow_down_rounded, size: 20, color: context.colors.muted),
+                      ],
+                    ),
                   ),
                 ),
               ),

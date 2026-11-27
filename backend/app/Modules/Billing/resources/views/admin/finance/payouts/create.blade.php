@@ -18,7 +18,7 @@
 
         <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
             <x-ui::card :title="__('billing::finance.payouts.form_title')">
-                <form id="payout-form" method="POST" action="{{ route('admin.finance.payouts.store') }}" data-ajax class="grid max-w-xl gap-4">
+                <form id="payout-form" method="POST" action="{{ route('admin.finance.payouts.store') }}" data-ajax novalidate class="grid max-w-xl gap-4">
                     @csrf
                     <x-ui::select name="tenant_id" :label="__('billing::finance.payouts.fields.store')" :options="$tenant ? [$tenant->id => $tenant->name] : []" :selected="$tenant?->id" :placeholder="__('billing::finance.payouts.choose_store')" :ajax-url="route('admin.finance.payouts.stores')" required data-reload-param="tenant_id" />
                     @if ($tenant === null)

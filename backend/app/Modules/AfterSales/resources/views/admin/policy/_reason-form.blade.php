@@ -1,5 +1,5 @@
 {{-- ADM-090 reason modal: English / Arabic label, video required, seller fault, active, order. --}}
-<form id="return-reason-form" method="POST" action="{{ $action }}" data-ajax class="grid gap-4" data-modal-title="{{ $title }}">
+<form id="return-reason-form" method="POST" action="{{ $action }}" data-ajax novalidate class="grid gap-4" data-modal-title="{{ $title }}">
     @csrf
     @if ($reason->exists) @method('PUT') @endif
     <div class="grid gap-4 sm:grid-cols-2">

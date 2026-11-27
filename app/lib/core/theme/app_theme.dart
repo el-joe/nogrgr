@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'app_tokens.dart';
 
@@ -6,6 +7,22 @@ import 'app_tokens.dart';
 /// display 28/34 bold, title 22/28 semibold, top bar 17/22 semibold, body 15/20,
 /// label 13/18 medium, caption 11/13 medium.
 class AppTheme {
+  /// Status / navigation bar style for a surface: dark icons on light surfaces, light
+  /// icons on dark surfaces (dark mode, the Ecommet brand header). Transparent status bar.
+  static SystemUiOverlayStyle overlayFor(Color background, {Color? navigationBar}) {
+    final light = ThemeData.estimateBrightnessForColor(background) == Brightness.light;
+
+    return SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: light ? Brightness.dark : Brightness.light,
+      statusBarBrightness: light ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: navigationBar,
+      systemNavigationBarIconBrightness: navigationBar == null
+          ? null
+          : (ThemeData.estimateBrightnessForColor(navigationBar) == Brightness.light ? Brightness.dark : Brightness.light),
+    );
+  }
+
   static ThemeData build({
     required ThemeFamily family,
     required Brightness brightness,
@@ -68,6 +85,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         titleTextStyle: textTheme.titleLarge,
+        systemOverlayStyle: overlayFor(colors.bg, navigationBar: colors.tabbar),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,

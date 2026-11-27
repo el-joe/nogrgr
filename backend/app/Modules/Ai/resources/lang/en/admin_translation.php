@@ -61,7 +61,7 @@ return [
         'locked' => 'Locked keys',
         'skipped' => 'skipped (:count)',
         'submit' => '{0} Nothing to translate|{1} Translate 1 key|[2,*] Translate :count keys',
-        'none' => 'Every key already has a :language translation.',
+        'none' => 'Every key already has a translation in :language.',
         'hint' => 'Only empty keys are translated; existing values and locked keys are never changed. Placeholders such as :name or {{ var }} are kept.',
     ],
     'errors' => [

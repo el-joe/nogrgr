@@ -212,4 +212,23 @@ class Order extends Model
     {
         return $this->paid_at !== null && in_array($this->payment_status, [PaymentStatus::Paid, PaymentStatus::Refunded], true);
     }
+
+    /**
+     * Estimated delivery window as the order timeline prints it: "2 Dec", "29 Nov–2 Dec"
+     * (each date keeps its month, RQA-VEN-014); null without an estimate.
+     */
+    public function deliveryWindowLabel(): ?string
+    {
+        if ($this->delivery_min_date === null) {
+            return null;
+        }
+
+        $label = $this->delivery_min_date->translatedFormat('j M');
+
+        if ($this->delivery_max_date !== null && ! $this->delivery_max_date->equalTo($this->delivery_min_date)) {
+            $label .= '–'.$this->delivery_max_date->translatedFormat('j M');
+        }
+
+        return $label;
+    }
 }

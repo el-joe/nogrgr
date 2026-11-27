@@ -90,6 +90,16 @@ class OwnProductRequest extends FormRequest
     /**
      * @return array<string, string>
      */
+    public function messages(): array
+    {
+        return [
+            'country_ids.required_unless' => (string) __('catalog::vendor.own.countries_required'),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
     public function attributes(): array
     {
         $fallback = (string) config('app.fallback_locale', 'en');

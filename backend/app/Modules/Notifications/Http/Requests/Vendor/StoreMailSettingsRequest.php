@@ -10,6 +10,9 @@ use Illuminate\Validation\Rule;
 /**
  * Store SMTP (VEN-081): host, port, encryption, username, password (empty = keep the
  * saved one), from address / name. Used by save and "Send test email" (+ test_email).
+ * RQA-VEN-012: a save with host, username, password and from address all empty means
+ * "use Nogrgr mail" (the controller clears the store server); the server fields are only
+ * required when the store uses its own SMTP.
  */
 class StoreMailSettingsRequest extends FormRequest
 {
@@ -32,10 +35,37 @@ class StoreMailSettingsRequest extends FormRequest
     }
 
     /**
+     * Own SMTP server = any server field typed (or a test send). All empty = platform mail.
+     */
+    public function usesOwnServer(): bool
+    {
+        if ($this->routeIs('*.settings.mail.test')) {
+            return true;
+        }
+
+        foreach (['host', 'username', 'password', 'from_address'] as $key) {
+            if ($this->filled($key)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function rules(): array
     {
+        if (! $this->usesOwnServer()) {
+            return [
+                'host' => ['nullable'],
+                'port' => ['nullable', 'integer', 'between:1,65535'],
+                'encryption' => ['nullable', Rule::enum(MailEncryption::class)],
+                'from_name' => ['nullable', 'string', 'max:120'],
+            ];
+        }
+
         $rules = [
             'host' => ['required', 'string', 'max:191', 'regex:/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i'],
             'port' => ['required', 'integer', 'between:1,65535'],

@@ -10,6 +10,38 @@ enum ThemeFamily {
       ThemeFamily.values.firstWhere((family) => family.name == value, orElse: () => ThemeFamily.elora);
 }
 
+/// Theme family + brand colour the app paints with (decision #107 c). Once bootstrap
+/// answers, the store's theme family wins and sets ink + the default primary; the
+/// store's `branding.colors.primary` overrides that primary. The build's
+/// THEME_FAMILY / PRIMARY_COLOR only paint until bootstrap answers (splash, offline
+/// first start), so a store that switches theme never keeps the old family's colour.
+@immutable
+class AppBrand {
+  const AppBrand({required this.family, this.primary});
+
+  factory AppBrand.resolve({
+    required String buildFamily,
+    required String? buildPrimary,
+    String? bootstrapFamily,
+    String? bootstrapPrimary,
+    bool bootstrapped = false,
+  }) {
+    if (!bootstrapped) {
+      return AppBrand(family: ThemeFamily.parse(buildFamily), primary: AppColors.parseHex(buildPrimary));
+    }
+
+    // null primary = the family default (AppColors.familyPrimary).
+    return AppBrand(family: ThemeFamily.parse(bootstrapFamily ?? buildFamily), primary: AppColors.parseHex(bootstrapPrimary));
+  }
+
+  final ThemeFamily family;
+
+  /// Explicit brand colour, null = [AppColors.familyPrimary] of [family].
+  final Color? primary;
+
+  Color get effectivePrimary => primary ?? AppColors.familyPrimary(family);
+}
+
 /// Colour tokens of the Figma "Mobile App" + "Mobile App · Family" collections
 /// (`--app-*`, page "Mobile App" 139:10147). The family sets ink + default primary, the
 /// store's brand colour (bootstrap) overrides primary. Dark mode keeps the same roles.

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../core/models/json.dart';
 import '../../../core/models/product_card.dart';
 
@@ -390,6 +392,52 @@ class ReviewSummary {
   final Map<int, int> distribution;
 }
 
+enum MediaType { image, video }
+
+/// One gallery item of `GET products/{id}` `media [{type, url, poster}]` (decision #114 f):
+/// images and videos in the gallery order; `poster` only for videos and may be null.
+@immutable
+class ProductMedia {
+  const ProductMedia({required this.type, required this.url, this.poster});
+
+  const ProductMedia.image(this.url)
+      : type = MediaType.image,
+        poster = null;
+
+  static ProductMedia? maybe(Object? source) {
+    if (source is! Map) {
+      return null;
+    }
+
+    final url = source['url'];
+
+    if (url is! String || url.trim().isEmpty) {
+      return null;
+    }
+
+    final video = source['type'] == 'video';
+    final poster = source['poster'];
+
+    return ProductMedia(
+      type: video ? MediaType.video : MediaType.image,
+      url: url,
+      poster: video && poster is String && poster.trim().isNotEmpty ? poster : null,
+    );
+  }
+
+  final MediaType type;
+  final String url;
+  final String? poster;
+
+  bool get isVideo => type == MediaType.video;
+
+  @override
+  bool operator ==(Object other) => other is ProductMedia && other.type == type && other.url == url && other.poster == poster;
+
+  @override
+  int get hashCode => Object.hash(type, url, poster);
+}
+
 /// `GET products/{id}`.
 class ProductDetail {
   const ProductDetail({
@@ -398,6 +446,7 @@ class ProductDetail {
     required this.images,
     required this.price,
     required this.inStock,
+    this.media = const [],
     this.summary,
     this.description,
     this.comparePrice,
@@ -426,6 +475,7 @@ class ProductDetail {
       summary: jsonString(json['summary']),
       description: jsonString(json['description']),
       images: [for (final image in (json['images'] is List ? json['images'] as List : const [])) if (image is String) image],
+      media: [for (final item in (json['media'] is List ? json['media'] as List : const [])) ?ProductMedia.maybe(item)],
       price: Money.fromJson(json['price']),
       comparePrice: Money.maybe(json['compare_price']),
       discountPercent: jsonIntOrNull(json['discount_percent']),
@@ -478,6 +528,9 @@ class ProductDetail {
   final String? summary;
   final String? description;
   final List<String> images;
+
+  /// Raw `media` of the API (empty on older servers); read [gallery].
+  final List<ProductMedia> media;
   final Money price;
   final Money? comparePrice;
   final int? discountPercent;
@@ -493,6 +546,9 @@ class ProductDetail {
   final DeliveryEstimate? delivery;
   final ReviewSummary reviews;
   final List<ProductCard> related;
+
+  /// The product page gallery: `media` (images + videos in order), else the `images`.
+  List<ProductMedia> get gallery => media.isNotEmpty ? media : [for (final image in images) ProductMedia.image(image)];
 
   Variant? variantById(int? id) {
     for (final variant in variants) {

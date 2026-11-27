@@ -2,7 +2,7 @@
 @php
     $owed = \App\Shared\Money\Money::ofMinor($summary['owed']);
 @endphp
-<form id="settle-form" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" data-ajax class="grid gap-4"
+<form id="settle-form" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('billing::finance.settle.title') }}" data-modal-subtitle="{{ $tenant->name }}">
     @csrf
     <p class="text-sm text-ink-secondary">{{ __('billing::finance.settle.help', ['owed' => $owed->format(), 'count' => $summary['open_orders']->count()]) }}</p>

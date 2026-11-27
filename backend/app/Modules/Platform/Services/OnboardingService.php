@@ -80,7 +80,7 @@ class OnboardingService extends BaseService
         $stops = [];
 
         foreach (self::TOUR as $key => $route) {
-            $stops[] = ['key' => $key, 'url' => self::vendorUrl($route)];
+            $stops[] = ['key' => $key, 'url' => self::accessibleVendorUrl($route)];
         }
 
         return $stops;
@@ -116,7 +116,8 @@ class OnboardingService extends BaseService
             $nextAssigned = $nextAssigned || $state === SetupStepState::Next;
             $completed += $state->isComplete() ? 1 : 0;
             $route = $step->route();
-            $url = $route !== null ? self::vendorUrl($route) : null;
+            $pageUrl = $route !== null ? self::vendorUrl($route) : null;
+            $url = $pageUrl !== null && self::canOpen($route) ? $pageUrl : null;
 
             $steps[] = new SetupStepData(
                 step: $step,
@@ -124,7 +125,7 @@ class OnboardingService extends BaseService
                 title: (string) __('platform::onboarding.steps.'.$step->value.'.title'),
                 detail: $this->detail($step, $tenant, $state),
                 url: $url,
-                availableAfter: $route !== null && $url === null ? (string) __('platform::onboarding.steps.'.$step->value.'.available_after') : null,
+                availableAfter: $route !== null && $pageUrl === null ? (string) __('platform::onboarding.steps.'.$step->value.'.available_after') : null,
             );
         }
 
@@ -158,5 +159,45 @@ class OnboardingService extends BaseService
         $prefix = VendorPanel::mode() === VendorPanelMode::CentralHost ? VendorPanel::CENTRAL_NAME_PREFIX : VendorPanel::TENANT_NAME_PREFIX;
 
         return Route::has($prefix.$route) ? vendor_route($route) : null;
+    }
+
+    /**
+     * Like vendorUrl(), but null when the signed-in member lacks the route's
+     * `permission:` middleware (RQA-VEN-007: never show a link that answers 403).
+     */
+    public static function accessibleVendorUrl(string $route): ?string
+    {
+        $url = self::vendorUrl($route);
+
+        return $url !== null && self::canOpen($route) ? $url : null;
+    }
+
+    /**
+     * The vendor member passes every `permission:a|b,vendor` middleware of the route.
+     */
+    public static function canOpen(string $route): bool
+    {
+        $prefix = VendorPanel::mode() === VendorPanelMode::CentralHost ? VendorPanel::CENTRAL_NAME_PREFIX : VendorPanel::TENANT_NAME_PREFIX;
+        $definition = Route::getRoutes()->getByName($prefix.$route);
+
+        if ($definition === null) {
+            return false;
+        }
+
+        $user = auth('vendor')->user();
+
+        foreach ($definition->gatherMiddleware() as $middleware) {
+            if (! is_string($middleware) || ! str_starts_with($middleware, 'permission:')) {
+                continue;
+            }
+
+            $permissions = explode('|', explode(',', substr($middleware, strlen('permission:')))[0]);
+
+            if ($user === null || ! $user->canAny($permissions)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

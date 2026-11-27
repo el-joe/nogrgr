@@ -10,7 +10,7 @@ class SelectOption<T> {
   final String? leading;
 }
 
-/// "App/Input" used as a picker: label, 50-high box with "value ▾", opens a bottom sheet
+/// "App/Input" used as a picker: label, 50-high box with the value and a trailing chevron, opens a bottom sheet
 /// list (APP-003 / settings).
 class AppSelectField<T> extends StatelessWidget {
   const AppSelectField({
@@ -61,17 +61,24 @@ class AppSelectField<T> extends StatelessWidget {
               onTap: options.isEmpty ? null : () => _open(context),
               child: Container(
                 height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                alignment: AlignmentDirectional.centerStart,
-                child: Text.rich(
-                  TextSpan(children: [
-                    if (selected?.leading != null && selected!.leading!.isNotEmpty) TextSpan(text: '${selected.leading}  '),
-                    TextSpan(text: selected?.label ?? ''),
-                    const TextSpan(text: '  ▾', style: TextStyle(fontSize: 10)),
-                  ]),
-                  style: text.bodyLarge,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                padding: const EdgeInsetsDirectional.only(start: 14, end: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        [
+                          if (selected?.leading != null && selected!.leading!.isNotEmpty) selected.leading!,
+                          selected?.label ?? '',
+                        ].join('  '),
+                        key: const ValueKey('select-field-value'),
+                        style: text.bodyLarge,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(Icons.keyboard_arrow_down_rounded, key: const ValueKey('select-field-chevron'), size: 22, color: colors.muted),
+                  ],
                 ),
               ),
             ),

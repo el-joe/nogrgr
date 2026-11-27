@@ -118,6 +118,8 @@ it('uploads, reports, previews, reviews, publishes, rolls back and switches off 
     $this->get($this->centralUrl('/admin/storefront/theme-reviews'))->assertOk()->assertSee(__('content::custom_themes.review.subtitle'));
     $this->getJson($this->centralUrl('/admin/storefront/theme-reviews/data?draw=1&start=0&length=25&status=pending_review'))->assertOk()->assertJsonPath('recordsTotal', 1)->assertSee('Twig Shop');
     $this->get($this->centralUrl('/admin/storefront/theme-reviews/'.$v1->id))->assertOk()->assertSee(__('content::custom_themes.review.first_version'))->assertSee('First release')->assertSee('templates/home.twig');
+    // RQA-ADM-012: long file paths wrap inside the card at phone widths.
+    $this->get($this->centralUrl('/admin/storefront/theme-reviews/'.$v1->id))->assertSee('class="min-w-0 break-all text-ink hover:text-primary hover:underline" data-review-path', false);
     $this->get($this->centralUrl('/admin/storefront/theme-reviews/'.$v1->id.'/files?path=templates/home.twig'))->assertOk()->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
     $this->get($this->centralUrl('/admin/storefront/theme-reviews/'.$v1->id.'/files?path=../../.env'))->assertNotFound();
     $this->get($this->centralUrl('/admin/storefront/theme-reviews/'.$v1->id.'/preview'))->assertRedirect();

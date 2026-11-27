@@ -35,3 +35,17 @@ it('saves the order of the loaded window and resets to newest', function (): voi
     $this->postJson($this->centralUrl('/admin/catalog/products/sort/reset'))->assertOk();
     expect($this->getJson($this->centralUrl('/admin/catalog/products/sort/data'))->json('data.*.id'))->toBe([$c->id, $b->id, $a->id]);
 });
+
+it('labels every drag handle with its product name (RQA-ADM-009)', function (): void {
+    $this->actingAs(catalogAdmin(['catalog.products.manage']), 'admin');
+    Product::factory()->create(['name' => ['en' => 'Linen Shirt', 'ar' => 'قميص كتان']]);
+
+    $this->get($this->centralUrl('/admin/catalog/products/sort'))->assertOk()
+        ->assertDontSee(__('catalog::common.drag_handle', ['name' => '']));
+
+    $row = $this->getJson($this->centralUrl('/admin/catalog/products/sort/data'))->assertOk()->json('data.0');
+
+    expect($row['handle_label'])->toBe(__('catalog::common.drag_handle', ['name' => 'Linen Shirt']))
+        ->and($row['handle_label'])->toContain('Linen Shirt')
+        ->not->toContain('  ');
+});

@@ -124,3 +124,16 @@ it('formats money for both interface locales', function (): void {
         ->and(Money::ofMinor(123456)->format('ar'))->not->toBe('')
         ->and(Money::ofMinor(-500)->format('en'))->toContain('5.00');
 });
+
+it('formats Arabic prices with Latin digits and keeps English unchanged (RQA-SF-003)', function (): void {
+    $arabic = Money::ofMinor(13708, 'USD')->format('ar');
+
+    expect($arabic)->toContain('137')
+        ->and(preg_match('/[\x{0660}-\x{0669}\x{06F0}-\x{06F9}]/u', $arabic))->toBe(0)
+        ->and(Money::ofMinor(13708, 'USD')->format('en'))->toBe('$137.08')
+        ->and(Money::ofMinor(13708, 'USD')->format('ar@numbers=arab'))->toMatch('/[\x{0660}-\x{0669}]/u');
+
+    app()->setLocale('ar');
+
+    expect(preg_match('/[\x{0660}-\x{0669}]/u', Money::ofMinor(13708)->format()))->toBe(0);
+});

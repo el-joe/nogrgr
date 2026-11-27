@@ -134,8 +134,48 @@ export function toast(tone, title, message = '', options = {}) {
     return element;
 }
 
+const PENDING_KEY = 'ui:pending-toasts';
+
+/**
+ * Toast to show on the next page (RQA-VEN-013): a JSON save that answers `redirect`
+ * navigates right away, so the message is kept in sessionStorage and shown by
+ * bindToasts() once the target page boots. Falls back to an immediate toast.
+ */
+export function queueToast(tone, title, message = '') {
+    if (!title) {
+        return;
+    }
+
+    try {
+        const pending = JSON.parse(window.sessionStorage.getItem(PENDING_KEY) || '[]');
+        pending.push({ tone, title, message });
+        window.sessionStorage.setItem(PENDING_KEY, JSON.stringify(pending.slice(-MAX_TOASTS)));
+    } catch {
+        toast(tone, title, message);
+    }
+}
+
+function flushQueuedToasts() {
+    let pending = [];
+
+    try {
+        pending = JSON.parse(window.sessionStorage.getItem(PENDING_KEY) || '[]');
+        window.sessionStorage.removeItem(PENDING_KEY);
+    } catch {
+        return;
+    }
+
+    if (Array.isArray(pending)) {
+        pending.forEach((item) => item && typeof item.title === 'string' && toast(TONES[item.tone] ? item.tone : 'info', item.title, typeof item.message === 'string' ? item.message : ''));
+    }
+}
+
 /** Server-rendered toasts (<x-ui::toasts>): close buttons and auto-dismiss timers. */
 export function bindToasts(root = document) {
+    if (root === document) {
+        flushQueuedToasts();
+    }
+
     root.querySelectorAll('.ui-toast[data-toast-timeout]:not([data-timer])').forEach((element) => {
         const timeout = Number(element.dataset.toastTimeout);
 

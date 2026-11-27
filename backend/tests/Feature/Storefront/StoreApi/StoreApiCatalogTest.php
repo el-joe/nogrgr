@@ -104,7 +104,7 @@ it('prices a live flash sale exactly like the cart', function (): void {
 it('converts the display currency but keeps USD amounts', function (): void {
     $shop = apiCatalogShop();
     Currency::query()->where('code', 'SAR')->delete();
-    Currency::factory()->code('SAR', '3.750000')->create(['is_active' => true]);
+    Currency::factory()->code('SAR', '3.750000')->create(['is_active' => true, 'rate_synced_at' => now()]);
 
     $this->getJson(storeApi('products?sort=price_desc'), catalogHeaders($shop, ['X-Currency' => 'SAR']))
         ->assertOk()

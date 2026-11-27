@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../theme/app_theme.dart';
 import '../theme/app_tokens.dart';
 
 /// Figma icon set (24 grid, 1.75 stroke) recoloured with the token colour.
@@ -248,6 +249,13 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: AppTheme.overlayFor(context.colors.bg, navigationBar: context.colors.tabbar),
+      child: _bar(context),
+    );
+  }
+
+  Widget _bar(BuildContext context) {
     return Container(
       color: context.colors.bg,
       height: 52,

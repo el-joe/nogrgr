@@ -6,7 +6,7 @@
  *
  * Opening shows the skeleton, fetches the HTML fragment, injects it and wires its
  * fields (Select2, switches…). The fragment's root may carry data-modal-title /
- * data-modal-subtitle (and data-submit-label for [data-remote-submit]). A data-ajax
+ * data-modal-subtitle (and data-submit-label / data-submit-disabled for [data-remote-submit]). A data-ajax
  * form inside closes the modal on success, reloads the page's table and refreshes its
  * [data-live] regions (counts, quota lines; see ui/live.js). Failures
  * show the error state with Retry.
@@ -63,7 +63,8 @@ async function load(modal, url) {
 
     loading.hidden = true;
     body.hidden = false;
-    submit?.removeAttribute('disabled');
+    // data-submit-disabled on the fragment root: nothing to submit (e.g. no missing keys).
+    submit?.toggleAttribute('disabled', root?.hasAttribute('data-submit-disabled') ?? false);
     initUi(body);
     initSelect2(body);
 

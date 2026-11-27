@@ -1,5 +1,5 @@
 {{-- ADM-052b "Edit payout PO-…" (Figma 74:68877): status (allowed next steps) and reference. --}}
-<form id="payout-edit-form" method="POST" action="{{ $formAction }}" data-ajax class="grid gap-4"
+<form id="payout-edit-form" method="POST" action="{{ $formAction }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('billing::finance.payouts.edit_title', ['reference' => $payout->reference]) }}">
     @csrf
     @method('PUT')

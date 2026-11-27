@@ -11,7 +11,7 @@
     };
     $complete = in_array($o->status, [\App\Modules\Commerce\Enums\OrderStatus::Delivered, \App\Modules\Commerce\Enums\OrderStatus::Completed, \App\Modules\Commerce\Enums\OrderStatus::Returned, \App\Modules\Commerce\Enums\OrderStatus::Refunded], true) && $o->delivered_at !== null;
     $failed = in_array($o->status, [\App\Modules\Commerce\Enums\OrderStatus::Cancelled, \App\Modules\Commerce\Enums\OrderStatus::Refunded], true) && $o->delivered_at === null;
-    $estimate = $o->delivery_min_date ? __('commerce::orders_admin.steps.est', ['date' => $o->delivery_min_date->translatedFormat('j M').($o->delivery_max_date && ! $o->delivery_max_date->equalTo($o->delivery_min_date) ? '–'.$o->delivery_max_date->translatedFormat('j M') : '')]) : null;
+    $estimate = $o->delivery_min_date ? __('commerce::orders_admin.steps.est', ['date' => $o->deliveryWindowLabel()]) : null;
     if ($failed) { $current = $o->paid_at ? 3 : 2; }
 @endphp
 @include('commerce::partials.progress', [

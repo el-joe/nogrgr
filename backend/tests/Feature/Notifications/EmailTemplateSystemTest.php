@@ -3,6 +3,7 @@
 use App\Modules\Identity\Database\Seeders\CentralPermissionSeeder;
 use App\Modules\Identity\Models\Admin;
 use App\Modules\Identity\Notifications\AdminPasswordChangedNotification;
+use App\Modules\Identity\Notifications\AdminRoleChangedNotification;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\EmailTemplateStatus;
 use App\Modules\Notifications\Mail\TemplatedMail;
@@ -158,7 +159,31 @@ it('saves the e-mail layout and applies it to every central e-mail', function ()
 
 it('does not mail a notification whose template is disabled but keeps the inbox row', function (): void {
     $admin = emailSystemAdmin('dashboard.view');
-    $template = EmailTemplate::factory()->event(EmailTemplateEvent::AdminAlert)->create(['status' => EmailTemplateStatus::Inactive]);
+    $event = (new AdminRoleChangedNotification('Editor'))->mailTemplate($admin);
+    expect($event)->toBe(EmailTemplateEvent::AdminTeamUpdate)->and($event->isMandatory())->toBeFalse();
+
+    $template = EmailTemplate::factory()->event($event)->create(['status' => EmailTemplateStatus::Inactive]);
+    $sent = [];
+    Event::listen(NotificationSent::class, function (NotificationSent $event) use (&$sent): void {
+        $sent[] = $event->channel;
+    });
+
+    $admin->notifyNow(new AdminRoleChangedNotification('Editor'), ['database', 'mail']);
+
+    expect($sent)->toBe(['database'])->and($admin->notifications()->count())->toBe(1);
+
+    $template->update(['status' => EmailTemplateStatus::Active]);
+    $admin->notifyNow(new AdminRoleChangedNotification('Editor'), ['mail']);
+
+    expect($sent)->toBe(['database', 'mail']);
+});
+
+it('always mails a mandatory account / security template even when its row is disabled', function (): void {
+    $admin = emailSystemAdmin('dashboard.view');
+    $event = (new AdminPasswordChangedNotification('10:00'))->mailTemplate($admin);
+    expect($event)->toBe(EmailTemplateEvent::AdminPasswordChanged)->and($event->isMandatory())->toBeTrue();
+
+    EmailTemplate::factory()->event($event)->create(['status' => EmailTemplateStatus::Inactive]);
     $sent = [];
     Event::listen(NotificationSent::class, function (NotificationSent $event) use (&$sent): void {
         $sent[] = $event->channel;
@@ -166,12 +191,7 @@ it('does not mail a notification whose template is disabled but keeps the inbox 
 
     $admin->notifyNow(new AdminPasswordChangedNotification('10:00'), ['database', 'mail']);
 
-    expect($sent)->toBe(['database'])->and($admin->notifications()->count())->toBe(1);
-
-    $template->update(['status' => EmailTemplateStatus::Active]);
-    $admin->notifyNow(new AdminPasswordChangedNotification('10:00'), ['mail']);
-
-    expect($sent)->toBe(['database', 'mail']);
+    expect($sent)->toBe(['database', 'mail'])->and($admin->notifications()->count())->toBe(1);
 });
 
 describe('store templates', function (): void {

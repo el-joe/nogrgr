@@ -3,7 +3,7 @@
     (stock released, full refund to the original payment), 2) reason code + note.
 --}}
 @php $number = $order->number; @endphp
-<form id="order-cancel-form" method="POST" action="{{ $action }}" data-ajax class="grid gap-4"
+<form id="order-cancel-form" method="POST" action="{{ $action }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('commerce::orders_admin.cancel.title', ['number' => $number]) }}"
     x-data="{ step: 1, reason: '' }">
     @csrf

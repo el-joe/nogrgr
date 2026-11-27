@@ -28,6 +28,21 @@ class StoreTranslationRunRepository extends BaseRepository implements StoreTrans
         return $this->query()->withoutGlobalScopes()->where('addon_purchase_id', $addonPurchaseId)->first();
     }
 
+    public function activeLanguageCodes(int $tenantId): array
+    {
+        /** @var list<string> $codes */
+        $codes = $this->query()->withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->whereIn('status', [TranslationRunStatus::Queued->value, TranslationRunStatus::Translating->value])
+            ->distinct()
+            ->pluck('language_code')
+            ->map(static fn ($code): string => strtolower((string) $code))
+            ->values()
+            ->all();
+
+        return $codes;
+    }
+
     public function latestByLanguage(int $tenantId): Collection
     {
         /** @var Collection<int, StoreTranslationRun> $runs */

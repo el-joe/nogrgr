@@ -32,7 +32,7 @@
         >
             @if ($canManage && $active === 'to_ship')
                 <x-slot:actions>
-                    <form id="shipping-bulk-form" method="POST" action="{{ route('admin.shipping-queue.bulk-ship') }}" data-ajax data-confirm="{{ __('commerce::fulfilment.queue.bulk_confirm') }}" data-confirm-tone="primary">
+                    <form id="shipping-bulk-form" method="POST" action="{{ route('admin.shipping-queue.bulk-ship') }}" data-ajax novalidate data-confirm="{{ __('commerce::fulfilment.queue.bulk_confirm') }}" data-confirm-tone="primary">
                         @csrf
                         <x-ui::button type="submit" icon="truck" data-bulk-submit disabled>{{ __('commerce::fulfilment.queue.mark_shipped') }} (<span data-bulk-count>0</span>)</x-ui::button>
                     </form>

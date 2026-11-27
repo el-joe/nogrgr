@@ -109,7 +109,9 @@ void main() {
     expect(order.number, 'N-1001');
     expect(order.grandTotal.formatted, 'USD 129.00');
     expect(order.timeline.single.label, 'Placed');
-    expect(order.shippingAddress, contains('Fatma Elsonny'));
+    expect(order.shippingAddress!.lines('en'), ['Fatma Elsonny', '+966500000000', 'King Fahd Rd 1', 'Riyadh, Riyadh Province', 'Saudi Arabia']);
+    expect(order.shippingAddress!.country('ar'), 'السعودية');
+    expect(order.paymentGatewayLabel, 'Stripe');
     expect(order.cancellable, isTrue);
     expect(order.awaitingPayment, isFalse);
   });

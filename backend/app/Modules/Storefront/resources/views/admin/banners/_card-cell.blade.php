@@ -14,7 +14,7 @@
 @endphp
 <div class="flex min-w-0 items-center gap-3">
     @if ($canManage)
-        <button type="button" class="grid size-8 shrink-0 cursor-grab place-items-center rounded-control text-ink-muted hover:bg-subtle hover:text-ink active:cursor-grabbing" data-drag-handle aria-label="{{ __('engagement::banners.drag') }}" title="{{ __('engagement::banners.drag') }}">
+        <button type="button" class="grid size-8 shrink-0 cursor-grab place-items-center rounded-control text-ink-muted hover:bg-subtle hover:text-ink active:cursor-grabbing" data-drag-handle aria-label="{{ __('engagement::banners.drag_named', ['name' => $title]) }}" title="{{ __('engagement::banners.drag') }}">
             <x-ui::icon name="menu" :size="16" />
         </button>
     @endif

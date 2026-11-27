@@ -21,6 +21,23 @@ php artisan reverb:restart
 php artisan up
 ```
 
+## Queue workers
+
+Jobs run on four queues, in this priority order: `provisioning` (new store databases —
+without it a new store stays on "Preparing your store …"), `default`, `notifications`
+(database + Reverb + mail notifications) and `mail` (verify / reset / invitation mails).
+Horizon (`config/horizon.php`, `supervisor-1`) already lists all four; a plain
+Supervisor worker must name them all too:
+
+```bash
+php artisan horizon                              # production (Supervisor keeps it running)
+# without Horizon:
+php artisan queue:work --queue=provisioning,default,notifications,mail --memory=1024 --timeout=900 --tries=3
+```
+
+`tests/Unit/Architecture/HorizonQueuesTest.php` fails when code uses a queue the
+supervisor does not run.
+
 ## Why each sync step exists
 
 - **`permissions:sync`**: provisioning only seeds the permissions that existed when a store
@@ -49,7 +66,7 @@ so **a queue worker must be running**.
 ```bash
 php artisan migrate                                          # once after updating (catalog_import_run_pages)
 php artisan queue:restart                                    # workers pick up the new code
-php artisan queue:work --queue=default --memory=1024 --timeout=900 --tries=3   # keep running (Supervisor / Horizon in production)
+php artisan queue:work --queue=provisioning,default,notifications,mail --memory=1024 --timeout=900 --tries=3   # keep running (Supervisor / Horizon in production)
 
 php artisan catalog:import-neozena --dry-run                 # totals, pages, mapping, sample items; writes nothing
 php artisan catalog:import-neozena --force                   # queue every page, then watch: progress bar + final counts

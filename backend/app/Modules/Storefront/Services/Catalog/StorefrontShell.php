@@ -2,7 +2,7 @@
 
 namespace App\Modules\Storefront\Services\Catalog;
 
-use App\Modules\Commerce\Models\StorePaymentGateway;
+use App\Modules\Commerce\Services\Payments\StorefrontGatewayService;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
 use App\Modules\Storefront\Services\Appearance\StorefrontAppearance;
 use App\Modules\Storefront\Services\Pages\StorePageReader;
@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Route;
 
 /**
  * Footer data of the store (Ecommet 1:573): link columns from the store pages (sf-data's
- * StorePageReader), the store's own footer links (VEN-034e) + catalog / account links, and the "We accept" badges of the store's
- * active payment methods.
+ * StorePageReader), the store's own footer links (VEN-034e) + catalog / account links, and the "We accept" badges of the
+ * payment methods checkout actually offers (StorefrontGatewayService::options(), RQA-SF-002).
  */
 class StorefrontShell
 {
@@ -59,8 +59,9 @@ class StorefrontShell
     {
         $badges = [];
 
-        foreach (StorePaymentGateway::query()->where('is_active', true)->where('is_hidden', false)->get() as $gateway) {
-            $badges = [...$badges, ...match ($gateway->code) {
+        // Exactly the methods checkout lists (centrally usable + connected keys; COD is never offered there).
+        foreach (app(StorefrontGatewayService::class)->options() as $option) {
+            $badges = [...$badges, ...match ($option->code) {
                 PaymentGatewayCode::Stripe, PaymentGatewayCode::Paymob, PaymentGatewayCode::Tap, PaymentGatewayCode::Moyasar, PaymentGatewayCode::Myfatoorah => ['visa', 'mastercard'],
                 PaymentGatewayCode::Paypal => ['paypal'],
                 PaymentGatewayCode::Cod => ['cod'],

@@ -6,7 +6,7 @@
 @php
     $decimal = static fn (?int $value): ?string => $value !== null ? number_format($value / 100, 2, '.', '') : null;
 @endphp
-<form id="promo-code-form" method="POST" action="{{ $formAction }}" data-ajax class="grid gap-4"
+<form id="promo-code-form" method="POST" action="{{ $formAction }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ $code ? __('affiliates::admin.promo.edit_title', ['code' => $code->code]) : __('affiliates::admin.promo.create') }}">
     @csrf
     @if ($code)

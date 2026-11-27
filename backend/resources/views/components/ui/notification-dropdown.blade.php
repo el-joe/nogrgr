@@ -28,7 +28,7 @@
                 <x-ui::badge tone="brand"><span data-notification-new-label>{{ trans_choice('ui.notifications.new', $unread, ['count' => $unread]) }}</span></x-ui::badge>
             </span>
             @if ($markAllUrl)
-                <form method="POST" action="{{ $markAllUrl }}" class="ms-auto" data-ajax data-notification-mark-all @if ($unread === 0) hidden @endif>
+                <form method="POST" action="{{ $markAllUrl }}" class="ms-auto" data-ajax novalidate data-notification-mark-all @if ($unread === 0) hidden @endif>
                     @csrf
                     <button type="submit" class="text-xs font-medium text-ink-brand hover:underline">{{ __('ui.notifications.mark_all') }}</button>
                 </form>

@@ -9,6 +9,7 @@ use App\Modules\Identity\Services\CustomerNotificationPreferences;
 use App\Modules\Notifications\Concerns\RendersMailTemplate;
 use App\Modules\Notifications\Contracts\TemplatedMailNotification;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
+use App\Modules\Notifications\Support\InboxText;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -82,11 +83,7 @@ class OrderCustomerNotification extends Notification implements ShouldQueue, Tem
     public function toMail(object $notifiable): MailMessage
     {
         $locale = $this->recipientLocale($notifiable);
-        $params = [];
-
-        foreach ($this->variables as $key => $value) {
-            $params[str_replace('.', '_', $key)] = $value;
-        }
+        $params = InboxText::params($this->variables);
 
         return $this->templatedMail($this->mailTemplate($notifiable), $this->variables + [
             'alert.title' => (string) __('commerce::notifications.customer.'.$this->eventName.'.subject', $params, $locale),
@@ -104,7 +101,8 @@ class OrderCustomerNotification extends Notification implements ShouldQueue, Tem
             'order_uuid' => $this->orderUuid,
             'title_key' => 'commerce::notifications.customer.'.$this->eventName.'.subject',
             'body_key' => 'commerce::notifications.customer.'.$this->eventName.'.body',
-            'params' => $this->variables,
+            // Placeholder names of the texts (`order_number`), not the template variables (RQA-APP-014).
+            'params' => InboxText::params($this->variables),
         ];
     }
 }

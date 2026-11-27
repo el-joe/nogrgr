@@ -2,6 +2,7 @@
 
 namespace App\Shared\Money;
 
+use App\Shared\Support\Locale;
 use InvalidArgumentException;
 use JsonSerializable;
 use NumberFormatter;
@@ -226,7 +227,7 @@ final class Money implements JsonSerializable, Stringable
 
     public function format(?string $locale = null): string
     {
-        $formatter = new NumberFormatter($locale ?? app()->getLocale(), NumberFormatter::CURRENCY);
+        $formatter = new NumberFormatter(Locale::numberLocale($locale), NumberFormatter::CURRENCY);
         $formatted = $formatter->formatCurrency($this->toFloat(), $this->currency);
 
         return $formatted === false ? $this->currency.' '.$this->toDecimal() : $formatted;

@@ -49,6 +49,7 @@ class SetupWizardController extends Controller
             'pendingChange' => $this->wizard->pendingCountriesChange($tenant),
             'storeLanguages' => $this->wizard->storeLanguageCodes($tenant),
             'purchasable' => $step === SetupWizardStep::Languages ? $this->wizard->purchasableLanguages($tenant) : collect(),
+            'bought' => $step === SetupWizardStep::Languages ? $this->wizard->boughtLanguages($tenant) : collect(),
             'gateways' => $step === SetupWizardStep::Languages ? $checkout->gateways() : collect(),
             'canBuyLanguages' => $staff->can('settings.languages.manage'),
             'theme' => $this->wizard->themeLabel($tenant),

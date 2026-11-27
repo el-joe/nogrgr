@@ -2,7 +2,7 @@
     Shipping status modal (ADM-022 / 022a, VEN-021c own-products, Figma 84:107236):
     next step, carrier, tracking number, location / note, shipping branch, notify.
 --}}
-<form id="shipping-status-form" method="POST" action="{{ $action }}" data-ajax class="grid gap-4"
+<form id="shipping-status-form" method="POST" action="{{ $action }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ isset($vendor) ? __('commerce::fulfilment.status_modal.vendor_title') : __('commerce::fulfilment.status_modal.title', ['number' => $order->number]) }}">
     @csrf
     @method('PUT')

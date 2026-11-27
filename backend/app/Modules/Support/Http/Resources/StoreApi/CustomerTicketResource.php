@@ -5,8 +5,8 @@ namespace App\Modules\Support\Http\Resources\StoreApi;
 use App\Modules\Support\Models\CustomerTicket;
 use App\Modules\Support\Models\CustomerTicketAttachment;
 use App\Modules\Support\Models\CustomerTicketMessage;
+use App\Shared\Routing\StoreApiSignedUrl;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 /**
@@ -70,7 +70,7 @@ final class CustomerTicketResource
                 'size' => $file->size,
                 'size_label' => $file->humanSize(),
                 'is_image' => $file->isImage(),
-                'url' => url(URL::temporarySignedRoute('store-api.v1.support.tickets.attachments', now()->addMinutes(self::FILE_URL_MINUTES), ['ticket' => $ticket->id, 'attachment' => $file->id], absolute: false)),
+                'url' => StoreApiSignedUrl::temporary('store-api.v1.support.tickets.attachments', now()->addMinutes(self::FILE_URL_MINUTES), ['ticket' => $ticket->id, 'attachment' => $file->id]),
             ])->values()->all(),
         ];
     }

@@ -12,7 +12,7 @@
 @php
     /** @var \App\Modules\Platform\DTOs\SetupProgressData $progress */
     $steps = collect($progress->steps)->keyBy(fn ($item) => $item->step->value);
-    $customizeUrl = \App\Modules\Platform\Services\OnboardingService::vendorUrl('store.appearance');
+    $customizeUrl = \App\Modules\Platform\Services\OnboardingService::accessibleVendorUrl('store.appearance');
     $checklistUrl = vendor_route('onboarding', ['tab' => 'checklist']);
     $chip = function (SetupStep $step) use ($steps): array {
         $item = $steps[$step->value];

@@ -12,7 +12,7 @@
         <div class="grid gap-6 xl:grid-cols-2">
             <x-ui::card>
                 <h2 class="mb-4 font-semibold text-ink">{{ __('after-sales::policy.rules') }}</h2>
-                <form method="POST" action="{{ route('admin.storefront.return-policy.update') }}" data-ajax class="grid gap-4">
+                <form method="POST" action="{{ route('admin.storefront.return-policy.update') }}" data-ajax novalidate class="grid gap-4">
                     @csrf
                     @method('PUT')
                     <x-ui::input name="window_days" type="number" min="0" max="365" :label="__('after-sales::policy.fields.window')" :value="$policy->window_days" required />

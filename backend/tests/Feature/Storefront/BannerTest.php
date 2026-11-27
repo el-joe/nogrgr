@@ -238,3 +238,13 @@ it('manages store banners through the vendor service API', function (): void {
         Event::assertDispatched(BannersChanged::class, fn (BannersChanged $event): bool => $event->tenantId === $tenant->id);
     });
 });
+
+it('names the banner in its drag handle label (RQA-ADM-009)', function (): void {
+    $this->actingAs(commerceAdmin(['storefront.banners.view', 'storefront.banners.manage']), 'admin');
+    $banner = Banner::factory()->create(['title' => ['en' => 'Winter drop', 'ar' => 'تشكيلة الشتاء']]);
+
+    $cell = $this->getJson($this->centralUrl('/admin/storefront/banners/data?draw=1&start=0&length=100'))->assertOk()->json('data.0.banner');
+
+    expect($cell)->toContain('aria-label="'.e(__('engagement::banners.drag_named', ['name' => $banner->title])).'"')
+        ->and($cell)->toContain('Winter drop');
+});

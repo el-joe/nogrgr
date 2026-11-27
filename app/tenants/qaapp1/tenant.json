@@ -1,0 +1,18 @@
+{
+  "key": "qaapp1",
+  "tenant_id": "1",
+  "app_name": "QA Store One",
+  "android_application_id": "com.nogrgr.qaapp1",
+  "ios_bundle_id": "com.nogrgr.qaapp1",
+  "api_base_url": "http://10.0.2.2:8204",
+  "theme_family": "ecommet",
+  "theme_variant": 1,
+  "primary_color": "#DE1709",
+  "splash_color": "#DE1709",
+  "default_locale": "en",
+  "version": "1.0.0",
+  "build_number": 1,
+  "icon": "icon.png",
+  "icon_foreground": "icon_foreground.png",
+  "splash_image": "splash.png"
+}

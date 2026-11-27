@@ -5,6 +5,7 @@ namespace App\Modules\Commerce\Support;
 use App\Modules\Localization\Models\Currency;
 use App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract;
 use App\Shared\Money\Money;
+use App\Shared\Support\Locale;
 use NumberFormatter;
 
 /**
@@ -34,7 +35,7 @@ final class MoneyPresenter
 
         if ($this->display !== null) {
             $converted = $this->display->convertFromBase($money);
-            $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
+            $formatter = new NumberFormatter(Locale::numberLocale(), NumberFormatter::CURRENCY);
             $formatted = $formatter->formatCurrency($converted, $this->display->code);
             $display = [
                 'currency' => $this->display->code,

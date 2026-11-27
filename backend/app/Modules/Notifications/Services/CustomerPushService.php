@@ -8,6 +8,7 @@ use App\Modules\Identity\Models\Customer;
 use App\Modules\Identity\Services\CustomerNotificationPreferences;
 use App\Modules\Notifications\Enums\PushDeliveryResult;
 use App\Modules\Notifications\Repositories\Contracts\CustomerDeviceRepositoryContract;
+use App\Modules\Notifications\Support\InboxText;
 use App\Modules\Notifications\Support\Push\FcmClient;
 use App\Shared\Support\Locale;
 
@@ -56,9 +57,8 @@ class CustomerPushService
         }
 
         $locale = Locale::isSupported($customer->locale) ? (string) $customer->locale : app()->getLocale();
-        $params = is_array($payload['params'] ?? null) ? $payload['params'] : [];
-        $title = self::text($payload, 'title', $params, $locale);
-        $body = self::text($payload, 'body', $params, $locale);
+        $title = InboxText::render($payload, 'title', $locale);
+        $body = InboxText::render($payload, 'body', $locale);
 
         if ($title === '') {
             return 0;
@@ -93,23 +93,5 @@ class CustomerPushService
         }
 
         return $sent;
-    }
-
-    /**
-     * @param  array<string, mixed>  $payload
-     * @param  array<string, mixed>  $params
-     */
-    private static function text(array $payload, string $field, array $params, string $locale): string
-    {
-        $key = $payload[$field.'_key'] ?? null;
-        $params = is_array($payload[$field.'_params'] ?? null) ? $payload[$field.'_params'] : $params;
-
-        if (! is_string($key) || $key === '') {
-            return trim((string) ($payload[$field] ?? ''));
-        }
-
-        $text = __($key, $params, $locale);
-
-        return is_string($text) && $text !== $key ? $text : '';
     }
 }

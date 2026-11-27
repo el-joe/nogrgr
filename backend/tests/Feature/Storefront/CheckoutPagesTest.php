@@ -128,7 +128,7 @@ it('hides another customer\'s order behind a 404', function (): void {
 
 it('shows the display-currency total for reference and the USD charge line (decision #87)', function (): void {
     $shop = checkoutShop();
-    Currency::query()->updateOrCreate(['code' => 'SAR'], ['name' => ['en' => 'Saudi Riyal', 'ar' => 'ريال سعودي'], 'symbol' => 'SAR', 'decimals' => 2, 'rate' => '3.750000', 'is_active' => true, 'is_base' => false]);
+    Currency::query()->updateOrCreate(['code' => 'SAR'], ['name' => ['en' => 'Saudi Riyal', 'ar' => 'ريال سعودي'], 'symbol' => 'SAR', 'decimals' => 2, 'rate' => '3.750000', 'is_active' => true, 'is_base' => false, 'rate_synced_at' => now()]);
     $this->actingAsCustomer($shop->customer, $shop->tenant);
     $this->postJson($this->tenantUrl($shop->tenant, '/store-api/v1/cart/items'), ['store_product_id' => $shop->catalog->id, 'quantity' => 2])->assertCreated();
 

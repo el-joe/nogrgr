@@ -3,6 +3,7 @@
 namespace App\Modules\Api\Http\Middleware;
 
 use App\Shared\Http\JsonResponder;
+use App\Shared\Routing\StoreApiSignedUrl;
 use Closure;
 use Illuminate\Http\Request;
 use Stancl\Tenancy\Contracts\TenantCouldNotBeIdentifiedException;
@@ -13,7 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Store API tenant identification: the mobile app sends `X-Tenant`; storefront themes
- * (and gateway webhooks) call the store's own domain / sub-domain.
+ * (and gateway webhooks) call the store's own domain / sub-domain. A valid relative
+ * signed link (StoreApiSignedUrl: file links opened by Image.network / the in-app browser)
+ * names its store in the signed `tenant` parameter, which wins over header and host
+ * (RQA-APP-016); `signed:relative` + EnsureSignedStoreLink re-check it on the route.
  */
 class InitializeStoreApiTenancy
 {
@@ -29,6 +33,12 @@ class InitializeStoreApiTenancy
     public function handle(Request $request, Closure $next): mixed
     {
         try {
+            $signed = self::signedTenant($request);
+
+            if ($signed !== null) {
+                $request->headers->set(self::header(), $signed);
+            }
+
             if (self::usesHeader($request)) {
                 return $this->byHeader->handle($request, $next);
             }
@@ -41,6 +51,25 @@ class InitializeStoreApiTenancy
 
     public static function usesHeader(Request $request): bool
     {
-        return filled($request->header(InitializeTenancyByRequestData::$header ?? 'X-Tenant'));
+        return filled($request->header(self::header()));
+    }
+
+    /**
+     * Store key of a valid, unexpired relative signed link that carries `tenant`.
+     */
+    private static function signedTenant(Request $request): ?string
+    {
+        $tenant = $request->query(StoreApiSignedUrl::parameter());
+
+        if (! is_string($tenant) || $tenant === '' || ! $request->has('signature')) {
+            return null;
+        }
+
+        return $request->hasValidRelativeSignature() ? $tenant : null;
+    }
+
+    private static function header(): string
+    {
+        return InitializeTenancyByRequestData::$header ?? 'X-Tenant';
     }
 }

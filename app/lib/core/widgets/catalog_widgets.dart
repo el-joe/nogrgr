@@ -128,17 +128,17 @@ class SectionHeader extends ConsumerWidget {
 }
 
 /// "Countdown (flip each second)": HH : MM : SS boxes in primary, ticking to [endsAt].
-class Countdown extends StatefulWidget {
+class Countdown extends ConsumerStatefulWidget {
   const Countdown({super.key, required this.endsAt, this.onDone});
 
   final DateTime endsAt;
   final VoidCallback? onDone;
 
   @override
-  State<Countdown> createState() => _CountdownState();
+  ConsumerState<Countdown> createState() => _CountdownState();
 }
 
-class _CountdownState extends State<Countdown> {
+class _CountdownState extends ConsumerState<Countdown> {
   Timer? _timer;
 
   @override
@@ -173,38 +173,55 @@ class _CountdownState extends State<Countdown> {
       left = Duration.zero;
     }
 
-    final parts = [left.inHours.clamp(0, 99), left.inMinutes % 60, left.inSeconds % 60];
+    // ≥ 24 h: a days segment ("5d" / "5 يوم") before HH:MM:SS, never a clamped hour count.
+    final days = left.inDays;
+    final parts = [left.inHours % 24, left.inMinutes % 60, left.inSeconds % 60];
+    final texts = ref.watch(textsProvider);
+    final dayLabel = days > 0 ? texts.t('app.countdown.days', {'count': days}) : null;
     final style = Theme.of(context).textTheme.labelSmall?.copyWith(color: colors.onPrimary, fontWeight: FontWeight.w600);
+    final time = parts.map((part) => part.toString().padLeft(2, '0')).join(':');
 
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Semantics(
-        label: '${parts[0]}:${parts[1]}:${parts[2]}',
-        excludeSemantics: true,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 0; i < parts.length; i++) ...[
-              if (i > 0) Padding(padding: const EdgeInsets.symmetric(horizontal: 3), child: Text(':', style: TextStyle(color: colors.primary, fontWeight: FontWeight.w600))),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 220),
-                transitionBuilder: (child, animation) => FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(position: Tween(begin: const Offset(0, -0.3), end: Offset.zero).animate(animation), child: child),
-                ),
-                child: Container(
-                  key: ValueKey(parts[i]),
-                  constraints: const BoxConstraints(minWidth: 24),
-                  height: 19,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(color: colors.primary, borderRadius: BorderRadius.circular(4)),
-                  child: Text(parts[i].toString().padLeft(2, '0'), style: style),
-                ),
-              ),
-            ],
+    Widget segment(String value) => AnimatedSwitcher(
+          duration: const Duration(milliseconds: 220),
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: SlideTransition(position: Tween(begin: const Offset(0, -0.3), end: Offset.zero).animate(animation), child: child),
+          ),
+          child: Container(
+            key: ValueKey(value),
+            constraints: const BoxConstraints(minWidth: 24),
+            height: 19,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: colors.primary, borderRadius: BorderRadius.circular(4)),
+            child: Text(value, style: style),
+          ),
+        );
+
+    return Semantics(
+      label: dayLabel == null ? time : '$dayLabel $time',
+      excludeSemantics: true,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (dayLabel != null) ...[
+            KeyedSubtree(key: const ValueKey('countdown-days'), child: segment(dayLabel)),
+            const SizedBox(width: 6),
           ],
-        ),
+          // Digits always read HH:MM:SS left to right, also in Arabic.
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < parts.length; i++) ...[
+                  if (i > 0) Padding(padding: const EdgeInsets.symmetric(horizontal: 3), child: Text(':', style: TextStyle(color: colors.primary, fontWeight: FontWeight.w600))),
+                  segment(parts[i].toString().padLeft(2, '0')),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

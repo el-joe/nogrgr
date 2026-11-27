@@ -7,6 +7,7 @@ return [
     'all_countries' => 'كل الدول',
     'list_title' => ':placement — اسحب للترتيب',
     'drag' => 'اسحب للترتيب',
+    'drag_named' => 'اسحب :name للترتيب',
     'search' => 'ابحث في البنرات…',
     'columns' => [
         'banner' => 'البنر',

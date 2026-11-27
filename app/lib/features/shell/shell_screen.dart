@@ -63,7 +63,14 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           for (final tab in shellTabs)
             AppTabItem(icon: tab.icon, label: ref.t(tab.textKey), badge: tab.path == '/cart' ? ref.watch(cartCountProvider) : 0),
         ],
-        onTap: (index) => shell.goBranch(index, initialLocation: index == shell.currentIndex),
+        onTap: (index) {
+          // A message from one tab (e.g. "Item added to cart") never follows to another.
+          if (index != shell.currentIndex) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+          }
+
+          shell.goBranch(index, initialLocation: index == shell.currentIndex);
+        },
       ),
     );
   }

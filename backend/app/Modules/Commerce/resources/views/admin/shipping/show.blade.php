@@ -74,7 +74,7 @@
                         </ul>
                     @endif
                     @if ($canManage)
-                        <form method="POST" action="{{ route('admin.shipping-queue.attachments.store', $fact->id) }}" data-ajax enctype="multipart/form-data" class="mt-4 grid gap-3 border-t border-line pt-4">
+                        <form method="POST" action="{{ route('admin.shipping-queue.attachments.store', $fact->id) }}" data-ajax novalidate enctype="multipart/form-data" class="mt-4 grid gap-3 border-t border-line pt-4">
                             @csrf
                             <x-ui::select name="kind" :label="__('commerce::fulfilment.attachments.kind')" :options="$kinds" :search="false" required />
                             <x-ui::file-upload name="file" :label="__('commerce::fulfilment.attachments.file')" accept=".pdf,.jpg,.jpeg,.png,.webp" :hint="__('commerce::fulfilment.attachments.hint')" required />

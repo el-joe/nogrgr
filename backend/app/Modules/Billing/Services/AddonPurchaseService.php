@@ -105,6 +105,16 @@ class AddonPurchaseService extends BaseService
         return $this->purchases->openFor($tenantId, AddonType::Language, strtolower($languageCode));
     }
 
+    /**
+     * Language codes the store has already paid for (decision #45: bought once).
+     *
+     * @return list<string>
+     */
+    public function paidLanguageCodes(int $tenantId): array
+    {
+        return $this->purchases->paidItemCodes($tenantId, AddonType::Language);
+    }
+
     public function invoiceFor(AddonPurchase $purchase): ?Invoice
     {
         /** @var Invoice|null $invoice */

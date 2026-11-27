@@ -11,7 +11,7 @@
     $scope = $estimates['file']['keys'] > 0 ? 'file' : 'all';
     $labels = array_map(fn (array $estimate): string => trans_choice('ai::admin_translation.keys.submit', $estimate['keys'], ['count' => $format($estimate['keys'])]), $estimates);
 @endphp
-<form id="ai-keys-form" method="POST" action="{{ route('admin.localization.ai-translation.static-keys.store') }}" data-ajax novalidate class="grid gap-5" data-ai-keys-form data-modal-title="{{ __('ai::admin_translation.keys.title') }}" data-modal-subtitle="{{ $file->label() }}" data-submit-label="{{ $labels[$scope] }}">
+<form id="ai-keys-form" method="POST" action="{{ route('admin.localization.ai-translation.static-keys.store') }}" data-ajax novalidate class="grid gap-5" data-ai-keys-form data-modal-title="{{ __('ai::admin_translation.keys.title') }}" data-modal-subtitle="{{ $file->label() }}" data-submit-label="{{ $labels[$scope] }}" @if ($estimates[$scope]['keys'] === 0) data-submit-disabled @endif>
     @csrf
     <input type="hidden" name="locale" value="{{ $locale }}">
     <input type="hidden" name="file" value="{{ $file->id }}">

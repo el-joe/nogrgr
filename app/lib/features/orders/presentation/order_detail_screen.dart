@@ -168,7 +168,11 @@ class _OrderBody extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 6),
-              Text('${texts.t('orders.payment')}: ${order.paymentStatusLabel}${order.paymentGateway != null ? ' · ${order.paymentGateway}' : ''}', style: text.bodyMedium),
+              Text(
+                '${texts.t('orders.payment')}: ${[order.paymentStatusLabel, ?(order.paymentGateway == 'cod' && order.paymentGatewayName == null ? texts.t('app.payment.cod') : order.paymentGatewayLabel)].join(' · ')}',
+                key: const ValueKey('order-payment-line'),
+                style: text.bodyMedium,
+              ),
               if (order.deliveryMin != null)
                 Text('${texts.t('orders.estimated')}: ${formatDate(order.deliveryMin, locale)} – ${formatDate(order.deliveryMax ?? order.deliveryMin, locale)}', style: text.bodyMedium),
               if (order.awaitingPayment && order.paymentExpiresAt != null)
@@ -217,7 +221,16 @@ class _OrderBody extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(texts.t('orders.shipping_address'), style: text.titleLarge),
           const SizedBox(height: 6),
-          Text(order.shippingAddress!.join('\n'), style: text.bodyLarge),
+          SurfaceCard(
+            key: const ValueKey('order-shipping-address'),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final (index, line) in order.shippingAddress!.lines(locale).indexed)
+                  Text(line, style: index == 0 ? text.bodyLarge?.copyWith(fontWeight: FontWeight.w600) : text.bodyMedium),
+              ],
+            ),
+          ),
         ],
         const SizedBox(height: 20),
         for (final action in actions) Padding(padding: const EdgeInsets.only(bottom: 10), child: action),

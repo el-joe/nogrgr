@@ -13,6 +13,7 @@ import '../../auth/presentation/auth_form.dart';
 import '../../cart/data/cart_repository.dart';
 import '../data/catalog_models.dart';
 import '../data/catalog_repository.dart';
+import 'gallery_video.dart';
 
 final productProvider = FutureProvider.autoDispose.family<ProductDetail, int>((ref, id) {
   ref.watch(localeCodeProvider);
@@ -87,7 +88,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
       _picked = {..._picked, attributeId: optionId};
       _quantity = 1;
       final image = _variant?.image;
-      final index = image == null ? -1 : p.images.indexOf(image);
+      final index = image == null ? -1 : p.gallery.indexWhere((item) => !item.isVideo && item.url == image);
 
       if (index >= 0 && _gallery.hasClients) {
         _gallery.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
@@ -106,8 +107,12 @@ class _ProductViewState extends ConsumerState<_ProductView> {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(
+            key: const ValueKey('cart-added-snack'),
             content: Text(texts.t('cart.added.title')),
-            action: SnackBarAction(label: texts.t('cart.view_cart'), onPressed: () => context.go(Routes.cart)),
+            // An action makes a SnackBar persist by default: auto-dismiss like the others.
+            duration: const Duration(seconds: 4),
+            persist: false,
+            action: SnackBarAction(label: texts.t('cart.view_cart'), onPressed: () => _openCart(context)),
           ));
       }
     } on ApiException catch (error) {
@@ -121,6 +126,12 @@ class _ProductViewState extends ConsumerState<_ProductView> {
     }
   }
 
+  /// Leaves for the cart without the "added" message covering its checkout button.
+  void _openCart(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    context.go(Routes.cart);
+  }
+
   @override
   Widget build(BuildContext context) {
     final texts = ref.watch(textsProvider);
@@ -132,7 +143,9 @@ class _ProductViewState extends ConsumerState<_ProductView> {
     final discount = variant?.discountPercent ?? p.discountPercent;
     final inStock = variant?.inStock ?? p.inStock;
     final stock = variant?.stock ?? p.stock;
-    final images = p.images.isEmpty ? <String?>[null] : p.images;
+    // Gallery = `media` (images + videos in order), else `images`; empty = placeholder.
+    final gallery = p.gallery;
+    final slides = gallery.isEmpty ? 1 : gallery.length;
     final maxQty = stock != null && stock > 0 ? stock.clamp(1, 99) : 99;
 
     return Scaffold(
@@ -149,12 +162,12 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     FavoriteButton(productId: p.id, initial: p.favorited, size: 36),
-                    IconButton(tooltip: texts.t('cart.title'), onPressed: () => context.go(Routes.cart), icon: const AppIcon('cart')),
+                    IconButton(tooltip: texts.t('cart.title'), onPressed: () => _openCart(context), icon: const AppIcon('cart')),
                   ],
                 ),
               ),
             ),
-            // Gallery: swipe (touch + mouse drag), contained images, dots.
+            // Gallery: swipe (touch + mouse drag), contained images + inline videos, dots.
             SliverToBoxAdapter(
               child: Column(
                 children: [
@@ -165,29 +178,41 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                       child: PageView.builder(
                         key: const ValueKey('product-gallery'),
                         controller: _gallery,
-                        itemCount: images.length,
+                        itemCount: slides,
                         onPageChanged: (index) => setState(() => _image = index),
                         itemBuilder: (_, index) => Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: NetImage(images[index], semanticLabel: p.name),
+                          child: gallery.isEmpty
+                              ? NetImage(null, semanticLabel: p.name)
+                              : gallery[index].isVideo
+                                  ? GalleryVideo(key: ValueKey('gallery-video-$index'), media: gallery[index], active: index == _image, semanticLabel: p.name)
+                                  : NetImage(gallery[index].url, semanticLabel: p.name),
                         ),
                       ),
                     ),
                   ),
-                  if (images.length > 1)
+                  if (slides > 1)
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          for (var i = 0; i < images.length; i++)
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                              width: i == _image ? 18 : 6,
-                              height: 6,
-                              decoration: BoxDecoration(color: i == _image ? colors.primary : colors.border, borderRadius: BorderRadius.circular(3)),
-                            ),
+                          for (var i = 0; i < slides; i++)
+                            // Video slides show a small play mark instead of a dot.
+                            gallery[i].isVideo
+                                ? Padding(
+                                    key: ValueKey('gallery-dot-video-$i'),
+                                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                                    child: Icon(Icons.play_circle_fill_rounded, size: 12, color: i == _image ? colors.primary : colors.border),
+                                  )
+                                : AnimatedContainer(
+                                    key: ValueKey('gallery-dot-$i'),
+                                    duration: const Duration(milliseconds: 200),
+                                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                                    width: i == _image ? 18 : 6,
+                                    height: 6,
+                                    decoration: BoxDecoration(color: i == _image ? colors.primary : colors.border, borderRadius: BorderRadius.circular(3)),
+                                  ),
                         ],
                       ),
                     ),

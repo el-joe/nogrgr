@@ -20,13 +20,16 @@ class SupportTicketNotification extends PanelNotification
     public const REPLY_EVENTS = ['admin_replied', 'requester_replied'];
 
     /**
+     * Not readonly: a subclass is queued, and SerializesModels::__unserialize() cannot
+     * initialise a parent's readonly property from the subclass scope (RQA-ADM-006).
+     *
      * @param  array<string, string|int>  $parameters
      */
     public function __construct(
-        public readonly string $eventName,
-        public readonly array $parameters,
-        public readonly ?string $link = null,
-        public readonly bool $withMail = true,
+        public string $eventName,
+        public array $parameters,
+        public ?string $link = null,
+        public bool $withMail = true,
     ) {
         parent::__construct();
     }

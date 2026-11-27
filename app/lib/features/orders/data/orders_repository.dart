@@ -40,6 +40,7 @@ class Order {
     required this.items,
     this.placedAt,
     this.paymentGateway,
+    this.paymentGatewayName,
     this.couponCode,
     this.shippingAddress,
     this.billingAddress,
@@ -63,6 +64,7 @@ class Order {
       paymentStatus: '${json['payment_status'] ?? ''}',
       paymentStatusLabel: '${json['payment_status_label'] ?? ''}',
       paymentGateway: jsonString(json['payment_gateway']),
+      paymentGatewayName: jsonString(json['payment_gateway_name']),
       placedAt: jsonDate(json['placed_at']),
       itemsCount: jsonInt(json['items_count']),
       cancellable: json['cancellable'] == true,
@@ -93,20 +95,7 @@ class Order {
     );
   }
 
-  /// Address snapshot (JSON object) as display lines.
-  static List<String>? _address(Object? source) {
-    if (source is! Map) {
-      return null;
-    }
-
-    final map = source.cast<String, dynamic>();
-    final lines = <String>[
-      for (final key in ['full_name', 'phone', 'address_line_1', 'city', 'state', 'country_name', 'country'])
-        if (map[key] is String && (map[key] as String).isNotEmpty) map[key] as String,
-    ];
-
-    return lines.isEmpty ? null : lines;
-  }
+  static OrderAddress? _address(Object? source) => source is Map ? OrderAddress.fromJson(source.cast<String, dynamic>()) : null;
 
   final String uuid;
   final String number;
@@ -115,14 +104,32 @@ class Order {
   final String paymentStatus;
   final String paymentStatusLabel;
   final String? paymentGateway;
+
+  /// Display name from the API when it sends one (`payment_gateway_name`).
+  final String? paymentGatewayName;
+
+  /// "Stripe" / "PayPal" for the raw gateway code: API name → known brand → capitalised.
+  String? get paymentGatewayLabel {
+    if (paymentGatewayName != null && paymentGatewayName!.trim().isNotEmpty) {
+      return paymentGatewayName;
+    }
+
+    final code = paymentGateway?.trim();
+
+    if (code == null || code.isEmpty) {
+      return null;
+    }
+
+    return gatewayDisplayName(code);
+  }
   final DateTime? placedAt;
   final int itemsCount;
   final bool cancellable;
   final Map<String, Money> totals;
   final String? couponCode;
   final List<OrderItem> items;
-  final List<String>? shippingAddress;
-  final List<String>? billingAddress;
+  final OrderAddress? shippingAddress;
+  final OrderAddress? billingAddress;
   final String? company;
   final String? trackingNumber;
   final DateTime? deliveryMin;
@@ -253,3 +260,88 @@ final orderProvider = FutureProvider.autoDispose.family<Order, String>((ref, uui
 
   return ref.watch(ordersRepositoryProvider).show(uuid);
 });
+
+/// Known gateway codes → brand spelling; others are title-cased (`bank_transfer` → "Bank Transfer").
+String gatewayDisplayName(String code) {
+  const known = {
+    'stripe': 'Stripe',
+    'paypal': 'PayPal',
+    'paymob': 'Paymob',
+    'tap': 'Tap',
+    'moyasar': 'Moyasar',
+    'hyperpay': 'HyperPay',
+    'tabby': 'Tabby',
+    'tamara': 'Tamara',
+    'myfatoorah': 'MyFatoorah',
+    'paytabs': 'PayTabs',
+    'checkout': 'Checkout.com',
+    'razorpay': 'Razorpay',
+  };
+  final key = code.toLowerCase();
+
+  if (known.containsKey(key)) {
+    return known[key]!;
+  }
+
+  return key
+      .split(RegExp(r'[_\-\s]+'))
+      .where((word) => word.isNotEmpty)
+      .map((word) => word[0].toUpperCase() + word.substring(1))
+      .join(' ');
+}
+
+/// Address snapshot copied onto the order (`OrderAddressSnapshotData`: full_name, phone,
+/// address_line1, city, state, country_name {locale: name}, country_iso2).
+class OrderAddress {
+  const OrderAddress({
+    required this.fullName,
+    this.phone,
+    this.street = const [],
+    this.city,
+    this.state,
+    this.countryNames = const {},
+    this.countryIso2,
+  });
+
+  factory OrderAddress.fromJson(Map<String, dynamic> json) {
+    String? text(String key) {
+      final value = json[key];
+
+      return value is String && value.trim().isNotEmpty ? value.trim() : null;
+    }
+
+    final names = json['country_name'];
+
+    return OrderAddress(
+      fullName: text('full_name') ?? '',
+      phone: text('phone'),
+      street: [?(text('address_line1') ?? text('address_line_1')), ?(text('address_line2') ?? text('address_line_2'))],
+      city: text('city'),
+      state: text('state'),
+      countryNames: names is Map
+          ? {for (final entry in names.entries) if (entry.value is String) '${entry.key}': entry.value as String}
+          : (names is String ? {'': names} : const {}),
+      countryIso2: text('country_iso2'),
+    );
+  }
+
+  final String fullName;
+  final String? phone;
+  final List<String> street;
+  final String? city;
+  final String? state;
+  final Map<String, String> countryNames;
+  final String? countryIso2;
+
+  String? country(String locale) =>
+      countryNames[locale] ?? countryNames['en'] ?? countryNames[''] ?? (countryNames.isEmpty ? countryIso2 : countryNames.values.first);
+
+  /// Name, phone, street lines, "city, state", country (like the checkout address card).
+  List<String> lines(String locale) => [
+        if (fullName.isNotEmpty) fullName,
+        ?phone,
+        ...street,
+        if (city != null || state != null) [?city, ?state].join(', '),
+        ?country(locale),
+      ];
+}

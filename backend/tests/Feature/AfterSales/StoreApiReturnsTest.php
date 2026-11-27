@@ -20,6 +20,7 @@ use App\Modules\Inventory\Models\BranchStock;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 require_once __DIR__.'/../Commerce/FulfilmentHelpers.php';
 
@@ -209,9 +210,20 @@ it('lists and shows own returns with signed media and only customer-visible even
         ->assertJsonMissing(['message' => 'Internal: customer is a reseller.']);
 
     $url = $show->json('data.media.0.url');
-    expect($url)->toContain('signature=');
+    expect($url)->toContain('signature=')->toContain('tenant='.$this->shop->tenant->id);
     $this->get($url, $this->headers)->assertOk();
     $this->get(strtok($url, '?'), $this->headers)->assertForbidden();
+
+    // RQA-APP-016: the link names its store itself (Image.network / in-app browser send no X-Tenant).
+    $this->app['auth']->forgetGuards();
+    $this->get($url)->assertOk();
+    $other = shopSetup('evidence-other');
+    tenancy()->end();
+    $this->get(str_replace('tenant='.$this->shop->tenant->id, 'tenant='.$other->tenant->id, $url), shopHeaders($other->tenant))->assertForbidden();
+    $legacy = URL::temporarySignedRoute('store-api.v1.returns.media', now()->addMinutes(30), ['return' => $return->id, 'media' => $return->media->first()->id], absolute: false);
+    $this->get($legacy, $this->headers)->assertForbidden();
+    $this->travel(31)->minutes();
+    $this->get($url, $this->headers)->assertForbidden();
 });
 
 it('hides returns of other customers and other stores', function (): void {

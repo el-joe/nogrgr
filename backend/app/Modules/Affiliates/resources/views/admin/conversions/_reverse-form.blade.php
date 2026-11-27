@@ -1,5 +1,5 @@
 {{-- ADM-061 "Reverse conversion CV-…" (Figma 74:68877): reason (required). --}}
-<form id="conversion-reverse-form" method="POST" action="{{ route('admin.affiliates.conversions.reverse', $conversion->id) }}" data-ajax class="grid gap-4"
+<form id="conversion-reverse-form" method="POST" action="{{ route('admin.affiliates.conversions.reverse', $conversion->id) }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('affiliates::admin.conversions.reverse_title', ['reference' => $conversion->reference()]) }}">
     @csrf
     <p class="text-sm text-ink-secondary">{{ __('affiliates::admin.conversions.reverse_help', ['amount' => $conversion->commission()->format()]) }}</p>

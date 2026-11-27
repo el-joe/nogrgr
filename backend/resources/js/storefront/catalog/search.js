@@ -4,6 +4,7 @@
  * product + category suggestions from storefront.search.autocomplete; ↑ ↓ Enter Esc.
  */
 import { context } from './context';
+import { pageLocale } from '../../core/http';
 
 const KEY = 'sf:recent-searches';
 const MAX = 8;
@@ -155,7 +156,7 @@ function bind(form) {
         controller = new AbortController();
         show(loading);
         open(true);
-        fetch(`${url}?q=${encodeURIComponent(term)}`, { headers: { Accept: 'application/json' }, signal: controller.signal, credentials: 'same-origin' })
+        fetch(`${url}?q=${encodeURIComponent(term)}`, { headers: { Accept: 'application/json', ...(pageLocale() ? { 'X-Locale': pageLocale() } : {}) }, signal: controller.signal, credentials: 'same-origin' })
             .then((response) => (response.ok ? response.json() : Promise.reject(response)))
             .then((payload) => renderResults(payload.data ?? {}))
             .catch((error) => error?.name !== 'AbortError' && show(empty));

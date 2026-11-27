@@ -30,7 +30,7 @@ class BackInStockNotification extends Notification implements ShouldQueue, Templ
     public function __construct(
         public readonly int $storeProductId,
         public readonly array $variables,
-        public readonly ?string $locale = null,
+        public readonly ?string $mailLocale = null, // not `$locale`: Notification::$locale is untyped and mutable
     ) {
         $this->onQueue('notifications');
     }
@@ -68,7 +68,7 @@ class BackInStockNotification extends Notification implements ShouldQueue, Templ
 
     public function toMail(object $notifiable): MailMessage
     {
-        $locale = $notifiable instanceof Customer ? $this->recipientLocale($notifiable) : ($this->locale ?: app()->getLocale());
+        $locale = $notifiable instanceof Customer ? $this->recipientLocale($notifiable) : ($this->mailLocale ?: app()->getLocale());
         $name = $notifiable instanceof Customer ? (string) $notifiable->name : '';
 
         return $this->templatedMail($this->mailTemplate($notifiable), $this->variables + [

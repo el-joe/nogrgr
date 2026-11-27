@@ -30,7 +30,7 @@
                                     @case('visa')<span class="italic tracking-tight text-[#1a1f71]">VISA</span>@break
                                     @case('mastercard')<span class="relative flex" aria-hidden="true"><span class="size-4 rounded-full bg-[#eb001b]"></span><span class="-ms-1.5 size-4 rounded-full bg-[#f79e1b]/90"></span></span><span class="sr-only">Mastercard</span>@break
                                     @case('paypal')<span class="text-[#003087]">Pay<span class="text-[#009cde]">Pal</span></span>@break
-                                    @default<span class="px-1 text-center text-[10px] leading-tight">{{ __st('shell.payments.'.$badge) }}</span>
+                                    @default<span class="line-clamp-2 max-w-full overflow-hidden break-words px-0.5 text-center text-[9px] leading-[1.1]">{{ __st('shell.payments.'.$badge) }}</span>
                                 @endswitch
                             </li>
                         @endforeach

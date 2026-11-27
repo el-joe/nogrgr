@@ -2,12 +2,14 @@
 
 namespace App\Modules\Localization\Services;
 
+use App\Modules\Billing\Services\AddonPurchaseService;
 use App\Modules\Localization\DTOs\LanguageData;
 use App\Modules\Localization\Enums\TenantLanguageSource;
 use App\Modules\Localization\Exceptions\LockedRecordException;
 use App\Modules\Localization\Models\Language;
 use App\Modules\Localization\Models\TenantLanguage;
 use App\Modules\Localization\Repositories\Contracts\LanguageRepositoryContract;
+use App\Modules\Localization\Repositories\Contracts\StoreTranslationRunRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\TenantLanguageRepositoryContract;
 use App\Modules\Platform\Models\Tenant;
 use App\Shared\Money\Money;
@@ -26,6 +28,8 @@ class LanguageService
     public function __construct(
         private readonly LanguageRepositoryContract $languages,
         private readonly TenantLanguageRepositoryContract $tenantLanguages,
+        private readonly AddonPurchaseService $purchases,
+        private readonly StoreTranslationRunRepositoryContract $runs,
     ) {}
 
     /**
@@ -136,15 +140,16 @@ class LanguageService
 
     /**
      * Languages the store can buy: active, priced, not ar / en, not already on the store,
-     * and offered in at least one of the store's selling countries (all when either list
-     * is empty).
+     * not already paid for (paid purchase or a queued / translating run, RQA-VEN-001:
+     * a language is bought once) and offered in at least one of the store's selling
+     * countries (all when either list is empty).
      *
      * @return Collection<int, Language>
      */
     public function availableToPurchase(Tenant $tenant): Collection
     {
         /** @var list<string> $owned */
-        $owned = $tenant->run(fn (): array => $this->tenantLanguages->codes());
+        $owned = [...$tenant->run(fn (): array => $this->tenantLanguages->codes()), ...$this->boughtCodes($tenant)];
         $selling = array_map('intval', array_values(array_filter((array) $tenant->getAttribute('selling_country_ids'), 'is_numeric')));
 
         return $this->languages->active()
@@ -154,6 +159,25 @@ class LanguageService
                     || array_intersect($selling, array_map('intval', $language->country_ids)) !== []))
             ->values()
             ->toBase();
+    }
+
+    /**
+     * Language codes the store has paid for and whose translation has not switched them on
+     * yet or already did: paid purchases plus queued / translating runs.
+     *
+     * @return list<string>
+     */
+    public function boughtCodes(Tenant $tenant): array
+    {
+        return array_values(array_unique([
+            ...$this->purchases->paidLanguageCodes((int) $tenant->id),
+            ...$this->runs->activeLanguageCodes((int) $tenant->id),
+        ]));
+    }
+
+    public function isBought(Tenant $tenant, string $code): bool
+    {
+        return in_array(strtolower($code), $this->boughtCodes($tenant), true);
     }
 
     /**

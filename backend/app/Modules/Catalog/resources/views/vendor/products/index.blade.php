@@ -23,7 +23,7 @@
 
     <div class="flex flex-wrap items-center justify-between gap-4">
         @include('catalog::vendor.partials._tabs', ['active' => 'products'])
-        @if ($newCount > 0)
+        @if ($newCount > 0 && $canManage)
             <a href="{{ vendor_route('catalog.products.new') }}" class="inline-flex items-center gap-2 rounded-full bg-primary-subtle px-4 py-2 text-sm font-medium text-ink-brand hover:bg-primary hover:text-on-primary">
                 <x-ui::icon name="sparkles" :size="18" />{{ trans_choice('catalog::vendor.new.banner', $newCount, ['count' => number_format($newCount)]) }}
             </a>
@@ -53,9 +53,11 @@
                 <x-ui::button size="sm" variant="ghost" icon="percent" data-bulk-markup data-overlay-open="bulk-markup-modal">{{ __('catalog::vendor.price_list.bulk') }}</x-ui::button>
             </x-slot:bulk>
         @endif
-        <x-slot:empty>
-            <x-ui::button icon="plus" :href="vendor_route('catalog.products.new')">{{ __('catalog::vendor.new.browse') }}</x-ui::button>
-        </x-slot:empty>
+        @if ($canManage)
+            <x-slot:empty>
+                <x-ui::button icon="plus" :href="vendor_route('catalog.products.new')">{{ __('catalog::vendor.new.browse') }}</x-ui::button>
+            </x-slot:empty>
+        @endif
     </x-ui::datatable>
 
     @include('catalog::vendor.products._modals', ['canManage' => $canManage])

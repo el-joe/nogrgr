@@ -109,7 +109,7 @@ Public (a token only adds `favorited`). Same services as the themes, so prices e
 
 ## Store API customer support tickets (decision #108)
 
-Signed-in customer only (401); another customer's ticket → 404. Ticket: `{id, reference (C-1001), subject, topic {value, label}, status {value, label, tone}, order {uuid, number}|null, unread, last_reply_by customer|store, last_reply_at, excerpt, can_reply, can_close, created_at}`; detail adds `messages [{id, author customer|store, author_name, body, created_at, attachments [{id, name, mime_type, size, size_label, is_image, url}]}]` (file URLs are 30-min signed links).
+Signed-in customer only (401); another customer's ticket → 404. Ticket: `{id, reference (C-1001), subject, topic {value, label}, status {value, label, tone}, order {uuid, number}|null, unread, last_reply_by customer|store, last_reply_at, excerpt, can_reply, can_close, created_at}`; detail adds `messages [{id, author customer|store, author_name, body, created_at, attachments [{id, name, mime_type, size, size_label, is_image, url}]}]` (file URLs are 30-min signed links, see below).
 
 | Method | Path | Notes |
 |---|---|---|
@@ -121,6 +121,10 @@ Signed-in customer only (401); another customer's ticket → 404. Ticket: `{id, 
 | POST | `support/tickets/{id}/close` | → `ticket`; already closed → 422 |
 
 Store replies / status changes reach the customer as inbox rows (`event` `ticket_replied` / `ticket_resolved` / `ticket_closed` / `ticket_reopened`, `type` `support`, `ticket_id`), e-mail per the `support` switch and push.
+
+## Signed file links (RQA-APP-016, decision #128)
+
+Customer-ticket attachments (`support/tickets/{id}/attachments/{file}`) and return evidence (`returns/{id}/media/{media}`) are 30-min relative signed URLs that name their store in a signed query parameter: `…?expires=…&tenant={store id}&signature=…`. The app loads them as-is (Image.network, in-app browser) — **no `X-Tenant`, no bearer token**; the platform host or the store domain both work. A valid signed `tenant` wins over the `X-Tenant` header / host; tampered or expired links → 403 (404 when no store can be identified at all), links without `tenant` or of another store → 403. Request a fresh detail to get new links after expiry. `orders/{uuid}/invoice` keeps its link on the store domain.
 
 ## Push
 

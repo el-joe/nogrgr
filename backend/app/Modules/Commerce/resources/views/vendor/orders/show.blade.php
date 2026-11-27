@@ -52,7 +52,7 @@
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.company') }}</dt><dd class="font-semibold text-ink">{{ $order->shipping_company_name ?? '—' }}</dd></div>
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.status') }}</dt><dd>@include('commerce::partials.status-badge', ['value' => $order->fulfilment_status])</dd></div>
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.tracking') }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $order->tracking_number ?? '—' }}</dd></div>
-                        <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.estimate') }}</dt><dd class="font-semibold text-ink">{{ $order->delivery_min_date ? $order->delivery_min_date->translatedFormat('j').'–'.$order->delivery_max_date?->translatedFormat('j M') : '—' }}</dd></div>
+                        <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.estimate') }}</dt><dd class="font-semibold text-ink">{{ $order->deliveryWindowLabel() ?? '—' }}</dd></div>
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::vendor_orders.fulfilled_by') }}</dt><dd class="font-semibold text-ink">{{ $own ? tenant('name') : __('commerce::vendor_orders.platform_fulfilled') }}</dd></div>
                     </dl>
                     @unless ($own)

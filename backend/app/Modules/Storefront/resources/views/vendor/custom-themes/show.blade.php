@@ -72,7 +72,7 @@
                             <tbody>
                                 @forelse ($version->files() as $path => $file)
                                     <tr>
-                                        <td class="px-5 py-2 font-mono text-[13px] text-ink" dir="ltr">{{ $path }}</td>
+                                        <td class="break-all px-5 py-2 font-mono text-[13px] text-ink" dir="ltr">{{ $path }}</td>
                                         <td class="px-5 py-2 text-ink-secondary">{{ \Illuminate\Support\Number::fileSize((int) $file['size']) }}</td>
                                         <td class="px-5 py-2 font-mono text-xs text-ink-secondary" dir="ltr">{{ substr((string) $file['sha256'], 0, 12) }}</td>
                                     </tr>

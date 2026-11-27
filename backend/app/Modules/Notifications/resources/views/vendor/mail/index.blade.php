@@ -2,7 +2,8 @@
     Vendor › Settings › Mail (SMTP) (VEN-081, Figma Vendor Panel 91:115511): host, port,
     encryption, username, password (stored encrypted, never shown), from address / name;
     Save, "Send test email" (with the values on the page) and its result inline,
-    "Use Nogrgr mail" to remove the server.
+    "Use Nogrgr mail" to remove the server. Saving with host, username, password and from
+    address all empty also switches back to Nogrgr mail (RQA-VEN-012).
 --}}
 <x-vendor::layout :title="__('notifications::vendor_mail.title')" page="vendor-mail">
     <form id="vendor-mail-form" method="POST" action="{{ vendor_route('settings.mail.update') }}" data-ajax data-unsaved-form novalidate class="grid gap-6" data-mail-form @if ($canManage) data-test-url="{{ vendor_route('settings.mail.test') }}" @endif>
@@ -22,13 +23,13 @@
 
         <x-ui::card>
             <fieldset class="grid gap-5 md:grid-cols-2" @disabled(! $canManage)>
-                <x-ui::input name="host" :label="__('notifications::vendor_mail.fields.host')" :value="$settings['host']" maxlength="191" dir="ltr" placeholder="smtp.zoho.com" required autocomplete="off" />
+                <x-ui::input name="host" :label="__('notifications::vendor_mail.fields.host')" :value="$settings['host']" maxlength="191" dir="ltr" placeholder="smtp.zoho.com" autocomplete="off" />
                 <x-ui::input name="port" type="number" :label="__('notifications::vendor_mail.fields.port')" :value="$settings['port']" min="1" max="65535" dir="ltr" required />
                 <x-ui::select name="encryption" :label="__('notifications::vendor_mail.fields.encryption')" :options="$encryptions" :selected="$settings['encryption']" :search="false" required />
                 <x-ui::input name="username" :label="__('notifications::vendor_mail.fields.username')" :value="$settings['username']" maxlength="191" dir="ltr" autocomplete="off" />
                 <x-ui::input name="password" type="password" :label="__('notifications::vendor_mail.fields.password')" maxlength="191" dir="ltr" autocomplete="new-password" :placeholder="$settings['has_password'] ? '••••••••' : null" :helper="$settings['has_password'] ? __('notifications::vendor_mail.fields.password_saved') : null" />
                 <x-ui::input name="from_name" :label="__('notifications::vendor_mail.fields.from_name')" :value="$settings['from_name']" maxlength="120" />
-                <x-ui::input name="from_address" type="email" :label="__('notifications::vendor_mail.fields.from_address')" :value="$settings['from_address']" maxlength="191" dir="ltr" required class="md:col-span-2" />
+                <x-ui::input name="from_address" type="email" :label="__('notifications::vendor_mail.fields.from_address')" :value="$settings['from_address']" maxlength="191" dir="ltr" class="md:col-span-2" />
             </fieldset>
             <div class="mt-5 flex items-center gap-3 rounded-control bg-subtle px-4 py-3 text-sm text-ink" role="status" data-mail-status>
                 <x-ui::icon name="info" :size="16" class="shrink-0 text-ink-secondary" />

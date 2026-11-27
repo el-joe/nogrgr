@@ -14,7 +14,7 @@
                 <x-ui::badge tone="brand" data-unread-pill :hidden="$unread === 0">{{ trans_choice('notifications::panel.unread_count', $unread, ['count' => $unread]) }}</x-ui::badge>
             </x-slot:status>
             <x-slot:actions>
-                <form method="POST" action="{{ vendor_route('notifications.read-all') }}" data-ajax data-notification-mark-all-page @if ($unread === 0) hidden @endif>
+                <form method="POST" action="{{ vendor_route('notifications.read-all') }}" data-ajax novalidate data-notification-mark-all-page @if ($unread === 0) hidden @endif>
                     @csrf
                     <x-ui::button type="submit" icon="check">{{ __('notifications::panel.inbox.mark_all_vendor') }}</x-ui::button>
                 </form>

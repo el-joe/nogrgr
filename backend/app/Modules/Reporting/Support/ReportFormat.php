@@ -64,7 +64,10 @@ final class ReportFormat
     public static function period(ReportFilterData $filters): string
     {
         $locale = app()->getLocale();
+        $start = $filters->start()->locale($locale);
+        $end = $filters->end()->locale($locale);
 
-        return $filters->start()->locale($locale)->isoFormat('D MMM').' – '.$filters->end()->locale($locale)->isoFormat('D MMM YYYY');
+        /* RQA-VEN-005: a range across two years names both years (1 Dec 2025 – 27 Nov 2026). */
+        return $start->isoFormat($start->year === $end->year ? 'D MMM' : 'D MMM YYYY').' – '.$end->isoFormat('D MMM YYYY');
     }
 }

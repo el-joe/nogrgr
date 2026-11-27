@@ -45,7 +45,7 @@
         @endif
         <div class="mt-auto flex flex-wrap items-center gap-2 pt-1">
             @if ($canManage && ! $isDefault)
-                <form method="POST" action="{{ vendor_route('store.themes.activate') }}" data-ajax class="contents">
+                <form method="POST" action="{{ vendor_route('store.themes.activate') }}" data-ajax novalidate class="contents">
                     @csrf
                     <input type="hidden" name="theme" value="{{ $theme->id }}">
                     <input type="hidden" name="default" value="1">

@@ -71,6 +71,7 @@ return [
         'empty_description' => 'Languages you buy appear here with their invoice.',
     ],
     'errors' => [
+        'already_purchased' => 'You have already bought this language. Its AI translation is running and it switches on when it finishes.',
         'not_purchasable' => 'This language cannot be bought for your store.',
         'default_disabled' => 'The default language must be switched on.',
         'not_retryable' => 'Only a failed translation can be retried.',

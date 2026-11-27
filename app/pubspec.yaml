@@ -54,6 +54,7 @@ dependencies:
   sign_in_with_apple: ^8.2.0
   crypto: ^3.0.8
   file_picker: ^13.4.1
+  video_player: ^2.14.1
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,7 @@ dev_dependencies:
   mocktail: ^1.0.5
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.8
+  video_player_platform_interface: ^6.9.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../core/models/product_card.dart';
 import '../../../core/providers.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/widgets/app_widgets.dart';
 import '../../../core/widgets/catalog_widgets.dart';
@@ -287,30 +289,36 @@ class _HomeHeader extends ConsumerWidget {
         ),
     };
 
-    return Container(
-      color: onBrand ? colors.primary : colors.bg,
-      padding: EdgeInsets.fromLTRB(16, top + 12, 16, 12),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(child: title),
-              IconButton(
-                key: const ValueKey('home-inbox'),
-                tooltip: texts.t('app.inbox.title'),
-                onPressed: () => context.push(Routes.notifications),
-                icon: Badge(isLabelVisible: unread > 0, label: Text('$unread'), child: AppIcon('bell', color: fg)),
-              ),
-              IconButton(
-                tooltip: texts.t('cart.title'),
-                onPressed: () => StatefulNavigationShell.maybeOf(context)?.goBranch(2),
-                icon: AppIcon('cart', color: fg),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SearchEntry(onBrand: onBrand),
-        ],
+    final background = onBrand ? colors.primary : colors.bg;
+
+    // Light status-bar icons on the Ecommet brand header, else the surface default.
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: AppTheme.overlayFor(background, navigationBar: colors.tabbar),
+      child: Container(
+        color: background,
+        padding: EdgeInsets.fromLTRB(16, top + 12, 16, 12),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(child: title),
+                IconButton(
+                  key: const ValueKey('home-inbox'),
+                  tooltip: texts.t('app.inbox.title'),
+                  onPressed: () => context.push(Routes.notifications),
+                  icon: Badge(isLabelVisible: unread > 0, label: Text('$unread'), child: AppIcon('bell', color: fg)),
+                ),
+                IconButton(
+                  tooltip: texts.t('cart.title'),
+                  onPressed: () => StatefulNavigationShell.maybeOf(context)?.goBranch(2),
+                  icon: AppIcon('cart', color: fg),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SearchEntry(onBrand: onBrand),
+          ],
+        ),
       ),
     );
   }

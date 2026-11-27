@@ -1,7 +1,15 @@
-{{-- Order totals (snapshot columns): subtotal, flash discount, shipping, coupon, tax, total. --}}
-@php $o = $order; @endphp
+{{--
+    Order totals (snapshot columns): subtotal, flash discount, shipping, coupon, tax, total.
+    display_subtotal = Σ(sub_total + fixed_shipping), so the label says so when an order line
+    carries fixed shipping (RQA-VEN-006); the item count is pluralised (RQA-VEN-014).
+--}}
+@php
+    $o = $order;
+    $itemCount = (int) $o->items->sum('quantity');
+    $subtotalKey = $o->items->sum('fixed_shipping') > 0 ? 'subtotal_with_fixed' : 'subtotal';
+@endphp
 <dl class="grid gap-2 text-sm">
-    <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::orders_admin.totals.subtotal', ['count' => $o->items->sum('quantity')]) }}</dt><dd class="text-ink" dir="ltr">{{ $o->money('display_subtotal')->format() }}</dd></div>
+    <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ trans_choice('commerce::orders_admin.totals.'.$subtotalKey, $itemCount, ['count' => $itemCount]) }}</dt><dd class="text-ink" dir="ltr">{{ $o->money('display_subtotal')->format() }}</dd></div>
     @if ($o->flash_discount > 0)
         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::orders_admin.totals.flash') }}</dt><dd class="text-success" dir="ltr">− {{ $o->money('flash_discount')->format() }}</dd></div>
     @endif

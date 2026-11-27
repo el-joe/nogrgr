@@ -22,6 +22,13 @@ interface AddonPurchaseRepositoryContract extends RepositoryContract
     public function openFor(int $tenantId, AddonType $type, string $itemCode): ?AddonPurchase;
 
     /**
+     * Item codes of the store's paid purchases of a type (e.g. bought language codes).
+     *
+     * @return list<string>
+     */
+    public function paidItemCodes(int $tenantId, AddonType $type): array;
+
+    /**
      * @return Collection<int, AddonPurchase>
      */
     public function forTenant(int $tenantId): Collection;

@@ -15,7 +15,9 @@ use App\Modules\Catalog\Services\Requests\TenantChangeService;
 use App\Modules\Integrations\Enums\PaymentGatewayCode;
 use App\Modules\Integrations\Exceptions\PaymentGatewayException;
 use App\Modules\Localization\Models\Language;
+use App\Modules\Localization\Models\StoreTranslationRun;
 use App\Modules\Localization\Repositories\Contracts\LanguageRepositoryContract;
+use App\Modules\Localization\Repositories\Contracts\StoreTranslationRunRepositoryContract;
 use App\Modules\Localization\Repositories\Contracts\TenantLanguageRepositoryContract;
 use App\Modules\Localization\Services\LanguageService;
 use App\Modules\Platform\DTOs\SetupCountriesData;
@@ -54,6 +56,7 @@ class SetupWizardService extends BaseService
         private readonly InvoiceCheckoutService $checkout,
         private readonly StoreSettingsService $settings,
         private readonly StoreThemeService $themes,
+        private readonly StoreTranslationRunRepositoryContract $runs,
     ) {}
 
     /**
@@ -154,7 +157,36 @@ class SetupWizardService extends BaseService
     {
         $language = $this->languageService->availableToPurchase($tenant)->first(static fn (Language $language): bool => $language->id === $languageId);
 
-        return $language ?? throw PlatformRuleException::languageNotPurchasable();
+        if ($language !== null) {
+            return $language;
+        }
+
+        $known = $this->languages->find($languageId);
+
+        throw $known instanceof Language && $this->languageService->isBought($tenant, $known->code)
+            ? PlatformRuleException::languageAlreadyPurchased()
+            : PlatformRuleException::languageNotPurchasable();
+    }
+
+    /**
+     * Languages the store has paid for that are not switched on yet (their AI translation
+     * is queued / running / failed), shown as "Paid — <run status>" like Settings › Languages.
+     *
+     * @return Collection<int, array{code: string, language: Language|null, run: StoreTranslationRun|null}>
+     */
+    public function boughtLanguages(Tenant $tenant): Collection
+    {
+        $on = $this->storeLanguageCodes($tenant);
+        $runs = $this->runs->latestByLanguage((int) $tenant->id);
+
+        return collect($this->languageService->boughtCodes($tenant))
+            ->reject(static fn (string $code): bool => in_array($code, $on, true))
+            ->map(fn (string $code): array => [
+                'code' => $code,
+                'language' => $this->languages->findByCode($code),
+                'run' => $runs->get($code),
+            ])
+            ->values();
     }
 
     /**

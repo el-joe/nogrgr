@@ -7,10 +7,11 @@
     $errorKey = \App\Shared\Support\Ui::errorKey($name);
     $id ??= \App\Shared\Support\Ui::id($name);
     $old = \App\Shared\Support\Ui::old($errorKey);
-    $isChecked = $old !== null ? (string) $old === (string) $value : $checked;
+    $isChecked = $old !== null ? in_array((string) $value, array_map('strval', (array) $old), true) : $checked;
+    $hasHiddenFallback = ! $url && $uncheckedValue !== null && $uncheckedValue !== false && ! str_ends_with($name, '[]');
 @endphp
 <label for="{{ $id }}" {{ $attributes->only('class')->class(['inline-flex items-center gap-2.5 text-sm', 'cursor-not-allowed text-ink-muted' => $disabled, 'cursor-pointer text-ink' => ! $disabled]) }}>
-    @if (! $url && $uncheckedValue !== null)
+    @if ($hasHiddenFallback)
         <input type="hidden" name="{{ $name }}" value="{{ $uncheckedValue }}">
     @endif
     <input

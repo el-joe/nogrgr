@@ -4,6 +4,7 @@ namespace App\Modules\Api\Http\Resources\Mobile;
 
 use App\Modules\Notifications\Models\PanelNotificationRecord;
 use App\Modules\Notifications\Services\CustomerPushService;
+use App\Modules\Notifications\Support\InboxText;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -42,15 +43,6 @@ class NotificationResource extends JsonResource
      */
     private static function text(array $data, string $field): string
     {
-        $key = $data[$field.'_key'] ?? null;
-        $params = $data[$field.'_params'] ?? $data['params'] ?? [];
-
-        if (! is_string($key) || $key === '') {
-            return (string) ($data[$field] ?? '');
-        }
-
-        $text = __($key, is_array($params) ? $params : []);
-
-        return is_string($text) ? $text : $key;
+        return InboxText::render($data, $field);
     }
 }

@@ -18,6 +18,13 @@ interface StoreTranslationRunRepositoryContract extends RepositoryContract
     public function forPurchase(int $addonPurchaseId): ?StoreTranslationRun;
 
     /**
+     * Language codes with a queued / translating run for the store.
+     *
+     * @return list<string>
+     */
+    public function activeLanguageCodes(int $tenantId): array;
+
+    /**
      * Latest run per language code of one store.
      *
      * @return Collection<string, StoreTranslationRun>

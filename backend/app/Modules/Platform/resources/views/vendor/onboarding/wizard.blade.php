@@ -4,6 +4,7 @@
     paid languages bought through the hosted checkout), theme (P7 themes page, else the
     "available after" note) and launch. Same frame as the vendor auth pages.
 --}}
+@use('App\Modules\Localization\Enums\TranslationRunStatus')
 @use('App\Modules\Platform\Enums\SetupWizardStep')
 @php
     $featuredIso = ['SA', 'AE', 'KW', 'BH', 'QA', 'OM', 'EG', 'JO'];
@@ -99,6 +100,20 @@
                                 <li class="flex items-center justify-between gap-3 rounded-control border border-line px-3 py-2.5">
                                     <span class="text-sm font-medium text-ink">{{ __('ui.languages.'.$code) !== 'ui.languages.'.$code ? __('ui.languages.'.$code) : strtoupper($code) }}</span>
                                     <x-ui::badge tone="success" dot>{{ in_array($code, ['ar', 'en'], true) ? __('platform::setup.languages.free') : __('platform::setup.languages.on') }}</x-ui::badge>
+                                </li>
+                            @endforeach
+                            {{-- RQA-VEN-001: a paid language is bought once — shown with its translation status, never offered again. --}}
+                            @foreach ($bought as $row)
+                                <li class="flex flex-wrap items-center justify-between gap-3 rounded-control border border-line px-3 py-2.5" data-language="{{ $row['code'] }}" data-bought>
+                                    <span class="text-sm font-medium text-ink">{{ $row['language']?->name ?: strtoupper($row['code']) }}@if ($row['language']?->native_name) <span class="text-xs text-ink-secondary">{{ $row['language']->native_name }}</span>@endif</span>
+                                    <span class="flex items-center gap-1.5">
+                                        <x-ui::badge tone="success">{{ __('localization::vendor_languages.paid') }}</x-ui::badge>
+                                        @if ($row['run'])
+                                            @include('localization::vendor.languages._run-badge', ['run' => $row['run']])
+                                        @else
+                                            <x-ui::badge :tone="TranslationRunStatus::Queued->tone()" dot>{{ TranslationRunStatus::Queued->label() }}</x-ui::badge>
+                                        @endif
+                                    </span>
                                 </li>
                             @endforeach
                             @foreach ($purchasable as $row)

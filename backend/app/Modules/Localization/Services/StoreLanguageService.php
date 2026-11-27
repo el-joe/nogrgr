@@ -98,7 +98,15 @@ class StoreLanguageService extends BaseService
     {
         $row = $this->purchasable($tenant)->first(static fn (array $row): bool => $row['language']->id === $languageId);
 
-        return $row['language'] ?? throw TranslationRuleException::languageNotPurchasable();
+        if (isset($row['language'])) {
+            return $row['language'];
+        }
+
+        $language = $this->languages->find($languageId);
+
+        throw $language instanceof Language && $this->languageService->isBought($tenant, $language->code)
+            ? TranslationRuleException::languageAlreadyPurchased()
+            : TranslationRuleException::languageNotPurchasable();
     }
 
     /**

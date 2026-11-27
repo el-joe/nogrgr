@@ -242,6 +242,7 @@ return [
 
     'own' => [
         'title' => 'Own products',
+        'countries_required' => 'Pick at least one country or tick All countries.',
         'add' => 'Add product',
         'see_all' => 'See all',
         'empty_title' => 'No own products yet',

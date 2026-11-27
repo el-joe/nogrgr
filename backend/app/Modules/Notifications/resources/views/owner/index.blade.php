@@ -7,7 +7,7 @@
     <div class="grid gap-6">
         <x-ui::page-header :title="__('notifications::panel.owner.title')" :subtitle="__('notifications::panel.owner.subtitle')">
             <x-slot:actions>
-                <form method="POST" action="{{ route('owner.notifications.read-all') }}" data-ajax data-owner-mark-all @if ($unread === 0) hidden @endif>
+                <form method="POST" action="{{ route('owner.notifications.read-all') }}" data-ajax novalidate data-owner-mark-all @if ($unread === 0) hidden @endif>
                     @csrf
                     <x-ui::button type="submit" variant="secondary" icon="check">{{ __('notifications::panel.owner.mark_all') }}</x-ui::button>
                 </form>

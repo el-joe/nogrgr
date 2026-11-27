@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\AfterSales\Http\Controllers\StoreApi\ReturnController;
+use App\Modules\Api\Http\Middleware\EnsureSignedStoreLink;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,6 @@ Route::controller(ReturnController::class)->group(function (): void {
         Route::get('{return}', 'show')->whereNumber('return')->name('show');
         Route::post('{return}/messages', 'reply')->whereNumber('return')->name('messages.store');
         Route::post('{return}/withdraw', 'withdraw')->whereNumber('return')->name('withdraw');
-        Route::get('{return}/media/{media}', 'media')->whereNumber(['return', 'media'])->middleware('signed:relative')->name('media');
+        Route::get('{return}/media/{media}', 'media')->whereNumber(['return', 'media'])->middleware(['signed:relative', EnsureSignedStoreLink::class])->name('media');
     });
 });

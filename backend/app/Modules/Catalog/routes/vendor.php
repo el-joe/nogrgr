@@ -37,15 +37,8 @@ Route::middleware('auth:vendor')->prefix('catalog')->name('catalog.')->group(fun
             });
 
             Route::get('{product}/price-list', [PriceListController::class, 'show'])->whereNumber('product')->name('price-list');
-
-            Route::get('new', [NewProductController::class, 'index'])->name('new');
-
-            Route::controller(NewProductController::class)->prefix('new')->name('new.')->group(function (): void {
-                Route::get('data', 'data')->name('data');
-                Route::get('{central}', 'show')->whereNumber('central')->name('show');
-            });
-
-            Route::get('sort', [ProductSortController::class, 'index'])->name('sort');
+            // Product preview (also the "product assigned" notification link for every viewer).
+            Route::get('new/{central}', [NewProductController::class, 'show'])->whereNumber('central')->name('new.show');
         });
 
         Route::get('export', [StoreProductController::class, 'export'])->middleware('permission:catalog.products.export,vendor')->name('export');
@@ -65,6 +58,10 @@ Route::middleware('auth:vendor')->prefix('catalog')->name('catalog.')->group(fun
                 Route::get('price-list/runs/{run}', 'run')->whereUuid('run')->name('price-list.run');
             });
 
+            // RQA-VEN-007: the import and sort pages only serve their manage POSTs.
+            Route::get('new', [NewProductController::class, 'index'])->name('new');
+            Route::get('new/data', [NewProductController::class, 'data'])->name('new.data');
+            Route::get('sort', [ProductSortController::class, 'index'])->name('sort');
             Route::post('new/import', [NewProductController::class, 'import'])->middleware('throttle:30,1')->name('new.import');
             Route::post('sort', [ProductSortController::class, 'update'])->name('sort.update');
         });
@@ -114,10 +111,10 @@ Route::middleware('auth:vendor')->prefix('catalog')->name('catalog.')->group(fun
         Route::middleware('permission:catalog.products.view,vendor')->group(function (): void {
             Route::get('/', 'index')->name('index');
             Route::get('data', 'data')->name('data');
-            Route::get('form', 'form')->name('form');
             Route::get('{editRequest}', 'show')->whereNumber('editRequest')->name('show');
         });
 
+        Route::get('form', 'form')->middleware('permission:catalog.products.manage,vendor')->name('form');
         Route::post('/', 'store')->middleware(['permission:catalog.products.manage,vendor', 'throttle:20,1'])->name('store');
     });
 

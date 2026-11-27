@@ -7,7 +7,7 @@
     $balance = $affiliate->balanceMoney();
     $suggested = $payoutRequest !== null ? $payoutRequest->money()->min($balance) : $balance;
 @endphp
-<form id="affiliate-payout-form" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" data-ajax class="grid gap-4"
+<form id="affiliate-payout-form" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('affiliates::admin.payout.title', ['name' => $affiliate->name]) }}"
     data-modal-subtitle="{{ __('affiliates::admin.payout.subtitle', ['balance' => $balance->format(), 'minimum' => $minimum->format()]) }}">
     @csrf

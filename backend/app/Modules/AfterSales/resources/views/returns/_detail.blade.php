@@ -149,7 +149,7 @@
                     @endforeach
                 </ul>
                 @if ($canManage)
-                    <form method="POST" action="{{ $noteUrl }}" data-ajax class="mt-4 grid gap-2">
+                    <form method="POST" action="{{ $noteUrl }}" data-ajax novalidate class="mt-4 grid gap-2">
                         @csrf
                         <input type="hidden" name="customer_visible" value="1">
                         <x-ui::textarea name="note" :label="__('after-sales::returns.reply')" label-hidden :placeholder="__('after-sales::returns.reply_placeholder')" rows="2" maxlength="2000" required />
@@ -170,7 +170,7 @@
                     </ul>
                 @endif
                 @if ($canManage)
-                    <form method="POST" action="{{ $noteUrl }}" data-ajax class="mt-3 grid gap-2">
+                    <form method="POST" action="{{ $noteUrl }}" data-ajax novalidate class="mt-3 grid gap-2">
                         @csrf
                         <x-ui::textarea name="note" :label="__('after-sales::returns.add_note')" label-hidden :placeholder="__('after-sales::returns.note_placeholder')" rows="2" maxlength="2000" required />
                         <div><x-ui::button type="submit" variant="secondary" size="sm">{{ __('after-sales::returns.add_note') }}</x-ui::button></div>

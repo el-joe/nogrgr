@@ -21,6 +21,10 @@ final class PermissionMatrix
         'overview' => ['dashboard', 'reports'],
         'catalog' => ['catalog'],
         'requests' => ['requests'],
+        'sales' => ['orders', 'returns', 'refunds', 'shipping-queue'],
+        'shipping' => ['shipping'],
+        'marketing' => ['coupons', 'flash-sales'],
+        'storefront' => ['storefront'],
         'vendors' => ['vendors', 'tenants'],
         'billing' => ['plans', 'subscriptions', 'finance'],
         'affiliates' => ['affiliates'],
@@ -111,26 +115,38 @@ final class PermissionMatrix
     /**
      * Translated row label of a resource ("localization.languages" → "Languages").
      */
-    public static function resourceLabel(string $resource): string
+    public static function resourceLabel(string $resource, ?string $locale = null): string
     {
-        $key = 'identity::roles.resources.'.$resource;
-        $label = __($key);
+        // Resource keys are dotted ("catalog.categories"): the translator would read them
+        // as nested keys, so look the flat key up in the resources array (RQA-ADM-002).
+        $labels = __('identity::roles.resources', [], $locale);
+        $label = is_array($labels) ? ($labels[$resource] ?? null) : null;
 
-        return is_string($label) && $label !== $key ? $label : Str::headline(str_replace('.', ' ', $resource));
+        return is_string($label) && $label !== '' ? $label : Str::headline(str_replace('.', ' ', $resource));
     }
 
-    public static function moduleLabel(string $module): string
+    /**
+     * Whether a resource / module / ability has a real translation (not the headline fallback).
+     */
+    public static function hasLabel(string $group, string $key, ?string $locale = null): bool
+    {
+        $labels = __('identity::roles.'.$group, [], $locale);
+
+        return is_array($labels) && is_string($labels[$key] ?? null) && $labels[$key] !== '';
+    }
+
+    public static function moduleLabel(string $module, ?string $locale = null): string
     {
         $key = 'identity::roles.modules.'.$module;
-        $label = __($key);
+        $label = __($key, [], $locale);
 
         return is_string($label) && $label !== $key ? $label : Str::headline($module);
     }
 
-    public static function abilityLabel(string $ability): string
+    public static function abilityLabel(string $ability, ?string $locale = null): string
     {
         $key = 'identity::roles.abilities.'.$ability;
-        $label = __($key);
+        $label = __($key, [], $locale);
 
         return is_string($label) && $label !== $key ? $label : Str::headline($ability);
     }

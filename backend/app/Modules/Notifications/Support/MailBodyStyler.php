@@ -14,6 +14,7 @@ final class MailBodyStyler
     {
         $start = $rtl ? 'right' : 'left';
         $end = $rtl ? 'left' : 'right';
+        $onPrimary = self::onColor($primary);
 
         // Drop links without a usable URL, then the blocks they leave empty.
         $html = (string) preg_replace_callback('#<a\s+href="([^"]*)"([^>]*)>(.*?)</a>#is', static function (array $match): string {
@@ -26,7 +27,8 @@ final class MailBodyStyler
         // Figma Emails & printables 131:11159: full-width brand button, radius 10.
         // Central e-mails (Figma 129:10162): full-width button; store e-mails (129:10215): inline.
         $button = static fn (array $match): string => '<table role="presentation"'.($centered ? ' width="100%"' : '').' cellpadding="0" cellspacing="0" style="margin:8px 0 20px;"><tr><td align="center" style="border-radius:10px;background:'.$primary.';">'
-            .'<a href="'.$match[1].'" style="display:'.($centered ? 'block' : 'inline-block').';padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:10px;text-align:center;">'.strip_tags($match[3]).'</a></td></tr></table>';
+            // style before href: the generic link colouring below only matches `<a href="`.
+            .'<a style="display:'.($centered ? 'block' : 'inline-block').';padding:14px 28px;font-size:15px;font-weight:600;color:'.$onPrimary.';text-decoration:none;border-radius:10px;text-align:center;" href="'.$match[1].'">'.strip_tags($match[3]).'</a></td></tr></table>';
         $html = (string) preg_replace_callback('#<p>\s*<a href="([^"]+)"([^>]*)>(.*?)</a>\s*</p>#is', $button, $html);
 
         // Two-cell rows = detail rows (label muted at the start, value bold at the end).
@@ -52,6 +54,32 @@ final class MailBodyStyler
             '<img ' => '<img style="max-width:100%;height:auto;" ',
             '<code>' => '<code style="font-family:monospace;background:#f5f3f1;padding:1px 4px;border-radius:4px;">',
         ]);
+    }
+
+    /**
+     * Readable text colour on a brand background: white, or the dark ink for light brands.
+     */
+    public static function onColor(string $background): string
+    {
+        $hex = ltrim(trim($background), '#');
+
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+
+        if (preg_match('/^[0-9a-f]{6}$/i', $hex) !== 1) {
+            return '#ffffff';
+        }
+
+        $channel = static function (string $pair): float {
+            $value = hexdec($pair) / 255;
+
+            return $value <= 0.03928 ? $value / 12.92 : (($value + 0.055) / 1.055) ** 2.4;
+        };
+        $luminance = 0.2126 * $channel(substr($hex, 0, 2)) + 0.7152 * $channel(substr($hex, 2, 2)) + 0.0722 * $channel(substr($hex, 4, 2));
+
+        // White (the Figma button label) while it keeps at least 3:1 against the brand.
+        return 1.05 / ($luminance + 0.05) >= 3 ? '#ffffff' : '#2b1a14';
     }
 
     /**

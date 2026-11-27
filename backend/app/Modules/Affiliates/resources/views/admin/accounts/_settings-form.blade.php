@@ -1,5 +1,5 @@
 {{-- ADM-060c "Affiliate program settings" (Figma 74:68877): cookie days, default commission (%), minimum payout (USD). $cookieDays, $defaultCommission, $minPayout. --}}
-<form id="affiliate-settings-form" method="POST" action="{{ route('admin.affiliates.settings.update') }}" data-ajax class="grid gap-4"
+<form id="affiliate-settings-form" method="POST" action="{{ route('admin.affiliates.settings.update') }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('affiliates::admin.settings.title') }}">
     @csrf
     @method('PUT')

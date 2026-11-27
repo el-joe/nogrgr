@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Mail (SMTP)',
-    'subtitle' => 'Send store emails from your own domain. Leave empty to use Nogrgr mail.',
+    'subtitle' => 'Send store emails from your own domain. To use Nogrgr mail, leave Host, Username, Password and From address empty and save.',
     'crumb' => 'Settings',
     'save' => 'Save',
     'send_test' => 'Send test email',

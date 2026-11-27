@@ -10,9 +10,9 @@ use App\Modules\AfterSales\Models\ReturnRequestEvent;
 use App\Modules\AfterSales\Models\ReturnRequestMedia;
 use App\Modules\Commerce\Enums\ActorType;
 use App\Modules\Commerce\Support\MoneyPresenter;
+use App\Shared\Routing\StoreApiSignedUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\URL;
 
 /**
  * Customer view of a return (list row; detail adds the customer-visible timeline, the
@@ -130,7 +130,7 @@ class ReturnResource extends JsonResource
                     'name' => $media->original_name,
                     'mime' => $media->mime,
                     'size' => $media->size,
-                    'url' => url(URL::temporarySignedRoute('store-api.v1.returns.media', now()->addMinutes(self::MEDIA_URL_MINUTES), ['return' => $return->id, 'media' => $media->id], absolute: false)),
+                    'url' => StoreApiSignedUrl::temporary('store-api.v1.returns.media', now()->addMinutes(self::MEDIA_URL_MINUTES), ['return' => $return->id, 'media' => $media->id]),
                 ])->all(),
             'refunds' => $return->refunds->map(static fn (Refund $refund): array => [
                 'reference' => $refund->reference,

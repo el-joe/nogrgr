@@ -36,6 +36,13 @@ class MailSettingsController extends Controller
 
     public function update(StoreMailSettingsRequest $request): JsonResponse
     {
+        if (! $request->usesOwnServer()) {
+            // RQA-VEN-012: all server fields empty = back to Nogrgr mail.
+            $this->mail->clear();
+
+            return JsonResponder::success(__('notifications::vendor_mail.cleared'), redirect: vendor_route('settings.mail'));
+        }
+
         $this->mail->save($request->toData());
 
         return JsonResponder::success(__('notifications::vendor_mail.saved'), redirect: vendor_route('settings.mail'));

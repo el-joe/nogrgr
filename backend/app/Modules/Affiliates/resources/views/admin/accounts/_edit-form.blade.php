@@ -2,7 +2,7 @@
 @php
     $value = $affiliate->commission_value !== null ? number_format($affiliate->commission_value / 100, 2, '.', '') : null;
 @endphp
-<form id="affiliate-edit-form" method="POST" action="{{ route('admin.affiliates.update', $affiliate->id) }}" data-ajax class="grid gap-4"
+<form id="affiliate-edit-form" method="POST" action="{{ route('admin.affiliates.update', $affiliate->id) }}" data-ajax novalidate class="grid gap-4"
     data-modal-title="{{ __('affiliates::admin.accounts.edit_title', ['name' => $affiliate->name]) }}">
     @csrf
     @method('PUT')
