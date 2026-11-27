@@ -109,3 +109,5 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - Committed 43b4401 (Flutter batch 3 #111).
 - CLIENT (2026-11-27): launching fresh — old per-store data migration NOT required (no old store DBs needed). Products come from Neozena: new `catalog:import-neozena` command (agent neozena-cmd) reusing the ADM-013 import. p12-migrate2 narrowed to central items + reconcile.
 - Running: qa-final, p12-migrate2, neozena-cmd (3 briefly; p12-migrate2 narrowed).
+- Committed df802f8 + cf8cd73 (Neozena command + fixes), be5c277 (legacy batch 2), dd3dbfd (final QA fixes). Dev: all 189 products published, default branch seeded.
+- QUEUED after product-video: "product-form" — rebuild admin product form to old controller version (decision above), remove Countries & shipping tab.
