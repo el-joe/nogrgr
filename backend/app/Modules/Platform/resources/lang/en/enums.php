@@ -131,4 +131,30 @@ return [
         'domain' => 'Connect a domain',
         'tour' => 'Panel tour',
     ],
+    'maintenance_scope' => [
+        'platform' => 'Full platform',
+        'storefronts' => 'All storefronts',
+        'store' => 'One store',
+    ],
+    'maintenance_window_status' => [
+        'scheduled' => 'Scheduled',
+        'active' => 'Active',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
+    ],
+    'cache_action' => [
+        'application' => 'Application cache',
+        'config_routes' => 'Config & routes',
+        'views' => 'Views',
+        'static_texts' => 'Store texts',
+        'store_pages' => 'Storefront pages',
+        'store_translations' => 'Translations',
+        'store_themes' => 'Theme assets',
+        'all_stores' => 'All store caches',
+    ],
+    'cache_run_status' => [
+        'queued' => 'Queued',
+        'done' => 'Cleared',
+        'failed' => 'Failed',
+    ],
 ];

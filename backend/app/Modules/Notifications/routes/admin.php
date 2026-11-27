@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Notifications\Http\Controllers\Admin\EmailTemplateController;
+use App\Modules\Notifications\Http\Controllers\Admin\MailLayoutController;
 use App\Modules\Notifications\Http\Controllers\Admin\NotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,13 +44,29 @@ Route::middleware('auth:admin')
         });
 
         Route::middleware('permission:email-templates.manage,admin')->group(function (): void {
-            Route::get('create', 'create')->name('create');
-            Route::post('/', 'store')->name('store');
             Route::post('sync', 'syncAll')->middleware('throttle:6,1')->name('sync-all');
             Route::get('{template}/edit', 'edit')->whereNumber('template')->name('edit');
             Route::put('{template}', 'update')->whereNumber('template')->name('update');
-            Route::delete('{template}', 'destroy')->whereNumber('template')->name('destroy');
+            Route::post('{template}/render', 'render')->whereNumber('template')->middleware('throttle:120,1')->name('render');
+            Route::post('{template}/reset', 'reset')->whereNumber('template')->name('reset');
             Route::post('{template}/test', 'test')->whereNumber('template')->middleware('throttle:10,1')->name('test');
             Route::post('{template}/sync', 'sync')->whereNumber('template')->middleware('throttle:12,1')->name('sync');
         });
+    });
+
+/*
+| Surface: admin — {central}/admin/settings/email-layout, names
+| "admin.settings.email-layout.*": the shared MAIL-001 layout (logo, colours, footer,
+| social links; email-templates.view / .manage).
+*/
+Route::middleware('auth:admin')
+    ->controller(MailLayoutController::class)
+    ->prefix('settings/email-layout')
+    ->name('settings.email-layout.')
+    ->group(function (): void {
+        Route::middleware('permission:email-templates.view,admin')->group(function (): void {
+            Route::get('/', 'edit')->name('edit');
+            Route::get('preview', 'preview')->name('preview');
+        });
+        Route::put('/', 'update')->middleware('permission:email-templates.manage,admin')->name('update');
     });

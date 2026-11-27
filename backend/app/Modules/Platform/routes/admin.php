@@ -43,3 +43,6 @@ require __DIR__.'/admin/domains.php';
 
 // System tools › Developer docs (P9, ADM-115 / 115a).
 require __DIR__.'/admin/developer-docs.php';
+
+// System tools › Maintenance windows (ADM-113) and Cache tools (ADM-114).
+require __DIR__.'/admin/system-tools.php';

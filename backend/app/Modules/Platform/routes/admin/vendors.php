@@ -3,6 +3,7 @@
 use App\Modules\Platform\Http\Controllers\Admin\VendorController;
 use App\Modules\Platform\Http\Controllers\Admin\VendorCreateController;
 use App\Modules\Platform\Http\Controllers\Admin\VendorImpersonationController;
+use App\Modules\Platform\Http\Controllers\Admin\VendorLimitOverrideController;
 use App\Modules\Platform\Http\Controllers\Admin\VendorProfileController;
 use App\Modules\Platform\Http\Controllers\Admin\VendorStatusController;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,9 @@ Route::middleware('auth:admin')->prefix('vendors')->name('vendors.')->group(func
         Route::post('{tenant}/suspend', [VendorStatusController::class, 'suspend'])->whereNumber('tenant')->name('suspend');
         Route::post('{tenant}/retry', [VendorStatusController::class, 'retry'])->whereNumber('tenant')->name('retry');
     });
+
+    // ADM-041h: per-store plan limit overrides.
+    Route::put('{tenant}/limits', [VendorLimitOverrideController::class, 'update'])->whereNumber('tenant')->middleware('permission:vendors.limits.manage,admin')->name('limits');
 
     Route::delete('{tenant}', [VendorStatusController::class, 'destroy'])->whereNumber('tenant')->middleware('permission:vendors.delete,admin')->name('destroy');
 

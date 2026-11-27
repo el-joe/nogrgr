@@ -3,11 +3,14 @@
 namespace App\Modules\Notifications\Services;
 
 use App\Modules\Notifications\DTOs\EmailTemplateData;
+use App\Modules\Notifications\DTOs\RenderedEmailData;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
+use App\Modules\Notifications\Enums\EmailTemplateStatus;
 use App\Modules\Notifications\Jobs\SyncEmailTemplatesToTenants;
 use App\Modules\Notifications\Mail\TemplatedMail;
 use App\Modules\Notifications\Models\EmailTemplate;
 use App\Modules\Notifications\Repositories\Contracts\EmailTemplateRepositoryContract;
+use App\Modules\Notifications\Support\EmailHtmlSanitizer;
 use App\Modules\Platform\Services\Auditor;
 use App\Shared\Services\BaseService;
 use DomainException;
@@ -16,8 +19,9 @@ use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
- * Admin › Settings › Email templates (ADM-102/102a): one template per event, ar/en
- * subject + body, "Send test" with sample data and "Sync to tenants" (queued job).
+ * Admin › Settings › Email templates (ADM-102/102a, decision #118): one row per registry
+ * key (created from the code default), ar/en subject + body, enable / disable, reset to
+ * default, live preview, "Send test" to the current admin and "Sync to tenants".
  */
 class EmailTemplateService extends BaseService
 {
@@ -36,57 +40,81 @@ class EmailTemplateService extends BaseService
     }
 
     /**
-     * Events without a template yet (create form), grouped by audience label.
-     *
-     * @return array<string, array<string, string>>
+     * Gives every registry key a row (created from its code default) so the list shows
+     * every e-mail the platform sends. Idempotent; returns the number of rows created.
      */
-    public function availableEvents(): array
+    public function ensureRegistry(): int
     {
         $existing = $this->templates->existingEvents();
-        $groups = [];
+        $created = 0;
 
         foreach (EmailTemplateEvent::cases() as $event) {
-            if (! in_array($event->value, $existing, true)) {
-                $groups[$event->audience()->label()][$event->value] = $event->label().' ('.$event->value.')';
+            if (in_array($event->value, $existing, true)) {
+                continue;
             }
+
+            $this->templates->create([
+                'event' => $event,
+                'audience' => $event->audience(),
+                'subject' => $this->defaults($event, 'subject'),
+                'body' => $this->defaults($event, 'body'),
+                'status' => EmailTemplateStatus::Active,
+            ]);
+            $created++;
         }
 
-        return $groups;
+        return $created;
     }
 
-    public function create(EmailTemplateData $data): EmailTemplate
-    {
-        if ($this->templates->findByEvent($data->event) !== null) {
-            throw new DomainException(__('notifications::templates.event_taken'));
-        }
-
-        /** @var EmailTemplate $template */
-        $template = $this->templates->create([
-            'event' => $data->event,
-            'audience' => $data->event->audience(),
-            'subject' => $data->subject,
-            'body' => $data->body,
-            'status' => $data->status,
-        ]);
-
-        return $template;
-    }
-
-    public function update(EmailTemplate $template, EmailTemplateData $data): EmailTemplate
+    public function update(EmailTemplate $template, EmailTemplateData $data, ?string $editor = null): EmailTemplate
     {
         // Replace (not merge) the translations so a cleared locale is removed.
         $template->replaceTranslations('subject', $data->subject);
         $template->replaceTranslations('body', $data->body);
 
         /** @var EmailTemplate $updated */
-        $updated = $this->templates->update($template, ['status' => $data->status]);
+        $updated = $this->templates->update($template, ['status' => $data->status, 'updated_by_name' => $editor]);
 
         return $updated;
     }
 
-    public function delete(EmailTemplate $template): void
+    /**
+     * "Reset to default": subject + body of both locales back to the code default.
+     */
+    public function reset(EmailTemplate $template, ?string $editor = null): EmailTemplate
     {
-        $this->templates->delete($template);
+        $template->replaceTranslations('subject', $this->defaults($template->event, 'subject'));
+        $template->replaceTranslations('body', $this->defaults($template->event, 'body'));
+
+        /** @var EmailTemplate $updated */
+        $updated = $this->templates->update($template, ['updated_by_name' => $editor]);
+        $this->auditor->record('email_templates.reset', $template, ['event' => $template->event->value]);
+
+        return $updated;
+    }
+
+    /**
+     * Unsaved editor content rendered through the real layout with sample values.
+     *
+     * @param  array<string, string>  $variables
+     */
+    public function previewContent(EmailTemplateEvent $event, string $subject, string $body, string $locale, array $variables = []): RenderedEmailData
+    {
+        return $this->renderer->renderContent($subject, EmailHtmlSanitizer::clean($body), $locale, $variables !== [] ? $variables : $event->variables(), $event);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function defaults(EmailTemplateEvent $event, string $field): array
+    {
+        $values = [];
+
+        foreach (EmailTemplate::LOCALES as $locale) {
+            $values[$locale] = $field === 'subject' ? $event->defaultSubject($locale) : $event->defaultBody($locale);
+        }
+
+        return $values;
     }
 
     /**

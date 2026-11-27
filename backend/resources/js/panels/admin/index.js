@@ -34,6 +34,7 @@ const pages = {
     'admin-reports': () => import('./reports.js'),
     'admin-support': () => import('./support.js'),
     'admin-affiliates': () => import('./affiliates.js'),
+    'admin-system-tools': () => import('./system-tools.js'),
 };
 
 export function initAdmin() {

@@ -1,0 +1,45 @@
+<?php
+
+/*
+| Descriptions of the e-mail template variables (EmailTemplateEvent::variables()),
+| shown in the variable picker of Admin / Vendor › Email templates.
+*/
+
+return [
+    'platform' => ['name' => 'Platform name'],
+    'store' => ['name' => 'Store name', 'url' => 'Store website address'],
+    'vendor' => ['name' => 'Store owner name'],
+    'customer' => ['first_name' => 'Customer first name', 'name' => 'Customer full name'],
+    'recipient' => ['name' => 'Name of the person receiving the e-mail'],
+    'alert' => ['title' => 'Notification title', 'body' => 'Notification message'],
+    'action' => ['url' => 'Link of the main button (empty hides the button)'],
+    'order' => ['number' => 'Order number', 'total' => 'Order total', 'url' => 'Order page link', 'review_url' => 'Write a review link'],
+    'invoice' => ['number' => 'Invoice number', 'total' => 'Invoice total', 'due_date' => 'Invoice due date', 'url' => 'Billing page link'],
+    'plan' => ['name' => 'Plan name', 'term' => 'Billing term'],
+    'subscription' => ['ends_at' => 'Subscription end date'],
+    'payment' => ['amount' => 'Payment amount', 'reference' => 'Payment reference', 'gateway' => 'Payment gateway'],
+    'reset' => ['url' => 'Password reset link', 'expires_minutes' => 'Minutes before the reset link expires'],
+    'verify' => ['url' => 'E-mail verification link', 'expires_minutes' => 'Minutes before the verification link expires'],
+    'code' => ['value' => 'One-time code', 'expires_minutes' => 'Minutes before the code expires'],
+    'login' => ['url' => 'Sign-in page link'],
+    'registration' => ['url' => 'Registration completion link', 'expires_hours' => 'Hours before the registration link expires'],
+    'compliance' => ['status' => 'Review decision', 'message' => 'Decision explanation', 'note' => 'Reviewer note'],
+    'inviter' => ['name' => 'Name of the person who sent the invitation'],
+    'role' => ['name' => 'Role given to the invited member'],
+    'invitation' => ['url' => 'Accept invitation link', 'expires_minutes' => 'Minutes before the invitation expires'],
+    'shipment' => ['company' => 'Shipping company', 'tracking_no' => 'Tracking number', 'tracking_url' => 'Tracking link'],
+    'refund' => ['amount' => 'Refunded amount'],
+    'ticket' => ['reference' => 'Ticket reference', 'subject' => 'Ticket subject', 'url' => 'Ticket link'],
+    'reply' => ['author' => 'Reply author', 'excerpt' => 'Start of the reply'],
+    'affiliate' => ['name' => 'Affiliate name', 'code' => 'Affiliate referral code'],
+    'referral' => ['url' => 'Referral link'],
+    'conversion' => ['status' => 'Conversion status', 'note' => 'Conversion note'],
+    'commission' => ['amount' => 'Commission amount'],
+    'dashboard' => ['url' => 'Affiliate dashboard link'],
+    'payout' => ['amount' => 'Payout amount', 'reference' => 'Payout reference', 'status' => 'Payout status', 'method' => 'Payout method', 'note' => 'Payout note'],
+    'admin' => ['url' => 'Admin panel link'],
+    'contact' => ['name' => 'Sender name', 'email' => 'Sender e-mail', 'phone' => 'Sender phone', 'subject' => 'Message subject', 'message' => 'Message text'],
+    'confirm' => ['url' => 'Confirmation link'],
+    'unsubscribe' => ['url' => 'Unsubscribe link'],
+    'domain' => ['name' => 'Domain name'],
+];

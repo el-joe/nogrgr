@@ -1,0 +1,48 @@
+<?php
+
+return [
+    'title' => 'Cache tools',
+    'subtitle' => 'Clear cached data when content or settings do not show their latest version.',
+    'tabs_label' => 'Cache tool sections',
+    'tabs' => [
+        'main' => 'Main cache',
+        'tenants' => 'Tenants cache',
+    ],
+    'main_title' => 'Main cache',
+    'main_hint' => 'Caches of the central application, shared by every surface.',
+    'tenants_title' => 'Tenants cache',
+    'tenants_hint' => 'Pick a store to clear its caches, or clear them for every store.',
+    'store' => 'Store',
+    'store_placeholder' => 'Search stores',
+    'pick_store_title' => 'Choose a store',
+    'pick_store_description' => 'Search by store name or sub-domain to see and clear its caches.',
+    'actions' => [
+        'application' => ['label' => 'Application cache', 'hint' => 'Cached queries, settings and computed data.', 'button' => 'Clear'],
+        'config_routes' => ['label' => 'Config & routes', 'hint' => 'Cleared, then rebuilt when the app runs cached.', 'button' => 'Rebuild'],
+        'views' => ['label' => 'Views (Blade / Twig)', 'hint' => 'Compiled panel, website and theme templates.', 'button' => 'Clear'],
+        'static_texts' => ['label' => 'Store texts (all stores)', 'hint' => 'Theme and app texts of every store. Runs in the background.', 'button' => 'Clear'],
+        'store_pages' => ['label' => 'Storefront pages', 'hint' => 'Cached data read by the store\'s pages and API.', 'button' => 'Clear'],
+        'store_translations' => ['label' => 'Translations', 'hint' => 'The store\'s theme and app texts in every language.', 'button' => 'Clear'],
+        'store_themes' => ['label' => 'Theme assets', 'hint' => 'Compiled templates of the store\'s custom theme.', 'button' => 'Clear'],
+        'all_stores' => ['label' => 'Every store', 'hint' => 'Pages, translations and theme caches of all stores.', 'button' => 'Clear'],
+    ],
+    'clear_all' => 'Clear all tenants (:count)',
+    'never' => 'Never cleared',
+    'last_run' => ':status :time by :name',
+    'last_run_system' => ':status :time',
+    'stores_done' => ':count stores',
+    'confirm' => [
+        'title' => 'Clear :cache?',
+        'message' => 'Pages rebuild the cache on their next visit, so the first loads can be slower.',
+        'store_title' => 'Clear :cache of :store?',
+        'all_title' => 'Clear the caches of all :count stores?',
+        'all_message' => 'Runs in the background. Every store rebuilds its caches on the next visit.',
+    ],
+    'cleared' => ':cache cleared.',
+    'queued' => ':cache is being cleared in the background.',
+    'failed' => 'Clearing :cache failed. The error was logged.',
+    'partial' => ':count stores could not be cleared.',
+    'rules' => [
+        'store_required' => 'Choose a store first.',
+    ],
+];

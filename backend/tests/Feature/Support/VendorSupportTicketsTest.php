@@ -168,7 +168,7 @@ it('notifies the store staff of an admin reply and e-mails the opener only', fun
 
     $mail = (new StoreSupportNotification('admin_replied', ['reference' => 'T-1001', 'subject' => 'Domain SSL', 'author' => 'Sara', 'excerpt' => 'We fixed the shipping zone sync.', 'store' => 'Supacme'], 'support.show', ['ticket' => $ticket->id], $this->staff->id, 'https://example.test/t'))
         ->toMail($this->staff);
-    expect((string) $mail->render())->toContain('We fixed the shipping zone sync.')->toContain(__('support::tickets.mail.cta'))->toContain('https://example.test/t');
+    expect((string) $mail->render())->toContain('We fixed the shipping zone sync.')->toContain('>View the conversation</a>')->toContain('https://example.test/t');
 });
 
 it('shows the sidebar link with the unread badge', function (): void {

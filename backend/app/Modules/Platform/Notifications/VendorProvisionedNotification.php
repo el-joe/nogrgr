@@ -2,6 +2,7 @@
 
 namespace App\Modules\Platform\Notifications;
 
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
 
@@ -13,6 +14,18 @@ class VendorProvisionedNotification extends PanelNotification
     public function __construct(public readonly int $tenantId, public readonly string $storeName)
     {
         parent::__construct();
+    }
+
+    /**
+     * Own editable e-mail template per event (decision #124).
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [
+            'store_provisioned' => EmailTemplateEvent::AdminNewVendor,
+        ];
     }
 
     public function category(): NotificationCategory

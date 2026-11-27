@@ -3,7 +3,7 @@
 namespace App\Modules\Identity\Services;
 
 use App\Modules\Billing\Enums\PlanLimit;
-use App\Modules\Billing\Repositories\Contracts\SubscriptionRepositoryContract;
+use App\Modules\Billing\Services\EffectivePlanLimits;
 use App\Modules\Identity\DTOs\VendorStaffData;
 use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Enums\Guard;
@@ -36,7 +36,7 @@ class VendorStaffService extends BaseService
 {
     public function __construct(
         private readonly VendorStaffRepositoryContract $staff,
-        private readonly SubscriptionRepositoryContract $subscriptions,
+        private readonly EffectivePlanLimits $planLimits,
         private readonly Auditor $auditor,
     ) {}
 
@@ -163,11 +163,12 @@ class VendorStaffService extends BaseService
     }
 
     /**
-     * Staff quota of the current plan (null = unlimited / no plan).
+     * Staff quota of the store: plan or admin override (EffectivePlanLimits; null =
+     * unlimited / no plan).
      */
     public function limit(): ?int
     {
-        $limit = $this->subscriptions->currentFor($this->tenant()->id)?->plan?->limit(PlanLimit::Staff);
+        $limit = $this->planLimits->for(PlanLimit::Staff, (int) $this->tenant()->id);
 
         return is_int($limit) ? $limit : null;
     }

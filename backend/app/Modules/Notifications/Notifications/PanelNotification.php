@@ -2,8 +2,13 @@
 
 namespace App\Modules\Notifications\Notifications;
 
+use App\Modules\Identity\Models\Admin;
+use App\Modules\Identity\Models\Affiliate;
 use App\Modules\Identity\Models\VendorStaff;
+use App\Modules\Notifications\Concerns\RendersMailTemplate;
 use App\Modules\Notifications\Contracts\HasPanelInbox;
+use App\Modules\Notifications\Contracts\TemplatedMailNotification;
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Models\PanelNotificationRecord;
 use App\Modules\Notifications\Services\NotificationInboxService;
@@ -19,11 +24,14 @@ use Illuminate\Notifications\Notification;
  * Base of every central panel notification: database (inbox + bell), mail and a live
  * Reverb push, each switched per category by the recipient (NotificationPreferenceService).
  * Titles/bodies are stored as translation keys + params so the inbox follows the
- * reader's language. Database type = "<category>.<event>".
+ * reader's language. Database type = "<category>.<event>". Mail renders the generic
+ * alert template of the recipient's panel (admin.alert / vendor.alert / affiliate.alert,
+ * decision #118) unless a subclass maps a specific template.
  */
-abstract class PanelNotification extends Notification implements ShouldQueue
+abstract class PanelNotification extends Notification implements ShouldQueue, TemplatedMailNotification
 {
     use Queueable;
+    use RendersMailTemplate;
 
     public function __construct()
     {
@@ -101,15 +109,64 @@ abstract class PanelNotification extends Notification implements ShouldQueue
         ];
     }
 
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
+    {
+        return array_values(array_unique([
+            EmailTemplateEvent::AdminAlert, EmailTemplateEvent::VendorAlert, EmailTemplateEvent::AffiliateAlert,
+            ...array_values(static::specificMailTemplates()),
+        ], SORT_REGULAR));
+    }
+
+    /**
+     * event() => its own editable template (decision #124 batch 2); events not listed use
+     * the generic alert template of the recipient's panel.
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [];
+    }
+
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
+    {
+        $specific = static::specificMailTemplates()[$this->event()] ?? null;
+
+        if ($specific !== null) {
+            return $specific;
+        }
+
+        return match (true) {
+            $notifiable instanceof Admin => EmailTemplateEvent::AdminAlert,
+            $notifiable instanceof Affiliate => EmailTemplateEvent::AffiliateAlert,
+            default => EmailTemplateEvent::VendorAlert,
+        };
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
-        $mail = (new MailMessage)
-            ->subject($this->text($this->titleKey()))
-            ->line($this->text($this->bodyKey()));
+        return $this->templatedMail($this->mailTemplate($notifiable), $this->alertVariables($notifiable));
+    }
 
-        $url = $this->url();
+    /**
+     * Variables of the generic alert templates: the inbox title / body in the mail locale.
+     *
+     * @return array<string, string>
+     */
+    protected function alertVariables(object $notifiable): array
+    {
+        $store = $this->params()['store'] ?? null;
 
-        return $url !== null ? $mail->action(__('notifications::panel.mail.open'), $url) : $mail;
+        return [
+            ...(is_string($store) && $store !== '' && $store !== '—' ? ['store.name' => $store] : []),
+            'recipient.name' => (string) ($notifiable->name ?? ''),
+            'alert.title' => $this->text($this->titleKey()),
+            'alert.body' => $this->text($this->bodyKey()),
+            'action.url' => (string) $this->url(),
+        ];
     }
 
     public function toBroadcast(object $notifiable): BroadcastMessage
@@ -133,7 +190,7 @@ abstract class PanelNotification extends Notification implements ShouldQueue
         return 'panel.notification';
     }
 
-    private function text(string $key): string
+    protected function text(string $key): string
     {
         $text = __($key, $this->params());
 

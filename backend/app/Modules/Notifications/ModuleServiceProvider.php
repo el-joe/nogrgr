@@ -5,6 +5,7 @@ namespace App\Modules\Notifications;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Notifications\Contracts\HasPanelInbox;
 use App\Modules\Notifications\Events\EmailTemplatesSynced;
+use App\Modules\Notifications\Listeners\EnforceEmailTemplateSwitches;
 use App\Modules\Notifications\Listeners\EnforceVendorNotificationPreferences;
 use App\Modules\Notifications\Listeners\QueueCustomerPush;
 use App\Modules\Notifications\Listeners\SyncStoreEmailTemplates;
@@ -74,6 +75,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         // Store members' topic × channel switches (VEN-087) on every panel notification.
         Event::listen(NotificationSending::class, EnforceVendorNotificationPreferences::class);
+        Event::listen(NotificationSending::class, EnforceEmailTemplateSwitches::class);
 
         // Customer inbox rows → FCM push to the customer's mobile apps (P11).
         Event::listen(NotificationSent::class, QueueCustomerPush::class);

@@ -131,4 +131,30 @@ return [
         'domain' => 'ربط نطاق',
         'tour' => 'جولة اللوحة',
     ],
+    'maintenance_scope' => [
+        'platform' => 'المنصة بالكامل',
+        'storefronts' => 'كل المتاجر',
+        'store' => 'متجر واحد',
+    ],
+    'maintenance_window_status' => [
+        'scheduled' => 'مجدولة',
+        'active' => 'جارية',
+        'completed' => 'مكتملة',
+        'cancelled' => 'ملغاة',
+    ],
+    'cache_action' => [
+        'application' => 'كاش التطبيق',
+        'config_routes' => 'الإعدادات والمسارات',
+        'views' => 'القوالب',
+        'static_texts' => 'نصوص المتاجر',
+        'store_pages' => 'صفحات المتجر',
+        'store_translations' => 'الترجمات',
+        'store_themes' => 'ملفات الثيم',
+        'all_stores' => 'كاش كل المتاجر',
+    ],
+    'cache_run_status' => [
+        'queued' => 'في الانتظار',
+        'done' => 'تم المسح',
+        'failed' => 'فشل',
+    ],
 ];

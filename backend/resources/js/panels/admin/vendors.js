@@ -10,6 +10,9 @@
  *  - #assign-plan-form             Billing assign form on the profile: stays on the profile.
  *  - form[data-vendor-impersonate] posts, then opens the returned vendor panel URL.
  *  - [data-commission-form]        platform share = 100 − vendor profit, live.
+ *  - form[data-limits-form]        limit overrides (ADM-041h): the number field shows for
+ *                                  "custom" only, the effective column follows live and
+ *                                  [data-limits-reset] sets every row back to "use plan".
  *  - ?open=edit-store|impersonate  opens that modal on load (row actions of the list).
  */
 import { collectFilters } from '../ui/filters';
@@ -356,6 +359,54 @@ function bindCommission(root) {
     });
 }
 
+function bindLimitOverrides(root) {
+    root.querySelectorAll('form[data-limits-form]').forEach((form) => {
+        const formatter = new Intl.NumberFormat(numberLocale());
+        const rows = [...form.querySelectorAll('[data-limit-row]')];
+
+        const sync = (row) => {
+            const mode = row.querySelector('select[data-limit-mode]');
+            const valueField = row.querySelector('[data-limit-value]');
+            const input = valueField?.querySelector('input');
+            const effective = row.querySelector('[data-limit-effective] bdi');
+
+            if (!mode || !valueField || !input || !effective) {
+                return;
+            }
+
+            const isCustom = mode.value === 'custom';
+            valueField.hidden = !isCustom;
+            input.required = isCustom;
+
+            if (mode.value === 'unlimited') {
+                effective.textContent = form.dataset.unlimited;
+            } else if (isCustom) {
+                const value = Number.parseInt(input.value, 10);
+                effective.textContent = Number.isFinite(value) && value >= 0 ? formatter.format(value) : '—';
+            } else {
+                effective.textContent = row.dataset.planText;
+            }
+        };
+
+        rows.forEach((row) => {
+            row.querySelector('select[data-limit-mode]')?.addEventListener('change', () => sync(row));
+            row.querySelector('[data-limit-value] input')?.addEventListener('input', () => sync(row));
+            sync(row);
+        });
+
+        form.querySelector('[data-limits-reset]')?.addEventListener('click', () => {
+            rows.forEach((row) => {
+                const select = row.querySelector('select[data-limit-mode]');
+
+                if (select) {
+                    select.value = 'plan';
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+        });
+    });
+}
+
 function openRequestedOverlay(root) {
     const profile = root.querySelector('[data-vendor-profile]');
 
@@ -383,5 +434,6 @@ export default function initVendors(root) {
     bindAssignPlan();
     bindImpersonate();
     bindCommission(root);
+    bindLimitOverrides(root);
     openRequestedOverlay(root);
 }

@@ -3,7 +3,7 @@
 namespace App\Modules\Storefront\Services\Banners;
 
 use App\Modules\Billing\Enums\PlanLimit;
-use App\Modules\Billing\Repositories\Contracts\SubscriptionRepositoryContract;
+use App\Modules\Billing\Services\EffectivePlanLimits;
 use App\Modules\Commerce\Services\Promotions\StoreContext;
 use App\Modules\Localization\Services\CountryService;
 use App\Modules\Storefront\DTOs\BannerInputData;
@@ -35,7 +35,7 @@ class VendorBannerPageService
         private readonly HiddenBannerRepositoryContract $hidden,
         private readonly StoreBannerService $banners,
         private readonly CountryService $countries,
-        private readonly SubscriptionRepositoryContract $subscriptions,
+        private readonly EffectivePlanLimits $limits,
     ) {}
 
     /**
@@ -175,14 +175,15 @@ class VendorBannerPageService
     }
 
     /**
-     * Store-owned banners against the plan's quota (max null = unlimited / no plan).
+     * Store-owned banners against the store's effective quota (plan or admin override,
+     * EffectivePlanLimits; max null = unlimited / no plan).
      *
      * @return array{used: int, max: int|null, reached: bool}
      */
     public function quota(): array
     {
         $used = $this->banners->count();
-        $max = $this->subscriptions->currentFor($this->tenantId())?->plan?->limit(PlanLimit::Banners);
+        $max = $this->limits->for(PlanLimit::Banners, $this->tenantId());
 
         return ['used' => $used, 'max' => $max, 'reached' => $max !== null && $used >= $max];
     }

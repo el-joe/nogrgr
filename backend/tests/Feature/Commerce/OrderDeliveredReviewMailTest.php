@@ -45,21 +45,18 @@ it('links the delivered e-mail to the review modal of the storefront order page'
     expect($this->notification->variables['order.review_url'])->toBe($this->expectedUrl)
         ->and($this->notification->variables['order.url'])->toBe(StoreSettingsService::storeUrl($this->shop->tenant).'/orders/'.$this->order->uuid);
 
+    // Registry template order.delivered (#124): the lone review link is drawn as the button.
     $mail = $this->notification->toMail($this->customer->forceFill(['locale' => 'en']));
-
-    expect($mail->actionText)->toBe('Write a review')
-        ->and($mail->actionUrl)->toBe($this->expectedUrl)
-        ->and($mail->introLines)->toContain(__('commerce::notifications.customer.review_prompt', [], 'en'));
+    expect($mail->viewData['html'])->toContain('href="'.e($this->expectedUrl).'"')->toContain('>Write a review</a>');
 });
 
 it('translates the review button in Arabic', function (): void {
     $mail = $this->notification->toMail($this->customer->forceFill(['locale' => 'ar']));
 
-    expect($mail->actionText)->toBe('اكتب تقييمًا')
-        ->and($mail->actionUrl)->toBe($this->expectedUrl);
+    expect($mail->viewData['html'])->toContain('>اكتب تقييمًا</a>')->toContain('href="'.e($this->expectedUrl).'"')->toContain('dir="rtl"');
 });
 
-it('keeps the view-order button on other order e-mails', function (): void {
+it('keeps the review button off the other order e-mails', function (): void {
     Notification::assertSentTo($this->customer, OrderCustomerNotification::class, function (OrderCustomerNotification $notification): bool {
         if ($notification->eventName !== 'shipped') {
             return false;
@@ -67,6 +64,6 @@ it('keeps the view-order button on other order e-mails', function (): void {
 
         $mail = $notification->toMail($this->customer->forceFill(['locale' => 'en']));
 
-        return ! array_key_exists('order.review_url', $notification->variables) && $mail->actionText === 'View order';
+        return ! array_key_exists('order.review_url', $notification->variables) && ! str_contains($mail->viewData['html'], 'Write a review');
     });
 });

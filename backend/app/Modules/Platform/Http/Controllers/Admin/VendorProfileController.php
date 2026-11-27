@@ -5,6 +5,7 @@ namespace App\Modules\Platform\Http\Controllers\Admin;
 use App\Modules\Api\Services\MobileAppPanelService;
 use App\Modules\Billing\Enums\BillingTerm;
 use App\Modules\Billing\Repositories\Contracts\PlanRepositoryContract;
+use App\Modules\Billing\Services\EffectivePlanLimits;
 use App\Modules\Localization\Services\CountryService;
 use App\Modules\Platform\DTOs\VendorCommissionData;
 use App\Modules\Platform\DTOs\VendorStoreData;
@@ -23,19 +24,19 @@ use Illuminate\Http\Request;
 
 /**
  * Admin › Vendors › Vendor profile (ADM-041…041f): Overview, Plan & subscription,
- * Domains, Profit & commission, Stats & orders (ADM-041e), Compliance and Mobile app (ADM-041g) tabs (?tab=), the Edit store form and
+ * Domains, Profit & commission, Stats & orders (ADM-041e), Limit overrides (ADM-041h), Compliance and Mobile app (ADM-041g) tabs (?tab=), the Edit store form and
  * the profit / commission form.
  */
 class VendorProfileController extends Controller
 {
-    public const TABS = ['overview', 'plan', 'domains', 'commission', 'stats', 'compliance', 'mobile-app'];
+    public const TABS = ['overview', 'plan', 'domains', 'commission', 'stats', 'limits', 'compliance', 'mobile-app'];
 
     public function __construct(
         private readonly VendorService $vendors,
         private readonly VendorProfileService $profile,
     ) {}
 
-    public function show(Request $request, Tenant $tenant, PlanRepositoryContract $plans, CountryService $countries, VendorStatsService $stats, MobileAppPanelService $mobileApp): View
+    public function show(Request $request, Tenant $tenant, PlanRepositoryContract $plans, CountryService $countries, VendorStatsService $stats, MobileAppPanelService $mobileApp, EffectivePlanLimits $limits): View
     {
         $tab = $request->query('tab');
         $tab = is_string($tab) && in_array($tab, self::TABS, true) ? $tab : 'overview';
@@ -57,6 +58,7 @@ class VendorProfileController extends Controller
             'terms' => BillingTerm::options(),
             'domainRequests' => $tab === 'domains' ? $this->profile->domainRequests($tenant) : collect(),
             'stats' => $tab === 'stats' ? $stats->overview((int) $tenant->id) : null,
+            'limitRows' => $tab === 'limits' ? $limits->rows((int) $tenant->id) : [],
             // ADM-041g: the store's app settings, read in its tenant context (operational stores only).
             'mobileApp' => $tab === 'mobile-app' && $tenant->status->isOperational() ? $mobileApp->page($tenant) : null,
         ]);

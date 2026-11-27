@@ -95,20 +95,20 @@ it('fires TicketOpened with the first message', function (): void {
     Event::assertDispatched(TicketOpened::class, fn (TicketOpened $event): bool => $event->ticket->is($ticket) && str_contains((string) $event->message->body, 'Tabby'));
 });
 
-it('renders the MAIL-037 reply e-mail with the built-in layout in both languages', function (): void {
+it('renders the MAIL-037 reply e-mail through the support.ticket_reply template in both languages', function (): void {
     $owner = Owner::factory()->create(['name' => 'Mohamed']);
     $notification = new SupportTicketNotification('admin_replied', ['reference' => 'T-4471', 'subject' => 'Shipping zone', 'store' => 'Megz', 'author' => 'Laila', 'excerpt' => 'We fixed the shipping zone sync.'], 'https://example.test/support/4471');
 
     $html = (string) $notification->toMail($owner)->render();
-    expect($html)->toContain(__('support::tickets.mail.heading', ['reference' => 'T-4471']))
+    expect($html)->toContain('T-4471')
         ->toContain('We fixed the shipping zone sync.')
         ->toContain('Hi Mohamed,')
         ->toContain('https://example.test/support/4471')
-        ->toContain(__('support::tickets.mail.cta'));
+        ->toContain('>View the conversation</a>');
 
     app()->setLocale('ar');
     $arabic = (string) $notification->toMail($owner)->render();
-    expect($arabic)->toContain('dir="rtl"')->toContain('الرد على التذكرة');
+    expect($arabic)->toContain('dir="rtl"')->toContain('عرض المحادثة');
     app()->setLocale('en');
 });
 

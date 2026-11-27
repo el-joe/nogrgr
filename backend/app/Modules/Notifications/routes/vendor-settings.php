@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 | Surface: vendor panel (both host modes) — link with vendor_route():
-|   vendor.settings.email-templates.*   shopper e-mail templates (VEN-080 / 080a), {event} =
+|   vendor.settings.email-templates.*   store-scoped e-mail templates (VEN-080 / 080a, #118), {event} =
 |                                       EmailTemplateEvent value; settings.email-templates.view | manage
 |   vendor.settings.mail*               store SMTP (VEN-081); settings.mail.view | manage
 */
@@ -23,6 +23,8 @@ Route::middleware('auth:vendor')->prefix('settings/email-templates')->name('sett
         Route::post('sync', 'sync')->name('sync');
         Route::put('{event}', 'update')->where('event', '[a-z_]+\.[a-z_]+')->name('update');
         Route::delete('{event}', 'reset')->where('event', '[a-z_]+\.[a-z_]+')->name('reset');
+        Route::post('{event}/render', 'render')->where('event', '[a-z_]+\.[a-z_]+')->middleware('throttle:120,1')->name('render');
+        Route::post('{event}/test', 'test')->where('event', '[a-z_]+\.[a-z_]+')->middleware('throttle:10,1')->name('test');
     });
 });
 

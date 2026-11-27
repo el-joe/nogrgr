@@ -15,7 +15,6 @@ use App\Modules\Billing\Notifications\VendorBillingMail;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Enums\NotificationChannel;
-use App\Modules\Notifications\Mail\TemplatedMail;
 use App\Modules\Notifications\Models\EmailTemplate;
 use App\Modules\Notifications\Repositories\Contracts\NotificationPreferenceRepositoryContract;
 use App\Modules\Platform\Models\Tenant;
@@ -128,13 +127,13 @@ it('stores the admin notification in the inbox and renders the owner mail', func
 
     $fallback = (new VendorBillingMail(EmailTemplateEvent::VendorInvoiceIssued, 'invoice_issued', ['vendor.name' => 'Mona', 'invoice.number' => 'INV-2026-0042', 'invoice.total' => '$49.00', 'invoice.due_date' => '2026-12-01', 'store.name' => 'Megz Store'], 'en'))
         ->toMail(Notification::route('mail', 'owner@megz.test'));
-    expect($fallback->subject)->toBe('New invoice INV-2026-0042');
+    expect($fallback->subject)->toBe('New invoice INV-2026-0042 for Megz Store')
+        ->and($fallback->viewData['html'])->toContain('INV-2026-0042'); // registry default (#124)
 
     EmailTemplate::factory()->event(EmailTemplateEvent::VendorInvoiceIssued)->create(['subject' => ['en' => 'Bill {{ invoice.number }}'], 'body' => ['en' => '<p>Hi {{ vendor.name }}</p>']]);
     $templated = (new VendorBillingMail(EmailTemplateEvent::VendorInvoiceIssued, 'invoice_issued', ['vendor.name' => 'Mona', 'invoice.number' => 'INV-2026-0042'], 'en'))
         ->toMail(Notification::route('mail', 'owner@megz.test'));
 
-    expect($templated)->toBeInstanceOf(TemplatedMail::class)
-        ->and($templated->email->subject)->toBe('Bill INV-2026-0042')
-        ->and($templated->hasTo('owner@megz.test'))->toBeTrue();
+    expect($templated->subject)->toBe('Bill INV-2026-0042')
+        ->and($templated->viewData['html'])->toContain('Hi Mona');
 });

@@ -313,6 +313,7 @@ return [
         'reload' => 'Reload page',
         '503_title' => 'We\'ll be right back',
         '503_text' => ':app is getting an upgrade. Stores stay online; the website returns by :time.',
+        '503_back_at' => 'Back by :time.',
         '503_text_generic' => ':app is getting an upgrade. Stores stay online; the website will be back shortly.',
         'check_status' => 'Check status',
     ],

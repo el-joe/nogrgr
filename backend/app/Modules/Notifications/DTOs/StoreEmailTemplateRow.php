@@ -3,6 +3,7 @@
 namespace App\Modules\Notifications\DTOs;
 
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
+use App\Modules\Notifications\Enums\EmailTemplateStatus;
 use App\Modules\Notifications\Models\EmailTemplate;
 use App\Modules\Notifications\Models\StoreEmailTemplate;
 use Illuminate\Support\Carbon;
@@ -55,5 +56,31 @@ final readonly class StoreEmailTemplateRow
     public function updatedAt(): ?Carbon
     {
         return $this->isCustomized() ? $this->store?->updated_at : $this->platform?->updated_at;
+    }
+
+    /**
+     * Editor value of a field in a locale: the store / platform copy, else the code default.
+     */
+    public function text(string $field, string $locale): string
+    {
+        $value = trim((string) $this->content()?->getTranslation($field, $locale, false));
+
+        if ($value !== '') {
+            return (string) $this->content()?->getTranslation($field, $locale, false);
+        }
+
+        return $field === 'subject' ? $this->event->defaultSubject($locale) : $this->event->defaultBody($locale);
+    }
+
+    public function isEnabled(): bool
+    {
+        $content = $this->isCustomized() ? $this->store : $this->platform;
+
+        return $content === null || $content->status === EmailTemplateStatus::Active;
+    }
+
+    public function editorName(): ?string
+    {
+        return $this->isCustomized() ? $this->store?->updated_by_name : null;
     }
 }

@@ -16,7 +16,7 @@
     $canReports = (bool) $admin?->can('reports.view');
     $canExport = (bool) $admin?->can('reports.export');
     $ordersUrl = $admin?->can('orders.view') && \Illuminate\Support\Facades\Route::has('admin.orders.index') ? route('admin.orders.index') : null;
-    $toolsUrl = collect(['admin.system.maintenance.index' => 'system.maintenance.view', 'admin.system.cache.index' => 'system.cache.manage', 'admin.system.docs.index' => 'system.docs.view'])
+    $toolsUrl = collect(['admin.system.maintenance.index' => 'system.maintenance.view', 'admin.system.cache.index' => 'system.cache.view', 'admin.system.docs.index' => 'system.docs.view'])
         ->filter(fn ($permission, $route) => \Illuminate\Support\Facades\Route::has($route) && $admin?->can($permission))->keys()->map(fn ($route) => route($route))->first();
     $donut = $overview['ordersByStatus'];
 @endphp

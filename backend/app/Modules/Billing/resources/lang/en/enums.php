@@ -16,6 +16,11 @@ return [
         'ai_logos' => 'AI logos',
         'ai_ads' => 'AI video ads / month',
     ],
+    'plan_limit_override_mode' => [
+        'plan' => 'Use plan',
+        'custom' => 'Custom number',
+        'unlimited' => 'Unlimited',
+    ],
     'plan_feature' => [
         'ai_translation' => 'AI translation add-on included',
         'ai_social_posts' => 'AI social posts',

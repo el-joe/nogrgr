@@ -23,6 +23,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property string $subject
  * @property string $body
  * @property EmailTemplateStatus $status
+ * @property string|null $updated_by_name
  * @property Carbon|null $synced_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -49,7 +50,7 @@ class EmailTemplate extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['event', 'audience', 'subject', 'body', 'status', 'synced_at'];
+    protected $fillable = ['event', 'audience', 'subject', 'body', 'status', 'updated_by_name', 'synced_at'];
 
     /**
      * @return array<string, string>

@@ -39,6 +39,18 @@ return [
         'vendor_subject' => 'Your plan renewal failed',
         'vendor_body' => 'We could not renew the :plan_name plan of :store_name. Pay the open invoice to keep your store online.',
     ],
+    'subscription_cancelled' => [
+        'title' => 'Subscription cancelled',
+        'body' => 'The :plan plan of :store was cancelled (ends :date).',
+    ],
+    'subscription_renewed' => [
+        'title' => 'Subscription renewed',
+        'body' => 'The :plan plan of :store was renewed until :date.',
+    ],
+    'invoice_voided' => [
+        'title' => 'Invoice :number voided',
+        'body' => 'The :total invoice of :store was voided.',
+    ],
     'subscription_expired' => [
         'title' => 'Subscription expired',
         'body' => 'The :plan plan of :store has expired.',

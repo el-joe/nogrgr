@@ -2,6 +2,9 @@
 
 namespace App\Modules\Identity\Notifications;
 
+use App\Modules\Notifications\Concerns\RendersMailTemplate;
+use App\Modules\Notifications\Contracts\TemplatedMailNotification;
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -9,9 +12,10 @@ use Illuminate\Notifications\Notification;
 /**
  * Reset link for the central store login (WEB-023), sent on demand to the e-mail.
  */
-class StoreLoginPasswordResetNotification extends Notification
+class StoreLoginPasswordResetNotification extends Notification implements TemplatedMailNotification
 {
     use Queueable;
+    use RendersMailTemplate;
 
     public function __construct(
         public readonly string $token,
@@ -27,16 +31,26 @@ class StoreLoginPasswordResetNotification extends Notification
         return ['mail'];
     }
 
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
+    {
+        return [EmailTemplateEvent::VendorPasswordReset];
+    }
+
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
+    {
+        return EmailTemplateEvent::VendorPasswordReset;
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
-        $url = route('central.password.reset', ['token' => $this->token, 'email' => $this->email, 'lang' => $this->mailLocale]);
-
-        return (new MailMessage)
-            ->subject(__('identity::store_login.reset_mail.subject', ['name' => config('app.name')], $this->mailLocale))
-            ->line(__('identity::store_login.reset_mail.intro', [], $this->mailLocale))
-            ->action(__('identity::store_login.reset_mail.action', [], $this->mailLocale), $url)
-            ->line(__('identity::store_login.reset_mail.expire', ['count' => StoreLoginPasswordResetNotification::EXPIRE_MINUTES], $this->mailLocale))
-            ->line(__('identity::store_login.reset_mail.ignore', [], $this->mailLocale));
+        return $this->templatedMail(EmailTemplateEvent::VendorPasswordReset, [
+            'recipient.name' => (string) ($notifiable->name ?? ''),
+            'reset.url' => route('central.password.reset', ['token' => $this->token, 'email' => $this->email, 'lang' => $this->mailLocale]),
+            'reset.expires_minutes' => (string) self::EXPIRE_MINUTES,
+        ], $this->mailLocale);
     }
 
     public const EXPIRE_MINUTES = 60;

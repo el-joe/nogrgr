@@ -5,11 +5,15 @@ namespace App\Modules\Notifications\Http\Controllers\Vendor;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Notifications\DataTables\VendorEmailTemplatesDataTable;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
+use App\Modules\Notifications\Http\Controllers\Admin\EmailTemplateController as AdminEmailTemplateController;
+use App\Modules\Notifications\Http\Requests\Admin\SendTestEmailTemplateRequest;
+use App\Modules\Notifications\Http\Requests\RenderEmailTemplateRequest;
 use App\Modules\Notifications\Http\Requests\Vendor\StoreEmailTemplateRequest;
 use App\Modules\Notifications\Models\EmailTemplate;
 use App\Modules\Notifications\Services\StoreEmailTemplateService;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
+use DomainException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,7 +54,8 @@ class EmailTemplateController extends Controller
     public function update(StoreEmailTemplateRequest $request, string $event): JsonResponse
     {
         $case = $this->event($event);
-        $this->templates->customize($case, $request->toData());
+        $staff = $request->user('vendor');
+        $this->templates->customize($case, $request->toData(), $staff instanceof VendorStaff ? (string) $staff->name : null);
 
         return JsonResponder::success(__('notifications::vendor_templates.saved', ['name' => $case->label()]), redirect: vendor_route('settings.email-templates.edit', ['event' => $case->value]));
     }
@@ -75,9 +80,28 @@ class EmailTemplateController extends Controller
         $locale = in_array($request->query('locale'), EmailTemplate::LOCALES, true) ? (string) $request->query('locale') : app()->getLocale();
         $rendered = $this->templates->preview($this->event($event), $locale);
 
-        abort_if($rendered === null, 404);
+        return response($rendered->html)->header('Content-Security-Policy', AdminEmailTemplateController::PREVIEW_CSP);
+    }
 
-        return response($rendered->html)->header('Content-Security-Policy', "default-src 'none'; img-src https: data:; style-src 'unsafe-inline'");
+    public function render(RenderEmailTemplateRequest $request, string $event): JsonResponse
+    {
+        $rendered = $this->templates->previewContent($this->event($event), $request->subjectText(), $request->bodyHtml(), $request->locale());
+
+        return response()->json(['subject' => $rendered->subject, 'html' => $rendered->html]);
+    }
+
+    public function test(SendTestEmailTemplateRequest $request, string $event): JsonResponse
+    {
+        $case = $this->event($event);
+        $email = (string) $request->user('vendor')?->email;
+
+        try {
+            $this->templates->sendTest($case, (string) $request->validated('locale'), $email);
+        } catch (DomainException $exception) {
+            return JsonResponder::error($exception->getMessage(), 422);
+        }
+
+        return JsonResponder::success(__('notifications::templates.test_sent', ['email' => $email]));
     }
 
     private function event(string $event): EmailTemplateEvent

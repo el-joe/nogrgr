@@ -2,6 +2,7 @@
 
 namespace App\Modules\Billing\Notifications;
 
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -39,6 +40,21 @@ class FinanceAlertNotification extends PanelNotification
         }
 
         return $channels;
+    }
+
+    /**
+     * Own editable e-mail template per event (decision #124).
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [
+            'payout_scheduled' => EmailTemplateEvent::VendorPayoutUpdate,
+            'payout_paid' => EmailTemplateEvent::VendorPayoutUpdate,
+            'payout_cancelled' => EmailTemplateEvent::VendorPayoutUpdate,
+            'settlement_confirmed' => EmailTemplateEvent::VendorPayoutUpdate,
+        ];
     }
 
     public function category(): NotificationCategory

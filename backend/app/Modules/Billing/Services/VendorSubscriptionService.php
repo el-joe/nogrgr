@@ -49,6 +49,7 @@ class VendorSubscriptionService extends BaseService
         private readonly FinancePageService $finance,
         private readonly StoreProductRepositoryContract $products,
         private readonly VendorStaffRepositoryContract $staff,
+        private readonly EffectivePlanLimits $limits,
     ) {}
 
     public function current(int $tenantId): ?Subscription
@@ -67,12 +68,12 @@ class VendorSubscriptionService extends BaseService
     }
 
     /**
-     * Usage vs the plan's quotas for what the store can count today (tenant DB).
-     * max null = unlimited.
+     * Usage vs the store's effective quotas (plan or admin override) for what the store
+     * can count today (tenant DB). max null = unlimited.
      *
      * @return list<array{limit: PlanLimit, used: int, max: ?int, percent: int}>
      */
-    public function usage(?Plan $plan): array
+    public function usage(?Plan $plan, int $tenantId): array
     {
         $used = [
             PlanLimit::Products->value => $this->products->query()->count(),
@@ -82,7 +83,7 @@ class VendorSubscriptionService extends BaseService
 
         foreach ($used as $limit => $count) {
             $case = PlanLimit::from($limit);
-            $max = $plan?->limit($case);
+            $max = $this->limits->forPlan($case, $tenantId, $plan);
             $rows[] = [
                 'limit' => $case,
                 'used' => $count,

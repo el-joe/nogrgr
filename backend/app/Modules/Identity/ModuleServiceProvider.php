@@ -12,6 +12,7 @@ use App\Modules\Identity\Listeners\ActivateInvitedVendorStaff;
 use App\Modules\Identity\Listeners\NotifyStoreOwnersOfNewCustomer;
 use App\Modules\Identity\Listeners\NotifyStoreOwnersOfStaffJoined;
 use App\Modules\Identity\Listeners\SendAdminAccountNotifications;
+use App\Modules\Identity\Listeners\WelcomeNewCustomer;
 use App\Modules\Identity\Models\Admin;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Identity\Observers\VendorStaffDirectoryObserver;
@@ -71,6 +72,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         VendorStaff::observe(VendorStaffDirectoryObserver::class);
 
         Event::listen(CustomerRegistered::class, NotifyStoreOwnersOfNewCustomer::class);
+        Event::listen(CustomerRegistered::class, WelcomeNewCustomer::class);
         Event::listen(PasswordReset::class, ActivateInvitedVendorStaff::class);
         Event::listen(VendorStaffJoined::class, NotifyStoreOwnersOfStaffJoined::class);
         Event::listen(AdminAccountCreated::class, [SendAdminAccountNotifications::class, 'created']);

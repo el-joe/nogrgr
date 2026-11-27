@@ -7,6 +7,7 @@ use App\Modules\Identity\Http\Middleware\ApplyCustomerLocale;
 use App\Modules\Identity\Http\Middleware\EnsureCustomerSessionTenant;
 use App\Modules\Identity\Http\Middleware\EnsureVendorSessionTenant;
 use App\Modules\Platform\Http\Middleware\AuditRequests;
+use App\Modules\Platform\Http\Middleware\EnforceMaintenanceWindows;
 use App\Modules\Platform\Http\Middleware\InitializeTenancyByStoreSlug;
 use App\Modules\Storefront\Http\Middleware\GuardDemoStore;
 use App\Shared\Http\GuardRedirector;
@@ -68,6 +69,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'audit.requests' => AuditRequests::class,
+            /* Maintenance windows (ADM-113): central website, storefronts, Store API. */
+            'platform.maintenance' => EnforceMaintenanceWindows::class,
             'vendor.session' => EnsureVendorSessionTenant::class,
             'customer.session' => EnsureCustomerSessionTenant::class,
             'customer.locale' => ApplyCustomerLocale::class,

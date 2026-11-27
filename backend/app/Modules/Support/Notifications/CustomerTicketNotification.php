@@ -6,6 +6,9 @@ use App\Modules\Identity\Enums\CustomerNotificationChannel;
 use App\Modules\Identity\Enums\CustomerNotificationType;
 use App\Modules\Identity\Models\Customer;
 use App\Modules\Identity\Services\CustomerNotificationPreferences;
+use App\Modules\Notifications\Concerns\RendersMailTemplate;
+use App\Modules\Notifications\Contracts\TemplatedMailNotification;
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -17,9 +20,10 @@ use Illuminate\Notifications\Notification;
  * when the customer's "Support" e-mail switch is on. Texts:
  * support::customer_tickets.notifications.<event> in the customer's language.
  */
-class CustomerTicketNotification extends Notification implements ShouldQueue
+class CustomerTicketNotification extends Notification implements ShouldQueue, TemplatedMailNotification
 {
     use Queueable;
+    use RendersMailTemplate;
 
     /**
      * @param  array<string, string>  $params
@@ -48,22 +52,35 @@ class CustomerTicketNotification extends Notification implements ShouldQueue
         return $channels;
     }
 
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
+    {
+        return [EmailTemplateEvent::CustomerTicketUpdate];
+    }
+
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
+    {
+        return EmailTemplateEvent::CustomerTicketUpdate;
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
-        $locale = $notifiable instanceof Customer && $notifiable->locale !== null ? $notifiable->locale : app()->getLocale();
+        $locale = $this->recipientLocale($notifiable);
         $key = 'support::customer_tickets.notifications.'.$this->eventName;
-        $mail = (new MailMessage)
-            ->subject((string) __($key.'.title', $this->params, $locale))
-            ->greeting((string) __('support::customer_tickets.mail.greeting', ['name' => (string) ($notifiable->name ?? '')], $locale))
-            ->line((string) __($key.'.body', $this->params, $locale));
+        $name = (string) ($notifiable->name ?? '');
 
-        if (($this->params['excerpt'] ?? '') !== '' && $this->eventName === 'ticket_replied') {
-            $mail->line('“'.$this->params['excerpt'].'”');
-        }
-
-        return $this->ticketUrl !== null
-            ? $mail->action((string) __('support::customer_tickets.mail.cta', [], $locale), $this->ticketUrl)
-            : $mail;
+        return $this->templatedMail(EmailTemplateEvent::CustomerTicketUpdate, [
+            'customer.first_name' => (string) strtok($name, ' '),
+            'customer.name' => $name,
+            'ticket.reference' => (string) ($this->params['reference'] ?? ''),
+            'ticket.subject' => (string) ($this->params['subject'] ?? ''),
+            'alert.title' => (string) __($key.'.title', $this->params, $locale),
+            'alert.body' => (string) __($key.'.body', $this->params, $locale),
+            'reply.excerpt' => $this->eventName === 'ticket_replied' ? (string) ($this->params['excerpt'] ?? '') : '',
+            'ticket.url' => (string) ($this->ticketUrl ?? ''),
+        ], $locale);
     }
 
     /**

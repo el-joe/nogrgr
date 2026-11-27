@@ -2,6 +2,7 @@
 
 namespace App\Modules\Platform\Notifications;
 
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
 
@@ -17,6 +18,19 @@ class ComplianceSubmittedNotification extends PanelNotification
         public readonly bool $resubmitted = false,
     ) {
         parent::__construct();
+    }
+
+    /**
+     * Own editable e-mail template per event (decision #124).
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [
+            'compliance_submitted' => EmailTemplateEvent::AdminVendorAlert,
+            'compliance_resubmitted' => EmailTemplateEvent::AdminVendorAlert,
+        ];
     }
 
     public function category(): NotificationCategory

@@ -2,6 +2,9 @@
 
 namespace App\Modules\Identity\Notifications;
 
+use App\Modules\Notifications\Concerns\RendersMailTemplate;
+use App\Modules\Notifications\Contracts\TemplatedMailNotification;
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,9 +16,10 @@ use Illuminate\Notifications\Notification;
  * host's invitation (welcome / set-password) page; setting the password activates the member
  * (ActivateInvitedVendorStaff).
  */
-class VendorStaffInvitationNotification extends Notification implements ShouldQueue
+class VendorStaffInvitationNotification extends Notification implements ShouldQueue, TemplatedMailNotification
 {
     use Queueable;
+    use RendersMailTemplate;
 
     public function __construct(
         public readonly string $storeName,
@@ -35,13 +39,27 @@ class VendorStaffInvitationNotification extends Notification implements ShouldQu
         return ['mail'];
     }
 
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
+    {
+        return [EmailTemplateEvent::VendorStaffInvitation];
+    }
+
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
+    {
+        return EmailTemplateEvent::VendorStaffInvitation;
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject(__('identity::staff.invite_mail.subject', ['store' => $this->storeName]))
-            ->line(__('identity::staff.invite_mail.intro', ['inviter' => $this->inviterName, 'store' => $this->storeName, 'role' => $this->roleLabel]))
-            ->action(__('identity::staff.invite_mail.action'), $this->url)
-            ->line(__('identity::staff.invite_mail.expiry', ['count' => $this->expiresInMinutes]))
-            ->line(__('identity::staff.invite_mail.ignore'));
+        return $this->templatedMail(EmailTemplateEvent::VendorStaffInvitation, [
+            'store.name' => $this->storeName,
+            'inviter.name' => $this->inviterName,
+            'role.name' => $this->roleLabel,
+            'invitation.url' => $this->url,
+            'invitation.expires_minutes' => (string) $this->expiresInMinutes,
+        ]);
     }
 }

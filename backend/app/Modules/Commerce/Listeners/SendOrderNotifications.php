@@ -134,10 +134,12 @@ class SendOrderNotifications
      */
     public function notifyStore(Order $order, string $name, array $extra = []): void
     {
-        $owners = $this->staff->activeOwners();
+        // Owners plus every active member allowed to see the orders / returns (#124).
+        $permission = str_starts_with($name, 'store_return') || str_starts_with($name, 'store_refund') ? 'returns.view' : 'orders.view';
+        $recipients = $this->staff->activeOwners()->merge($this->staff->activeWithPermission($permission))->unique('id')->values();
 
-        if ($owners->isNotEmpty()) {
-            Notification::send($owners, new OrderAlertNotification($name, $this->params($order) + $extra, forStore: true));
+        if ($recipients->isNotEmpty()) {
+            Notification::send($recipients, new OrderAlertNotification($name, $this->params($order) + $extra, forStore: true));
         }
     }
 

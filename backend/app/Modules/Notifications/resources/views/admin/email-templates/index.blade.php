@@ -1,7 +1,8 @@
 {{--
     Admin › Settings › Email templates (ADM-102, Figma Admin Panel 79:89188): audience
-    tabs with counts, server-side table (search, status, language filters), preview,
-    edit, send test, sync to tenants (one / all), delete.
+    tabs with counts, server-side table (search, status, language filters) of every
+    registry e-mail (decision #118), preview, edit, send test, reset to default, sync to
+    tenants (one / all) and the link to Email layout (MAIL-001).
 --}}
 @php
     use App\Modules\Notifications\Enums\EmailAudience;
@@ -21,8 +22,9 @@
         :subtitle="__('notifications::templates.subtitle')"
         :breadcrumbs="[__('navigation.sections.system') => null, __('navigation.admin.settings') => null, __('notifications::templates.title') => null]"
     >
-        @if ($canManage)
-            <x-slot:actions>
+        <x-slot:actions>
+            <x-ui::button variant="secondary" icon="palette" :href="route('admin.settings.email-layout.edit')">{{ __('notifications::templates.layout') }}</x-ui::button>
+            @if ($canManage)
                 <x-ui::button
                     variant="secondary"
                     icon="refresh"
@@ -34,11 +36,8 @@
                     :data-confirm-url="route('admin.settings.email-templates.sync-all')"
                     :disabled="$counts['all'] === 0"
                 >{{ __('notifications::templates.sync_all') }}</x-ui::button>
-                @if ($canCreate)
-                    <x-ui::button icon="plus" :href="route('admin.settings.email-templates.create')">{{ __('notifications::templates.add') }}</x-ui::button>
-                @endif
-            </x-slot:actions>
-        @endif
+            @endif
+        </x-slot:actions>
         <x-slot:tabs>
             <x-ui::tabs id="email-template-tabs" :active="$tab" :label="__('notifications::templates.title')" :items="$tabs" />
         </x-slot:tabs>
@@ -65,11 +64,6 @@
                 <x-ui::select name="status" :label="__('notifications::templates.columns.status')" label-hidden :options="\App\Modules\Notifications\Enums\EmailTemplateStatus::options()" :placeholder="__('notifications::templates.columns.status')" :search="false" allow-clear data-filter :data-filter-label="__('notifications::templates.columns.status')" class="w-40" />
             </x-ui::filters-bar>
         </x-slot:filters>
-        @if ($canManage && $canCreate)
-            <x-slot:empty>
-                <x-ui::button icon="plus" :href="route('admin.settings.email-templates.create')">{{ __('notifications::templates.add') }}</x-ui::button>
-            </x-slot:empty>
-        @endif
     </x-ui::datatable>
 
     <x-ui::modal id="template-preview-modal" :title="__('notifications::templates.preview')" size="lg">

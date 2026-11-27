@@ -2,6 +2,7 @@
 
 namespace App\Modules\Engagement\Notifications;
 
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
 
@@ -20,6 +21,20 @@ class StoreEngagementNotification extends PanelNotification
         public readonly array $parameters,
     ) {
         parent::__construct();
+    }
+
+    /**
+     * Own editable e-mail template per event (decision #124).
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [
+            'review_pending' => EmailTemplateEvent::VendorReviewUpdate,
+            'review_published' => EmailTemplateEvent::VendorReviewUpdate,
+            'support_request' => EmailTemplateEvent::VendorContactMessage,
+        ];
     }
 
     public function category(): NotificationCategory

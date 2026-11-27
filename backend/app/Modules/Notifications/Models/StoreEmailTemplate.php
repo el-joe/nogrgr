@@ -19,6 +19,7 @@ use Spatie\Translatable\HasTranslations;
  * @property string $subject
  * @property string $body
  * @property EmailTemplateStatus $status
+ * @property string|null $updated_by_name
  * @property bool $is_customized
  * @property Carbon|null $synced_at
  * @property Carbon|null $created_at
@@ -48,7 +49,7 @@ class StoreEmailTemplate extends Model implements AiTranslatable
     /**
      * @var list<string>
      */
-    protected $fillable = ['event', 'subject', 'body', 'status', 'is_customized', 'synced_at'];
+    protected $fillable = ['event', 'subject', 'body', 'status', 'is_customized', 'updated_by_name', 'synced_at'];
 
     /**
      * @return array<string, string>

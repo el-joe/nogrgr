@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Notifications;
 
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Throwable;
 
 /**
  * Requests-center update for the store's own staff (vendor bell + inbox): the tenant
@@ -30,7 +31,14 @@ class StoreRequestNotification extends RequestUpdateNotification
      */
     public function via(object $notifiable): array
     {
-        return config('broadcasting.default') === 'reverb' ? ['database', 'broadcast'] : ['database'];
+        $channels = config('broadcasting.default') === 'reverb' ? ['database', 'broadcast'] : ['database'];
+
+        // Staff mail follows the request_replies switch (VEN-087, EnforceVendorNotificationPreferences, #124).
+        if (filled($notifiable->email ?? null)) {
+            $channels[] = 'mail';
+        }
+
+        return $channels;
     }
 
     /**
@@ -56,5 +64,17 @@ class StoreRequestNotification extends RequestUpdateNotification
             'unread' => true,
             'url' => null,
         ]]);
+    }
+
+    /**
+     * E-mail button for store staff: the request page in the vendor panel.
+     */
+    protected function url(): ?string
+    {
+        try {
+            return vendor_route($this->vendorRoute, $this->routeParameters);
+        } catch (Throwable) {
+            return parent::url();
+        }
     }
 }

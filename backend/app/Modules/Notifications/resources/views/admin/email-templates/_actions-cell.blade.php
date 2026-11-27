@@ -7,7 +7,7 @@
             <x-ui::dropdown-item icon="mail" data-template-test="{{ route('admin.settings.email-templates.test', $template) }}">{{ __('notifications::templates.send_test') }}</x-ui::dropdown-item>
             <x-ui::dropdown-item icon="refresh" :data-confirm="__('notifications::templates.sync_one_message')" :data-confirm-title="__('notifications::templates.sync_one_title', ['name' => $template->name()])" :data-confirm-label="__('notifications::templates.sync')" data-confirm-tone="brand" data-confirm-method="POST" :data-confirm-url="route('admin.settings.email-templates.sync', $template)">{{ __('notifications::templates.sync') }}</x-ui::dropdown-item>
             <x-ui::dropdown-divider />
-            <x-ui::dropdown-item icon="trash" tone="danger" :data-confirm="__('notifications::templates.delete_message')" :data-confirm-title="__('notifications::templates.delete_title', ['name' => $template->name()])" data-confirm-method="DELETE" :data-confirm-url="route('admin.settings.email-templates.destroy', $template)">{{ __('ui.delete') }}</x-ui::dropdown-item>
+            <x-ui::dropdown-item icon="refresh" :data-confirm="__('notifications::templates.reset_message')" :data-confirm-title="__('notifications::templates.reset_title', ['name' => $template->name()])" :data-confirm-label="__('notifications::templates.reset')" data-confirm-method="POST" :data-confirm-url="route('admin.settings.email-templates.reset', $template)">{{ __('notifications::templates.reset') }}</x-ui::dropdown-item>
         </x-ui::row-actions>
     @endif
 </div>

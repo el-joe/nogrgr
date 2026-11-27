@@ -39,6 +39,18 @@ return [
         'vendor_subject' => 'فشل تجديد باقتك',
         'vendor_body' => 'تعذّر تجديد باقة :plan_name لمتجر :store_name. ادفع الفاتورة المفتوحة ليبقى متجرك متاحًا.',
     ],
+    'subscription_cancelled' => [
+        'title' => 'إلغاء الاشتراك',
+        'body' => 'تم إلغاء باقة :plan لمتجر :store (تنتهي :date).',
+    ],
+    'subscription_renewed' => [
+        'title' => 'تجديد الاشتراك',
+        'body' => 'تم تجديد باقة :plan لمتجر :store حتى :date.',
+    ],
+    'invoice_voided' => [
+        'title' => 'إلغاء الفاتورة :number',
+        'body' => 'تم إلغاء فاتورة متجر :store بقيمة :total.',
+    ],
     'subscription_expired' => [
         'title' => 'انتهاء الاشتراك',
         'body' => 'انتهت باقة :plan لمتجر :store.',

@@ -89,12 +89,12 @@ enum Surface: string
     public function mounts(string $centralDomain): array
     {
         return match ($this) {
-            self::Central => [new RouteMount($this, '', 'central.', ['web', 'affiliate.referral'], $centralDomain)],
+            self::Central => [new RouteMount($this, '', 'central.', ['web', 'affiliate.referral', 'platform.maintenance'], $centralDomain)],
             self::Admin => [new RouteMount($this, 'admin', 'admin.', ['web', 'audit.requests'], $centralDomain)],
             self::Affiliate => [new RouteMount($this, 'affiliate', 'affiliate.', ['web', 'audit.requests'], $centralDomain)],
             self::Owner => [new RouteMount($this, 'my-account', 'owner.', ['web', 'audit.requests'], $centralDomain)],
             self::Api => [new RouteMount($this, 'api/mobile/v1', 'api.mobile.v1.', ['tenant.api', 'api'])],
-            self::StoreApi => [new RouteMount($this, 'store-api/v1', 'store-api.v1.', ['store.api'])],
+            self::StoreApi => [new RouteMount($this, 'store-api/v1', 'store-api.v1.', ['store.api', 'platform.maintenance'])],
             self::Vendor => [
                 new RouteMount(
                     $this,
@@ -107,7 +107,7 @@ enum Surface: string
                 new RouteMount($this, 'admin', 'vendor.', ['tenant.web', 'web', 'vendor.session', 'audit.requests']),
             ],
             self::VendorAuth => [new RouteMount($this, '', 'vendor.', ['tenant.web', 'web', 'vendor.session', 'audit.requests'])],
-            self::Storefront => [new RouteMount($this, '', 'storefront.', ['tenant.web', 'web', 'customer.session', 'customer.locale'])],
+            self::Storefront => [new RouteMount($this, '', 'storefront.', ['tenant.web', 'web', 'customer.session', 'customer.locale', 'platform.maintenance'])],
         };
     }
 

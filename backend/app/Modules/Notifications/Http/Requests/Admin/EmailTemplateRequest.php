@@ -3,7 +3,6 @@
 namespace App\Modules\Notifications\Http\Requests\Admin;
 
 use App\Modules\Notifications\DTOs\EmailTemplateData;
-use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\EmailTemplateStatus;
 use App\Modules\Notifications\Models\EmailTemplate;
 use App\Modules\Notifications\Support\EmailHtmlSanitizer;
@@ -35,6 +34,14 @@ class EmailTemplateRequest extends FormRequest
         $this->merge(['body' => $body]);
     }
 
+    public function routeTemplate(): EmailTemplate
+    {
+        $template = $this->template();
+        abort_if($template === null, 404);
+
+        return $template;
+    }
+
     public function template(): ?EmailTemplate
     {
         $template = $this->route('template');
@@ -48,10 +55,8 @@ class EmailTemplateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event' => $this->template() === null
-                ? ['required', 'string', Rule::enum(EmailTemplateEvent::class), Rule::unique(EmailTemplate::class, 'event')]
-                : ['prohibited'],
-            'status' => ['required', Rule::enum(EmailTemplateStatus::class)],
+            'event' => ['prohibited'],
+            'status' => [$this->template()?->event->isMandatory() === true ? 'nullable' : 'required', Rule::enum(EmailTemplateStatus::class)],
             'subject' => ['required', 'array'],
             'subject.en' => ['required', 'string', 'max:191'],
             'subject.ar' => ['nullable', 'string', 'max:191', 'required_with:body.ar'],
@@ -67,7 +72,7 @@ class EmailTemplateRequest extends FormRequest
     public function after(): array
     {
         return [function (Validator $validator): void {
-            $event = $this->template()->event ?? EmailTemplateEvent::tryFrom((string) $this->input('event'));
+            $event = $this->template()?->event;
 
             if ($event === null) {
                 return;
@@ -106,10 +111,10 @@ class EmailTemplateRequest extends FormRequest
     public function payload(): EmailTemplateData
     {
         return new EmailTemplateData(
-            event: $this->template()->event ?? EmailTemplateEvent::from((string) $this->input('event')),
+            event: $this->routeTemplate()->event,
             subject: array_filter(['en' => trim((string) $this->input('subject.en')), 'ar' => trim((string) $this->input('subject.ar'))], static fn (string $value): bool => $value !== ''),
             body: array_filter(['en' => (string) $this->input('body.en'), 'ar' => (string) $this->input('body.ar')], static fn (string $value): bool => trim(strip_tags($value)) !== ''),
-            status: EmailTemplateStatus::from((string) $this->input('status')),
+            status: $this->routeTemplate()->event->isMandatory() ? EmailTemplateStatus::Active : EmailTemplateStatus::from((string) $this->input('status')),
         );
     }
 }

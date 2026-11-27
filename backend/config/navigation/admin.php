@@ -169,8 +169,8 @@ return [
             ]],
             ['key' => 'audit', 'label' => 'navigation.admin.audit_log', 'icon' => 'file', 'route' => 'admin.system.audit.index', 'permission' => 'audit.view'],
             ['key' => 'system-tools', 'label' => 'navigation.admin.system_tools', 'icon' => 'server', 'children' => [
-                ['key' => 'system.maintenance', 'label' => 'navigation.admin.maintenance_windows', 'route' => 'admin.system.maintenance.index', 'permission' => 'system.maintenance.view'],
-                ['key' => 'system.cache', 'label' => 'navigation.admin.cache_tools', 'route' => 'admin.system.cache.index', 'permission' => 'system.cache.manage'],
+                ['key' => 'system.maintenance', 'label' => 'navigation.admin.maintenance_windows', 'route' => 'admin.system.maintenance.index', 'permission' => 'system.maintenance.view', 'active' => 'admin.system.maintenance.*'],
+                ['key' => 'system.cache', 'label' => 'navigation.admin.cache_tools', 'route' => 'admin.system.cache.index', 'permission' => 'system.cache.view', 'active' => 'admin.system.cache.*'],
                 ['key' => 'system.docs', 'label' => 'navigation.admin.developer_docs', 'route' => 'admin.system.docs.index', 'permission' => 'system.docs.view', 'active' => 'admin.system.docs.*'],
                 ['key' => 'system.ui-kit', 'label' => 'navigation.admin.ui_kit', 'route' => 'admin.ui-kit', 'permission' => 'system.ui-kit.view', 'active' => 'admin.ui-kit'],
             ]],

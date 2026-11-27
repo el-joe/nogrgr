@@ -5,15 +5,14 @@ namespace App\Modules\Support\Notifications;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
-use App\Modules\Notifications\Services\EmailTemplateRenderer;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
  * Support ticket update for admins or the store owner (database + mail + Reverb via the
  * shared PanelNotification, category "support"). Reply events mail the "Support ticket
- * reply" e-mail (MAIL-037): the admin's active template `support.ticket_reply` when there
- * is one, else the built-in branded layout support::mail.ticket-reply.
+ * reply" registry template `support.ticket_reply` (MAIL-037, #124); other events mail the
+ * generic panel alert template.
  * Texts: support::tickets.notifications.<event>.
  */
 class SupportTicketNotification extends PanelNotification
@@ -53,28 +52,26 @@ class SupportTicketNotification extends PanelNotification
         return $this->eventName;
     }
 
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
+    {
+        return [EmailTemplateEvent::SupportTicketReply, ...parent::mailTemplates()];
+    }
+
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
+    {
+        return in_array($this->eventName, self::REPLY_EVENTS, true) ? EmailTemplateEvent::SupportTicketReply : parent::mailTemplate($notifiable);
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
         if (! in_array($this->eventName, self::REPLY_EVENTS, true)) {
             return parent::toMail($notifiable);
         }
 
-        $locale = app()->getLocale();
-        $variables = $this->mailVariables($notifiable);
-        $rendered = app(EmailTemplateRenderer::class)->renderEvent(EmailTemplateEvent::SupportTicketReply, $locale, $variables);
-
-        if ($rendered !== null) {
-            // Already rendered + sanitised by the template engine (same output as TemplatedMail).
-            return (new MailMessage)->subject($rendered->subject)->view('support::mail.rendered', ['html' => $rendered->html]);
-        }
-
-        return (new MailMessage)
-            ->subject((string) __('support::tickets.mail.subject', ['reference' => $this->parameters['reference'] ?? '', 'subject' => $this->parameters['subject'] ?? '']))
-            ->view('support::mail.ticket-reply', [
-                'locale' => $locale,
-                'variables' => $variables,
-                'platform' => (string) config('app.name'),
-            ]);
+        return $this->templatedMail(EmailTemplateEvent::SupportTicketReply, $this->mailVariables($notifiable));
     }
 
     protected function titleKey(): string

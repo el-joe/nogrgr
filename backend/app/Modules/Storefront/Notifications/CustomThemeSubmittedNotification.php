@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Notifications;
 
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
 
@@ -19,6 +20,18 @@ class CustomThemeSubmittedNotification extends PanelNotification
         public readonly ?string $link = null,
     ) {
         parent::__construct();
+    }
+
+    /**
+     * Own editable e-mail template per event (decision #124).
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [
+            'theme_submitted' => EmailTemplateEvent::AdminRequestAlert,
+        ];
     }
 
     public function category(): NotificationCategory

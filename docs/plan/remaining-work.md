@@ -40,7 +40,7 @@
 | 5 | Vendor UI kit | VEN-093 | S | D5 | Keep — internal-only page (#116). |
 | 6 | Maintenance windows (schedule, message per language, central + per store) | ADM-113 | M | — | No route yet. |
 | 7 | Cache tools: main cache + tenants cache tabs | ADM-114, 114a, 114b | S | — | No route yet. Each action must be audited. |
-| 8 | Shared branded e-mail layout (central brand / store brand, en / ar RTL, plain-text alternative) | MAIL-001 | M | — | Today: admin templates use a basic layout. Support and affiliate mails have their own built-in layouts. Every other mail uses the stock Laravel `MailMessage` layout. Figma 129:10149. Every MAIL row depends on this item to match the design. |
+| 8 | Shared branded e-mail layout (central brand / store brand, en / ar RTL, plain-text alternative) | MAIL-001 | M | — | **Done (#124):** every e-mail renders through the MAIL-001 layout (EmailTemplateRenderer); admin Email layout page; editable registry templates. Plain-text alternative not built (HTML only). |
 | 9 | Vendor welcome mail: add a test | MAIL-003 | S | — | VendorWelcomeNotification is already sent on TenantProvisioned. Only a test asserting the send is missing. |
 | 10 | Renewal reminder mails (store owner + admins) | MAIL-007, MAIL-009 | M | scheduler | Needs a daily command that finds subscriptions N days before renewal, plus the two templates. |
 | 11 | Admin mail: subscription cancelled; store mail: domain connected / DNS failed | MAIL-010, MAIL-032 | S | — | The `SubscriptionCancelled` event exists but has no listener. The DNS check job does not notify yet. |

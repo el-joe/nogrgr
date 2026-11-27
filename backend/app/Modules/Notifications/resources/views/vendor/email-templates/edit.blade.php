@@ -1,15 +1,23 @@
 {{--
     Vendor › Settings › Email templates › Edit (VEN-080a, Figma Vendor Panel 91:114835 "Edit:
     Order confirmation"): EN / AR tabs with subject + rich-text body (toolbar, variable
-    chips), live preview with sample values of this store, Reset to default, Save.
+    picker), enable / disable, live preview rendered on the server through the store
+    variant of the MAIL-001 layout, Send test (to the signed-in member), Reset to default,
+    last edited by / at, Save (decision #118). Empty store + platform copies start from
+    the code default.
     Shares the editor script with Admin › Email templates (panels/admin/email-templates.js).
 --}}
 @php
     $name = $row->event->label();
     $title = __('notifications::vendor_templates.edit_title', ['name' => $name]);
-    $content = $row->content();
     $index = vendor_route('settings.email-templates.index');
     $source = $row->source();
+    $staff = auth('vendor')->user();
+    $lastEdited = $row->isCustomized() && $row->updatedAt() !== null
+        ? ($row->editorName()
+            ? __('notifications::templates.last_edited', ['name' => $row->editorName(), 'date' => $row->updatedAt()->translatedFormat('j M Y, H:i')])
+            : __('notifications::templates.last_edited_anonymous', ['date' => $row->updatedAt()->translatedFormat('j M Y, H:i')]))
+        : null;
     $toolbar = [
         ['bold', 'B', 'notifications::templates.toolbar.bold'],
         ['italic', 'I', 'notifications::templates.toolbar.italic'],
@@ -27,7 +35,7 @@
     ];
 @endphp
 <x-vendor::layout :title="$title" page="vendor-email-templates">
-    <form id="email-template-form" method="POST" action="{{ vendor_route('settings.email-templates.update', ['event' => $row->event->value]) }}" data-ajax data-unsaved-form data-email-template-form novalidate class="grid gap-6">
+    <form id="email-template-form" method="POST" action="{{ vendor_route('settings.email-templates.update', ['event' => $row->event->value]) }}" data-ajax data-unsaved-form data-email-template-form @if ($canManage) data-preview-url="{{ vendor_route('settings.email-templates.render', ['event' => $row->event->value]) }}" @endif novalidate class="grid gap-6">
         @csrf
         @method('PUT')
         <script type="application/json" id="email-template-samples">@json([$row->event->value => $samples])</script>
@@ -41,6 +49,7 @@
                     @if ($row->isCustomized())
                         <x-ui::button variant="secondary" icon="refresh" :data-confirm="__('notifications::vendor_templates.reset_message')" :data-confirm-title="__('notifications::vendor_templates.reset_title', ['name' => $name])" data-confirm-method="DELETE" :data-confirm-label="__('notifications::vendor_templates.reset')" :data-confirm-url="vendor_route('settings.email-templates.reset', ['event' => $row->event->value])">{{ __('notifications::vendor_templates.reset') }}</x-ui::button>
                     @endif
+                    <x-ui::button variant="secondary" icon="mail" data-overlay-open="template-test-modal">{{ __('notifications::templates.send_test') }}</x-ui::button>
                     <x-ui::button type="submit" icon="check">{{ __('notifications::vendor_templates.save') }}</x-ui::button>
                 @endif
             </x-slot:actions>
@@ -53,12 +62,15 @@
 
         <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
             <fieldset class="grid min-w-0 gap-4" @disabled(! $canManage)>
+                <x-ui::card>
+                    <x-ui::select name="status" :label="__('notifications::templates.enabled')" :options="\App\Modules\Notifications\Enums\EmailTemplateStatus::options()" :selected="$row->isEnabled() || $row->event->isMandatory() ? 'active' : 'inactive'" :search="false" required :disabled="$row->event->isMandatory()" :helper="$row->event->isMandatory() ? __('notifications::templates.mandatory') : null" />
+                </x-ui::card>
                 <x-ui::tabs id="template-locales" variant="segmented" :label="__('notifications::templates.fields.locale')" param="locale" :items="['en' => __('notifications::templates.locales.en'), 'ar' => __('notifications::templates.locales.ar')]">
                     @foreach ($locales as $locale)
                         <x-ui::tab-panel tabs="template-locales" :key="$locale" :active="$loop->first" class="mt-4">
                             <x-ui::card data-email-editor="{{ $locale }}">
                                 <div class="grid gap-4" lang="{{ $locale }}" dir="{{ $locale === 'ar' ? 'rtl' : 'ltr' }}">
-                                    <x-ui::input :name="'subject['.$locale.']'" :label="__('notifications::templates.fields.subject')" :value="$content?->getTranslation('subject', $locale, false)" :required="$locale === 'en'" maxlength="191" data-editor-subject />
+                                    <x-ui::input :name="'subject['.$locale.']'" :label="__('notifications::templates.fields.subject')" :value="$row->text('subject', $locale)" :required="$locale === 'en'" maxlength="191" data-editor-subject />
                                     <div class="grid gap-1.5" data-field>
                                         <span class="text-sm font-medium text-ink" id="body-{{ $locale }}-label">{{ __('notifications::templates.fields.body') }} @if ($locale === 'en')<span class="text-danger" aria-hidden="true">*</span>@endif</span>
                                         <div class="email-editor overflow-hidden rounded-control border border-line bg-field">
@@ -67,15 +79,12 @@
                                                     <button type="button" data-editor-command="{{ $command }}" class="inline-flex h-7 min-w-7 items-center justify-center rounded-chip px-1.5 text-xs font-medium text-ink-secondary hover:bg-surface hover:text-ink" title="{{ __($label) }}" aria-label="{{ __($label) }}">{{ $text }}</button>
                                                 @endforeach
                                             </div>
-                                            <div class="email-editor-content min-h-48 px-3 py-3 text-sm text-ink outline-none" @if ($canManage) contenteditable="true" @endif role="textbox" aria-multiline="true" aria-labelledby="body-{{ $locale }}-label" data-editor-area>{!! $content?->getTranslation('body', $locale, false) !!}</div>
+                                            <div class="email-editor-content min-h-48 px-3 py-3 text-sm text-ink outline-none" @if ($canManage) contenteditable="true" @endif role="textbox" aria-multiline="true" aria-labelledby="body-{{ $locale }}-label" data-editor-area>{!! $row->text('body', $locale) !!}</div>
                                         </div>
-                                        <textarea name="body[{{ $locale }}]" hidden data-editor-input>{{ $content?->getTranslation('body', $locale, false) }}</textarea>
+                                        <textarea name="body[{{ $locale }}]" hidden data-editor-input>{{ $row->text('body', $locale) }}</textarea>
                                         <p class="ui-error hidden text-xs text-danger" data-error-for="body.{{ $locale }}"></p>
                                     </div>
-                                    <div class="grid gap-2">
-                                        <span class="text-xs font-medium text-ink-secondary">{{ __('notifications::templates.variables_help') }}</span>
-                                        <div class="flex flex-wrap gap-2" data-variable-chips dir="ltr"></div>
-                                    </div>
+                                    @include('notifications::partials.template-variables', ['event' => $row->event])
                                 </div>
                             </x-ui::card>
                         </x-ui::tab-panel>
@@ -83,24 +92,21 @@
                 </x-ui::tabs>
             </fieldset>
 
-            <x-ui::card class="xl:sticky xl:top-20">
-                <div class="mb-3 flex items-center justify-between gap-3">
-                    <h2 class="ui-card-title text-base font-semibold text-ink">{{ __('notifications::templates.preview') }}</h2>
-                    <div class="inline-flex gap-1 rounded-control bg-subtle p-1" role="group" aria-label="{{ __('notifications::templates.preview_width') }}">
-                        @foreach (['desktop', 'mobile'] as $width)
-                            <button type="button" data-preview-width="{{ $width }}" aria-pressed="{{ $width === 'desktop' ? 'true' : 'false' }}" class="inline-flex h-7 items-center rounded-chip px-2.5 text-xs text-ink-secondary aria-pressed:bg-surface aria-pressed:font-medium aria-pressed:text-ink-brand aria-pressed:shadow-card">{{ __('notifications::templates.widths.'.$width) }}</button>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="rounded-card bg-subtle p-4">
-                    <div class="mx-auto w-full rounded-card bg-white p-5 text-[#2b1a14] shadow-card transition-[max-width]" data-preview-pane>
-                        <p class="mb-1 text-xs text-[#8a7a72]" data-preview-subject></p>
-                        <p class="mb-3 text-lg font-semibold" data-preview-header></p>
-                        <div class="email-editor-content text-sm" data-preview-body></div>
-                    </div>
-                </div>
-                <p class="mt-3 text-xs text-ink-secondary">{{ __('notifications::templates.preview_help') }}</p>
-            </x-ui::card>
+            @if ($canManage)
+                @include('notifications::partials.template-preview', ['lastEdited' => $lastEdited])
+            @else
+                <x-ui::card class="xl:sticky xl:top-20">
+                    <h2 class="ui-card-title mb-3 text-base font-semibold text-ink">{{ __('notifications::templates.preview') }}</h2>
+                    <iframe title="{{ __('notifications::templates.preview') }}" src="{{ vendor_route('settings.email-templates.preview', ['event' => $row->event->value]) }}" sandbox loading="lazy" class="h-[560px] w-full rounded-control border border-line bg-white"></iframe>
+                    @if ($lastEdited)
+                        <p class="mt-3 text-xs text-ink-secondary">{{ $lastEdited }}</p>
+                    @endif
+                </x-ui::card>
+            @endif
         </div>
     </form>
+
+    @if ($canManage)
+        @include('notifications::admin.email-templates._test-modal', ['action' => vendor_route('settings.email-templates.test', ['event' => $row->event->value]), 'email' => (string) $staff?->email])
+    @endif
 </x-vendor::layout>

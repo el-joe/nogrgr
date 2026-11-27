@@ -2,6 +2,7 @@
 
 namespace App\Modules\Commerce\Notifications;
 
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -39,11 +40,37 @@ class OrderAlertNotification extends PanelNotification
             $channels[] = 'broadcast';
         }
 
-        if ((bool) $notifiable->getAttribute('is_owner') && filled($notifiable->getAttribute('email'))) {
+        // Per-member switches (VEN-087) then drop channels via EnforceVendorNotificationPreferences.
+        if (filled($notifiable->getAttribute('email'))) {
             $channels[] = 'mail';
         }
 
         return $channels;
+    }
+
+    /**
+     * Own editable e-mail template per event (decision #124).
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [
+            'store_new_order' => EmailTemplateEvent::VendorNewOrder,
+            'store_order_cancelled' => EmailTemplateEvent::VendorOrderCancelled,
+            'store_return_opened' => EmailTemplateEvent::VendorReturnUpdate,
+            'store_return_updated' => EmailTemplateEvent::VendorReturnUpdate,
+            'store_return_message' => EmailTemplateEvent::VendorReturnUpdate,
+            'store_refund_completed' => EmailTemplateEvent::VendorRefundUpdate,
+            'store_refund_failed' => EmailTemplateEvent::VendorRefundUpdate,
+            'admin_order_paid' => EmailTemplateEvent::AdminOrderAlert,
+            'admin_order_cancelled' => EmailTemplateEvent::AdminOrderAlert,
+            'admin_return_opened' => EmailTemplateEvent::AdminReturnAlert,
+            'admin_return_updated' => EmailTemplateEvent::AdminReturnAlert,
+            'admin_return_message' => EmailTemplateEvent::AdminReturnAlert,
+            'admin_refund_completed' => EmailTemplateEvent::AdminReturnAlert,
+            'admin_refund_failed' => EmailTemplateEvent::AdminReturnAlert,
+        ];
     }
 
     public function category(): NotificationCategory

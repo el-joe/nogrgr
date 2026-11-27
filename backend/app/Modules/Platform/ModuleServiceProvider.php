@@ -9,6 +9,7 @@ use App\Modules\Platform\Contracts\CertificateInspector;
 use App\Modules\Platform\Contracts\DnsResolver;
 use App\Modules\Platform\Events\ComplianceReviewed;
 use App\Modules\Platform\Events\ComplianceSubmitted;
+use App\Modules\Platform\Events\DomainConnected;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Modules\Platform\Events\TenantProvisioningFailed;
 use App\Modules\Platform\Legacy\Console\LegacyMigrateCommand;
@@ -17,19 +18,24 @@ use App\Modules\Platform\Listeners\AdvanceRegistrationOnPayment;
 use App\Modules\Platform\Listeners\AlertProvisioningFailure;
 use App\Modules\Platform\Listeners\NotifyAdminsOfComplianceSubmission;
 use App\Modules\Platform\Listeners\NotifyOwnerOfComplianceDecision;
+use App\Modules\Platform\Listeners\NotifyOwnerOfDomainConnected;
 use App\Modules\Platform\Listeners\WelcomeProvisionedVendor;
 use App\Modules\Platform\Policies\OwnerStorePolicy;
 use App\Modules\Platform\Repositories\Contracts\AuditEventRepositoryContract;
+use App\Modules\Platform\Repositories\Contracts\CacheClearRunRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\ComplianceProfileRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\DnsRecordTemplateRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\DomainRequestRepositoryContract;
+use App\Modules\Platform\Repositories\Contracts\MaintenanceWindowRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\StoreSettingRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\TenantRepositoryContract;
 use App\Modules\Platform\Repositories\Contracts\VendorRegistrationRepositoryContract;
 use App\Modules\Platform\Repositories\Eloquent\AuditEventRepository;
+use App\Modules\Platform\Repositories\Eloquent\CacheClearRunRepository;
 use App\Modules\Platform\Repositories\Eloquent\ComplianceProfileRepository;
 use App\Modules\Platform\Repositories\Eloquent\DnsRecordTemplateRepository;
 use App\Modules\Platform\Repositories\Eloquent\DomainRequestRepository;
+use App\Modules\Platform\Repositories\Eloquent\MaintenanceWindowRepository;
 use App\Modules\Platform\Repositories\Eloquent\StoreSettingRepository;
 use App\Modules\Platform\Repositories\Eloquent\TenantRepository;
 use App\Modules\Platform\Repositories\Eloquent\VendorRegistrationRepository;
@@ -60,6 +66,8 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         DomainRequestRepositoryContract::class => DomainRequestRepository::class,
         StoreSettingRepositoryContract::class => StoreSettingRepository::class,
         DnsRecordTemplateRepositoryContract::class => DnsRecordTemplateRepository::class,
+        MaintenanceWindowRepositoryContract::class => MaintenanceWindowRepository::class,
+        CacheClearRunRepositoryContract::class => CacheClearRunRepository::class,
         DnsResolver::class => SystemDnsResolver::class,
         CertificateInspector::class => StreamCertificateInspector::class,
     ];
@@ -85,6 +93,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Event::listen(MigrationStarted::class, [PartialMigrationCleaner::class, 'started']);
         Event::listen(MigrationFailed::class, [PartialMigrationCleaner::class, 'failed']);
         Event::listen(TenantProvisioned::class, WelcomeProvisionedVendor::class);
+        Event::listen(DomainConnected::class, NotifyOwnerOfDomainConnected::class);
         Event::listen(TenantProvisioningFailed::class, AlertProvisioningFailure::class);
         Event::listen(ComplianceReviewed::class, NotifyOwnerOfComplianceDecision::class);
         Event::listen(ComplianceSubmitted::class, NotifyAdminsOfComplianceSubmission::class);

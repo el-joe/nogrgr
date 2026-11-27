@@ -61,13 +61,13 @@ it('sends guests to the login and guards every endpoint with settings.email-temp
     $this->postJson(($this->url)('/sync'))->assertForbidden();
 });
 
-it('lists only the shopper e-mails with their source and filters', function (): void {
+it('lists only the store-scoped e-mails with their source and filters', function (): void {
     $this->actingAsVendor($this->owner, $this->tenant);
 
     $this->get(($this->url)())->assertOk()->assertSee(__('notifications::vendor_templates.sync'));
 
     $rows = collect(($this->data)()['data']);
-    expect($rows->pluck('id')->all())->toBe(['order.confirmation', 'order.shipped', 'order.delivered', 'order.cancelled', 'order.refund_processed', 'customer.password_reset'])
+    expect($rows->pluck('id')->all())->toBe(array_map(static fn (EmailTemplateEvent $event): string => $event->value, EmailTemplateEvent::storeScoped()))
         ->and($rows->firstWhere('id', 'order.confirmation')['source'])->toContain(__('notifications::vendor_templates.sources.platform'))
         ->and($rows->firstWhere('id', 'order.confirmation')['languages'])->toBe('EN · AR')
         ->and($rows->firstWhere('id', 'order.shipped')['source'])->toContain(__('notifications::vendor_templates.sources.builtin'));
@@ -102,7 +102,7 @@ it('customises a template per locale, previews it, and resets it to the platform
 
     $preview = $this->get(($this->url)('/order.confirmation/preview?locale=ar'))->assertOk()->assertHeader('Content-Security-Policy');
     expect($preview->getContent())->toContain('نجهّز طلبك الآن.')->toContain('Megz');
-    $this->get(($this->url)('/order.shipped/preview'))->assertNotFound();
+    $this->get(($this->url)('/order.shipped/preview'))->assertOk()->assertSee('Aramex');
 
     $this->deleteJson(($this->url)('/order.confirmation'))->assertOk()->assertJsonPath('message', __('notifications::vendor_templates.reset_done', ['name' => EmailTemplateEvent::OrderConfirmation->label()]));
     $own = ($this->own)(EmailTemplateEvent::OrderConfirmation);

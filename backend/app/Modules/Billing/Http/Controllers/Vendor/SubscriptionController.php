@@ -48,7 +48,7 @@ class SubscriptionController extends Controller
             'tab' => SubscriptionPageTab::fromQuery($request->query('tab')),
             'subscription' => $current,
             'plans' => $this->service->plans(),
-            'usage' => $this->service->usage($current?->plan),
+            'usage' => $this->service->usage($current?->plan, $tenantId),
             'balance' => $this->service->balance($tenantId),
             'recent' => $this->service->recentTransactions($tenantId),
             'unpaidInvoice' => $this->service->unpaidInvoice($tenantId),

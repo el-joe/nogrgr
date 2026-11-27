@@ -16,6 +16,7 @@ use App\Modules\Billing\Repositories\Contracts\AddonPurchaseRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\InvoiceRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\LedgerRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\PaymentLogRepositoryContract;
+use App\Modules\Billing\Repositories\Contracts\PlanLimitOverrideRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\PlanRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\SubscriptionRepositoryContract;
 use App\Modules\Billing\Repositories\Contracts\TenantPayoutRepositoryContract;
@@ -23,6 +24,7 @@ use App\Modules\Billing\Repositories\Eloquent\AddonPurchaseRepository;
 use App\Modules\Billing\Repositories\Eloquent\InvoiceRepository;
 use App\Modules\Billing\Repositories\Eloquent\LedgerRepository;
 use App\Modules\Billing\Repositories\Eloquent\PaymentLogRepository;
+use App\Modules\Billing\Repositories\Eloquent\PlanLimitOverrideRepository;
 use App\Modules\Billing\Repositories\Eloquent\PlanRepository;
 use App\Modules\Billing\Repositories\Eloquent\SubscriptionRepository;
 use App\Modules\Billing\Repositories\Eloquent\TenantPayoutRepository;
@@ -41,6 +43,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
     public $bindings = [
         AddonPurchaseRepositoryContract::class => AddonPurchaseRepository::class,
         PlanRepositoryContract::class => PlanRepository::class,
+        PlanLimitOverrideRepositoryContract::class => PlanLimitOverrideRepository::class,
         SubscriptionRepositoryContract::class => SubscriptionRepository::class,
         InvoiceRepositoryContract::class => InvoiceRepository::class,
         PaymentLogRepositoryContract::class => PaymentLogRepository::class,

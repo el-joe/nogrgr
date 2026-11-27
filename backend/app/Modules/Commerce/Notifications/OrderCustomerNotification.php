@@ -6,9 +6,9 @@ use App\Modules\Identity\Enums\CustomerNotificationChannel;
 use App\Modules\Identity\Enums\CustomerNotificationType;
 use App\Modules\Identity\Models\Customer;
 use App\Modules\Identity\Services\CustomerNotificationPreferences;
+use App\Modules\Notifications\Concerns\RendersMailTemplate;
+use App\Modules\Notifications\Contracts\TemplatedMailNotification;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
-use App\Modules\Notifications\Mail\TemplatedMail;
-use App\Modules\Notifications\Services\EmailTemplateRenderer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -21,9 +21,10 @@ use Illuminate\Notifications\Notification;
  * commerce::notifications.customer.<event> texts. E-mail follows the customer's
  * "order updates" / "shipping updates" e-mail preference; the account inbox always gets it.
  */
-class OrderCustomerNotification extends Notification implements ShouldQueue
+class OrderCustomerNotification extends Notification implements ShouldQueue, TemplatedMailNotification
 {
     use Queueable;
+    use RendersMailTemplate;
 
     /**
      * @param  array<string, string>  $variables  template variables (EmailTemplateEvent::variables())
@@ -43,9 +44,11 @@ class OrderCustomerNotification extends Notification implements ShouldQueue
     public function via(object $notifiable): array
     {
         $channels = ['database'];
-        $type = in_array($this->template, [EmailTemplateEvent::OrderShipped, EmailTemplateEvent::OrderDelivered], true) || str_starts_with($this->eventName, 'shipping_')
-            ? CustomerNotificationType::ShippingUpdates
-            : CustomerNotificationType::OrderUpdates;
+        $type = match (true) {
+            str_starts_with($this->eventName, 'return_') => CustomerNotificationType::Returns,
+            in_array($this->template, [EmailTemplateEvent::OrderShipped, EmailTemplateEvent::OrderDelivered], true) || str_starts_with($this->eventName, 'shipping_') => CustomerNotificationType::ShippingUpdates,
+            default => CustomerNotificationType::OrderUpdates,
+        };
 
         if ($notifiable instanceof Customer && filled($notifiable->email)
             && app(CustomerNotificationPreferences::class)->allows($notifiable, $type, CustomerNotificationChannel::Email)) {
@@ -55,35 +58,35 @@ class OrderCustomerNotification extends Notification implements ShouldQueue
         return $channels;
     }
 
-    public function toMail(object $notifiable): MailMessage|TemplatedMail
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
     {
-        $locale = $notifiable instanceof Customer && $notifiable->locale !== null ? $notifiable->locale : app()->getLocale();
-        $rendered = $this->template !== null ? app(EmailTemplateRenderer::class)->renderEvent($this->template, $locale, $this->variables) : null;
+        return [EmailTemplateEvent::OrderConfirmation, EmailTemplateEvent::OrderShipped, EmailTemplateEvent::OrderDelivered, EmailTemplateEvent::OrderCancelled, EmailTemplateEvent::OrderRefundProcessed, EmailTemplateEvent::OrderUpdate];
+    }
 
-        if ($rendered !== null) {
-            return (new TemplatedMail($rendered))->to((string) $notifiable->routeNotificationFor('mail', $this));
-        }
+    /**
+     * Order events without their own template (shipping_* / return_*) use order.update.
+     */
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
+    {
+        return $this->template ?? EmailTemplateEvent::OrderUpdate;
+    }
 
+    public function toMail(object $notifiable): MailMessage
+    {
+        $locale = $this->recipientLocale($notifiable);
         $params = [];
 
         foreach ($this->variables as $key => $value) {
             $params[str_replace('.', '_', $key)] = $value;
         }
 
-        $mail = (new MailMessage)
-            ->subject((string) __('commerce::notifications.customer.'.$this->eventName.'.subject', $params, $locale))
-            ->greeting((string) __('commerce::notifications.customer.greeting', $params, $locale))
-            ->line((string) __('commerce::notifications.customer.'.$this->eventName.'.body', $params, $locale));
-
-        // MAIL-015: delivered → "Write a review" opens the review modal of the order page.
-        if (($this->variables['order.review_url'] ?? '') !== '') {
-            return $mail->line((string) __('commerce::notifications.customer.review_prompt', $params, $locale))
-                ->action((string) __('commerce::notifications.customer.write_review', [], $locale), $this->variables['order.review_url']);
-        }
-
-        return ($this->variables['order.url'] ?? '') !== ''
-            ? $mail->action((string) __('commerce::notifications.customer.view_order', [], $locale), $this->variables['order.url'])
-            : $mail;
+        return $this->templatedMail($this->mailTemplate($notifiable), $this->variables + [
+            'alert.title' => (string) __('commerce::notifications.customer.'.$this->eventName.'.subject', $params, $locale),
+            'alert.body' => (string) __('commerce::notifications.customer.'.$this->eventName.'.body', $params, $locale),
+        ], $locale);
     }
 
     /**

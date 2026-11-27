@@ -3,8 +3,10 @@
  *  - list: preview modal (iframe of the server render, EN / AR) and "Send test" modal
  *    whose form action is taken from the clicked row.
  *  - form: per-locale rich-text editor (contenteditable + toolbar, mirrored into a
- *    hidden textarea), variable chips of the selected event, live preview with the
- *    event's sample values (desktop / mobile width).
+ *    hidden textarea), variable picker (server-rendered list, data-insert-variable) and a
+ *    live preview: with data-preview-url the unsaved subject / body of the active locale
+ *    is rendered on the server through the real MAIL-001 layout (debounced POST, JSON
+ *    {subject, html} into a sandboxed iframe); desktop / mobile width.
  */
 import { openOverlay } from '../ui/index.js';
 
@@ -134,7 +136,55 @@ function bindForm(root) {
 
     const editorFor = (locale) => form.querySelector(`[data-email-editor="${locale}"]`);
 
+    const previewUrl = form.dataset.previewUrl ?? '';
+    const frame = form.querySelector('[data-preview-frame]');
+    const previewError = form.querySelector('[data-preview-error]');
+    let previewTimer = null;
+    let previewRequest = 0;
+
+    const renderServerPreview = async () => {
+        const editor = editorFor(activeLocale);
+
+        if (!editor || !frame) {
+            return;
+        }
+
+        const body = new FormData();
+        body.append('_token', form.querySelector('input[name="_token"]')?.value ?? '');
+        body.append('locale', activeLocale);
+        body.append(`subject[${activeLocale}]`, editor.querySelector('[data-editor-subject]')?.value ?? '');
+        body.append(`body[${activeLocale}]`, editor.querySelector('[data-editor-area]')?.innerHTML ?? '');
+        const request = ++previewRequest;
+
+        try {
+            const response = await fetch(previewUrl, { method: 'POST', body, headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' });
+
+            if (!response.ok) {
+                throw new Error(String(response.status));
+            }
+
+            const data = await response.json();
+
+            if (request !== previewRequest) {
+                return;
+            }
+
+            frame.srcdoc = data.html ?? '';
+            form.querySelector('[data-preview-subject]').textContent = data.subject ?? '';
+            previewError?.classList.add('hidden');
+        } catch {
+            previewError?.classList.remove('hidden');
+        }
+    };
+
     const renderPreview = () => {
+        if (previewUrl) {
+            window.clearTimeout(previewTimer);
+            previewTimer = window.setTimeout(renderServerPreview, 400);
+
+            return;
+        }
+
         const editor = editorFor(activeLocale);
 
         if (!editor || !pane) {
@@ -150,6 +200,10 @@ function bindForm(root) {
 
     const renderChips = () => {
         form.querySelectorAll('[data-variable-chips]').forEach((container) => {
+            if (container.children.length > 0) {
+                return; // server-rendered variable picker
+            }
+
             container.replaceChildren(...Object.keys(variables()).map((key) => {
                 const chip = document.createElement('button');
                 chip.type = 'button';

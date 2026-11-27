@@ -39,6 +39,7 @@ final class PermissionCatalog
                 'vendors.view', 'vendors.manage', 'vendors.delete', 'vendors.export',
                 'vendors.kyc.view', 'vendors.kyc.manage',
                 'vendors.domains.view', 'vendors.domains.manage',
+                'vendors.limits.manage',
                 'requests.tenant-changes.view', 'requests.tenant-changes.manage',
                 'requests.products.view', 'requests.products.manage',
                 'requests.edits.view', 'requests.edits.manage',
@@ -103,6 +104,9 @@ final class PermissionCatalog
                 'reports.view', 'reports.export',
                 'vendors.shoppers.view', 'vendors.shoppers.export',
                 'system.docs.view',
+                // System tools: maintenance windows (ADM-113), cache tools (ADM-114)
+                'system.maintenance.view', 'system.maintenance.manage',
+                'system.cache.view', 'system.cache.manage',
                 // Support tickets (P9, ADM-116)
                 'support.tickets.view', 'support.tickets.manage',
                 // Affiliate program (P9, ADM-060…063)

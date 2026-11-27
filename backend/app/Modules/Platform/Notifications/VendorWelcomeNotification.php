@@ -2,6 +2,9 @@
 
 namespace App\Modules\Platform\Notifications;
 
+use App\Modules\Notifications\Concerns\RendersMailTemplate;
+use App\Modules\Notifications\Contracts\TemplatedMailNotification;
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,9 +14,10 @@ use Illuminate\Notifications\Notification;
  * Sent to the store owner once provisioning finished: store name, store address and
  * the vendor panel sign-in link.
  */
-class VendorWelcomeNotification extends Notification implements ShouldQueue
+class VendorWelcomeNotification extends Notification implements ShouldQueue, TemplatedMailNotification
 {
     use Queueable;
+    use RendersMailTemplate;
 
     public function __construct(
         public readonly string $storeName,
@@ -31,14 +35,26 @@ class VendorWelcomeNotification extends Notification implements ShouldQueue
         return ['mail'];
     }
 
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
+    {
+        return [EmailTemplateEvent::VendorWelcome];
+    }
+
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
+    {
+        return EmailTemplateEvent::VendorWelcome;
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject(__('platform::mail.welcome.subject', ['store' => $this->storeName]))
-            ->greeting(__('platform::mail.welcome.greeting'))
-            ->line(__('platform::mail.welcome.intro', ['store' => $this->storeName]))
-            ->line(__('platform::mail.welcome.address', ['url' => $this->storeUrl]))
-            ->action(__('platform::mail.welcome.action'), $this->loginUrl)
-            ->line(__('platform::mail.welcome.outro'));
+        return $this->templatedMail(EmailTemplateEvent::VendorWelcome, [
+            'vendor.name' => (string) ($notifiable->name ?? ''),
+            'store.name' => $this->storeName,
+            'store.url' => $this->storeUrl,
+            'login.url' => $this->loginUrl,
+        ]);
     }
 }

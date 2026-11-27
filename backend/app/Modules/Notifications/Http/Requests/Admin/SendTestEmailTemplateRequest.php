@@ -22,7 +22,6 @@ class SendTestEmailTemplateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email:rfc', 'max:191'],
             'locale' => ['required', 'string', Rule::in(EmailTemplate::LOCALES)],
         ];
     }
@@ -33,7 +32,6 @@ class SendTestEmailTemplateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'email' => __('notifications::templates.fields.test_email'),
             'locale' => __('notifications::templates.fields.locale'),
         ];
     }

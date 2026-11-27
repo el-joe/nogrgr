@@ -3,21 +3,24 @@
 namespace App\Modules\Notifications\Services;
 
 use App\Modules\Notifications\DTOs\RenderedEmailData;
-use App\Modules\Notifications\Enums\EmailAudience;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\EmailTemplateStatus;
 use App\Modules\Notifications\Models\EmailTemplate;
 use App\Modules\Notifications\Models\StoreEmailTemplate;
 use App\Modules\Notifications\Repositories\Contracts\EmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\StoreEmailTemplateRepositoryContract;
+use App\Modules\Notifications\Support\MailBodyStyler;
+use App\Modules\Platform\Models\Tenant;
+use App\Modules\Platform\Services\StoreSettingsService;
 use Illuminate\Database\QueryException;
 
 /**
- * Renders a template for one locale: `{{ var.name }}` placeholders are replaced
- * (HTML-escaped in the body, plain in the subject; unknown ones become empty) and the
- * body is wrapped in the shared e-mail layout. A missing locale falls back to English.
- * Inside a store (tenant context) a shopper e-mail uses the store's own template when it
- * has a usable one (VEN-080, StoreEmailTemplate), otherwise the platform template.
+ * Renders e-mails from the template registry (decision #118). Content per locale:
+ * the store's own template (store-scoped keys inside a store, VEN-080) → the admin
+ * template (`email_templates`) → the code default (EmailTemplateEvent::defaultBody).
+ * `{{ var.name }}` placeholders are replaced (HTML-escaped in the body, plain in the
+ * subject; unknown ones become empty) and the body is wrapped in the MAIL-001 layout
+ * (central or store variant, RTL for Arabic).
  */
 class EmailTemplateRenderer
 {
@@ -26,80 +29,166 @@ class EmailTemplateRenderer
     public function __construct(
         private readonly EmailTemplateRepositoryContract $templates,
         private readonly StoreEmailTemplateRepositoryContract $storeTemplates,
+        private readonly MailLayoutService $layout,
     ) {}
 
     /**
+     * One stored template; a locale it lacks uses the code default of that locale.
+     *
      * @param  array<string, string|int|float|null>  $variables
      */
     public function render(EmailTemplate|StoreEmailTemplate $template, string $locale, array $variables): RenderedEmailData
     {
-        $complete = $template->completeLocales();
-        $locale = in_array($locale, $complete, true) ? $locale : ($complete[0] ?? 'en');
+        $locale = in_array($locale, EmailTemplate::LOCALES, true) ? $locale : 'en';
+
+        if (! in_array($locale, $template->completeLocales(), true)) {
+            return $this->renderDefault($template->event, $locale, $variables);
+        }
 
         return $this->renderContent(
             (string) $template->getTranslation('subject', $locale, false),
             (string) $template->getTranslation('body', $locale, false),
             $locale,
             $variables,
+            $template->event,
         );
     }
 
     /**
-     * Unsaved subject / body (vendor preview) rendered with the event's sample values.
+     * The registry default of an event (Reset to default, previews of new templates).
      *
      * @param  array<string, string|int|float|null>  $variables
      */
-    public function renderContent(string $subject, string $body, string $locale, array $variables): RenderedEmailData
+    public function renderDefault(EmailTemplateEvent $event, string $locale, array $variables): RenderedEmailData
     {
+        return $this->renderContent($event->defaultSubject($locale), $event->defaultBody($locale), $locale, $variables, $event);
+    }
+
+    /**
+     * Any subject / body (unsaved editor content, previews) with the given values.
+     *
+     * @param  array<string, string|int|float|null>  $variables
+     */
+    public function renderContent(string $subject, string $body, string $locale, array $variables, ?EmailTemplateEvent $event = null): RenderedEmailData
+    {
+        $locale = in_array($locale, EmailTemplate::LOCALES, true) ? $locale : 'en';
+        $variables = $this->withContext($variables);
+        $layout = $this->layout->forMail($locale);
+
+        if ($event !== null && ! $layout->isStore) {
+            $layout = $layout->withLabel((string) __('notifications::mail_layout.labels.'.$event->audience()->value, [], $locale));
+        }
+
+        $subject = trim($this->replace($subject, $variables, false));
+        $html = MailBodyStyler::style($this->replace($body, $variables, true), $layout->primaryColor, $locale === 'ar', ! $layout->isStore);
+
         return new RenderedEmailData(
-            subject: trim($this->replace($subject, $variables, false)),
+            subject: $subject,
             html: view('notifications::mail.template', [
-                'body' => $this->replace($body, $variables, true),
+                'body' => $html,
+                'subject' => $subject,
+                'preheader' => MailBodyStyler::preheader($html),
                 'locale' => $locale,
-                'platform' => (string) ($variables['platform.name'] ?? config('app.name')),
-                'header' => (string) ($variables['store.name'] ?? $variables['platform.name'] ?? config('app.name')),
+                'layout' => $layout,
             ])->render(),
             locale: $locale,
         );
     }
 
     /**
-     * The store's usable template of the event, else the active platform template, or
-     * null (callers fall back to their default text).
+     * The e-mail of an event as it is sent now, or null when the template is disabled.
      *
      * @param  array<string, string|int|float|null>  $variables
      */
     public function renderEvent(EmailTemplateEvent $event, string $locale, array $variables): ?RenderedEmailData
     {
-        $variables = ['platform.name' => (string) config('app.name'), ...$variables];
+        return $this->isEnabled($event) ? $this->compose($event, $locale, $variables) : null;
+    }
+
+    /**
+     * The e-mail of an event, whatever its switch (the switch is applied when sending).
+     *
+     * @param  array<string, string|int|float|null>  $variables
+     */
+    public function compose(EmailTemplateEvent $event, string $locale, array $variables): RenderedEmailData
+    {
+        $locale = in_array($locale, EmailTemplate::LOCALES, true) ? $locale : 'en';
         $store = $this->storeTemplate($event);
 
-        if ($store !== null) {
+        if ($store !== null && $store->isUsable() && in_array($locale, $store->completeLocales(), true)) {
             return $this->render($store, $locale, $variables);
         }
 
-        $template = $this->templates->findByEvent($event);
+        $template = $this->platformTemplate($event);
 
-        if ($template === null || $template->status !== EmailTemplateStatus::Active || $template->completeLocales() === []) {
-            return null;
+        if ($template !== null && in_array($locale, $template->completeLocales(), true)) {
+            return $this->render($template, $locale, $variables);
         }
 
-        return $this->render($template, $locale, $variables);
+        return $this->renderDefault($event, $locale, $variables);
+    }
+
+    /**
+     * Enable / disable switch: a store's customised copy decides for that store, else
+     * the admin template; an event nobody edited yet is enabled; mandatory account /
+     * security e-mails are always enabled.
+     */
+    public function isEnabled(EmailTemplateEvent $event): bool
+    {
+        if ($event->isMandatory()) {
+            return true;
+        }
+
+        $store = $this->storeTemplate($event);
+
+        if ($store !== null && $store->is_customized) {
+            return $store->status === EmailTemplateStatus::Active;
+        }
+
+        $template = $this->platformTemplate($event);
+
+        return $template === null || $template->status === EmailTemplateStatus::Active;
+    }
+
+    private function platformTemplate(EmailTemplateEvent $event): ?EmailTemplate
+    {
+        try {
+            return $this->templates->findByEvent($event);
+        } catch (QueryException) {
+            return null;
+        }
     }
 
     private function storeTemplate(EmailTemplateEvent $event): ?StoreEmailTemplate
     {
-        if (! tenancy()->initialized || $event->audience() !== EmailAudience::Shoppers) {
+        if (! tenancy()->initialized || ! $event->isStoreScoped()) {
             return null;
         }
 
         try {
-            $template = $this->storeTemplates->findByEvent($event);
+            return $this->storeTemplates->findByEvent($event);
         } catch (QueryException) {
             return null; // store not migrated yet
         }
+    }
 
-        return $template?->isUsable() ? $template : null;
+    /**
+     * Platform name always; store name / address inside a store unless given.
+     *
+     * @param  array<string, string|int|float|null>  $variables
+     * @return array<string, string|int|float|null>
+     */
+    private function withContext(array $variables): array
+    {
+        $context = ['platform.name' => (string) config('app.name')];
+        $tenant = tenancy()->initialized ? tenant() : null;
+
+        if ($tenant instanceof Tenant) {
+            $context['store.name'] = (string) $tenant->name;
+            $context['store.url'] = StoreSettingsService::storeUrl($tenant);
+        }
+
+        return [...$context, ...$variables];
     }
 
     /**

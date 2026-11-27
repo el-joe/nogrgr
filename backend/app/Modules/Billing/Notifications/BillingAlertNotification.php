@@ -2,6 +2,7 @@
 
 namespace App\Modules\Billing\Notifications;
 
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
 
@@ -22,6 +23,27 @@ class BillingAlertNotification extends PanelNotification
         public readonly ?string $link = null,
     ) {
         parent::__construct();
+    }
+
+    /**
+     * Own editable e-mail template per event (decision #124).
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [
+            'payment_failed' => EmailTemplateEvent::AdminPaymentFailed,
+            'invoice_issued' => EmailTemplateEvent::AdminBillingAlert,
+            'invoice_paid' => EmailTemplateEvent::AdminBillingAlert,
+            'invoice_voided' => EmailTemplateEvent::AdminBillingAlert,
+            'payment_refunded' => EmailTemplateEvent::AdminBillingAlert,
+            'subscription_activated' => EmailTemplateEvent::AdminBillingAlert,
+            'subscription_past_due' => EmailTemplateEvent::AdminBillingAlert,
+            'subscription_expired' => EmailTemplateEvent::AdminBillingAlert,
+            'subscription_cancelled' => EmailTemplateEvent::AdminBillingAlert,
+            'subscription_renewed' => EmailTemplateEvent::AdminBillingAlert,
+        ];
     }
 
     public function category(): NotificationCategory

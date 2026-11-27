@@ -4,11 +4,14 @@ namespace App\Modules\Billing\Listeners;
 
 use App\Modules\Billing\Events\InvoiceIssued;
 use App\Modules\Billing\Events\InvoicePaid;
+use App\Modules\Billing\Events\InvoiceVoided;
 use App\Modules\Billing\Events\PaymentFailed;
 use App\Modules\Billing\Events\PaymentRefunded;
 use App\Modules\Billing\Events\SubscriptionActivated;
+use App\Modules\Billing\Events\SubscriptionCancelled;
 use App\Modules\Billing\Events\SubscriptionExpired;
 use App\Modules\Billing\Events\SubscriptionPastDue;
+use App\Modules\Billing\Events\SubscriptionRenewed;
 use App\Modules\Billing\Models\Invoice;
 use App\Modules\Billing\Models\PaymentLog;
 use App\Modules\Billing\Models\Subscription;
@@ -45,6 +48,9 @@ class SendBillingNotifications
         $events->listen(SubscriptionActivated::class, [self::class, 'subscriptionActivated']);
         $events->listen(SubscriptionPastDue::class, [self::class, 'subscriptionPastDue']);
         $events->listen(SubscriptionExpired::class, [self::class, 'subscriptionExpired']);
+        $events->listen(SubscriptionCancelled::class, [self::class, 'subscriptionCancelled']);
+        $events->listen(SubscriptionRenewed::class, [self::class, 'subscriptionRenewed']);
+        $events->listen(InvoiceVoided::class, [self::class, 'invoiceVoided']);
     }
 
     public function invoiceIssued(InvoiceIssued $event): void
@@ -80,6 +86,21 @@ class SendBillingNotifications
     public function subscriptionExpired(SubscriptionExpired $event): void
     {
         $this->subscription($event->subscription, 'subscription_expired', EmailTemplateEvent::VendorSubscriptionExpired);
+    }
+
+    public function subscriptionCancelled(SubscriptionCancelled $event): void
+    {
+        $this->subscription($event->subscription, 'subscription_cancelled', EmailTemplateEvent::VendorSubscriptionCancelled);
+    }
+
+    public function subscriptionRenewed(SubscriptionRenewed $event): void
+    {
+        $this->subscription($event->subscription, 'subscription_renewed', EmailTemplateEvent::VendorSubscriptionRenewed);
+    }
+
+    public function invoiceVoided(InvoiceVoided $event): void
+    {
+        $this->invoice($event->invoice, 'invoice_voided', EmailTemplateEvent::VendorInvoiceVoided);
     }
 
     private function invoice(Invoice $invoice, string $name, EmailTemplateEvent $template): void

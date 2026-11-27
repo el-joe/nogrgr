@@ -2,12 +2,11 @@
 
 namespace App\Modules\Billing\Notifications;
 
+use App\Modules\Notifications\Concerns\RendersMailTemplate;
+use App\Modules\Notifications\Contracts\TemplatedMailNotification;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
-use App\Modules\Notifications\Mail\TemplatedMail;
-use App\Modules\Notifications\Services\EmailTemplateRenderer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -16,9 +15,10 @@ use Illuminate\Notifications\Notification;
  * e-mail template of the event (Admin › Settings › Email templates) and falls back
  * to the built-in billing::notifications.<event>.vendor_* texts.
  */
-class VendorBillingMail extends Notification implements ShouldQueue
+class VendorBillingMail extends Notification implements ShouldQueue, TemplatedMailNotification
 {
     use Queueable;
+    use RendersMailTemplate;
 
     /**
      * @param  array<string, string>  $variables  template variables (see EmailTemplateEvent::variables())
@@ -41,38 +41,25 @@ class VendorBillingMail extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    public function toMail(object $notifiable): MailMessage|TemplatedMail
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
     {
-        $rendered = app(EmailTemplateRenderer::class)->renderEvent($this->template, $this->mailLocale, $this->variables);
-
-        if ($rendered !== null) {
-            $recipient = $notifiable instanceof AnonymousNotifiable ? $notifiable->routeNotificationFor('mail') : $notifiable->routeNotificationFor('mail', $this);
-
-            return (new TemplatedMail($rendered))->to($recipient);
-        }
-
-        $params = $this->parameters();
-        $mail = (new MailMessage)
-            ->subject((string) __('billing::notifications.'.$this->eventName.'.vendor_subject', $params, $this->mailLocale))
-            ->greeting((string) __('billing::notifications.greeting', ['name' => $this->variables['vendor.name'] ?? ''], $this->mailLocale))
-            ->line((string) __('billing::notifications.'.$this->eventName.'.vendor_body', $params, $this->mailLocale));
-
-        return $this->link !== null ? $mail->action((string) __('billing::notifications.open_billing', [], $this->mailLocale), $this->link) : $mail;
+        return [
+            EmailTemplateEvent::VendorInvoiceIssued, EmailTemplateEvent::VendorInvoicePaid, EmailTemplateEvent::VendorPaymentFailed, EmailTemplateEvent::VendorPaymentRefunded,
+            EmailTemplateEvent::VendorSubscriptionActivated, EmailTemplateEvent::VendorSubscriptionPastDue, EmailTemplateEvent::VendorSubscriptionExpired,
+            EmailTemplateEvent::VendorSubscriptionCancelled, EmailTemplateEvent::VendorSubscriptionRenewed, EmailTemplateEvent::VendorInvoiceVoided,
+        ];
     }
 
-    /**
-     * Template variables as translation parameters ("invoice.number" → "invoice_number").
-     *
-     * @return array<string, string>
-     */
-    private function parameters(): array
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
     {
-        $params = [];
+        return $this->template;
+    }
 
-        foreach ($this->variables as $key => $value) {
-            $params[str_replace('.', '_', $key)] = (string) $value;
-        }
-
-        return $params;
+    public function toMail(object $notifiable): MailMessage
+    {
+        return $this->templatedMail($this->template, $this->variables, $this->mailLocale);
     }
 }

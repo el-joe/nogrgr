@@ -2,6 +2,7 @@
 
 use App\Modules\Identity\Database\Seeders\CentralPermissionSeeder;
 use App\Modules\Identity\Models\Admin;
+use App\Modules\Notifications\Enums\EmailAudience;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\EmailTemplateStatus;
 use App\Modules\Notifications\Events\EmailTemplatesSynced;
@@ -16,8 +17,8 @@ use Illuminate\Support\Facades\Queue;
 
 /*
 | Admin › Settings › Email templates (ADM-102/102a): access, list JSON + filters,
-| create / edit per locale with sanitised bodies and known variables only, preview,
-| send test, sync to tenants (queued job → EmailTemplatesSynced), delete.
+| one row per registry key (#124), edit per locale with sanitised bodies and known
+| variables only, preview, send test, sync to tenants (queued job → EmailTemplatesSynced).
 */
 
 function emailTemplatesAdmin(string ...$permissions): Admin
@@ -33,11 +34,10 @@ dataset('email template endpoints', [
     'index' => ['get', '/admin/settings/email-templates', 'email-templates.view'],
     'data' => ['get', '/admin/settings/email-templates/data', 'email-templates.view'],
     'preview' => ['get', '/admin/settings/email-templates/{id}/preview', 'email-templates.view'],
-    'create' => ['get', '/admin/settings/email-templates/create', 'email-templates.manage'],
-    'store' => ['post', '/admin/settings/email-templates', 'email-templates.manage'],
     'edit' => ['get', '/admin/settings/email-templates/{id}/edit', 'email-templates.manage'],
     'update' => ['put', '/admin/settings/email-templates/{id}', 'email-templates.manage'],
-    'destroy' => ['delete', '/admin/settings/email-templates/{id}', 'email-templates.manage'],
+    'render' => ['post', '/admin/settings/email-templates/{id}/render', 'email-templates.manage'],
+    'reset' => ['post', '/admin/settings/email-templates/{id}/reset', 'email-templates.manage'],
     'test' => ['post', '/admin/settings/email-templates/{id}/test', 'email-templates.manage'],
     'sync' => ['post', '/admin/settings/email-templates/{id}/sync', 'email-templates.manage'],
     'sync all' => ['post', '/admin/settings/email-templates/sync', 'email-templates.manage'],
@@ -73,8 +73,7 @@ it('lists templates with audience tabs and filters', function (): void {
     $this->actingAs($admin, 'admin')
         ->getJson($this->centralUrl('/admin/settings/email-templates/data?draw=1&start=0&length=10&audience=vendors'))
         ->assertOk()
-        ->assertJsonPath('recordsFiltered', 1)
-        ->assertJsonPath('data.0.status', fn (string $html): bool => str_contains($html, 'AR'));
+        ->assertJsonPath('recordsFiltered', count(EmailTemplateEvent::forAudience(EmailAudience::Vendors)));
 
     $this->actingAs($admin, 'admin')
         ->getJson($this->centralUrl('/admin/settings/email-templates/data?draw=1&start=0&length=10&language=missing_ar'))
@@ -86,14 +85,12 @@ it('lists templates with audience tabs and filters', function (): void {
         ->assertJsonPath('recordsFiltered', 1);
 });
 
-it('creates a template with a sanitised body', function (): void {
+it('saves a template with a sanitised body', function (): void {
+    $template = EmailTemplate::factory()->create();
     $admin = emailTemplatesAdmin('email-templates.manage');
 
-    $this->actingAs($admin, 'admin')->get($this->centralUrl('/admin/settings/email-templates/create'))->assertOk()->assertSee('order.shipped');
-
     $this->actingAs($admin, 'admin')
-        ->postJson($this->centralUrl('/admin/settings/email-templates'), [
-            'event' => 'order.shipped',
+        ->putJson($this->centralUrl("/admin/settings/email-templates/{$template->id}"), [
             'status' => 'active',
             'subject' => ['en' => 'Your order {{ order.number }} is on its way', 'ar' => 'طلبك {{ order.number }} في الطريق'],
             'body' => [
@@ -101,34 +98,31 @@ it('creates a template with a sanitised body', function (): void {
                 'ar' => '<p>أخبار سارة</p>',
             ],
         ])
-        ->assertCreated();
+        ->assertOk();
 
-    $template = EmailTemplate::query()->sole();
-    $body = $template->getTranslation('body', 'en');
+    $body = $template->refresh()->getTranslation('body', 'en');
 
     expect($template->event)->toBe(EmailTemplateEvent::OrderShipped)
         ->and($template->audience->value)->toBe('shoppers')
         ->and($body)->not->toContain('script')->not->toContain('onclick')->not->toContain('javascript:')
         ->toContain('<h2>Good news, {{ customer.first_name }}!</h2>')
         ->toContain('href="{{ shipment.tracking_url }}"');
-
-    $this->actingAs($admin, 'admin')
-        ->postJson($this->centralUrl('/admin/settings/email-templates'), ['event' => 'order.shipped', 'status' => 'active', 'subject' => ['en' => 'x'], 'body' => ['en' => '<p>x</p>']])
-        ->assertJsonValidationErrors('event');
 });
 
 it('validates template input', function (): void {
+    $template = EmailTemplate::factory()->create();
+
     $this->actingAs(emailTemplatesAdmin('email-templates.manage'), 'admin')
-        ->postJson($this->centralUrl('/admin/settings/email-templates'), [
-            'event' => 'nope', 'status' => 'draft',
+        ->putJson($this->centralUrl("/admin/settings/email-templates/{$template->id}"), [
+            'status' => 'draft',
             'subject' => ['en' => ''], 'body' => ['en' => '<script>only</script>', 'ar' => '<p>نص</p>'],
         ])
         ->assertUnprocessable()
-        ->assertJsonValidationErrors(['event', 'status', 'subject.en', 'body.en', 'subject.ar']);
+        ->assertJsonValidationErrors(['status', 'subject.en', 'body.en', 'subject.ar']);
 
     $this->actingAs(emailTemplatesAdmin('email-templates.manage'), 'admin')
-        ->postJson($this->centralUrl('/admin/settings/email-templates'), [
-            'event' => 'order.shipped', 'status' => 'active',
+        ->putJson($this->centralUrl("/admin/settings/email-templates/{$template->id}"), [
+            'status' => 'active',
             'subject' => ['en' => 'Hi {{ customer.password }}'], 'body' => ['en' => '<p>{{ order.number }}</p>'],
         ])
         ->assertJsonValidationErrors('subject.en');
@@ -172,18 +166,19 @@ it('previews a template with escaped sample values', function (): void {
 it('sends a test email in the chosen locale', function (): void {
     Mail::fake();
     $template = EmailTemplate::factory()->create();
+    $admin = emailTemplatesAdmin('email-templates.manage');
 
-    $this->actingAs(emailTemplatesAdmin('email-templates.manage'), 'admin')
+    $this->actingAs($admin, 'admin')
         ->postJson($this->centralUrl("/admin/settings/email-templates/{$template->id}/test"), ['email' => 'qa@nogrgr.test', 'locale' => 'en'])
         ->assertOk();
 
-    Mail::assertSent(TemplatedMail::class, fn (TemplatedMail $mail): bool => $mail->hasTo('qa@nogrgr.test')
+    Mail::assertSent(TemplatedMail::class, fn (TemplatedMail $mail): bool => $mail->hasTo($admin->email) && ! $mail->hasTo('qa@nogrgr.test')
         && $mail->email->subject === 'Your order ORD-10431 is on its way'
         && str_contains($mail->email->html, 'Good news, Ahmed!'));
 
     $this->actingAs(emailTemplatesAdmin('email-templates.manage'), 'admin')
-        ->postJson($this->centralUrl("/admin/settings/email-templates/{$template->id}/test"), ['email' => 'x', 'locale' => 'fr'])
-        ->assertJsonValidationErrors(['email', 'locale']);
+        ->postJson($this->centralUrl("/admin/settings/email-templates/{$template->id}/test"), ['locale' => 'fr'])
+        ->assertJsonValidationErrors(['locale']);
 });
 
 it('queues the sync to tenants and publishes the templates', function (): void {
@@ -205,24 +200,24 @@ it('queues the sync to tenants and publishes the templates', function (): void {
     expect($template->refresh()->synced_at)->not->toBeNull();
 });
 
-it('deletes a template', function (): void {
+it('has no create or delete endpoints: every registry key keeps its row', function (): void {
     $template = EmailTemplate::factory()->create();
+    $admin = emailTemplatesAdmin('email-templates.manage');
 
-    $this->actingAs(emailTemplatesAdmin('email-templates.manage'), 'admin')
-        ->deleteJson($this->centralUrl("/admin/settings/email-templates/{$template->id}"))
-        ->assertOk();
+    $this->actingAs($admin, 'admin')->get($this->centralUrl('/admin/settings/email-templates/create'))->assertNotFound();
+    $this->actingAs($admin, 'admin')->deleteJson($this->centralUrl("/admin/settings/email-templates/{$template->id}"))->assertStatus(405);
 
-    expect(EmailTemplate::query()->count())->toBe(0);
+    expect(EmailTemplate::query()->count())->toBe(1);
 });
 
 it('renders active templates for an event and skips inactive ones', function (): void {
     $renderer = app(EmailTemplateRenderer::class);
-    expect($renderer->renderEvent(EmailTemplateEvent::OrderShipped, 'en', []))->toBeNull();
+    expect($renderer->renderEvent(EmailTemplateEvent::OrderShipped, 'en', ['order.number' => 'ORD-1'])->subject)->toBe('Your order ORD-1 is on its way');
 
     $template = EmailTemplate::factory()->create(['subject' => ['en' => 'Hi <b>{{ customer.first_name }}</b>'], 'body' => ['en' => '<p>{{ customer.first_name }}</p>']]);
     $rendered = $renderer->renderEvent(EmailTemplateEvent::OrderShipped, 'ar', ['customer.first_name' => '<script>x</script>']);
 
-    expect($rendered->locale)->toBe('en')
+    expect($rendered->locale)->toBe('ar')
         ->and($rendered->html)->toContain('&lt;script&gt;x&lt;/script&gt;')->not->toContain('<script>x');
 
     $template->update(['status' => EmailTemplateStatus::Inactive]);

@@ -5,17 +5,20 @@ namespace App\Modules\Notifications\Services;
 use App\Modules\Notifications\DTOs\RenderedEmailData;
 use App\Modules\Notifications\DTOs\StoreEmailTemplateData;
 use App\Modules\Notifications\DTOs\StoreEmailTemplateRow;
-use App\Modules\Notifications\Enums\EmailAudience;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\EmailTemplateStatus;
+use App\Modules\Notifications\Mail\TemplatedMail;
 use App\Modules\Notifications\Models\StoreEmailTemplate;
 use App\Modules\Notifications\Repositories\Contracts\EmailTemplateRepositoryContract;
 use App\Modules\Notifications\Repositories\Contracts\StoreEmailTemplateRepositoryContract;
 use App\Modules\Notifications\Support\EmailHtmlSanitizer;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Services\StoreSettingsService;
+use DomainException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * Vendor › Settings › Email templates (VEN-080 / 080a, tenant context): the shopper
@@ -37,7 +40,7 @@ class StoreEmailTemplateService
      */
     public static function events(): array
     {
-        return EmailTemplateEvent::forAudience(EmailAudience::Shoppers);
+        return EmailTemplateEvent::storeScoped();
     }
 
     public static function supports(EmailTemplateEvent $event): bool
@@ -66,17 +69,19 @@ class StoreEmailTemplateService
         return new StoreEmailTemplateRow($event, $this->platform->findByEvent($event), $this->store->findByEvent($event));
     }
 
-    public function customize(EmailTemplateEvent $event, StoreEmailTemplateData $data): StoreEmailTemplate
+    public function customize(EmailTemplateEvent $event, StoreEmailTemplateData $data, ?string $editor = null): StoreEmailTemplate
     {
         abort_unless(self::supports($event), 404);
 
         $subject = array_filter(array_map('trim', $data->subject), static fn (string $line): bool => $line !== '');
         $body = array_map(static fn (string $html): string => EmailHtmlSanitizer::clean($html), array_filter($data->body, static fn (string $html): bool => trim(strip_tags($html)) !== ''));
 
-        return DB::transaction(function () use ($event, $subject, $body): StoreEmailTemplate {
-            $template = $this->store->findByEvent($event) ?? new StoreEmailTemplate(['event' => $event, 'status' => EmailTemplateStatus::Active]);
+        return DB::transaction(function () use ($event, $subject, $body, $data, $editor): StoreEmailTemplate {
+            $template = $this->store->findByEvent($event) ?? new StoreEmailTemplate(['event' => $event]);
             $template->replaceTranslations('subject', $subject);
             $template->replaceTranslations('body', $body);
+            $template->status = $data->status;
+            $template->updated_by_name = $editor;
             $template->is_customized = true;
             $template->save();
 
@@ -172,12 +177,37 @@ class StoreEmailTemplateService
         return $variables;
     }
 
-    public function preview(EmailTemplateEvent $event, string $locale): ?RenderedEmailData
+    /**
+     * What this store's recipients get now (store copy → platform → code default).
+     */
+    public function preview(EmailTemplateEvent $event, string $locale): RenderedEmailData
     {
-        $content = $this->row($event)->content();
+        abort_unless(self::supports($event), 404);
 
-        return $content !== null && $content->completeLocales() !== []
-            ? $this->renderer->render($content, $locale, $this->sampleVariables($event))
-            : null;
+        return $this->renderer->compose($event, $locale, $this->sampleVariables($event));
+    }
+
+    /**
+     * Unsaved editor content rendered through the store layout with sample values.
+     */
+    public function previewContent(EmailTemplateEvent $event, string $subject, string $body, string $locale): RenderedEmailData
+    {
+        abort_unless(self::supports($event), 404);
+
+        return $this->renderer->renderContent($subject, EmailHtmlSanitizer::clean($body), $locale, $this->sampleVariables($event), $event);
+    }
+
+    /**
+     * "Send test": the saved version with sample values, now, to the given address.
+     */
+    public function sendTest(EmailTemplateEvent $event, string $locale, string $email): void
+    {
+        $rendered = $this->preview($event, $locale);
+
+        try {
+            Mail::to($email)->send(new TemplatedMail($rendered));
+        } catch (TransportExceptionInterface) {
+            throw new DomainException(__('notifications::templates.test_failed'));
+        }
     }
 }

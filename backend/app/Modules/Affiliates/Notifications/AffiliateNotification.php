@@ -5,14 +5,13 @@ namespace App\Modules\Affiliates\Notifications;
 use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
-use App\Modules\Notifications\Services\EmailTemplateRenderer;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
  * Affiliate program notifications to the affiliate (panel inbox + Reverb + mail):
  * activated (MAIL-038), conversion approved / reversed (MAIL-039), payout paid /
- * rejected (MAIL-040). Mail = the admin's active template of the event, else the
- * built-in layout (Figma Emails & printables 131:11159 / 11207 / 11262).
+ * rejected (MAIL-040). Mail = the registry template of the event (#124) in the MAIL-001
+ * layout (Figma Emails & printables 131:11159 / 11207 / 11262).
  *
  * @phpstan-type MailRow array{label: string, value: string}
  */
@@ -44,24 +43,22 @@ class AffiliateNotification extends PanelNotification
         return 'affiliate_'.$this->eventName;
     }
 
+    /**
+     * @return list<EmailTemplateEvent>
+     */
+    public static function mailTemplates(): array
+    {
+        return [EmailTemplateEvent::AffiliateActivated, EmailTemplateEvent::AffiliateConversion, EmailTemplateEvent::AffiliatePayout];
+    }
+
+    public function mailTemplate(object $notifiable): EmailTemplateEvent
+    {
+        return $this->template;
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
-        $locale = app()->getLocale();
-        $rendered = app(EmailTemplateRenderer::class)->renderEvent($this->template, $locale, $this->variables);
-
-        if ($rendered !== null) {
-            return (new MailMessage)->subject($rendered->subject)->view('affiliates::mail.rendered', ['html' => $rendered->html]);
-        }
-
-        return (new MailMessage)
-            ->subject((string) __($this->titleKey(), $this->params()))
-            ->view('affiliates::mail.affiliate', [
-                'locale' => $locale,
-                'platform' => (string) config('app.name'),
-                'layout' => $this->layout,
-                'name' => (string) ($this->variables['affiliate.name'] ?? ''),
-                'url' => $this->link,
-            ]);
+        return $this->templatedMail($this->template, $this->variables);
     }
 
     protected function titleKey(): string

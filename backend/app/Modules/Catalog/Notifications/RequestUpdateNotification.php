@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Notifications;
 
+use App\Modules\Notifications\Enums\EmailTemplateEvent;
 use App\Modules\Notifications\Enums\NotificationCategory;
 use App\Modules\Notifications\Notifications\PanelNotification;
 use Illuminate\Notifications\AnonymousNotifiable;
@@ -28,6 +29,29 @@ class RequestUpdateNotification extends PanelNotification
     public function via(object $notifiable): array
     {
         return $notifiable instanceof AnonymousNotifiable ? ['mail'] : parent::via($notifiable);
+    }
+
+    /**
+     * Own editable e-mail template per event (decision #124).
+     *
+     * @return array<string, EmailTemplateEvent>
+     */
+    public static function specificMailTemplates(): array
+    {
+        return [
+            'product_assigned' => EmailTemplateEvent::VendorRequestUpdate,
+            'admin_replied' => EmailTemplateEvent::VendorRequestUpdate,
+            'status_changed' => EmailTemplateEvent::VendorRequestUpdate,
+            'payment_requested' => EmailTemplateEvent::VendorRequestUpdate,
+            'payment_cancelled' => EmailTemplateEvent::VendorRequestUpdate,
+            'edit_approved' => EmailTemplateEvent::VendorRequestUpdate,
+            'edit_rejected' => EmailTemplateEvent::VendorRequestUpdate,
+            'tenant_change_approved' => EmailTemplateEvent::VendorRequestUpdate,
+            'tenant_change_rejected' => EmailTemplateEvent::VendorRequestUpdate,
+            'vendor_replied' => EmailTemplateEvent::AdminRequestAlert,
+            'vendor_submitted' => EmailTemplateEvent::AdminRequestAlert,
+            'vendor_cancelled' => EmailTemplateEvent::AdminRequestAlert,
+        ];
     }
 
     public function category(): NotificationCategory
