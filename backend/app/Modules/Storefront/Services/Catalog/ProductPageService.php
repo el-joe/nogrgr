@@ -61,7 +61,9 @@ class ProductPageService
         }
 
         $variants = $this->variants($view, $priced['variants']);
-        $selected = collect($variants)->firstWhere('id', $variantId) ?? collect($variants)->first(static fn (array $variant): bool => $variant['in_stock']) ?? ($variants[0] ?? null);
+        $requested = collect($variants)->firstWhere('id', $variantId);
+        // A sold-out variant in ?variant= falls back to the first in-stock one (all sold out: the requested / first, shown disabled).
+        $selected = ($requested !== null && $requested['in_stock'] ? $requested : null) ?? collect($variants)->first(static fn (array $variant): bool => $variant['in_stock']) ?? $requested ?? ($variants[0] ?? null);
         $category = $this->categories->primaryFor($view->categoryIds);
         $entry = new IndexEntry($view->id(), $view->name, '', $view->sku, null, null, $priced['price'], $priced['regular'], $priced['compare'], null, $priced['in_stock'], $variants !== [], [], [], [], false, 0, 0, 0, 0, 0, 0);
         $slug = $view->product->slug ?: ($view->central->slug ?? '');

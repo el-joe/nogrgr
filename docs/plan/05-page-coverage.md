@@ -785,3 +785,29 @@
 | **Total** | **689** | **129** | **545** | **14** | **2** |
 
 Rows = pages plus their modal/tab/state sub-rows. "With Figma" = row mapped to at least one node id (incl. dropped/post-launch rows); every top-level frame in `figma-metadata/*.xml` maps to a row. Old GET routes not listed by name are DataTables `*.data` JSON, gateway `success` callbacks, sitemap/robots, assets and broadcasting: actions of the page that owns them.
+
+## 10. Ecommet design parity (frame → route → status)
+
+Figma page "Ecommet" (`0:1`), read only. 47 top-level frames: 21 desktop 1440 pages, 20 mobile 375 pages, plus component sheets (`1:348` Components-Web, `1:2764` Components-mobile), search dropdown `1:1163`, pop-up `1:2646`, mini cart `1:1662`, filter drawer `1:1796`, item-add `4267`. Status columns: **D** = desktop 1440, **M** = mobile 375 (also 390 / 414 for card widths). `matched` = compared against the frame and equal; `fixed` = differences found and fixed in this pass; `n/c` = not compared yet in this pass (page exists and is built).
+
+| Frame (Figma) | Route (Ecommet theme) | D | M |
+|---|---|---|---|
+| Home `1:1002` / home `1:2656` (+ Star tab `1:2710`) | `/` | fixed (deals rail, ribbons, card size, footer, hero, see-more) | fixed (deals rail + grids same card width 158 / 165.5 / 177.5 at 375 / 390 / 414, square image) |
+| Components web `1:348` / mobile `1:2764` (header, nav, footer, cards, buttons) | shared components | fixed (footer `1:572`, see-more `1:1100`, cards, deal card) | fixed (header, bottom nav, phone cards) |
+| Footer `1:1162` | all pages | fixed (3 columns, We accept, Connect with, legal bar, copyright bar) | n/c (stacked layout kept) |
+| Category details `1:1693` | `/category/{slug}`, `/category` (all products) | fixed (sub-category circles, filter chip row, back tile, per-product ribbons) | n/c |
+| Category details (mobile) `1:2979` | `/categories` (browser) + hamburger drawer | matched (list + round tiles) | fixed (hamburger opens an in-place side drawer; direct page kept) |
+| Filter `1:1796` | filter drawer on every listing | fixed (accordion list + round colour swatches) | n/c |
+| Best selling `1:1191` | `/best-selling`, `/top-rated`, `/new-in`, `/offers`, `/search` | fixed (ranking rules, per-page sort order, ribbons) | n/c |
+| Search `1:1163`, Pop-Up `1:2646` | search autocomplete, popups | n/c | n/c |
+| Product details `1:3380` / `1:3073` | `/products/{id}/{slug}` | fixed (gallery blow-out fixed, variant image tiles; layout matches frame) | fixed (phone gallery without side thumbs, tile row as swipe rail, sticky add to cart matches) |
+| Cart `1:1240`, Full cart `1:1348`, carttt `1:1662` / full-cart `1:3329`, `1:3210` | `/cart`, mini cart | fixed after screenshot comparison with `1:1348` (square variant thumbnails, black checkboxes, dividers; free-shipping progress bar only shows when the store has a threshold; empty cart `1:1240` and mini cart not compared) | fixed after 375px check (square 96px thumbnails, no overlap); `1:3329` / `1:3210` not compared side by side |
+| Checkout `1:1520` / `1:3540` | `/checkout`, `/checkout/pay/{order}` | n/c | n/c |
+| Profile `1:1833` / `1:3670` | `/account/profile` | n/c | n/c |
+| Orders All `1:1871` / `1:3725`, Pending `1:2353` / `1:3815`, Processing `1:2384` / `1:3933`, Shipped `1:4110` / `1:3987`, Delivered `1:2518` / `1:4047`, Canceled `1:2615` / `1:4226` | `/account/orders` (status tabs) | n/c | n/c |
+| View details (deliver / shipped / pending) `1:2014`, `1:2126`, `1:2241` / info `1:3848` | `/orders/{order}` | n/c | n/c |
+| Item add `4267` | "Item Added to Cart" modal | fixed (card 384px with content inside, copy, focus ring, thumbnail) | fixed (343px card inside 375) |
+
+Pages with no Figma frame (auth, wishlist, addresses, notifications, support, returns, CMS pages, 404 / error, brands, compare, track order) already exist in the theme; they follow the shared components above and are not part of this table.
+
+Decisions needed: (1) the Figma footer links "Tree Planting Program" and "Manti" brand texts are not copied (store data replaces them); (2) Figma has no flash-sale banner image, so none is shown; (3) category tiles show a tinted initial when a category has no image.

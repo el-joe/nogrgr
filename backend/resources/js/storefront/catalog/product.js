@@ -7,7 +7,7 @@
  */
 import { http, HttpError } from '../../core/http';
 import { notify } from '../../core/notify';
-import { openSheet, closeSheet } from '../core/motion/index.js';
+import { openSheet, closeSheet, initMotion } from '../core/motion/index.js';
 import { initVideoPip } from '../core/video-pip.js';
 import { initStockAlert } from './stock-alert.js';
 
@@ -32,6 +32,20 @@ function bindVariants(page, data) {
     const button = page.querySelector('[data-add-to-cart]');
     const chosen = () => Object.fromEntries(groups.map((group) => [group.dataset.attribute, Number(group.querySelector('[aria-checked="true"]')?.dataset.option || 0)]));
     const matches = (variant, selection) => Object.entries(selection).every(([attribute, option]) => !option || Number(variant.options?.[attribute]) === option);
+
+    const tiles = [...page.querySelectorAll('[data-variant-tile]')];
+    const tileBox = page.querySelector('[data-variant-tiles]');
+
+    /* Phones: the tile row becomes a Swiper rail (touch swipe + mouse drag); desktop keeps the wrapping grid. */
+    if (tileBox && window.matchMedia('(max-width: 1023.98px)').matches) {
+        const track = tileBox.querySelector('[data-tiles-track]');
+        tileBox.classList.add('swiper');
+        tileBox.dataset.rail = JSON.stringify({ spaceBetween: 12 });
+        track.classList.remove('flex-wrap', 'gap-3', 'overflow-y-auto', 'max-h-[216px]');
+        track.classList.add('swiper-wrapper');
+        track.querySelectorAll('[data-tile-slide]').forEach((slide) => slide.classList.add('swiper-slide', '!w-auto'));
+        initMotion(tileBox.parentElement);
+    }
 
     const render = () => {
         const selection = chosen();
@@ -89,6 +103,8 @@ function bindVariants(page, data) {
             }
         }
 
+        tiles.forEach((tile) => tile.setAttribute('aria-checked', String(Boolean(variant) && Number(tile.dataset.variantTile) === variant.id)));
+
         if (button) {
             const available = Boolean(variant?.in_stock);
             button.disabled = !available;
@@ -100,6 +116,21 @@ function bindVariants(page, data) {
             }
         }
     };
+
+    /* Variant image tiles: picking one selects that combination's option in every attribute group. */
+    tiles.forEach((tile) => tile.addEventListener('click', () => {
+        const variant = variants.find((item) => item.id === Number(tile.dataset.variantTile));
+
+        if (!variant) {
+            return;
+        }
+
+        groups.forEach((group) => {
+            const wanted = Number(variant.options?.[group.dataset.attribute] ?? 0);
+            group.querySelectorAll('[data-option]').forEach((option) => option.setAttribute('aria-checked', String(Number(option.dataset.option) === wanted)));
+        });
+        render();
+    }));
 
     groups.forEach((group) => {
         group.addEventListener('click', (event) => {

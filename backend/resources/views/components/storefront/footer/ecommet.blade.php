@@ -33,13 +33,13 @@
                     <ul class="flex flex-wrap gap-3" role="list">
                         @foreach ($badges as $badge)
                             <li class="eco-pay-badge" title="{{ __st('shell.payments.'.$badge) }}">
-                                @switch($badge)
-                                    @case('visa')<span class="italic tracking-tight text-[#1a1f71]">VISA</span>@break
-                                    @case('mastercard')<span class="relative flex" aria-hidden="true"><span class="size-4 rounded-full bg-[#eb001b]"></span><span class="-ms-1.5 size-4 rounded-full bg-[#f79e1b]/90"></span></span><span class="sr-only">Mastercard</span>@break
-                                    @case('applepay')<span class="inline-flex items-center gap-0.5 text-[13px] font-semibold text-black"><x-ui::icon name="apple" :size="16" />Pay</span>@break
-                                    @case('paypal')<span class="text-[#003087]">Pay<span class="text-[#009cde]">Pal</span></span>@break
-                                    @default<span class="line-clamp-2 max-w-full overflow-hidden break-words px-0.5 text-center text-[9px] leading-[1.1]">{{ __st('shell.payments.'.$badge) }}</span>
-                                @endswitch
+                                @if (in_array($badge, ['visa', 'mastercard', 'applepay', 'fawry'], true))
+                                    {{-- Real card images from the Figma footer (1:610), 56 x 37. --}}
+                                    <img src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/payments/'.$badge.'.png') }}" alt="{{ __st('shell.payments.'.$badge) }}" width="56" height="37" loading="lazy" decoding="async">
+                                @else
+                                    {{-- No Figma image (PayPal, Tabby, Tamara, COD, ...): the method name in the same white box. --}}
+                                    @if ($badge === 'paypal')<span class="text-[#003087]">Pay<span class="text-[#009cde]">Pal</span></span>@else<span class="line-clamp-2 max-w-full overflow-hidden break-words px-0.5 text-center text-[9px] leading-[1.1]">{{ __st('shell.payments.'.$badge) }}</span>@endif
+                                @endif
                             </li>
                         @endforeach
                     </ul>

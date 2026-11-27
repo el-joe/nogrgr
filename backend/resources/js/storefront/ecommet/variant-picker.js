@@ -114,7 +114,70 @@ function renderGroups() {
 
         holder.appendChild(node);
     });
+
+    renderTiles(holder);
 }
+
+/** One image tile per real combination (own image, "Black / M" label); the attribute buttons stay as the data model. */
+function renderTiles(holder) {
+    const { product } = current;
+
+    if (product.variants.length < 2 || !(product.attributes ?? []).length) {
+        return;
+    }
+
+    const track = document.createElement('div');
+    track.className = 'flex max-h-[168px] flex-wrap gap-2 overflow-y-auto p-0.5';
+    track.setAttribute('role', 'radiogroup');
+    track.dataset.variantTiles = '';
+
+    product.variants.forEach((variant) => {
+        const label = product.attributes.map((attribute) => attribute.options.find((option) => option.id === variant.options?.[attribute.id])?.name).filter(Boolean).join(' / ') || variant.label || '';
+        const tile = document.createElement('button');
+        tile.type = 'button';
+        tile.setAttribute('role', 'radio');
+        tile.className = 'eco-variant-tile';
+        tile.dataset.variantTile = String(variant.id);
+        tile.title = label;
+        tile.setAttribute('aria-label', variant.in_stock ? label : label + ' - ' + texts.out);
+        tile.toggleAttribute('data-unavailable', !variant.in_stock);
+
+        if (variant.image) {
+            const img = document.createElement('img');
+            img.src = variant.image;
+            img.alt = '';
+            img.width = 64;
+            img.height = 64;
+            img.loading = 'lazy';
+            tile.appendChild(img);
+        } else {
+            const text = document.createElement('span');
+            text.className = 'eco-variant-tile-text';
+            text.textContent = label;
+            tile.appendChild(text);
+        }
+
+        if (!variant.in_stock) {
+            tile.setAttribute('aria-disabled', 'true');
+            tile.disabled = true;
+            tile.title = label + ' - ' + texts.out;
+        }
+
+        tile.addEventListener('click', () => {
+            if (!variant.in_stock) {
+                return;
+            }
+
+            current.selection = Object.fromEntries(Object.entries(variant.options ?? {}).map(([key, value]) => [key, Number(value)]));
+            update();
+        });
+        track.appendChild(tile);
+    });
+
+    holder.querySelectorAll('[data-group-options]').forEach((options) => options.setAttribute('hidden', ''));
+    holder.appendChild(track);
+}
+
 
 function update() {
     const { product, selection } = current;
@@ -136,6 +199,8 @@ function update() {
             button.toggleAttribute('data-unavailable', !possible);
         });
     });
+
+    document.querySelectorAll('[data-variant-tile]').forEach((tile) => tile.setAttribute('aria-checked', String(Boolean(variant) && Number(tile.dataset.variantTile) === variant.id)));
 
     const price = variant?.price ?? product.price;
     const compare = variant ? variant.compare_price : product.compare_price;
@@ -219,14 +284,8 @@ async function load(id, fallbackUrl) {
             return;
         }
 
-        /* Pre-select the API's default variant when it is in stock, else the first in-stock one. */
-        const start = product.variants.find((variant) => variant.id === product.selected_variant_id && variant.in_stock)
-            ?? product.variants.find((variant) => variant.in_stock)
-            ?? null;
-        current = { product, selection: { ...(start?.options ?? {}) } };
-        Object.keys(current.selection).forEach((key) => {
-            current.selection[key] = Number(current.selection[key]);
-        });
+        /* Explicit choice: nothing is pre-selected, "Add to cart" stays disabled until one in-stock combination is picked. */
+        current = { product, selection: {} };
 
         $('[data-variant-name]').textContent = product.name;
         $('[data-variant-attributes]').scrollTop = 0;
@@ -235,7 +294,7 @@ async function load(id, fallbackUrl) {
         update();
         showState('ready');
         $('[data-add-to-cart]').dataset.state = 'idle';
-        requestAnimationFrame(() => (modal.querySelector('[aria-checked="true"]') ?? modal.querySelector('[data-option]'))?.focus({ preventScroll: true }));
+        requestAnimationFrame(() => (modal.querySelector('[data-variant-tile]:not([aria-disabled])') ?? modal.querySelector('[data-option]'))?.focus({ preventScroll: true }));
     } catch {
         if (token === requestToken) {
             showState('error');

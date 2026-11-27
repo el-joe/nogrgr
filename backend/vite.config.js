@@ -27,6 +27,11 @@ const vendorBrand = readdirSync('resources/images/vendor/brand')
     .filter((file) => file.endsWith('.webp'))
     .map((file) => `resources/images/vendor/brand/${file}`);
 
+/** Payment method card images (Figma Ecommet footer 1:610), used by <img> in the Ecommet footer "We accept". */
+const paymentImages = readdirSync('resources/images/payments')
+    .filter((file) => file.endsWith('.png') || file.endsWith('.svg'))
+    .map((file) => `resources/images/payments/${file}`);
+
 /** Store fonts a vendor can pick in Appearance (VEN-034b, StoreFont::cssEntry()), loaded only when chosen. */
 const storeFonts = readdirSync('resources/css/storefront/fonts')
     .filter((file) => file.endsWith('.css'))
@@ -35,7 +40,7 @@ const storeFonts = readdirSync('resources/css/storefront/fonts')
 export default defineConfig({
     plugins: [
         laravel({
-            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages, ...vendorBrand, ...storeFonts, 'resources/js/storefront/custom-theme.js'],
+            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages, ...vendorBrand, ...paymentImages, ...storeFonts, 'resources/js/storefront/custom-theme.js'],
             refresh: ['resources/views/**', 'app/Modules/**/resources/views/**', 'app/Modules/**/routes/**', 'lang/**'],
         }),
         tailwindcss(),

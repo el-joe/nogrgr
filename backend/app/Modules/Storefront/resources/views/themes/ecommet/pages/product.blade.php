@@ -51,21 +51,21 @@
 
         <div class="grid gap-6 lg:grid-cols-[470px_minmax(0,1fr)] lg:gap-[52px]">
             {{-- Gallery + reviews + details (left column on desktop) --}}
-            <div class="grid content-start gap-6 max-lg:contents">
-                <div class="relative -mx-4 flex gap-5 max-lg:order-1 lg:mx-0" data-gallery @if ($pipVideo) data-video-pip="{{ json_encode(['family' => 'ecommet', 'src' => $pipVideo['url'], 'poster' => $pipVideo['poster'], 'close' => __st('product.close_video'), 'open' => __st('product.open_video')], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}" @endif>
+            <div class="grid min-w-0 content-start gap-6 max-lg:contents">
+                <div class="relative -mx-4 flex min-w-0 gap-5 max-lg:order-1 lg:mx-0" data-gallery @if ($pipVideo) data-video-pip="{{ json_encode(['family' => 'ecommet', 'src' => $pipVideo['url'], 'poster' => $pipVideo['poster'], 'close' => __st('product.close_video'), 'open' => __st('product.open_video')], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}" @endif>
                     @if (count($gallery) > 1)
-                        <div class="swiper hidden h-[276px] w-[81px] shrink-0 lg:block" data-gallery-thumbs='{"direction":"vertical","spaceBetween":10}'>
+                        <div class="swiper max-lg:!hidden h-[369px] w-[81px] shrink-0 lg:block" data-gallery-thumbs='{"direction":"vertical","spaceBetween":10}'>
                             <div class="swiper-wrapper">
                                 @foreach ($gallery as $index => $item)
-                                    <div class="swiper-slide !h-[62px] cursor-pointer">
-                                        @if ($item['type'] === 'video')<span @class(['eco-thumb', 'is-active' => $index === 0])><x-sf::gallery.video-thumb :item="$item" :width="81" :height="62" /></span>@else<span @class(['eco-thumb', 'is-active' => $index === 0])><img src="{{ $item['url'] }}" alt="" width="81" height="62" loading="lazy" decoding="async"></span>@endif
+                                    <div class="swiper-slide !h-[81px] cursor-pointer">
+                                        @if ($item['type'] === 'video')<span @class(['eco-thumb', 'is-active' => $index === 0])><x-sf::gallery.video-thumb :item="$item" :width="81" :height="81" /></span>@else<span @class(['eco-thumb', 'is-active' => $index === 0])><img src="{{ $item['url'] }}" alt="" width="81" height="81" loading="lazy" decoding="async"></span>@endif
                                     </div>
                                 @endforeach
                             </div>
                         </div>
                     @endif
                     <div class="relative min-w-0 flex-1">
-                        <div class="swiper aspect-[375/250] bg-eco-img lg:aspect-[367/276]" data-gallery-main>
+                        <div class="swiper w-full min-w-0 max-w-full aspect-square bg-eco-img" data-gallery-main>
                             <div class="swiper-wrapper">
                                 @forelse ($gallery as $index => $item)
                                     <div @if ($item['type'] === 'video') data-gallery-video-slide @endif class="swiper-slide grid place-items-center">
@@ -73,7 +73,7 @@
                                             <x-sf::gallery.video :item="$item" :index="$index" :name="$page->name" />
                                         @else
                                             <div class="swiper-zoom-container">
-                                                <img src="{{ $item['url'] }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="734" height="552" class="size-full object-contain mix-blend-multiply" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
+                                                <img src="{{ $item['url'] }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="734" height="734" class="size-full object-contain mix-blend-multiply" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
                                             </div>
                                         @endif
                                     </div>
@@ -167,11 +167,13 @@
                     </p>
                 @endif
 
-                {{-- Variations --}}
+                {{-- Variations: one image tile per real combination (own image, label, stock); the attribute pickers
+                     stay in the DOM (hidden) as the data model, their legends are the "Color: Black" summary. --}}
+                @php($useTiles = count($page->variants) > 1 && $page->attributes !== [])
                 @foreach ($page->attributes as $attribute)
                     <fieldset class="grid gap-3" data-attribute="{{ $attribute['id'] }}">
-                        <legend class="mb-3 text-base text-eco-black">{{ $attribute['name'] }}: <span class="text-eco-black max-lg:text-eco-gray" data-attribute-value>{{ collect($attribute['options'])->firstWhere('id', $selected['options'][$attribute['id']] ?? null)['name'] ?? '' }}</span></legend>
-                        <div class="flex flex-wrap gap-3 max-lg:gap-2" role="radiogroup" aria-label="{{ $attribute['name'] }}">
+                        <legend @class(['text-base text-eco-black', 'mb-3' => ! $useTiles, 'text-sm' => $useTiles])>{{ $attribute['name'] }}: <span class="text-eco-black max-lg:text-eco-gray" data-attribute-value>{{ collect($attribute['options'])->firstWhere('id', $selected['options'][$attribute['id']] ?? null)['name'] ?? '' }}</span></legend>
+                        <div @class(['flex flex-wrap gap-3 max-lg:gap-2', 'hidden' => $useTiles]) role="radiogroup" aria-label="{{ $attribute['name'] }}">
                             @foreach ($attribute['options'] as $option)
                                 @php($checked = ($selected['options'][$attribute['id']] ?? null) === $option['id'])
                                 @if ($attribute['swatch'])
@@ -183,6 +185,23 @@
                         </div>
                     </fieldset>
                 @endforeach
+                @if ($useTiles)
+                    <div class="eco-variant-tiles" data-variant-tiles aria-label="{{ __st('product.option') }}">
+                        <div class="flex max-h-[216px] flex-wrap gap-3 overflow-y-auto p-0.5 max-lg:max-h-none max-lg:overflow-visible" data-tiles-track role="radiogroup" aria-label="{{ __st('product.option') }}">
+                            @foreach ($page->variants as $variant)
+                                <div data-tile-slide>
+                                    <button type="button" role="radio" class="eco-variant-tile" data-variant-tile="{{ $variant['id'] }}" aria-checked="{{ $variant['id'] === $page->selectedVariantId ? 'true' : 'false' }}" aria-label="{{ $variant['label'] }}{{ $variant['in_stock'] ? '' : ' - '.__st('product.out_of_stock') }}" title="{{ $variant['label'] }}{{ $variant['in_stock'] ? '' : ' - '.__st('product.out_of_stock') }}" @unless ($variant['in_stock']) data-unavailable disabled aria-disabled="true" @endunless>
+                                        @if ($variant['image'])
+                                            <img src="{{ $variant['image'] }}" alt="" width="64" height="64" loading="lazy" decoding="async">
+                                        @else
+                                            <span class="eco-variant-tile-text">{{ $variant['label'] }}</span>
+                                        @endif
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Quantity + add to cart --}}
                 <div class="hidden items-center gap-4 lg:flex">

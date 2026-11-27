@@ -93,9 +93,10 @@
                         <x-ui::icon name="cart-add" :size="24" />
                     </a>
                 @elseif (! $card->inStock)
-                    <a href="{{ $card->url }}" class="eco-card-cart mo-press" aria-label="{{ $card->inStock ? __st('catalog.card.choose_options', ['name' => $card->name]) : __st('catalog.card.view', ['name' => $card->name]) }}">
+                    {{-- Sold out: never selectable, never addable (the server rejects it too). --}}
+                    <button type="button" class="eco-card-cart relative z-[2]" disabled aria-disabled="true" title="{{ __st('catalog.card.out_of_stock') }}" aria-label="{{ __st('catalog.card.out_of_stock') }}: {{ $card->name }}">
                         <x-ui::icon name="cart-add" :size="24" />
-                    </a>
+                    </button>
                 @else
                     <button type="button" class="eco-card-cart" data-add-to-cart data-product-id="{{ $card->id }}" data-state="idle" aria-label="{{ __st('catalog.card.add_to_cart', ['name' => $card->name]) }}">
                         <x-ui::icon name="cart-add" :size="24" />

@@ -186,8 +186,20 @@ export function initMiniCart() {
         const quantity = product?.quantity ?? 1;
         const text = added.querySelector('[data-cart-added-text]');
         const qty = added.querySelector('[data-cart-added-qty]');
-        text.textContent = text.dataset.template.replace('__COUNT__', '1');
-        added.querySelector('[data-cart-added-name]').textContent = line?.name ?? '';
+        text.textContent = (quantity > 1 ? text.dataset.templateMany : text.dataset.template).replace('__COUNT__', String(quantity));
+        added.querySelector('[data-cart-added-name]').textContent = [line?.name, line?.variant].filter(Boolean).join(' - ');
+        const thumb = added.querySelector('[data-cart-added-img]');
+        const check = added.querySelector('[data-cart-added-check]');
+
+        if (thumb) {
+            thumb.hidden = !line?.image_url;
+            check?.classList.toggle('hidden', Boolean(line?.image_url));
+
+            if (line?.image_url) {
+                thumb.src = line.image_url;
+            }
+        }
+
         qty.textContent = qty.dataset.template.replace('__QTY__', String(quantity));
         setTimeout(() => show(added), prefersReducedMotion() ? 0 : token('--motion-slow', document.documentElement, 520));
     });

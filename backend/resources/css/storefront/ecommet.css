@@ -616,7 +616,13 @@
         }
     }
 
-    .eco-card-cart:hover {
+    .eco-card-cart:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: auto;
+    }
+
+    .eco-card-cart:hover:not(:disabled) {
         background: var(--eco-black);
         color: #fff;
     }
@@ -989,8 +995,15 @@
         transition: transform var(--motion-fast) ease-out;
     }
 
+    .eco-pay-badge img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
     .eco-pay-badge {
         display: grid;
+        overflow: hidden;
         place-items: center;
         width: 56px;
         height: 37px;
@@ -1111,6 +1124,70 @@
         transform: rotate(180deg);
     }
 
+    /* One square line / order thumbnail (cart, mini cart, checkout, orders): the chosen variant's image, whole, never clipped. */
+    .eco-line-thumb {
+        position: relative;
+        display: grid;
+        flex: none;
+        width: 96px;
+        aspect-ratio: 1 / 1;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 8px;
+        background: var(--eco-img-bg);
+    }
+
+    @media (min-width: 1024px) {
+        .eco-line-thumb {
+            width: 140px;
+        }
+    }
+
+    .eco-line-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+    }
+
+    /* Cart / account checkboxes (Figma 1:1348): black box with a white tick when checked. */
+    .sf-check {
+        appearance: none;
+        display: inline-grid;
+        place-content: center;
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        border: 1.5px solid var(--eco-black);
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        transition: background-color var(--motion-fast, 120ms) ease-out;
+    }
+
+    .sf-check::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        background: #fff;
+        transform: scale(0);
+        clip-path: polygon(14% 44%, 0 59%, 40% 100%, 100% 20%, 85% 6%, 40% 68%);
+        transition: transform var(--motion-fast, 120ms) var(--ease-out);
+    }
+
+    .sf-check:checked {
+        background: var(--eco-black);
+    }
+
+    .sf-check:checked::before {
+        transform: scale(1);
+    }
+
+    .sf-check:focus-visible {
+        outline: 2px solid var(--eco-black);
+        outline-offset: 2px;
+    }
+
     .eco-check {
         display: flex;
         align-items: center;
@@ -1201,7 +1278,7 @@
     .eco-thumb {
         display: block;
         width: 81px;
-        height: 62px;
+        height: 81px;
         overflow: hidden;
         background: var(--eco-img-bg);
         border: 2px solid transparent;
@@ -1218,6 +1295,61 @@
         height: 100%;
         object-fit: contain;
         mix-blend-mode: multiply;
+    }
+
+    /* Variant combination tiles (product page): square, whole image, ring when selected, dimmed + struck when sold out.
+       A swipe / drag rail on phones, a wrapping grid on desktop. */
+    .eco-variant-tile {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 64px;
+        overflow: hidden;
+        border-radius: 8px;
+        background: var(--eco-img-bg);
+        border: 2px solid transparent;
+        transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+    }
+
+    .eco-variant-tile img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+    }
+
+    .eco-variant-tile:hover {
+        transform: translateY(-2px);
+    }
+
+    .eco-variant-tile[aria-checked='true'] {
+        border-color: var(--eco-black);
+        box-shadow: 0 0 0 2px #fff inset;
+    }
+
+    .eco-variant-tile[data-unavailable],
+    .eco-variant-tile:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .eco-variant-tile[data-unavailable]::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top right, transparent calc(50% - 1px), rgb(36 36 36 / 0.7) 50%, transparent calc(50% + 1px));
+    }
+
+    .eco-variant-tile-text {
+        padding: 4px;
+        font-size: 10px;
+        line-height: 1.2;
+        text-align: center;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
     }
 
     .eco-swatch {

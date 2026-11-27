@@ -43,9 +43,9 @@
             <ul class="grid gap-4" role="list" data-cart-lines>
                 @foreach ($lines as $line)
                     <li class="grid justify-items-center gap-2" data-cart-line="{{ $line['id'] }}" data-quantity="{{ $line['quantity'] }}">
-                        <div class="relative grid h-[106px] w-[139px] place-items-center bg-eco-img p-2">
+                        <div class="eco-line-thumb !w-[120px]">
                             @if ($line['image_url'])
-                                <img src="{{ $line['image_url'] }}" alt="{{ $line['name'] }}" class="max-h-full max-w-full object-contain" loading="lazy" decoding="async">
+                                <img src="{{ $line['image_url'] }}" alt="{{ $line['name'] }}" width="120" height="120" loading="lazy" decoding="async">
                             @else
                                 <span class="line-clamp-3 text-center text-xs text-eco-gray">{{ $line['name'] }}</span>
                             @endif

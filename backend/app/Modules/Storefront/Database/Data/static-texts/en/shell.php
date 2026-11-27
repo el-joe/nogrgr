@@ -93,6 +93,7 @@ return [
         'visa' => 'Visa',
         'mastercard' => 'Mastercard',
         'applepay' => 'Apple Pay',
+        'fawry' => 'Fawry Pay',
         'paypal' => 'PayPal',
         'cod' => 'Cash on delivery',
         'tabby' => 'Tabby',

@@ -98,7 +98,8 @@ class StorefrontShell
         foreach (app(StorefrontGatewayService::class)->options() as $option) {
             $badges = [...$badges, ...match ($option->code) {
                 PaymentGatewayCode::Stripe, PaymentGatewayCode::Tap, PaymentGatewayCode::Moyasar => ['visa', 'mastercard', ...($wallets ? ['applepay'] : [])],
-                PaymentGatewayCode::Paymob, PaymentGatewayCode::Myfatoorah => ['visa', 'mastercard'],
+                PaymentGatewayCode::Paymob => ['visa', 'mastercard', 'fawry'],
+                PaymentGatewayCode::Myfatoorah => ['visa', 'mastercard'],
                 PaymentGatewayCode::Paypal => ['paypal'],
                 PaymentGatewayCode::Cod => ['cod'],
                 PaymentGatewayCode::Tabby => ['tabby'],

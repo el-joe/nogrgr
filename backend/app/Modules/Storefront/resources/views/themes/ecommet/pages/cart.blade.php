@@ -21,15 +21,6 @@
                     <x-sf::cart.body :cart="$cart" />
                 </div>
 
-                @unless ($picks->isEmpty())
-                    <section class="grid gap-4" aria-labelledby="sf-cart-picks-title">
-                        <h2 id="sf-cart-picks-title" class="text-lg font-medium text-eco-black" data-reveal="fade-up">{{ __st('cart.picks', ['store' => $store]) }}</h2>
-                        <div id="sf-cart-picks" class="eco-card-grid" data-reveal-stagger>
-                            @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $picks->cards, 'variant' => 'grid'])
-                        </div>
-                        <x-sf::section.load-more :url="$picksMoreUrl" target="#sf-cart-picks" class="mt-4" />
-                    </section>
-                @endunless
             </div>
 
             <aside class="hidden bg-white px-8 py-8 shadow-[-4px_0_4px_rgba(195,195,195,0.25)] lg:block" aria-label="{{ __st('cart.summary') }}">
@@ -40,4 +31,13 @@
             </aside>
         </div>
     </div>
+        @unless ($picks->isEmpty())
+            <section class="eco-wide mt-10 grid gap-4 lg:mt-12" aria-labelledby="sf-cart-picks-title">
+                <h2 id="sf-cart-picks-title" class="text-lg font-medium text-eco-black" data-reveal="fade-up">{{ __st('cart.picks', ['store' => $store]) }}</h2>
+                <div id="sf-cart-picks" class="eco-card-grid lg:px-7" data-reveal-stagger>
+                    @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $picks->cards, 'variant' => 'grid'])
+                </div>
+                <x-sf::section.load-more :url="$picksMoreUrl" target="#sf-cart-picks" class="mt-4" />
+            </section>
+        @endunless
 </x-sf::layout>

@@ -21,24 +21,25 @@
     </aside>
 </div>
 
-<div class="fixed inset-0 z-[70] grid place-items-center p-4" id="sf-cart-added" role="dialog" aria-modal="true" aria-labelledby="sf-cart-added-title" data-cart-added hidden>
+<div class="fixed inset-0 z-[70] grid grid-cols-[minmax(0,1fr)] place-items-center p-4" id="sf-cart-added" role="dialog" aria-modal="true" aria-labelledby="sf-cart-added-title" data-cart-added hidden>
     <div class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-200 [[data-open]_&]:opacity-100" data-cart-added-close></div>
-    <div class="relative w-full max-w-[384px] scale-95 rounded-2xl bg-white px-6 py-8 opacity-0 shadow-xl transition duration-200 ease-[var(--ease-out)] [[data-open]_&]:scale-100 [[data-open]_&]:opacity-100 motion-reduce:transition-none" data-cart-added-panel>
-        <div class="grid justify-items-center gap-4 text-center">
-            <span class="grid size-16 place-items-center rounded-full bg-[#dcfce7] text-[#16a34a]"><x-ui::icon name="check-circle" :size="40" /></span>
-            <div class="grid gap-2">
+    <div class="relative w-[384px] max-w-full justify-self-center scale-95 rounded-2xl bg-white px-6 py-8 opacity-0 shadow-xl transition duration-200 ease-[var(--ease-out)] [[data-open]_&]:scale-100 [[data-open]_&]:opacity-100 motion-reduce:transition-none" data-cart-added-panel>
+        <div class="grid w-full min-w-0 gap-4 text-center">
+            <span class="grid size-16 place-items-center justify-self-center rounded-full bg-[#dcfce7] text-[#16a34a]"><x-ui::icon name="check-circle" :size="40" /></span>
+            <div class="grid min-w-0 gap-2">
                 <h2 id="sf-cart-added-title" class="text-lg font-medium text-eco-black">{{ __st('cart.added.title') }}</h2>
-                <p class="text-sm tracking-[0.5px] text-eco-gray" data-cart-added-text data-template="{{ __st('cart.added.body', ['count' => '__COUNT__']) }}"></p>
+                <p class="text-balance text-sm tracking-[0.5px] text-eco-gray" data-cart-added-text data-template="{{ __st('cart.added.body', ['count' => '__COUNT__']) }}" data-template-many="{{ __st('cart.added.body_many', ['count' => '__COUNT__']) }}"></p>
             </div>
-            <p class="flex w-full items-center gap-2 rounded-[10px] bg-[#f0fdf4] px-2.5 py-2 text-sm text-eco-black">
-                <x-ui::icon name="check-circle" :size="16" class="shrink-0 text-[#16a34a]" />
-                <span class="min-w-0 truncate text-start" data-cart-added-name></span>
+            <p class="flex w-full min-w-0 items-center gap-2 rounded-[10px] bg-[#f0fdf4] px-2.5 py-2 text-sm text-eco-black">
+                <img class="size-8 shrink-0 rounded bg-white object-contain" alt="" width="32" height="32" data-cart-added-img hidden>
+                <x-ui::icon name="check-circle" :size="16" class="shrink-0 text-[#16a34a]" data-cart-added-check />
+                <span class="min-w-0 flex-1 truncate text-start" data-cart-added-name></span>
                 <span class="shrink-0 text-eco-gray" data-cart-added-qty data-template="{{ __st('cart.added.qty', ['qty' => '__QTY__']) }}"></span>
             </p>
         </div>
         <div class="mt-6 grid grid-cols-2 gap-2">
-            <button type="button" class="mo-press h-10 rounded-[10px] border border-[#d1d5dc] text-base text-eco-black hover:bg-[#f6f6f6]" data-cart-added-close>{{ __st('cart.close') }}</button>
-            <a href="{{ route('storefront.cart') }}" class="mo-press inline-flex h-10 items-center justify-center gap-2 rounded-[10px] bg-eco-black text-base text-white hover:bg-black"><x-ui::icon name="cart" :size="20" />{{ __st('cart.view_cart') }}</a>
+            <button type="button" class="mo-press h-10 rounded-[10px] border border-[#d1d5dc] text-base text-eco-black outline-none hover:bg-[#f6f6f6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eco-black" data-cart-added-close>{{ __st('cart.close') }}</button>
+            <a href="{{ route('storefront.cart') }}" class="mo-press inline-flex h-10 items-center justify-center gap-2 rounded-[10px] bg-eco-black text-base text-white outline-none hover:bg-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eco-black"><x-ui::icon name="cart" :size="20" />{{ __st('cart.view_cart') }}</a>
         </div>
     </div>
 </div>

@@ -43,7 +43,8 @@ return [
     'view_cart' => 'View Cart',
     'added' => [
         'title' => 'Item Added to Cart!',
-        'body' => ':count item(s) with original quantities have been added to your cart.',
+        'body' => ':count item added to your cart.',
+        'body_many' => ':count items added to your cart.',
         'qty' => '(Qty: :qty)',
     ],
     'trust' => [
