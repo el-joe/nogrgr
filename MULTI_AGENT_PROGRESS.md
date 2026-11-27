@@ -103,3 +103,6 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - Running: ad-studio (VEN-010c client frame 12:15119 + VEN-009e), mobile-api (P11 Mobile API v1). Next: Flutter app (P11), P12 data migration + launch, final full QA gate.
 - Committed 8e01404 (Mobile API v1 #104) and 55a29f5 (AI Advertising Studio VEN-010c + VEN-009e #105). Dev DB migrated + permissions synced (0 stores on dev).
 - Running: mobile-api2 (catalog/order extras/customer tickets/social login endpoints), flutter1 (Flutter white-label core + auth). Next: mobile app settings panels (VEN-037/037a, ADM-041g), Flutter batches 2+ (catalog, cart/checkout with Stripe SDK, account), P12 data migration + launch, final QA gate.
+- Committed 937cd38 (store API catalog/order extras #106), da6f11c + 4ff6752 + eba4bb5 (Flutter batches 1–2, real Arabic 500/600 fonts, #107/#109), 415100f (customer tickets, mobile settings panels, shopper social login #108), 486bd9e (P12 legacy:migrate #110).
+- P12 BLOCKER for client: the 5 old store DBs (dokan_v2_<uuid>) are not on this server → store-side data (selections, customers, orders, reviews, store coupons) not migrated for real; central data migrated into nogrgr_qa twice (idempotent).
+- Running: flutter3 (social buttons, tickets, push toggles/deep links), qa-final (full suite + browser QA P7–P12 + remaining rows list).
