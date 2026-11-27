@@ -52,6 +52,19 @@ it('renders the home page with the store products, SEO and the context island', 
     expect($html)->toContain('og:title')->toContain('data-add-to-cart');
 });
 
+it('ships the Ecommet variant picker, its Store API product route and the card favourite toggle', function (): void {
+    $shop = catalogShop();
+
+    $html = $this->withSession(inSa($shop))->get($this->tenantUrl($shop->tenant, '/'))
+        ->assertOk()
+        ->assertSee('id="eco-variant-modal"', false)
+        ->assertSee('data-cart-scope', false)
+        ->assertSee('/store-api/v1/products/0', false)
+        ->getContent();
+
+    expect($html)->toContain('class="eco-card-fav" data-favorite');
+});
+
 it('prices a central product like the cart in the shopping country', function (): void {
     $shop = catalogShop();
 
