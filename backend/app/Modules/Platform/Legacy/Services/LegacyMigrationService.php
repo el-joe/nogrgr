@@ -8,12 +8,19 @@ use App\Modules\Platform\Legacy\Enums\LegacyIssueLevel;
 use App\Modules\Platform\Legacy\Enums\LegacyStep;
 use App\Modules\Platform\Legacy\Steps\Central\AdminsStep;
 use App\Modules\Platform\Legacy\Steps\Central\AffiliatesStep;
+use App\Modules\Platform\Legacy\Steps\Central\AfterSalesStep;
+use App\Modules\Platform\Legacy\Steps\Central\BillingStep;
 use App\Modules\Platform\Legacy\Steps\Central\CatalogStep;
+use App\Modules\Platform\Legacy\Steps\Central\ContentStep;
+use App\Modules\Platform\Legacy\Steps\Central\EmailTemplatesStep;
 use App\Modules\Platform\Legacy\Steps\Central\GatewaysStep;
 use App\Modules\Platform\Legacy\Steps\Central\LocalizationStep;
 use App\Modules\Platform\Legacy\Steps\Central\PlansStep;
 use App\Modules\Platform\Legacy\Steps\Central\PromotionsStep;
+use App\Modules\Platform\Legacy\Steps\Central\RequestsStep;
 use App\Modules\Platform\Legacy\Steps\Central\SettingsStep;
+use App\Modules\Platform\Legacy\Steps\Central\SettlementsStep;
+use App\Modules\Platform\Legacy\Steps\Central\ShippingStep;
 use App\Modules\Platform\Legacy\Steps\Central\SupportStep;
 use App\Modules\Platform\Legacy\Steps\Central\TenantsStep;
 use App\Modules\Platform\Legacy\Steps\LegacyStepHandler;
@@ -54,11 +61,18 @@ class LegacyMigrationService
         LegacyStep::Promotions->value => PromotionsStep::class,
         LegacyStep::Support->value => SupportStep::class,
         LegacyStep::Affiliates->value => AffiliatesStep::class,
+        LegacyStep::Content->value => ContentStep::class,
+        LegacyStep::EmailTemplates->value => EmailTemplatesStep::class,
+        LegacyStep::Shipping->value => ShippingStep::class,
+        LegacyStep::Billing->value => BillingStep::class,
+        LegacyStep::Settlements->value => SettlementsStep::class,
+        LegacyStep::Requests->value => RequestsStep::class,
         LegacyStep::StoreCatalog->value => StoreCatalogStep::class,
         LegacyStep::Customers->value => CustomersStep::class,
         LegacyStep::Orders->value => OrdersStep::class,
         LegacyStep::Engagement->value => EngagementStep::class,
         LegacyStep::StorePromotions->value => StorePromotionsStep::class,
+        LegacyStep::AfterSales->value => AfterSalesStep::class,
     ];
 
     /** Old store tables counted when a store cannot be migrated yet (dry run before provisioning). */
@@ -67,6 +81,7 @@ class LegacyMigrationService
     public function __construct(
         private readonly Container $container,
         private readonly LegacySource $source,
+        private readonly LegacyReconciliationService $reconciliation,
     ) {}
 
     public function run(LegacySourceConfig $config, LegacyRunOptions $options): LegacyReport
@@ -95,8 +110,14 @@ class LegacyMigrationService
             $migrated = $this->stores($context, $storeSteps);
         }
 
+        foreach (LegacyStep::afterStore() as $step) {
+            if ($options->wants($step)) {
+                $this->step($context, $step);
+            }
+        }
+
         if (! $options->dryRun && $options->wants(LegacyStep::Finalize)) {
-            $this->finalize($context, $migrated);
+            $this->finalize($context, $config, $migrated);
         }
 
         return $report;
@@ -123,7 +144,7 @@ class LegacyMigrationService
             $scope = 'store:'.$legacyId;
 
             if ($source === null) {
-                $context->report->issue(LegacyIssueLevel::Error, $scope, 'store', $legacyId, 'Old store database not found on the server (store data not migrated)');
+                $context->report->issue(LegacyIssueLevel::Info, $scope, 'store', $legacyId, 'Old store database not on the server: store data not migrated (not required for launch, decision #113)');
 
                 continue;
             }
@@ -190,11 +211,18 @@ class LegacyMigrationService
     /**
      * @param  list<int>  $tenantIds
      */
-    private function finalize(LegacyContext $context, array $tenantIds): void
+    private function finalize(LegacyContext $context, LegacySourceConfig $config, array $tenantIds): void
     {
         $ledger = Artisan::call('finance:backfill-ledger', $tenantIds === [] ? [] : ['--tenant' => $tenantIds]);
         $context->report->note('finance:backfill-ledger exit code '.$ledger.'.');
         $permissions = Artisan::call('permissions:sync');
         $context->report->note('permissions:sync exit code '.$permissions.'.');
+
+        $reconciliation = $this->reconciliation->run($config);
+        $context->report->section($reconciliation->markdown());
+
+        if ($reconciliation->differences() > 0) {
+            $context->report->issue(LegacyIssueLevel::Error, 'central', 'reconciliation', null, 'Finance reconciliation shows differences (see the reconciliation section)');
+        }
     }
 }

@@ -522,3 +522,469 @@ CREATE TABLE `affiliates` (
   UNIQUE KEY `affiliates_tenant_id_unique` (`tenant_id`),
   KEY `affiliates_type_index` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- P12 batch 2: after-sales, billing, content, email templates, shipping, settlements/payouts, catalog requests
+DROP TABLE IF EXISTS `refunds`;
+CREATE TABLE `refunds` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `reference` varchar(32) NOT NULL,
+  `tenant_id` varchar(36) NOT NULL,
+  `order_number` varchar(255) NOT NULL,
+  `return_request_id` bigint unsigned DEFAULT NULL,
+  `source` varchar(20) NOT NULL,
+  `reason` varchar(255) NOT NULL,
+  `currency` varchar(3) NOT NULL DEFAULT 'USD',
+  `items_amount` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `shipping_amount` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `return_fee` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `amount` decimal(12,2) NOT NULL,
+  `payment_method` varchar(255) DEFAULT NULL,
+  `gateway` varchar(255) DEFAULT NULL,
+  `original_transaction_id` varchar(255) DEFAULT NULL,
+  `refund_method` varchar(20) NOT NULL,
+  `gateway_refund_id` varchar(255) DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'pending',
+  `failure_reason` text,
+  `requested_by_type` varchar(20) DEFAULT NULL,
+  `requested_by_id` bigint unsigned DEFAULT NULL,
+  `approved_by_type` varchar(20) DEFAULT NULL,
+  `approved_by_id` bigint unsigned DEFAULT NULL,
+  `approved_by_name` varchar(255) DEFAULT NULL,
+  `requested_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_at` timestamp NULL DEFAULT NULL,
+  `processed_at` timestamp NULL DEFAULT NULL,
+  `notes` text,
+  `meta` json DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `refunds_reference_unique` (`reference`),
+  KEY `refunds_return_request_id_foreign` (`return_request_id`),
+  KEY `refunds_tenant_id_order_number_index` (`tenant_id`,`order_number`),
+  KEY `refunds_tenant_id_status_index` (`tenant_id`,`status`),
+  KEY `refunds_source_index` (`source`),
+  KEY `refunds_requested_at_index` (`requested_at`),
+  KEY `refunds_tenant_id_index` (`tenant_id`),
+  KEY `refunds_order_number_index` (`order_number`),
+  KEY `refunds_status_index` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `return_requests`;
+CREATE TABLE `return_requests` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` varchar(36) NOT NULL,
+  `order_number` varchar(255) NOT NULL,
+  `type` varchar(20) NOT NULL DEFAULT 'return',
+  `customer_id` bigint unsigned NOT NULL,
+  `order_item_id` bigint unsigned DEFAULT NULL,
+  `product_id` bigint unsigned DEFAULT NULL,
+  `product_variant_id` bigint unsigned DEFAULT NULL,
+  `quantity` int unsigned NOT NULL DEFAULT '1',
+  `return_method` varchar(30) DEFAULT NULL,
+  `reason` varchar(255) NOT NULL,
+  `description` text,
+  `customer_note` text,
+  `status` varchar(30) NOT NULL DEFAULT 'pending',
+  `refund_amount` decimal(12,2) DEFAULT NULL,
+  `inspection_result` varchar(20) DEFAULT NULL,
+  `inspection_notes` text,
+  `received_at` timestamp NULL DEFAULT NULL,
+  `inspected_at` timestamp NULL DEFAULT NULL,
+  `restocked_at` timestamp NULL DEFAULT NULL,
+  `replacement_product_variant_id` bigint unsigned DEFAULT NULL,
+  `replacement_quantity` int unsigned DEFAULT NULL,
+  `replacement_reserved_at` timestamp NULL DEFAULT NULL,
+  `exchange_tracking_number` varchar(255) DEFAULT NULL,
+  `exchange_shipped_at` timestamp NULL DEFAULT NULL,
+  `exchange_completed_at` timestamp NULL DEFAULT NULL,
+  `cancelled_at` timestamp NULL DEFAULT NULL,
+  `forwarded_at` timestamp NULL DEFAULT NULL,
+  `reviewed_by_admin_id` bigint unsigned DEFAULT NULL,
+  `reviewed_by_type` varchar(20) DEFAULT NULL,
+  `reviewed_by_id` bigint unsigned DEFAULT NULL,
+  `reviewed_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `product_type` varchar(10) DEFAULT NULL,
+  `catalog_product_id` bigint unsigned DEFAULT NULL,
+  `variant_type` varchar(10) DEFAULT NULL,
+  `catalog_variant_id` bigint unsigned DEFAULT NULL,
+  `replacement_variant_type` varchar(10) DEFAULT NULL,
+  `catalog_replacement_variant_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `return_requests_reviewed_by_admin_id_foreign` (`reviewed_by_admin_id`),
+  KEY `return_requests_tenant_id_index` (`tenant_id`),
+  KEY `return_requests_order_number_index` (`order_number`),
+  KEY `return_requests_status_index` (`status`),
+  KEY `return_requests_order_item_index` (`tenant_id`,`order_number`,`order_item_id`),
+  KEY `return_requests_type_index` (`type`),
+  KEY `return_requests_product_ref_index` (`tenant_id`,`product_type`,`catalog_product_id`),
+  KEY `return_requests_variant_ref_index` (`tenant_id`,`variant_type`,`catalog_variant_id`),
+  KEY `return_requests_replacement_ref_index` (`tenant_id`,`replacement_variant_type`,`catalog_replacement_variant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `return_request_notes`;
+CREATE TABLE `return_request_notes` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `return_request_id` bigint unsigned NOT NULL,
+  `author_type` varchar(20) NOT NULL,
+  `author_id` bigint unsigned DEFAULT NULL,
+  `note` text NOT NULL,
+  `customer_visible` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `return_request_notes_return_request_id_foreign` (`return_request_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `return_request_media`;
+CREATE TABLE `return_request_media` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `return_request_id` bigint unsigned NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `return_request_media_return_request_id_foreign` (`return_request_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `invoices`;
+CREATE TABLE `invoices` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` varchar(255) DEFAULT NULL,
+  `tenant_order_id` bigint unsigned DEFAULT NULL,
+  `order_uuid` varchar(255) DEFAULT NULL,
+  `order_number` varchar(255) DEFAULT NULL,
+  `invoice_number` varchar(255) NOT NULL,
+  `customer_name` varchar(255) DEFAULT NULL,
+  `customer_email` varchar(255) DEFAULT NULL,
+  `currency` varchar(12) NOT NULL DEFAULT 'USD',
+  `amount` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `payment_method` varchar(255) DEFAULT NULL,
+  `payment_reference` varchar(255) DEFAULT NULL,
+  `pdf_disk` varchar(255) DEFAULT NULL,
+  `pdf_path` varchar(255) DEFAULT NULL,
+  `meta` json DEFAULT NULL,
+  `issued_at` timestamp NULL DEFAULT NULL,
+  `due_at` timestamp NULL DEFAULT NULL,
+  `paid_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `invoices_invoice_number_unique` (`invoice_number`),
+  KEY `invoices_tenant_id_index` (`tenant_id`),
+  KEY `invoices_tenant_id_order_uuid_index` (`tenant_id`,`order_uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `payment_logs`;
+CREATE TABLE `payment_logs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` varchar(255) DEFAULT NULL,
+  `package_id` bigint unsigned DEFAULT NULL,
+  `gateway` varchar(255) NOT NULL,
+  `amount` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `reference` varchar(255) DEFAULT NULL,
+  `paid_at` timestamp NULL DEFAULT NULL,
+  `meta` json DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `payment_logs_package_id_foreign` (`package_id`),
+  KEY `payment_logs_tenant_id_index` (`tenant_id`),
+  KEY `payment_logs_reference_index` (`reference`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `blog_categories`;
+CREATE TABLE `blog_categories` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `blog_categories_slug_unique` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `blog_posts`;
+CREATE TABLE `blog_posts` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `blog_category_id` bigint unsigned DEFAULT NULL,
+  `slug` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `published_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `blog_posts_slug_unique` (`slug`),
+  KEY `blog_posts_blog_category_id_foreign` (`blog_category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `faqs`;
+CREATE TABLE `faqs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `static_pages`;
+CREATE TABLE `static_pages` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `is_compliance` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `static_pages_slug_unique` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `email_templates`;
+CREATE TABLE `email_templates` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `subject` varchar(255) NOT NULL,
+  `body` longtext,
+  `type` varchar(255) NOT NULL DEFAULT 'admin',
+  `status` varchar(255) NOT NULL DEFAULT 'active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `email_templates_type_index` (`type`),
+  KEY `email_templates_action_index` (`action`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `email_template_translations`;
+CREATE TABLE `email_template_translations` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `email_template_id` bigint unsigned NOT NULL,
+  `locale` varchar(10) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `body` longtext,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_template_translations_email_template_id_locale_unique` (`email_template_id`,`locale`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `shipping_zones`;
+CREATE TABLE `shipping_zones` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `branch_id` bigint unsigned DEFAULT NULL,
+  `country_id` bigint unsigned DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `currency_code` varchar(255) NOT NULL DEFAULT 'USD',
+  `status` varchar(255) NOT NULL DEFAULT 'active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `shipping_zones_branch_id_foreign` (`branch_id`),
+  KEY `shipping_zones_country_id_foreign` (`country_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `shipping_zone_rates`;
+CREATE TABLE `shipping_zone_rates` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `shipping_zone_id` bigint unsigned NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `min_weight` decimal(10,2) DEFAULT NULL,
+  `max_weight` decimal(10,2) DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `shipping_zone_rates_shipping_zone_id_foreign` (`shipping_zone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `fixed_shipping_costs`;
+CREATE TABLE `fixed_shipping_costs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `country_id` bigint unsigned NOT NULL,
+  `price_per_gram` decimal(14,6) NOT NULL DEFAULT '0.000000' COMMENT 'Shipping cost per gram of product weight for this country',
+  `currency_code` varchar(3) NOT NULL DEFAULT 'USD',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `fixed_shipping_costs_country_id_unique` (`country_id`),
+  KEY `fixed_shipping_costs_country_id_is_active_index` (`country_id`,`is_active`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `product_shipping_zone`;
+CREATE TABLE `product_shipping_zone` (
+  `product_id` bigint unsigned NOT NULL,
+  `shipping_zone_id` bigint unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`product_id`,`shipping_zone_id`),
+  KEY `product_shipping_zone_shipping_zone_id_foreign` (`shipping_zone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `vendor_settlements`;
+CREATE TABLE `vendor_settlements` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` varchar(255) NOT NULL,
+  `order_id` bigint unsigned NOT NULL,
+  `order_uuid` varchar(255) NOT NULL,
+  `invoice_number` varchar(255) NOT NULL,
+  `tenant_name` varchar(255) DEFAULT NULL,
+  `tenant_email` varchar(255) DEFAULT NULL,
+  `product_cost` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `shipping_cost` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `gateway_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `total` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `gateway_code` varchar(255) DEFAULT NULL,
+  `transaction_id` varchar(255) DEFAULT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'paid',
+  `meta` json DEFAULT NULL,
+  `settled_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `vendor_settlements_invoice_number_unique` (`invoice_number`),
+  KEY `vendor_settlements_tenant_id_index` (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `tenant_payouts`;
+CREATE TABLE `tenant_payouts` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` varchar(255) NOT NULL,
+  `invoice_number` varchar(255) NOT NULL,
+  `tenant_name` varchar(255) DEFAULT NULL,
+  `tenant_email` varchar(255) DEFAULT NULL,
+  `amount` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `status` varchar(16) NOT NULL DEFAULT 'paid',
+  `currency` varchar(8) NOT NULL DEFAULT 'USD',
+  `method` varchar(32) NOT NULL DEFAULT 'bank',
+  `bank_name` varchar(255) DEFAULT NULL,
+  `bank_account` varchar(255) DEFAULT NULL,
+  `gateway_name` varchar(255) DEFAULT NULL,
+  `transaction_reference` varchar(255) DEFAULT NULL,
+  `note` text,
+  `orders_snapshot` json DEFAULT NULL,
+  `admin_id` bigint unsigned DEFAULT NULL,
+  `paid_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tenant_payouts_invoice_number_unique` (`invoice_number`),
+  KEY `tenant_payouts_tenant_id_index` (`tenant_id`),
+  KEY `tenant_payouts_tenant_id_status_index` (`tenant_id`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `product_requests`;
+CREATE TABLE `product_requests` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` varchar(36) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `product_url` varchar(2000) DEFAULT NULL,
+  `attachments` json DEFAULT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'pending',
+  `tenant_has_unread` tinyint(1) NOT NULL DEFAULT '0',
+  `admin_has_unread` tinyint(1) NOT NULL DEFAULT '1',
+  `last_reply_at` timestamp NULL DEFAULT NULL,
+  `priority` varchar(20) NOT NULL DEFAULT 'normal',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `product_requests_tenant_id_status_index` (`tenant_id`,`status`),
+  KEY `product_requests_admin_has_unread_index` (`admin_has_unread`),
+  KEY `product_requests_tenant_id_index` (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `product_request_messages`;
+CREATE TABLE `product_request_messages` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `product_request_id` bigint unsigned NOT NULL,
+  `sender_type` varchar(10) NOT NULL,
+  `sender_name` varchar(255) NOT NULL,
+  `body` text NOT NULL,
+  `attachments` json DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `product_request_messages_product_request_id_index` (`product_request_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `brand_requests`;
+CREATE TABLE `brand_requests` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` varchar(36) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `attachments` json DEFAULT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'pending',
+  `admin_notes` text,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `brand_requests_tenant_id_index` (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `brand_request_messages`;
+CREATE TABLE `brand_request_messages` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `brand_request_id` bigint unsigned NOT NULL,
+  `sender_type` varchar(255) NOT NULL,
+  `sender_name` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `brand_request_messages_brand_request_id_index` (`brand_request_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `manufacturing_requests`;
+CREATE TABLE `manufacturing_requests` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tenant_id` varchar(36) NOT NULL,
+  `product_id` bigint unsigned DEFAULT NULL,
+  `product_name` varchar(255) NOT NULL,
+  `description` text,
+  `reference_url` varchar(2000) DEFAULT NULL,
+  `images` json DEFAULT NULL,
+  `quantity` int unsigned NOT NULL DEFAULT '1',
+  `status` varchar(50) NOT NULL DEFAULT 'pending',
+  `admin_notes` text,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `manufacturing_requests_product_id_foreign` (`product_id`),
+  KEY `manufacturing_requests_tenant_id_index` (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `manufacturing_request_messages`;
+CREATE TABLE `manufacturing_request_messages` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `manufacturing_request_id` bigint unsigned NOT NULL,
+  `sender_type` varchar(255) NOT NULL,
+  `sender_name` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `manufacturing_request_messages_manufacturing_request_id_index` (`manufacturing_request_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `manufacturing_payment_requests`;
+CREATE TABLE `manufacturing_payment_requests` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `manufacturing_request_id` bigint unsigned NOT NULL,
+  `tenant_id` varchar(36) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `currency` varchar(10) NOT NULL DEFAULT 'USD',
+  `status` varchar(30) NOT NULL DEFAULT 'pending',
+  `gateway_code` varchar(255) DEFAULT NULL,
+  `transaction_id` varchar(255) DEFAULT NULL,
+  `paid_at` timestamp NULL DEFAULT NULL,
+  `notes` text,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `manufacturing_payment_requests_manufacturing_request_id_foreign` (`manufacturing_request_id`),
+  KEY `manufacturing_payment_requests_tenant_id_index` (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `brand_payment_requests`;
+CREATE TABLE `brand_payment_requests` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `brand_request_id` bigint unsigned NOT NULL,
+  `tenant_id` varchar(36) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `currency` varchar(10) NOT NULL DEFAULT 'USD',
+  `status` varchar(30) NOT NULL DEFAULT 'pending',
+  `gateway_code` varchar(255) DEFAULT NULL,
+  `transaction_id` varchar(255) DEFAULT NULL,
+  `paid_at` timestamp NULL DEFAULT NULL,
+  `notes` text,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `brand_payment_requests_brand_request_id_foreign` (`brand_request_id`),
+  KEY `brand_payment_requests_tenant_id_index` (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 class LegacyMigrateCommand extends Command
 {
     protected $signature = 'legacy:migrate
-        {--step=* : Only these steps (localization, plans, settings, gateways, catalog, admins, tenants, promotions, support, affiliates, store_catalog, customers, orders, engagement, store_promotions, finalize)}
+        {--step=* : Only these steps (localization, plans, settings, gateways, catalog, admins, tenants, promotions, support, affiliates, store_catalog, customers, orders, engagement, store_promotions, content, email_templates, shipping, billing, settlements, requests, after_sales, finalize)}
         {--tenant=* : Only these old store ids}
         {--dry-run : Read and validate everything, write nothing but the report}
         {--fresh-mapping : Forget previous id mappings (rows are matched by natural keys or created again)}

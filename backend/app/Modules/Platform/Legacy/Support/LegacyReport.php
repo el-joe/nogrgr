@@ -24,6 +24,9 @@ class LegacyReport
     /** @var list<string> */
     private array $notes = [];
 
+    /** @var list<list<string>> extra Markdown sections (finance reconciliation) */
+    private array $sections = [];
+
     public function read(string $scope, string $entity, int $n = 1): void
     {
         $this->add($scope, $entity, 'read', $n);
@@ -53,6 +56,14 @@ class LegacyReport
     public function note(string $note): void
     {
         $this->notes[] = $note;
+    }
+
+    /**
+     * @param  list<string>  $lines  Markdown lines starting with a `## ` heading
+     */
+    public function section(array $lines): void
+    {
+        $this->sections[] = $lines;
     }
 
     public function count(string $scope, string $entity, string $metric): int
@@ -129,6 +140,11 @@ class LegacyReport
             foreach ($this->notes as $note) {
                 $lines[] = '- '.$note;
             }
+        }
+
+        foreach ($this->sections as $section) {
+            $lines[] = '';
+            array_push($lines, ...$section);
         }
 
         return implode("\n", $lines)."\n";

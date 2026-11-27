@@ -12,6 +12,7 @@ use App\Modules\Platform\Events\ComplianceSubmitted;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Modules\Platform\Events\TenantProvisioningFailed;
 use App\Modules\Platform\Legacy\Console\LegacyMigrateCommand;
+use App\Modules\Platform\Legacy\Console\LegacyReconcileCommand;
 use App\Modules\Platform\Listeners\AdvanceRegistrationOnPayment;
 use App\Modules\Platform\Listeners\AlertProvisioningFailure;
 use App\Modules\Platform\Listeners\NotifyAdminsOfComplianceSubmission;
@@ -78,7 +79,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Blade::anonymousComponentPath(__DIR__.'/resources/views/components/vendor', 'vendor');
 
         if ($this->app->runningInConsole()) {
-            $this->commands([LegacyMigrateCommand::class]);
+            $this->commands([LegacyMigrateCommand::class, LegacyReconcileCommand::class]);
         }
 
         Event::listen(MigrationStarted::class, [PartialMigrationCleaner::class, 'started']);

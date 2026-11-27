@@ -21,6 +21,7 @@ use App\Modules\Platform\Legacy\Support\LegacyMedia;
 use App\Modules\Platform\Legacy\Support\LegacyTranslations;
 use App\Modules\Platform\Legacy\Support\LegacyUnique;
 use App\Modules\Platform\Legacy\Support\LegacyValues;
+use App\Shared\Support\Icon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -33,6 +34,9 @@ use Illuminate\Support\Str;
 class CatalogStep implements LegacyStepHandler
 {
     private const CHUNK = 200;
+
+    /** Old label icon names (ProductLabelIcons) that have another name in our icon set. */
+    private const LABEL_ICON_ALIASES = ['bolt' => 'zap', 'fire' => 'flame', 'package' => 'box', 'undo' => 'return'];
 
     public function __construct(private readonly LegacyMedia $media) {}
 
@@ -194,13 +198,28 @@ class CatalogStep implements LegacyStepHandler
 
             $writer->upsert('label', (int) $row->id, 'product_labels', [
                 'text' => $translations !== [] ? $translations : ['en' => (string) $row->text],
-                'icon' => $row->icon,
+                'icon' => self::labelIcon($row->icon),
                 'is_active' => (bool) $row->active,
                 'sort_order' => (int) $row->sort_order,
                 'created_at' => $row->created_at,
                 'deleted_at' => $row->deleted_at,
             ]);
         }
+    }
+
+    /**
+     * The old label icon as a name of our icon set (aliases mapped); an icon we do not
+     * have becomes null, because the label views only render known icons.
+     */
+    private static function labelIcon(mixed $icon): ?string
+    {
+        if (! is_string($icon) || $icon === '') {
+            return null;
+        }
+
+        $name = self::LABEL_ICON_ALIASES[$icon] ?? $icon;
+
+        return Icon::exists($name) ? $name : null;
     }
 
     private function products(LegacyContext $context): void

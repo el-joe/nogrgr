@@ -104,6 +104,14 @@ class LegacySource
         return $this->config()->storageRoot.'/'.ltrim($relative, '/');
     }
 
+    /**
+     * A file in the old per-store public storage (stancl filesystem tenancy).
+     */
+    public function tenantMediaPath(string $legacyTenantId, string $relative): string
+    {
+        return dirname($this->config()->storageRoot, 2).'/tenant'.$legacyTenantId.'/app/public/'.ltrim($relative, '/');
+    }
+
     private function encrypter(): ?Encrypter
     {
         if ($this->encrypter !== null) {
