@@ -3,13 +3,15 @@
 namespace App\Modules\Support\DTOs;
 
 use App\Modules\Identity\Models\Admin;
+use App\Modules\Identity\Models\Customer;
 use App\Modules\Identity\Models\Owner;
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Support\Enums\TicketAuthor;
 use App\Shared\DTOs\BaseDTO;
 
 /**
- * Who acts on a ticket: a platform admin, a store staff member or the owner account.
+ * Who acts on a ticket: a platform admin, a store staff member, the owner account or a
+ * store customer (customer tickets).
  */
 final class TicketActor extends BaseDTO
 {
@@ -28,6 +30,11 @@ final class TicketActor extends BaseDTO
     public static function vendor(VendorStaff $staff): self
     {
         return new self(TicketAuthor::Vendor, (int) $staff->id, (string) $staff->name, (string) $staff->email);
+    }
+
+    public static function customer(Customer $customer): self
+    {
+        return new self(TicketAuthor::Customer, (int) $customer->id, (string) $customer->name, (string) $customer->email);
     }
 
     public static function owner(Owner $owner): self

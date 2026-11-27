@@ -13,6 +13,7 @@
         'orders' => ['route' => 'storefront.orders.index', 'icon' => 'cart', 'label' => 'account.nav.orders'],
         'returns' => ['route' => 'storefront.returns.index', 'icon' => 'return', 'label' => 'account.nav.returns'],
         'wishlist' => ['route' => 'storefront.favorites', 'icon' => 'star', 'label' => 'account.nav.wishlist'],
+        'support' => ['route' => 'storefront.support.index', 'icon' => 'lifebuoy', 'label' => 'support.tickets.nav'],
         'addresses' => ['route' => 'storefront.account.addresses', 'icon' => 'map', 'label' => 'identity::account.nav.addresses'],
         'profile' => ['route' => 'storefront.account.profile', 'icon' => 'users', 'label' => 'identity::account.nav.profile'],
         'notifications' => ['route' => 'storefront.account.notifications', 'icon' => 'bell', 'label' => 'identity::account.nav.notifications'],

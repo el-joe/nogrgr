@@ -117,6 +117,7 @@ enum IntegrationSection: string
                 $enabled,
                 new SettingField('client_id', required: true),
                 new SettingField('client_secret', SettingFieldType::Secret, true),
+                new SettingField('customer_client_ids', SettingFieldType::Textarea, maxLength: 2000),
             ],
             self::Apple => [
                 $enabled,
@@ -124,6 +125,7 @@ enum IntegrationSection: string
                 new SettingField('team_id', required: true, maxLength: 20),
                 new SettingField('key_id', required: true, maxLength: 20),
                 new SettingField('private_key', SettingFieldType::File, true, accept: '.p8,text/plain'),
+                new SettingField('customer_client_ids', SettingFieldType::Textarea, maxLength: 2000),
             ],
             self::Broadcasting => [
                 $enabled,
@@ -236,6 +238,7 @@ enum IntegrationSection: string
                 'enabled' => ['services.google.enabled'],
                 'client_id' => ['services.google.client_id'],
                 'client_secret' => ['services.google.client_secret'],
+                'customer_client_ids' => ['services.google.customer_client_ids'],
             ],
             self::Apple => [
                 'enabled' => ['services.apple.enabled'],
@@ -243,6 +246,7 @@ enum IntegrationSection: string
                 'team_id' => ['services.apple.team_id'],
                 'key_id' => ['services.apple.key_id'],
                 'private_key' => ['services.apple.private_key'],
+                'customer_client_ids' => ['services.apple.customer_client_ids'],
             ],
             self::Broadcasting => [],
             self::Cloudflare => [

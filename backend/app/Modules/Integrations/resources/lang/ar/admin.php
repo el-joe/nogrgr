@@ -61,15 +61,18 @@ return [
         ],
         'google' => [
             'title' => 'تسجيل الدخول عبر Google',
-            'description' => 'OAuth للمشرفين والبائعين والمسوّقين. تسجيل دخول المتسوّقين عبر Google يستخدم إعدادات كل متجر.',
+            'description' => 'OAuth للمشرفين والبائعين والمسوّقين، وتسجيل دخول المتسوّقين في تطبيقات المتاجر وثيماتها.',
             'test' => 'اختبار تسجيل الدخول',
             'redirect_help' => 'انسخه إلى Google Cloud Console › Credentials › Authorized redirect URIs.',
             'fields' => [
                 'enabled' => 'مفعّل',
                 'client_id' => 'معرّف العميل',
                 'client_secret' => 'سرّ العميل',
+                'customer_client_ids' => 'معرّفات عملاء تطبيقات المتسوّقين',
             ],
-            'help' => [],
+            'help' => [
+                'customer_client_ids' => 'معرّفات عملاء Google OAuth لتطبيقات المتاجر (iOS / أندرويد)، واحد في كل سطر أو مفصولة بفواصل. يُتاح تسجيل دخول المتسوّقين عبر Google عند تفعيل المزوّد، وتُقبل الرموز الصادرة لهذه المعرّفات أو لمعرّف العميل أعلاه.',
+            ],
         ],
         'apple' => [
             'title' => 'تسجيل الدخول عبر Apple',
@@ -83,8 +86,10 @@ return [
                 'team_id' => 'Team ID',
                 'key_id' => 'Key ID',
                 'private_key' => 'المفتاح الخاص (‎.p8)',
+                'customer_client_ids' => 'معرّفات حزم تطبيقات المتسوّقين',
             ],
             'help' => [
+                'customer_client_ids' => 'معرّفات الحزم (Bundle IDs) لتطبيقات iOS للمتاجر (وأي Services ID أخرى)، واحد في كل سطر أو مفصولة بفواصل. يُتاح تسجيل دخول المتسوّقين عبر Apple عند تفعيل المزوّد.',
                 'private_key' => 'ارفع ملف AuthKey_XXXX.p8 الذي نزّلته من Apple.',
             ],
         ],

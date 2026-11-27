@@ -34,6 +34,7 @@ Route::middleware([SetMobileLocale::class, 'throttle:mobile-api'])->group(functi
             Route::post('register', [AuthController::class, 'register'])->name('register');
             Route::post('login', [AuthController::class, 'login'])->name('login');
             Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
+            Route::post('social/{provider}', [AuthController::class, 'social'])->whereIn('provider', ['google', 'apple'])->name('social');
             Route::post('password/forgot', [PasswordResetController::class, 'forgot'])->name('password.forgot');
             Route::post('password/check', [PasswordResetController::class, 'check'])->name('password.check');
             Route::post('password/reset', [PasswordResetController::class, 'reset'])->name('password.reset');

@@ -76,6 +76,15 @@ class CustomerAuthService extends BaseService
         return $customer;
     }
 
+    /**
+     * Session sign-in of a customer already verified by a social provider (theme flow).
+     */
+    public function loginVerified(Customer $customer, Request $request): void
+    {
+        $this->sessions->login(Guard::Customer, $customer, $request, true);
+        $this->bindSession($customer, $request);
+    }
+
     public function logout(Request $request): void
     {
         $this->sessions->logout(Guard::Customer, $request);

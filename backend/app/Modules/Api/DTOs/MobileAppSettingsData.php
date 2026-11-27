@@ -67,6 +67,11 @@ final class MobileAppSettingsData extends BaseDTO
         ];
     }
 
+    public function withSplashLogo(?string $path): self
+    {
+        return new self($this->ios, $this->android, $this->maintenance, $this->maintenanceMessage, $this->splashBackground, $path, $this->features);
+    }
+
     public function release(string $platform): PlatformReleaseData
     {
         return $platform === 'ios' ? $this->ios : $this->android;

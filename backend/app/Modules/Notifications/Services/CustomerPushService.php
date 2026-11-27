@@ -26,12 +26,13 @@ class CustomerPushService
     ) {}
 
     /**
-     * Notification type of an inbox payload `event` (order / shipping / return events).
+     * Notification type of an inbox payload `event` (order / shipping / return / support ticket events).
      */
     public static function typeOf(string $event): CustomerNotificationType
     {
         return match (true) {
             str_starts_with($event, 'return') => CustomerNotificationType::Returns,
+            str_starts_with($event, 'ticket_') => CustomerNotificationType::Support,
             str_starts_with($event, 'shipping_'), in_array($event, ['shipped', 'delivered', 'order_shipped', 'order_delivered'], true) => CustomerNotificationType::ShippingUpdates,
             default => CustomerNotificationType::OrderUpdates,
         };
@@ -66,6 +67,7 @@ class CustomerPushService
             'notification_id' => $notificationId,
             'event' => $event,
             'order_uuid' => is_string($payload['order_uuid'] ?? null) ? $payload['order_uuid'] : null,
+            'ticket_id' => is_int($payload['ticket_id'] ?? null) ? (string) $payload['ticket_id'] : null,
         ], static fn (?string $value): bool => $value !== null && $value !== '');
 
         return $this->sendToCustomer($customer, $title, $body, $data);

@@ -45,6 +45,15 @@ return [
     'copyright' => '© :year Nogrgr · :console',
     'or' => 'or',
     'pending' => 'This account is awaiting approval. You will receive an e-mail as soon as it is activated.',
+    'social' => [
+        'generic' => 'Social sign-in did not finish. Please try again.',
+        'invalid' => 'We could not confirm your :provider sign-in. Please try again.',
+        'unverified_email' => 'This e-mail already has an account. Sign in with your password, then try again.',
+        'no_email' => 'Your account did not share an e-mail address. Allow e-mail access and try again.',
+        'continue' => 'Continue with :provider',
+        'failed' => ':provider sign-in did not finish. Please try again.',
+        'unavailable' => 'This sign-in option is not available.',
+    ],
     'inactive' => 'This account is not active. Please contact support.',
     'google' => 'Continue with Google',
     'reset' => [

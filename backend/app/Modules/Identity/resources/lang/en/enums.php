@@ -10,6 +10,7 @@ return [
         'order_updates' => 'Order updates',
         'shipping_updates' => 'Shipping and delivery',
         'returns' => 'Returns and refunds',
+        'support' => 'Support tickets',
         'price_drops' => 'Price drops on my wishlist',
         'back_in_stock' => 'Back in stock',
         'promotions' => 'Offers and promotions',

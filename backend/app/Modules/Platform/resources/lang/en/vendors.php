@@ -131,6 +131,7 @@ return [
             'commission' => 'Profit & commission',
             'stats' => 'Stats & orders',
             'compliance' => 'Compliance',
+            'mobile-app' => 'Mobile app',
         ],
         'store_info' => 'Store info',
         'owner' => 'Owner',

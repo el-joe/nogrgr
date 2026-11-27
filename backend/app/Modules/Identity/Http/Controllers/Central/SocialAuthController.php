@@ -2,11 +2,13 @@
 
 namespace App\Modules\Identity\Http\Controllers\Central;
 
+use App\Modules\Identity\DTOs\SocialProfileData;
 use App\Modules\Identity\Enums\SocialIntent;
 use App\Modules\Identity\Enums\SocialProvider;
 use App\Modules\Identity\Exceptions\SocialAuthException;
 use App\Modules\Identity\Services\OwnerService;
 use App\Modules\Identity\Services\SocialAuthService;
+use App\Modules\Identity\Support\Social\CustomerSocialHandoff;
 use App\Shared\Http\Controller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -31,16 +33,23 @@ class SocialAuthController extends Controller
     {
         $social = $this->enabled($provider);
         $intent = SocialIntent::tryFrom((string) $request->query('intent', '')) ?? SocialIntent::Login;
+        $context = [];
 
-        return redirect()->away($this->social->begin($social, $intent, $request));
+        // Theme shopper sign-in: the store host sealed which store and where to come back.
+        if ($intent === SocialIntent::Customer) {
+            $context = CustomerSocialHandoff::readStart($request->query('payload')) ?? abort(404);
+        }
+
+        return redirect()->away($this->social->begin($social, $intent, $request, $context));
     }
 
-    public function callback(Request $request, string $provider): View
+    public function callback(Request $request, string $provider): View|RedirectResponse
     {
         $social = $this->enabled($provider);
         $handoff = $request->query('handoff');
         $parameters = is_string($handoff) && $handoff !== '' ? $this->social->pullHandoff($handoff) : $request->query();
         $intent = $this->social->pendingIntent($request);
+        $context = $this->social->pendingContext($request);
 
         try {
             $result = $this->social->complete($social, $parameters, $request);
@@ -49,16 +58,24 @@ class SocialAuthController extends Controller
                 report($exception);
             }
 
+            if ($intent === SocialIntent::Customer && isset($context['tenant_id'], $context['base'])) {
+                return $this->backToStore($context, null, $exception->cancelled ? 'cancelled' : 'failed');
+            }
+
             return view('identity::social.result', [
                 'provider' => $social,
                 'state' => $exception->cancelled ? 'cancelled' : 'error',
                 'message' => $exception->userMessage,
                 'continueUrl' => match ($intent) {
-                    SocialIntent::Login => route('central.tenant.login'),
+                    SocialIntent::Login, SocialIntent::Customer => route('central.tenant.login'),
                     SocialIntent::Link => route('owner.profile.edit'),
                     SocialIntent::Register => route('central.register'),
                 },
             ]);
+        }
+
+        if ($result['intent'] === SocialIntent::Customer) {
+            return $this->backToStore($result['context'] ?? [], $result['profile'] ?? null, null);
         }
 
         return view('identity::social.result', [
@@ -79,6 +96,20 @@ class SocialAuthController extends Controller
         $key = $this->social->handoff($request->only(['code', 'state', 'error', 'user']));
 
         return redirect()->route('central.social.callback', ['provider' => $social->value, 'handoff' => $key], 303);
+    }
+
+    /**
+     * Hands the verified shopper (or the failure) back to the store host, which signs in.
+     *
+     * @param  array<string, mixed>  $context
+     */
+    private function backToStore(array $context, ?SocialProfileData $profile, ?string $error): RedirectResponse
+    {
+        abort_unless(is_int($context['tenant_id'] ?? null) && is_string($context['base'] ?? null), 404);
+
+        $token = CustomerSocialHandoff::result(['tenant_id' => $context['tenant_id'], 'base' => $context['base'], 'redirect' => is_string($context['redirect'] ?? null) ? $context['redirect'] : null], $profile, $error);
+
+        return redirect()->away($context['base'].'/account/social/complete?'.http_build_query(['token' => $token]));
     }
 
     private function continueUrl(SocialIntent $intent, SocialProvider $provider): string

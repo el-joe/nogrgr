@@ -38,6 +38,7 @@ return [
         'admin' => 'Platform support',
         'vendor' => 'Store team',
         'owner' => 'Store owner',
+        'customer' => 'Customer',
     ],
     'help_topic' => [
         'getting_started' => 'Getting started',

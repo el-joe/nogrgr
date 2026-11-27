@@ -10,6 +10,7 @@ return [
         'order_updates' => 'تحديثات الطلبات',
         'shipping_updates' => 'الشحن والتوصيل',
         'returns' => 'المرتجعات والاسترداد',
+        'support' => 'تذاكر الدعم',
         'price_drops' => 'انخفاض أسعار المفضلة',
         'back_in_stock' => 'عودة المنتجات للمخزون',
         'promotions' => 'العروض والتخفيضات',

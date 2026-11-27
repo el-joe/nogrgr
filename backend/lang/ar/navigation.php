@@ -119,6 +119,7 @@ return [
         'returns_analytics' => 'تحليلات المرتجعات',
         'pages' => 'الصفحات',
         'appearance' => 'المظهر',
+        'mobile_app' => 'تطبيق الجوال',
         'account' => 'الحساب',
         'general' => 'عام',
         'currencies' => 'العملات',

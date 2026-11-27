@@ -5,6 +5,8 @@ namespace App\Modules\Api\Services;
 use App\Modules\Api\DTOs\MobileAppSettingsData;
 use App\Modules\Api\Enums\AppUpdateState;
 use App\Modules\Api\Enums\MobileFeature;
+use App\Modules\Identity\Enums\SocialProvider;
+use App\Modules\Identity\Support\Social\CustomerIdTokenVerifier;
 use App\Modules\Localization\Models\Country;
 use App\Modules\Localization\Models\Currency;
 use App\Modules\Localization\Services\StaticTexts\StaticTextCatalog;
@@ -104,6 +106,8 @@ class MobileBootstrapService
             ],
             'features' => $features,
             'push' => ['enabled' => $features[MobileFeature::PushNotifications->value], 'provider' => 'fcm'],
+            // Shopper social sign-in: only the providers configured in Admin › Integrations.
+            'auth' => ['social_providers' => array_map(static fn (SocialProvider $provider): string => $provider->value, CustomerIdTokenVerifier::available())],
             'app' => [
                 'platform' => $platform,
                 'version' => $appVersion,

@@ -46,7 +46,7 @@ it('renders only the built tabs and hides manage buttons from viewers', function
         ->assertSee(__('platform::vendors.profile.tabs.plan'))
         ->assertSee(__('platform::vendors.profile.tabs.compliance'))
         ->assertSee(__('platform::vendors.profile.tabs.stats'))
-        ->assertDontSee('Mobile app')
+        ->assertSee(__('platform::vendors.profile.tabs.mobile-app'))
         ->assertDontSee('>Limits<', false)
         ->assertDontSee(__('platform::vendors.profile.edit_store'))
         ->assertDontSee('id="impersonate"', false);

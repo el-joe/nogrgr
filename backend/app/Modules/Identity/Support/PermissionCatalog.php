@@ -181,6 +181,8 @@ final class PermissionCatalog
                 'partner.view', 'partner.manage',
                 // P10: AI Advertising Studio (VEN-010c / VEN-009e)
                 'marketing.ads.view', 'marketing.ads.manage',
+                // P11: mobile app settings (VEN-037 / 037a)
+                'store.mobile-app.view', 'store.mobile-app.manage',
             ],
         ];
     }

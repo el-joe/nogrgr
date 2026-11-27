@@ -45,6 +45,7 @@ return [
                 ['key' => 'store.banners', 'label' => 'navigation.vendor.banners', 'route' => 'vendor.store.banners.index', 'permission' => 'store.banners.view', 'active' => 'vendor.store.banners.*'],
                 ['key' => 'store.pages', 'label' => 'navigation.vendor.pages', 'route' => 'vendor.store.pages.index', 'permission' => 'store.pages.view', 'active' => 'vendor.store.pages.*'],
                 ['key' => 'store.appearance', 'label' => 'navigation.vendor.appearance', 'route' => 'vendor.store.appearance', 'permission' => 'store.appearance.view', 'active' => 'vendor.store.appearance*'],
+                ['key' => 'store.mobile-app', 'label' => 'navigation.vendor.mobile_app', 'route' => 'vendor.store.mobile-app', 'permission' => 'store.mobile-app.view', 'active' => 'vendor.store.mobile-app*'],
             ]],
             ['key' => 'marketing', 'label' => 'navigation.vendor.marketing', 'icon' => 'tp-marketing', 'children' => [
                 ['key' => 'marketing.coupons', 'label' => 'navigation.vendor.coupons', 'route' => 'vendor.marketing.coupons.index', 'permission' => 'coupons.view', 'active' => 'vendor.marketing.coupons.*'],

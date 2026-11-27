@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Support\Http\Controllers\Vendor\CustomerTicketController;
 use App\Modules\Support\Http\Controllers\Vendor\HelpCenterController;
 use App\Modules\Support\Http\Controllers\Vendor\TicketController;
 use Illuminate\Support\Facades\Route;
@@ -7,8 +8,24 @@ use Illuminate\Support\Facades\Route;
 /*
 | Surface: vendor panel (both host modes) — Support tickets (VEN-091 / 091a / 091b),
 | names "vendor.support.*" (support.view reads, support.manage opens / replies / closes),
-| and the Help center (VEN-092 / 092a), names "vendor.help.*" (every staff member).
+| customer tickets "vendor.support.customers.*" (same permissions), and the Help center
+| (VEN-092 / 092a), names "vendor.help.*" (every staff member).
 */
+
+Route::middleware('auth:vendor')->prefix('support/customers')->name('support.customers.')->controller(CustomerTicketController::class)->group(function (): void {
+    Route::middleware('permission:support.view,vendor')->group(function (): void {
+        Route::get('/', 'index')->name('index');
+        Route::get('data', 'data')->name('data');
+        Route::get('attachments/{attachment}', 'attachment')->whereNumber('attachment')->name('attachments.show');
+        Route::get('{ticket}', 'show')->whereNumber('ticket')->name('show');
+        Route::get('{ticket}/messages', 'messages')->whereNumber('ticket')->name('messages');
+    });
+
+    Route::middleware('permission:support.manage,vendor')->group(function (): void {
+        Route::post('{ticket}/messages', 'reply')->whereNumber('ticket')->middleware('throttle:60,1')->name('reply');
+        Route::post('{ticket}/status/{status}', 'status')->whereNumber('ticket')->whereIn('status', ['resolved', 'closed', 'open'])->name('status');
+    });
+});
 
 Route::middleware('auth:vendor')->prefix('support')->name('support.')->controller(TicketController::class)->group(function (): void {
     Route::middleware('permission:support.view,vendor')->group(function (): void {

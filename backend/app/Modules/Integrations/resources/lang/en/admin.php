@@ -61,15 +61,18 @@ return [
         ],
         'google' => [
             'title' => 'Sign in with Google',
-            'description' => 'OAuth for admins, vendors and affiliates. Shopper Google login uses each store\'s own config.',
+            'description' => 'OAuth for admins, vendors and affiliates, and shopper sign-in in the store apps and themes.',
             'test' => 'Test sign-in',
             'redirect_help' => 'Copy into Google Cloud Console › Credentials › Authorized redirect URIs.',
             'fields' => [
                 'enabled' => 'Enabled',
                 'client_id' => 'Client ID',
                 'client_secret' => 'Client secret',
+                'customer_client_ids' => 'Shopper app client IDs',
             ],
-            'help' => [],
+            'help' => [
+                'customer_client_ids' => 'Google OAuth client IDs of the store apps (iOS / Android), one per line or comma-separated. Shopper Google sign-in is offered when the provider is enabled; tokens issued to these IDs or the Client ID above are accepted.',
+            ],
         ],
         'apple' => [
             'title' => 'Sign in with Apple',
@@ -83,8 +86,10 @@ return [
                 'team_id' => 'Team ID',
                 'key_id' => 'Key ID',
                 'private_key' => 'Private key (.p8)',
+                'customer_client_ids' => 'Shopper app bundle IDs',
             ],
             'help' => [
+                'customer_client_ids' => 'Bundle IDs of the store iOS apps (and other Services IDs), one per line or comma-separated. Shopper Apple sign-in is offered when the provider is enabled.',
                 'private_key' => 'Upload the AuthKey_XXXX.p8 file downloaded from Apple.',
             ],
         ],

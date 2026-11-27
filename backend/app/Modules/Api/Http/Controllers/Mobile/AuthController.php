@@ -5,6 +5,7 @@ namespace App\Modules\Api\Http\Controllers\Mobile;
 use App\Modules\Api\Http\Requests\Mobile\LogoutRequest;
 use App\Modules\Api\Http\Requests\Mobile\MobileLoginRequest;
 use App\Modules\Api\Http\Requests\Mobile\MobileRegisterRequest;
+use App\Modules\Api\Http\Requests\Mobile\MobileSocialLoginRequest;
 use App\Modules\Api\Http\Requests\Mobile\RefreshTokenRequest;
 use App\Modules\Api\Http\Resources\Mobile\CustomerResource;
 use App\Modules\Api\Services\MobileAuthService;
@@ -12,6 +13,8 @@ use App\Modules\Identity\DTOs\LoginCredentialsData;
 use App\Modules\Identity\DTOs\RegisterCustomerData;
 use App\Modules\Identity\Models\Customer;
 use App\Modules\Identity\Services\CustomerEmailVerificationService;
+use App\Modules\Identity\Services\CustomerSocialAuthService;
+use App\Modules\Identity\Support\Social\CustomerIdTokenVerifier;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
 use Illuminate\Http\JsonResponse;
@@ -41,6 +44,25 @@ class AuthController extends Controller
         $customer = $this->auth->login(LoginCredentialsData::fromRequest($request), $request->deviceId(), $request);
 
         return JsonResponder::success((string) __('identity::account.signed_in', ['name' => $customer->name]), $this->session($request, $customer, $request->deviceId()));
+    }
+
+    /**
+     * Sign in with Google / Apple (id_token from the native SDK); 201 when the account was created.
+     */
+    public function social(MobileSocialLoginRequest $request, CustomerSocialAuthService $social): JsonResponse
+    {
+        if (! CustomerIdTokenVerifier::isAvailable($request->provider())) {
+            return JsonResponder::error((string) __('identity::auth.social.unavailable'), 404);
+        }
+
+        $result = $social->signIn($request->provider(), (string) $request->validated('id_token'), $request->validated('nonce'), $request->validated('name'));
+        $customer = $result['customer'];
+        $this->auth->completeSocialSignIn($customer, $request->deviceId(), $result['created']);
+        $message = (string) __('identity::account.signed_in', ['name' => $customer->name]);
+
+        return $result['created']
+            ? JsonResponder::created($message, $this->session($request, $customer, $request->deviceId()))
+            : JsonResponder::success($message, $this->session($request, $customer, $request->deviceId()));
     }
 
     public function refresh(RefreshTokenRequest $request): JsonResponse

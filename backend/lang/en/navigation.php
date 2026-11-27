@@ -119,6 +119,7 @@ return [
         'returns_analytics' => 'Return analytics',
         'pages' => 'Pages',
         'appearance' => 'Appearance',
+        'mobile_app' => 'Mobile app',
         'account' => 'Account',
         'general' => 'General',
         'currencies' => 'Currencies',

@@ -136,6 +136,18 @@ return [
         'form_load' => 'The form could not be loaded.',
     ],
     'notifications' => [
+        'customer_opened' => [
+            'title' => 'New customer ticket :reference',
+            'body' => ':author: :subject',
+        ],
+        'customer_replied' => [
+            'title' => 'Customer replied on :reference',
+            'body' => ':author: :excerpt',
+        ],
+        'customer_closed' => [
+            'title' => 'Customer closed ticket :reference',
+            'body' => ':author closed “:subject”.',
+        ],
         'opened' => [
             'title' => 'New ticket :reference from :store',
             'body' => ':author: :subject',

@@ -55,6 +55,7 @@ return [
             'order_updates' => 'Confirmation and status changes of your orders.',
             'shipping_updates' => 'Shipment, tracking and delivery updates.',
             'returns' => 'Progress of your return and refund requests.',
+            'support' => 'Replies from the store on your support tickets.',
             'price_drops' => 'When an item in your wishlist gets cheaper.',
             'back_in_stock' => 'When an item you follow is available again.',
             'promotions' => 'Offers, coupons and news from the store.',

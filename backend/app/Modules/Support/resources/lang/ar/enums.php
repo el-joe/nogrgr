@@ -38,6 +38,7 @@ return [
         'admin' => 'دعم المنصة',
         'vendor' => 'فريق المتجر',
         'owner' => 'مالك المتجر',
+        'customer' => 'العميل',
     ],
     'help_topic' => [
         'getting_started' => 'البداية',

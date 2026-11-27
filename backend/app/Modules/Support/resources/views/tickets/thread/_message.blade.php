@@ -3,14 +3,19 @@
     the vendor panel and owner portal) is the end-aligned brand bubble; the other side is
     the start-aligned grey bubble with initials. Internal notes (admin only) are an amber
     bubble with the "Internal" badge. Files open through the viewer's authorised route.
-    $message, $ticket, $viewer ('admin' | 'vendor' | 'owner').
+    $message, $ticket, $viewer ('admin' | 'vendor' | 'owner' | 'store' = staff on a customer ticket).
 --}}
 @php
     $viewer ??= 'admin';
-    $mine = $viewer === 'admin' ? $message->isFromAdmin() : ! $message->isFromAdmin();
-    $internal = (bool) $message->is_internal;
+    $mine = match ($viewer) {
+        'admin' => $message->isFromAdmin(),
+        'store' => $message->isFromStore(),
+        default => ! $message->isFromAdmin(),
+    };
+    $internal = (bool) ($message->is_internal ?? false);
     $attachmentUrl = static fn (int $id): string => match ($viewer) {
         'vendor' => vendor_route('support.attachments.show', ['attachment' => $id]),
+        'store' => vendor_route('support.customers.attachments.show', ['attachment' => $id]),
         'owner' => route('owner.support.tickets.attachments.show', $id),
         default => route('admin.support.tickets.attachments.show', $id),
     };

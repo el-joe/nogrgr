@@ -136,6 +136,18 @@ return [
         'form_load' => 'تعذر تحميل النموذج.',
     ],
     'notifications' => [
+        'customer_opened' => [
+            'title' => 'تذكرة عميل جديدة :reference',
+            'body' => ':author: :subject',
+        ],
+        'customer_replied' => [
+            'title' => 'ردّ العميل على :reference',
+            'body' => ':author: :excerpt',
+        ],
+        'customer_closed' => [
+            'title' => 'أغلق العميل التذكرة :reference',
+            'body' => 'أغلق :author «:subject».',
+        ],
         'opened' => [
             'title' => 'تذكرة جديدة :reference من :store',
             'body' => ':author: :subject',

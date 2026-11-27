@@ -3,6 +3,7 @@
 namespace App\Modules\Identity\Services;
 
 use App\Modules\Identity\Contracts\SocialOAuthClient;
+use App\Modules\Identity\DTOs\SocialProfileData;
 use App\Modules\Identity\Enums\SocialIntent;
 use App\Modules\Identity\Enums\SocialProvider;
 use App\Modules\Identity\Exceptions\SocialAuthException;
@@ -53,7 +54,10 @@ class SocialAuthService extends BaseService
         return $client;
     }
 
-    public function begin(SocialProvider $provider, SocialIntent $intent, Request $request): string
+    /**
+     * @param  array<string, mixed>  $context  kept with the attempt (customer intent: the store hand-back)
+     */
+    public function begin(SocialProvider $provider, SocialIntent $intent, Request $request, array $context = []): string
     {
         $state = Str::random(40);
         $nonce = Str::random(40);
@@ -63,6 +67,7 @@ class SocialAuthService extends BaseService
             'nonce' => $nonce,
             'provider' => $provider->value,
             'intent' => $intent->value,
+            'context' => $context,
             'expires_at' => now()->addSeconds(self::STATE_TTL_SECONDS)->getTimestamp(),
         ]);
 
@@ -101,8 +106,20 @@ class SocialAuthService extends BaseService
     }
 
     /**
+     * The context of the pending attempt, without consuming it.
+     *
+     * @return array<string, mixed>
+     */
+    public function pendingContext(Request $request): array
+    {
+        $pending = $request->session()->get(self::SESSION_KEY);
+
+        return is_array($pending) && is_array($pending['context'] ?? null) ? $pending['context'] : [];
+    }
+
+    /**
      * @param  array<string, mixed>  $parameters  callback query / handed-off POST
-     * @return array{owner: Owner, intent: SocialIntent}
+     * @return array{owner: Owner|null, intent: SocialIntent, profile?: SocialProfileData, context?: array<string, mixed>}
      *
      * @throws SocialAuthException
      */
@@ -128,6 +145,10 @@ class SocialAuthService extends BaseService
         }
 
         $profile = $this->client($provider)->profile($code, (string) $pending['nonce'], SocialRedirectUri::for($provider->value), $parameters);
+
+        if (($pending['intent'] ?? null) === SocialIntent::Customer->value) {
+            return ['owner' => null, 'intent' => SocialIntent::Customer, 'profile' => $profile, 'context' => is_array($pending['context'] ?? null) ? $pending['context'] : []];
+        }
 
         if (($pending['intent'] ?? null) === SocialIntent::Link->value) {
             $owner = $this->owners->current();

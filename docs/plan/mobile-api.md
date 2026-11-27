@@ -4,10 +4,10 @@ The white-label Flutter app talks to two JSON APIs of the **same store** with th
 
 | API | Base | Owns |
 |---|---|---|
-| Mobile API v1 | `/api/mobile/v1` | auth, bootstrap + static texts, account, addresses, wishlist, notifications inbox, push devices |
-| Store API v1 | `/store-api/v1` | catalog (home, categories, products, search), CMS pages + shell, cart, checkout, payments (Stripe inline / PayPal), orders (+ reorder, invoice, cancel reasons), returns, reviews, image search |
+| Mobile API v1 | `/api/mobile/v1` | auth (incl. Google / Apple), bootstrap + static texts, account, addresses, wishlist, notifications inbox, push devices |
+| Store API v1 | `/store-api/v1` | catalog (home, categories, products, search), CMS pages + shell, cart, checkout, payments (Stripe inline / PayPal), orders (+ reorder, invoice, cancel reasons), returns, reviews, image search, customer support tickets |
 
-Routes: `app/Modules/Api/routes/api.php` (names `api.mobile.v1.*`) and the `routes/store-api.php` files of Storefront, Commerce, AfterSales, Engagement, Ai (names `store-api.v1.*`). Decisions #104, #106.
+Routes: `app/Modules/Api/routes/api.php` (names `api.mobile.v1.*`) and the `routes/store-api.php` files of Storefront, Commerce, AfterSales, Engagement, Ai, Support (names `store-api.v1.*`). Decisions #104, #106, #108.
 
 ## Headers
 
@@ -46,11 +46,12 @@ Sign-in / sign-up return `data.tokens {token_type, access_token, expires_at, exp
 | Method | Path | Auth | Notes |
 |---|---|---|---|
 | GET | `ping` | – | health |
-| GET | `bootstrap` | – | store, branding (theme slug/family/variant, primary colour, fonts, splash), locale + languages, currencies (base/charge USD, display list), countries, feature flags, push availability, `app.update.state` none/optional/required + store URL, maintenance + message, `texts.version` |
+| GET | `bootstrap` | – | store, branding (theme slug/family/variant, primary colour, fonts, splash), locale + languages, currencies (base/charge USD, display list), countries, feature flags, push availability, `auth.social_providers` (only configured: `google`, `apple`), `app.update.state` none/optional/required + store URL, maintenance + message, `texts.version` |
 | GET | `texts?group=mobile` | – | resolved static texts (store edits → base → English) of `X-Locale`; `ETag` / `If-None-Match` → 304 |
 | POST | `auth/register` | – | name, email, phone + phone_country (intl), password + confirmation, device_id → 201 customer + tokens; sends the e-mail code |
 | POST | `auth/login` | – | email, password, device_id |
 | POST | `auth/refresh` | – | refresh_token → new pair |
+| POST | `auth/social/{google\|apple}` | – | `id_token` from the native SDK, `nonce` (raw; Apple may carry its SHA-256), `name` (Apple first sign-in), `device_id` → `{customer, tokens}`; 201 when the account was created, 200 when found by provider id or linked by verified e-mail; 404 provider not configured; 422 `id_token` invalid / unverified e-mail of an existing account / inactive |
 | POST | `auth/password/forgot` | – | email → 6-digit code by mail (never reveals existence), resend after 45 s |
 | POST | `auth/password/check` | – | email, code |
 | POST | `auth/password/reset` | – | email, code, password + confirmation |
@@ -71,7 +72,7 @@ Sign-in / sign-up return `data.tokens {token_type, access_token, expires_at, exp
 | GET | `favorites` | token | product cards (USD + display), `ids` of all favorites |
 | POST | `favorites` | token | store_product_id (idempotent) |
 | DELETE | `favorites/{storeProductId}` | token | |
-| GET | `notifications?unread=1` | token | inbox items (translated title/body, event, type, order_uuid, read) + unread_count |
+| GET | `notifications?unread=1` | token | inbox items (translated title/body, event, type, order_uuid, ticket_id, read) + unread_count |
 | GET | `notifications/unread-count` | token | |
 | POST | `notifications/{uuid}/read` | token | |
 | POST | `notifications/read-all` | token | |
@@ -106,10 +107,29 @@ Public (a token only adds `favorited`). Same services as the themes, so prices e
 | POST | `orders/{uuid}/reorder` | re-adds every line through the add-to-cart rules at today's prices → `cart`, `added`, `skipped [{store_product_id, variant_id, name, reason, message}]`; nothing addable → 422 `reorder_unavailable`. Guests' cart token rules as `cart/items` |
 | GET | `orders/{uuid}/invoice` | `{url, expires_at}`: 30-min signed link to the printable invoice on the store domain (open in a browser / web view; print or save as PDF) |
 
+## Store API customer support tickets (decision #108)
+
+Signed-in customer only (401); another customer's ticket → 404. Ticket: `{id, reference (C-1001), subject, topic {value, label}, status {value, label, tone}, order {uuid, number}|null, unread, last_reply_by customer|store, last_reply_at, excerpt, can_reply, can_close, created_at}`; detail adds `messages [{id, author customer|store, author_name, body, created_at, attachments [{id, name, mime_type, size, size_label, is_image, url}]}]` (file URLs are 30-min signed links).
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `support/tickets/options` | `topics [{value, label}]`, the customer's recent `orders [{uuid, number}]`, `max_files` 5, `max_file_kb` 10240, `file_types` |
+| GET | `support/tickets?status=active\|closed&page&per_page` | `items`, `meta` |
+| POST | `support/tickets` | multipart: `topic`, `subject` (3–150), `body` (5–5000), `order_uuid` (own order, optional), `files[]` (≤5 × 10 MB; jpg/png/webp/gif/pdf/office/csv/txt/zip) → 201 `ticket` (detail). Store staff notified |
+| GET | `support/tickets/{id}` | detail; marks store replies read |
+| POST | `support/tickets/{id}/messages` | `body` and/or `files[]` → 201 `message` + `ticket`; a resolved ticket reopens; closed → 422 |
+| POST | `support/tickets/{id}/close` | → `ticket`; already closed → 422 |
+
+Store replies / status changes reach the customer as inbox rows (`event` `ticket_replied` / `ticket_resolved` / `ticket_closed` / `ticket_reopened`, `type` `support`, `ticket_id`), e-mail per the `support` switch and push.
+
 ## Push
 
-Every customer **database** notification (orders, shipping, returns, refunds) is also pushed by `Notifications\Listeners\QueueCustomerPush` → `SendCustomerPush` job → FCM HTTP v1, with the project id + service account JSON from **Admin › Integrations › Firebase** (DB). Text in the customer's language; sent only when the customer's push switch of the type is on; data payload `{notification_id, event, order_uuid}` for deep links. Rejected tokens are cleared.
+Every customer **database** notification (orders, shipping, returns, refunds, support tickets) is also pushed by `Notifications\Listeners\QueueCustomerPush` → `SendCustomerPush` job → FCM HTTP v1, with the project id + service account JSON from **Admin › Integrations › Firebase** (DB). Text in the customer's language; sent only when the customer's push switch of the type is on; data payload `{notification_id, event, order_uuid, ticket_id}` for deep links. Rejected tokens are cleared.
 
 ## Store settings (DB)
 
-`store_settings.mobile_app` (`Api\Services\MobileAppSettingsService`): `ios` / `android` `{min_version, latest_version, store_url}`, `maintenance`, `maintenance_message {locale}`, `splash_background`, `splash_logo_path`, `features {reviews, wishlist, returns, image_search, guest_checkout, currency_switcher, push_notifications}`. The vendor (VEN-037) and admin (ADM-041g) pages write it.
+`store_settings.mobile_app` (`Api\Services\MobileAppSettingsService`): `ios` / `android` `{min_version, latest_version, store_url}`, `maintenance`, `maintenance_message {locale}`, `splash_background`, `splash_logo_path`, `features {reviews, wishlist, returns, image_search, guest_checkout, currency_switcher, push_notifications}`. Edited in Vendor › Your store › Mobile app (VEN-037, `store.mobile-app.manage`) and Admin › Vendors › profile › Mobile app tab (ADM-041g, `vendors.manage`) — `MobileAppPanelService` + `MobileAppSettingsRequest` (decision #108).
+
+## Social sign-in configuration
+
+Admin › Integrations › Google / Apple (DB, decision #69): the provider switch + Client ID / Services ID, and **Shopper app client IDs / bundle IDs** (`customer_client_ids`, comma or line separated) — accepted `aud` values of app id_tokens besides the Client ID. Apple keys are fetched from `https://appleid.apple.com/auth/keys` and cached 12 h.

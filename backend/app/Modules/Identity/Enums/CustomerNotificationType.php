@@ -14,6 +14,7 @@ enum CustomerNotificationType: string
     case OrderUpdates = 'order_updates';
     case ShippingUpdates = 'shipping_updates';
     case Returns = 'returns';
+    case Support = 'support';
     case PriceDrops = 'price_drops';
     case BackInStock = 'back_in_stock';
     case Promotions = 'promotions';

@@ -8,6 +8,9 @@
 <x-vendor::layout :title="$ticket ? $ticket->title() : __('support::tickets.vendor_title')" page="vendor-support">
     <div class="grid gap-6" data-support-page>
         <x-ui::page-header :title="__('support::tickets.vendor_title')" :breadcrumbs="[__('support::tickets.vendor_title') => null]">
+            <x-slot:tabs>
+                @include('support::customers._tabs', ['active' => 'platform'])
+            </x-slot:tabs>
             @if ($canManage)
                 <x-slot:actions>
                     <x-ui::button icon="plus" data-remote-modal="support-ticket-modal" :data-url="vendor_route('support.create')">{{ __('support::tickets.new_ticket') }}</x-ui::button>

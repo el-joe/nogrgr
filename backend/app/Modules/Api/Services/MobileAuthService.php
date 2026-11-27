@@ -118,6 +118,16 @@ class MobileAuthService extends BaseService
     }
 
     /**
+     * Finishes a shopper social sign-in (customer already verified and resolved): audit +
+     * binds the app install.
+     */
+    public function completeSocialSignIn(Customer $customer, ?string $deviceId, bool $created): void
+    {
+        $this->auditor->record($created ? AuditAction::Registered : AuditAction::Login, $customer);
+        $this->attachDevice($customer, $deviceId);
+    }
+
+    /**
      * A fresh access + refresh pair for the install; the install's previous pair is revoked.
      */
     public function issueTokens(Customer $customer, ?string $deviceId): TokenPairData

@@ -7,6 +7,7 @@ use App\Modules\Identity\Http\Controllers\Storefront\NotificationPreferencesCont
 use App\Modules\Identity\Http\Controllers\Storefront\PasswordResetController;
 use App\Modules\Identity\Http\Controllers\Storefront\ProfileController;
 use App\Modules\Identity\Http\Controllers\Storefront\RegisterController;
+use App\Modules\Identity\Http\Controllers\Storefront\SocialLoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +26,11 @@ Route::prefix('account')->name('account.')->group(function (): void {
         Route::post('forgot-password', [PasswordResetController::class, 'email'])->middleware('throttle:6,1')->name('password.email');
         Route::get('reset-password/{token}', [PasswordResetController::class, 'reset'])->name('password.reset');
         Route::post('reset-password', [PasswordResetController::class, 'store'])->middleware('throttle:6,1')->name('password.store');
+
+        // Shopper social sign-in (only providers configured in Admin › Integrations; else 404).
+        Route::get('social/google', [SocialLoginController::class, 'redirect'])->defaults('provider', 'google')->middleware('throttle:20,1')->name('social.google');
+        Route::get('social/apple', [SocialLoginController::class, 'redirect'])->defaults('provider', 'apple')->middleware('throttle:20,1')->name('social.apple');
+        Route::get('social/complete', [SocialLoginController::class, 'complete'])->middleware('throttle:20,1')->name('social.complete');
     });
 
     Route::middleware('auth:customer')->group(function (): void {

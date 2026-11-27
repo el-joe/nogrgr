@@ -3,14 +3,17 @@
     vendor thread (VEN-091b, 88:111731) and the owner portal: messages, "Live" indicator
     (Reverb push on support.tickets.<id>, 15 s polling fallback), composer with
     Enter-to-send and up to 5 attachments (resources/js/panels/request-thread.js,
-    [data-thread]). Admins also get the "Internal note" switch.
+    [data-thread]). Admins also get the "Internal note" switch. viewer 'store' = store staff on
+    a customer ticket (Vendor › Support › Customers).
     $ticket, $messages, $viewer, $messagesUrl, $replyUrl (null = read only), $realtime,
     optional $title (header), $header (slot-like HTML of actions), $closedNotice (bool).
 --}}
 @php
     $lastId = (int) ($messages->last()?->id ?? 0);
     $closed = $ticket->status === \App\Modules\Support\Enums\TicketStatus::Closed;
-    $canWrite = $replyUrl !== null && ! ($closed && $viewer !== 'admin');
+    // The responder side (platform admin, store staff on a customer ticket) may answer a closed ticket.
+    $responder = in_array($viewer, ['admin', 'store'], true);
+    $canWrite = $replyUrl !== null && ! ($closed && ! $responder);
 @endphp
 <x-ui::card id="conversation" :padding="false" class="flex min-h-[420px] flex-col"
     data-thread
