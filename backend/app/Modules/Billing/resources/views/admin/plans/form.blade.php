@@ -8,7 +8,6 @@
     $locales = \App\Shared\Support\Locale::enabled();
     $isNew = ! $plan->exists;
     $title = $isNew ? __('billing::plans.create_title') : __('billing::plans.edit_title', ['name' => $plan->name]);
-    $icons = collect(\App\Shared\Support\Icon::names())->mapWithKeys(fn ($icon) => [$icon => $icon])->all();
     $money = fn (int $minor) => \App\Shared\Money\Money::ofMinor($minor)->toDecimal();
 @endphp
 <x-layouts.panel surface="admin" :title="$title" data-page="billing">
@@ -52,7 +51,7 @@
                     </x-ui::locale-tabs>
 
                     <div class="grid gap-5 sm:grid-cols-2">
-                        <x-ui::select name="icon" :label="__('billing::plans.fields.icon')" :options="$icons" :selected="$plan->icon" :placeholder="__('billing::plans.fields.icon_placeholder')" allow-clear />
+                        <x-ui::icon-picker name="icon" :label="__('billing::plans.fields.icon')" :selected="$plan->icon" :placeholder="__('billing::plans.fields.icon_placeholder')" />
                         <x-ui::select name="status" :label="__('billing::plans.fields.status')" :options="$statuses" :selected="$plan->status?->value" :search="false" required />
                         <x-ui::input name="monthly_price" type="number" step="0.01" min="0" inputmode="decimal" :label="__('billing::plans.fields.monthly_price')" :value="$money((int) $plan->monthly_price_minor)" required dir="ltr" />
                         <x-ui::input name="yearly_price" type="number" step="0.01" min="0" inputmode="decimal" :label="__('billing::plans.fields.yearly_price')" :value="$money((int) $plan->yearly_price_minor)" required dir="ltr" />

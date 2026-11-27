@@ -6,6 +6,7 @@ use App\Modules\Affiliates\Http\Middleware\TrackAffiliateReferral;
 use App\Modules\Affiliates\Http\ViewComposers\VendorPartnerWidgetComposer;
 use App\Modules\Affiliates\Listeners\ApproveConversionOnPayment;
 use App\Modules\Affiliates\Listeners\CreateVendorAffiliate;
+use App\Modules\Affiliates\Listeners\EnsureAffiliatePanelRole;
 use App\Modules\Affiliates\Listeners\RecordReferralOnRegistration;
 use App\Modules\Affiliates\Listeners\ReverseConversionOnRefund;
 use App\Modules\Affiliates\Listeners\SendAffiliateNotifications;
@@ -31,6 +32,7 @@ use App\Modules\Identity\Models\Affiliate;
 use App\Modules\Platform\Events\RegistrationCompleted;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Shared\Modules\ModuleServiceProvider as BaseModuleServiceProvider;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
@@ -68,6 +70,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         Event::listen(PaymentCaptured::class, ApproveConversionOnPayment::class);
         Event::listen(AffiliateConversionReversalRequested::class, ReverseConversionOnRefund::class);
         Event::listen(TenantProvisioned::class, CreateVendorAffiliate::class);
+        Event::listen(Login::class, EnsureAffiliatePanelRole::class);
         Event::subscribe(SendAffiliateNotifications::class);
 
         View::composer('affiliates::vendor._partner', VendorPartnerWidgetComposer::class);

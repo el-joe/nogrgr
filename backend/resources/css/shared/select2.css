@@ -193,3 +193,30 @@
 :root .select2-results__message {
     color: var(--color-ink-secondary);
 }
+
+/* <x-ui::icon-picker>: icon + title in the list and in the selected value (RTL via flex order). */
+:root .ui-icon-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    vertical-align: middle;
+}
+
+:root .ui-icon-option-glyph {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    color: var(--color-ink-secondary);
+}
+
+:root .select2-results__option--highlighted .ui-icon-option-glyph,
+:root .select2-results__option--selected .ui-icon-option-glyph {
+    color: currentColor;
+}
+
+:root .ui-icon-option-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -459,3 +459,54 @@ Scope: the uncommitted P8 vendor pages from "vendorp8": customers + newsletter s
 **Tests:** `flock … php artisan test --parallel --processes=12 tests/Feature --filter='VendorBannersPageTest|VendorThemesPageTest|VendorComplianceCenterTest|VendorCustomersTest|VendorStaffRolesTest|VendorSubscribersTest|RolesManagementTest'`: **70/70 passed** (697 assertions). `npm run build` passes; Pint passes on the changed files. The full suite was not run, because other agents hold uncommitted payment work in the tree.
 
 **Verdict: PASS** for the P8 vendor pages. No Critical or High issue. QA-P8-001…004 are fixed; QA-P8-005…012 are Low or observations.
+
+## Final QA gate P7–P12 (teammate "qa-final") — 2026-11-27
+
+Scope: everything committed on main up to 486bd9e (P7 storefront families, P8 vendor panel, P9 affiliates / support / reports / notifications, P10 AI, P11 mobile API + app settings panels, P12 legacy:migrate). **Setup:** QA DB `nogrgr_qa` (tenant suffix `_qa`), `php artisan serve --port=8091 --no-reload`, redis cache + prefix `qafinal_`, sync queue, log mailer, `TENANT_BASE_DOMAIN=localhost`. Headless Chromium (Playwright) scripts. Test passwords were set on the QA accounts (admin, qa-owner1 vendor / owner / affiliate, qa-customer1) and kept in the session scratchpad only. The server was stopped afterwards.
+
+**Method**
+- Route crawl of every parameter-free GET page of admin (120 + 87 followed detail pages), vendor (78 + 42), owner portal, affiliate panel, central website and storefront (20 + 43), each at **1440 en/light, 1440 ar/dark and 375 ar/light**. Per page: HTTP status, console / page errors, failed XHR, raw translation keys (text + placeholders / titles / aria-labels), horizontal overflow (with the offending element), placeholder copy and `href="#"` dead links. RTL / dark confirmed on every rendered page (`dir`, `.dark`).
+- Storefront flow in **Ecommet, Elora 1 and Souqify 1** (signed theme preview) × the same 3 modes, signed in as a customer: home (top + bottom), category listing, product page, add to cart, search, image-search modal opens, cart, checkout, **Stripe inline Card Element renders** (iframe from js.stripe.com), account orders / returns / support / wishlist / profile. Screenshots checked by eye.
+- Remote-modal audit: on every admin / vendor / owner page, each `[data-remote-modal]` opener was clicked and the overlay had to open.
+- Actions spot-checked: admin AI translation modal (scope, missing-key estimate), stop period create (422 inline → 201 → list refreshed), vendor new product request modal.
+
+**Money hand-check (ORDER_FORMULAS.md) — PASS.** ORD-10003 (central flash sale 10 % + central coupon QA10 10 %, 1 × cost 238.84, profit 20 %): profit 47.77, price 286.61, fixed shipping 5.00, discount (286.61 + 5.00) × 10 % = 29.16, line 262.45, shipping 7.50, coupon 26.25 → **total 243.70**; platform = 238.84 + 5.00 − 29.16 + 7.50 − 26.25 = **195.93**, vendor **47.77**, sum = total. The storefront order page shows Items subtotal 291.61 (sub + fixed shipping, per the display rule), −29.16, 7.50, −26.25, 243.70; the vendor order page shows the same plus "Platform share (80 %) $195.93". ORD-10001 (2 lines, no discounts) 307.87 = 258.64 + 49.23 also matches.
+
+**Fixed in this pass (each with a regression test; Pint clean; `npm run build`)**
+- QA-FINAL-002 (High): **Admin › Catalog › Labels returned 500** on the QA DB after `legacy:migrate` — old label icons (`bolt`, `fire`, `package`, `undo`, `leaf`) are not in our icon set and `Icon::svg()` throws.
+  - Fix: `Platform/Legacy/Steps/Central/CatalogStep.php` maps the old names (`bolt→zap`, `fire→flame`, `package→box`, `undo→return`) and stores null for an icon we do not have. The QA DB rows were mapped the same way.
+  - Test: `LegacyMigrationTest` "maps old label icon names…" (fixture label 5 = `bolt`, new label 6 = `leaf`).
+- QA-FINAL-003 (Medium): **dead "Returns" links** on the cart / product trust rows and the Elora / Souqify privacy popup and Souqify product page — they linked `/pages/returns`, but the system page slug is `returns-policy` (404).
+  - Fix: the five views use `SystemStorePage::Returns->value`.
+  - Test: `tests/Unit/Architecture/StorefrontPageSlugsTest.php` (every literal `storefront.pages.show` slug must be a `SystemStorePage`).
+- QA-FINAL-004 (Medium): **Ecommet home scrolled sideways** — 176 px at 1440 (the implicit grid track grew with `.eco-why` and the deals tabs; the "seen, not fixed" item from qa-p8) and ~600 px at 375 (the deals rail is overflow-visible on phones and nothing above it clipped).
+  - Fix: `grid-cols-1` on the home container (`themes/ecommet/pages/home.blade.php`) and `grid-cols-1 max-lg:overflow-x-clip` on `components/storefront/section/deals.blade.php`. Re-measured: 0 px at 1440 en and 375 ar.
+  - Test: `tests/Unit/Architecture/EcommetHomeOverflowTest.php`.
+- QA-FINAL-005 (High): **remote modals that never opened** — the page modules did not call `bindRemoteModals()`, so the buttons did nothing (no request, no error):
+  - admin Localization › Translations / Key locks: Add key, New file, View / Edit key, **Translate with AI** (ADM-092a);
+  - admin Shipping › Fixed costs (Add fixed cost) and Stop periods (Add stop period), also on the company form;
+  - admin Storefront › Default banners (Add banner);
+  - vendor Requests › product / brand / manufacturing "New request".
+  - Fix: `resources/js/panels/admin/{translations,shipping,banners}.js` and `resources/js/panels/vendor/requests.js` bind remote modals. All re-checked live (open, 422 inline, save, list refresh).
+  - Test: `tests/Unit/Architecture/RemoteModalsBoundTest.php` — every Blade with `data-remote-modal` whose `data-page` / layout `page=` maps to a panel module (panels/*/index.js) must reach `bindRemoteModals()` (directly or through imports).
+- QA-FINAL-006 (Medium): **affiliates without the panel role got 403 on every affiliate-panel page.** The role was only given at sign-up and vendor SSO, so affiliates imported by `legacy:migrate`, and the auto-created vendor affiliate signing in with a password (after a reset), could log in but see nothing.
+  - Fix: new listener `Affiliates/Listeners/EnsureAffiliatePanelRole` on `Illuminate\Auth\Events\Login` (guard `affiliate`) calls `AffiliateAccountService::ensurePanelRole()`. It is registered in the Affiliates `ModuleServiceProvider`.
+  - Test: `AffiliateAuthFlowTest` "gives an affiliate without the panel role that role when it signs in".
+
+- QA-FINAL-012 (client request, Low): the **icon selects listed raw names** ("ad-help", "ad-magic"…) as text only.
+  - New reusable `<x-ui::icon-picker>` (`resources/views/components/ui/icon-picker.blade.php`): every option carries its server-rendered 18 px currentColor SVG in `data-icon-svg`. `panels/select2.js` (`data-icon-picker`) adds templateResult / templateSelection (icon + title in the list and in the selected value) and a matcher on title or name. Styles live in `shared/select2.css` (RTL / dark checked).
+  - Titles: `App\Shared\Support\Icon::title()` = `ui.icons.<name>` (new en/ar keys for all 102 pickable icons), else the humanised name. `Icon::pickable()` leaves out the internal `ad-*` / `tp-*` icons; `Icon::pickerOptions($current)` keeps a current internal value.
+  - Used for every icon chooser: Catalog › Labels modal and Billing › Plan form. Badges, menu links and social links have no free icon field.
+  - Browser-checked at 1440 en/light, 1440 ar/dark and 375 ar: 102 options with icons; searching "light" / "قلب" / "truck-tick" finds the icon; the selected value shows the icon.
+  - Test: `tests/Feature/Ui/IconPickerTest.php`.
+
+**Open (logged, not fixed)**
+- QA-FINAL-001 (Medium, docs): `05-page-coverage.md` is stale. Many delivered rows still say `todo`, e.g. ADM-001…004, ADM-085…089, SF-ECO-001…036, SF-ALL-001…004, WEB-021…024 and most MAIL-0xx, although commits 29be999, a3e1a12 and 8f3cea5 delivered them and the pages render in this pass. The PM should flip the rows (the full remaining list is in the qa-final report). The doc was not edited here because it has uncommitted edits from "flutter3".
+- QA-FINAL-007 (Low, data): the demo / platform hero banners link to `/category/demo-home-appliances` and `/category/demo-gaming`. qastore1 does not sell those categories (`selling_category_ids` = [1, 2]), so the links 404. Suggestion: validate or resolve banner category links per store, or hide a link whose category is not visible.
+- QA-FINAL-008 (Low): notifications store absolute action URLs. On the QA DB, old notifications still point to `127.0.0.1:8099` and `localhost:8097`, so "open" goes to a dead host. The same thing happens in production after a store connects a custom domain or the central domain changes. Suggestion: store the route name + parameters, or a relative path.
+- QA-FINAL-009 (Low): currency rates on the QA DB were never synced (`rate` 1.000000, `rate_synced_at` null), so the storefront shows "SAR 1,594.61" next to "You will be charged $1,594.61 USD". In production the rate sync fixes this. Suggestion: hide or flag a non-base currency that has never been synced.
+- QA-FINAL-010 (Low): an unknown record under the vendor panel (e.g. `/admin/sales/orders/3` instead of the uuid) renders the **storefront** themed 404, not a panel error page. This matches the open rows VEN-096…099 (P2 todo).
+- QA-FINAL-011 (Low, cosmetic): the admin / vendor Audit log "Event" filter lists HTTP fallback events as raw route names ("Request: admin.catalog.products.store · http.admin.catalog.products.store").
+- Env only: theme preview / asset URLs drop the dev port (known). The store API answers 429 when 12 crawlers share 127.0.0.1 (rate limit works as designed).
+
+**Results per area** (after fixes): central website PASS · storefront Ecommet / Elora / Souqify (home, listing, product, add to cart, search, image search, cart, checkout + Stripe card, account) PASS · vendor panel (dashboard widgets, products, orders, AI translation, Ad Studio, staff, settings, mobile app, support customers tab) PASS after QA-FINAL-005 · admin (dashboard, reports incl. AI usage + affiliates, affiliates pages, AI translation modal, support) PASS after QA-FINAL-002/005 · affiliate panel PASS after QA-FINAL-006 · owner portal incl. notifications PASS.

@@ -6,7 +6,7 @@
 @props(['layout' => 'grid'])
 @php
     $badges = app(\App\Modules\Storefront\Services\Catalog\StorefrontShell::class)->paymentBadges();
-    $returns = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => 'returns']) : null;
+    $returns = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => \App\Modules\Storefront\Enums\SystemStorePage::Returns->value]) : null;
 @endphp
 <div {{ $attributes->class(['grid gap-3', 'sm:grid-cols-2' => $layout === 'grid']) }} data-reveal-stagger>
     @if ($badges)

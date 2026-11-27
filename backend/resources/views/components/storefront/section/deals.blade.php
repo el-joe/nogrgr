@@ -11,7 +11,7 @@
     ]));
 @endphp
 @if ($tabs !== [])
-    <section {{ $attributes->class(['grid gap-3 lg:gap-4']) }} data-simple-tabs data-reveal="fade-up" aria-label="{{ __st('catalog.home.deals_label') }}">
+    <section {{ $attributes->class(['grid grid-cols-1 gap-3 max-lg:overflow-x-clip lg:gap-4']) }} data-simple-tabs data-reveal="fade-up" aria-label="{{ __st('catalog.home.deals_label') }}">
         <div class="flex items-center justify-between gap-4" role="tablist">
             @foreach ($tabs as $index => $tab)
                 @if ($index === 1)<a href="{{ $tabs[0]['more'] }}" class="hidden items-center gap-0.5 text-sm text-eco-black hover:underline lg:inline-flex">{{ $tabs[0]['more_label'] }}<x-ui::icon name="chevron-right" :size="16" class="rtl:-scale-x-100" /></a>@endif

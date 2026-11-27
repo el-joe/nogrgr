@@ -2,6 +2,8 @@
 
 namespace App\Shared\Support;
 
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 /**
@@ -16,6 +18,14 @@ final class Icon
      * @var list<string>
      */
     public const DIRECTIONAL = ['chevron-left', 'chevron-right', 'arrow-up', 'arrow-down', 'return', 'log-out', 'panel-left'];
+
+    /**
+     * Name prefixes of one-screen art (ad-* Ad Studio) and panel chrome (tp-* tenant panel
+     * navigation): not offered in icon pickers (<x-ui::icon-picker>).
+     *
+     * @var list<string>
+     */
+    public const INTERNAL_PREFIXES = ['ad-', 'tp-'];
 
     /**
      * @var array<string, string>
@@ -62,5 +72,51 @@ final class Icon
         $open = sprintf('<svg width="%1$d" height="%1$d" focusable="false" %2$s%3$s data-icon="%4$s" %5$s', $size, $a11y, $flip, $name, trim($attributes));
 
         return (string) preg_replace('/^<svg/', rtrim($open), $source, 1);
+    }
+
+    /**
+     * Icons a user may pick (labels, plans, links…): every icon except the internal ones.
+     *
+     * @return list<string>
+     */
+    public static function pickable(): array
+    {
+        return array_values(array_filter(self::names(), static fn (string $name): bool => ! Str::startsWith($name, self::INTERNAL_PREFIXES)));
+    }
+
+    /**
+     * Readable, translatable icon title: `ui.icons.<name>` when translated, else the
+     * humanised name ("credit-card-2" → "Credit card 2").
+     */
+    public static function title(string $name): string
+    {
+        $key = 'ui.icons.'.$name;
+
+        return Lang::has($key) ? (string) __($key) : Str::ucfirst(str_replace('-', ' ', $name));
+    }
+
+    /**
+     * Options of <x-ui::icon-picker>, sorted by title. A current value that is internal
+     * (or picked before it became internal) stays listed so editing keeps it.
+     *
+     * @return list<array{value: string, label: string, svg: string}>
+     */
+    public static function pickerOptions(?string $current = null): array
+    {
+        $names = self::pickable();
+
+        if ($current !== null && $current !== '' && self::exists($current) && ! in_array($current, $names, true)) {
+            $names[] = $current;
+        }
+
+        $options = array_map(static fn (string $name): array => [
+            'value' => $name,
+            'label' => self::title($name),
+            'svg' => self::svg($name, 18),
+        ], $names);
+
+        usort($options, static fn (array $a, array $b): int => strnatcasecmp($a['label'], $b['label']));
+
+        return $options;
     }
 }

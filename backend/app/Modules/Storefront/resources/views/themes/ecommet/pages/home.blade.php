@@ -9,7 +9,7 @@
     <x-sf::section.category-strip :tabs="$tabs" class="lg:hidden" />
     <x-sf::section.hero :banners="$hero" />
 
-    <div class="eco-container mt-4 grid gap-6 max-lg:px-0 lg:mt-6">
+    <div class="eco-container mt-4 grid grid-cols-1 gap-6 max-lg:px-0 lg:mt-6">
         <x-sf::section.why-choose :store="$store" class="hidden lg:block" />
         <x-sf::section.deals :deals="$deals" :clearance="$clearance" class="max-lg:ps-4" />
     </div>

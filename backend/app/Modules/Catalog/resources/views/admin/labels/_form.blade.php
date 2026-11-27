@@ -5,7 +5,6 @@
 --}}
 @php
     $editing = $label->exists;
-    $icons = collect(\App\Shared\Support\Icon::names())->mapWithKeys(fn ($icon) => [$icon => $icon])->all();
 @endphp
 <form id="label-form" method="POST" action="{{ $editing ? route('admin.catalog.labels.update', $label) : route('admin.catalog.labels.store') }}" data-ajax novalidate class="grid gap-5"
     data-modal-title="{{ $editing ? __('catalog::labels.edit_title') : __('catalog::labels.create_title') }}" data-submit-label="{{ __('catalog::common.save') }}" data-label-form>
@@ -23,7 +22,7 @@
         @endforeach
     </x-ui::locale-tabs>
     <div class="grid gap-5 sm:grid-cols-2">
-        <x-ui::select name="icon" :label="__('catalog::labels.fields.icon')" :options="$icons" :selected="$label->icon" :placeholder="__('catalog::labels.fields.icon_none')" allow-clear />
+        <x-ui::icon-picker name="icon" :label="__('catalog::labels.fields.icon')" :selected="$label->icon" :placeholder="__('catalog::labels.fields.icon_none')" />
         <x-ui::input name="sort_order" type="number" min="0" max="65535" :label="__('catalog::labels.fields.sort_order')" :value="$editing ? $label->sort_order : null" dir="ltr" />
     </div>
     <x-ui::select name="country_ids" multiple :label="__('catalog::labels.fields.countries')" :options="$countries" :selected="$label->country_ids ?? []" :placeholder="__('catalog::labels.fields.countries_all')" />

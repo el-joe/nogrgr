@@ -12,6 +12,7 @@ import { $ } from '../vendor-libs';
 import { initSelect2 } from '../select2';
 import { http } from '../../core/http';
 import { bindUnsavedForms } from './unsaved-form.js';
+import { bindRemoteModals } from '../remote-modal.js';
 
 const debounce = (fn, wait = 300) => {
     let timer;
@@ -305,6 +306,7 @@ function initPopup(form) {
 }
 
 export default function initShipping(page) {
+    bindRemoteModals(page);
     bindUnsavedForms(page);
     bindStopForms(document);
 

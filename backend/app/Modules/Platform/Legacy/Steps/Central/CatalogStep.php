@@ -7,9 +7,11 @@ use App\Modules\Catalog\Enums\AttributeDisplayType;
 use App\Modules\Catalog\Enums\BadgeType;
 use App\Modules\Catalog\Enums\DeliveryScope;
 use App\Modules\Catalog\Enums\MediaConversionStatus;
+use App\Modules\Catalog\Enums\MediaType;
 use App\Modules\Catalog\Enums\ProductStatus;
 use App\Modules\Catalog\Enums\RecordStatus;
 use App\Modules\Catalog\Jobs\ConvertCatalogMedia;
+use App\Modules\Catalog\Jobs\GenerateVideoPoster;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Services\ProductService;
@@ -382,9 +384,13 @@ class CatalogStep implements LegacyStepHandler
     {
         $writer = $context->central;
         $position = 0;
+        $images = 0;
 
         foreach ($files as $file) {
-            if ($file->file_type !== 'image' || str_contains((string) $file->path, '-thumb.')) {
+            // Gallery videos are kept as video items (never primary, poster job), #114.
+            $video = $file->file_type === 'video';
+
+            if ((! $video && $file->file_type !== 'image') || str_contains((string) $file->path, '-thumb.')) {
                 continue;
             }
 
@@ -398,6 +404,7 @@ class CatalogStep implements LegacyStepHandler
             $mediaId = $writer->upsert('catalog_media', (int) $file->id, 'catalog_media', [
                 'mediable_type' => $morph,
                 'mediable_id' => $productId,
+                'type' => $video ? MediaType::Video->value : MediaType::Image->value,
                 'disk' => LegacyMedia::DISK,
                 'path' => $copied['path'],
                 'mime_type' => $copied['mime'],
@@ -405,16 +412,17 @@ class CatalogStep implements LegacyStepHandler
                 'width' => $copied['width'],
                 'height' => $copied['height'],
                 'conversion_status' => MediaConversionStatus::Pending->value,
-                'is_primary' => $position === 0,
+                'is_primary' => ! $video && $images === 0,
                 'sort_order' => $position++,
             ]);
+            $images += $video ? 0 : 1;
 
             if ($existing === null && ! $context->dryRun() && $mediaId > 0) {
-                ConvertCatalogMedia::dispatch($mediaId);
+                $video ? GenerateVideoPoster::dispatch($mediaId) : ConvertCatalogMedia::dispatch($mediaId);
             }
         }
 
-        if ($position === 0) {
+        if ($images === 0) {
             $context->report->issue(LegacyIssueLevel::Warning, 'central', 'products', $legacyId, 'Product without images');
         }
     }

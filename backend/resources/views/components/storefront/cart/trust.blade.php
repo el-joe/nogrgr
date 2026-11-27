@@ -7,7 +7,7 @@
 @php
     $store = \App\Modules\Storefront\Support\StorefrontTheme::storeName();
     $privacy = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => 'privacy']) : null;
-    $returns = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => 'returns']) : null;
+    $returns = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => \App\Modules\Storefront\Enums\SystemStorePage::Returns->value]) : null;
 @endphp
 @if ($compact)
     <ul class="grid grid-cols-4 gap-2 border-y-8 border-[#f6f6f6] px-1 py-3 text-center text-xs leading-tight text-eco-green" role="list">

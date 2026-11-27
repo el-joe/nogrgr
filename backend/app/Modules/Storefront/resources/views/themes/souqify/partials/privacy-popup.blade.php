@@ -7,7 +7,7 @@
     $store = \App\Modules\Storefront\Support\StorefrontTheme::storeName();
     $badges = app(\App\Modules\Storefront\Services\Catalog\StorefrontShell::class)->paymentBadges();
     $privacy = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => 'privacy']) : null;
-    $returns = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => 'returns']) : null;
+    $returns = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => \App\Modules\Storefront\Enums\SystemStorePage::Returns->value]) : null;
 @endphp
 <x-sf::modal id="sq-privacy" :title="__st('souqify_pages.product.why_choose', ['store' => $store])" size="md">
     <div class="grid gap-5" data-simple-tabs>

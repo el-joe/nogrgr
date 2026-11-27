@@ -84,6 +84,18 @@ it('refuses pending and suspended partners at login with their own message', fun
     $this->assertGuest('affiliate');
 });
 
+it('gives an affiliate without the panel role that role when it signs in (QA-FINAL-006)', function (): void {
+    $affiliate = Affiliate::factory()->create(['email' => 'imported@partners.test']);
+    expect($affiliate->hasRole('affiliate'))->toBeFalse();
+
+    $this->post(route('affiliate.login.store'), ['email' => 'imported@partners.test', 'password' => 'password'])
+        ->assertRedirect(route('affiliate.dashboard'));
+
+    expect($affiliate->fresh()->hasRole('affiliate'))->toBeTrue();
+    $this->get(route('affiliate.dashboard'))->assertOk();
+    $this->get(route('affiliate.links'))->assertOk();
+});
+
 it('confirms the e-mail from a valid signed link and refuses an expired or tampered one', function (): void {
     $affiliate = Affiliate::factory()->pending()->create(['email' => 'new@partners.test', 'email_verified_at' => null]);
     $hash = sha1('new@partners.test');

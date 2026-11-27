@@ -9,6 +9,7 @@
 import { $ } from '../vendor-libs';
 import { http } from '../../core/http.js';
 import { loadSortable } from '../core.js';
+import { bindRemoteModals } from '../remote-modal.js';
 
 function renumber(tbody) {
     tbody.querySelectorAll('tr[data-sort-item]').forEach((row, index) => {
@@ -21,6 +22,8 @@ function renumber(tbody) {
 }
 
 export default function initBanners(page) {
+    bindRemoteModals(page);
+
     const table = page.querySelector('table#banners');
     const tbody = table?.tBodies[0];
 

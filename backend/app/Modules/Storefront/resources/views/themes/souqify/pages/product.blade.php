@@ -13,6 +13,9 @@
 @php
     /** @var \App\Modules\Storefront\DTOs\Catalog\ProductPageData $page */
     $images = $page->images;
+    // Gallery slides: images and videos in order (#114); the video drives the floating popup.
+    $gallery = $page->media !== [] ? $page->media : array_map(fn ($url) => ['type' => 'image', 'url' => $url, 'poster' => null], $images);
+    $pipVideo = $page->firstVideo();
     $reviews = $page->reviews;
     $reviewsUrl = Route::has('store-api.v1.products.reviews.index') ? route('store-api.v1.products.reviews.index', ['storeProduct' => $page->view->id()]) : null;
     $favoriteUrl = Route::has('storefront.favorites.toggle') ? route('storefront.favorites.toggle') : null;
@@ -41,7 +44,7 @@
     }
     $hasDetails = $page->description || $page->summary;
     $badges = app(\App\Modules\Storefront\Services\Catalog\StorefrontShell::class)->paymentBadges();
-    $returns = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => 'returns']) : null;
+    $returns = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => \App\Modules\Storefront\Enums\SystemStorePage::Returns->value]) : null;
     $recommended = [];
 
     try {
@@ -84,33 +87,37 @@
 
         <div class="grid gap-5 lg:grid-cols-[minmax(0,699px)_minmax(0,639px)] lg:justify-between lg:gap-8">
             {{-- Gallery (1:74585): thumbnails column + main image --}}
-            <div class="sq-gallery grid gap-3 lg:grid-cols-[95px_minmax(0,1fr)] lg:gap-8" data-gallery data-reveal="fade">
+            <div class="sq-gallery grid gap-3 lg:grid-cols-[95px_minmax(0,1fr)] lg:gap-8" data-gallery @if ($pipVideo) data-video-pip="{{ json_encode(['family' => 'souqify', 'src' => $pipVideo['url'], 'poster' => $pipVideo['poster'], 'close' => __st('product.close_video'), 'open' => __st('product.open_video')], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}" @endif data-reveal="fade">
                 <div class="relative min-w-0 lg:order-2">
                     <div class="swiper sq-gallery-main aspect-square lg:aspect-[572/695]" data-gallery-main>
                         <div class="swiper-wrapper">
-                            @forelse ($images as $index => $image)
-                                <div class="swiper-slide">
-                                    <div class="swiper-zoom-container">
-                                        <img src="{{ $image }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="1144" height="1390" class="size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
-                                    </div>
+                            @forelse ($gallery as $index => $item)
+                                <div @if ($item['type'] === 'video') data-gallery-video-slide @endif class="swiper-slide">
+                                    @if ($item['type'] === 'video')
+                                        <x-sf::gallery.video :item="$item" :index="$index" :name="$page->name" />
+                                    @else
+                                        <div class="swiper-zoom-container">
+                                            <img src="{{ $item['url'] }}" alt="{{ $page->name }}{{ $index ? ' ('.($index + 1).')' : '' }}" width="1144" height="1390" class="size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" data-fly-image @else loading="lazy" @endif decoding="async">
+                                        </div>
+                                    @endif
                                 </div>
                             @empty
                                 <div class="swiper-slide grid place-items-center text-sq-line"><x-ui::icon name="image" :size="64" data-fly-image /></div>
                             @endforelse
                         </div>
                     </div>
-                    @if (count($images) > 1)
+                    @if (count($gallery) > 1)
                         <button type="button" class="sq-icon-btn absolute start-3 top-1/2 z-10 hidden -translate-y-1/2 lg:grid" data-motion-prev aria-label="{{ __st('catalog.rail.previous') }}"><x-ui::icon name="chevron-left" :size="18" class="rtl:-scale-x-100" /></button>
                         <button type="button" class="sq-icon-btn absolute end-3 top-1/2 z-10 hidden -translate-y-1/2 lg:grid" data-motion-next aria-label="{{ __st('catalog.rail.next') }}"><x-ui::icon name="chevron-right" :size="18" class="rtl:-scale-x-100" /></button>
-                        <span class="absolute bottom-3 end-3 z-10 rounded-full bg-black/60 px-2.5 py-0.5 text-xs text-white" data-gallery-counter aria-hidden="true">1/{{ count($images) }}</span>
+                        <span class="absolute bottom-3 end-3 z-10 rounded-full bg-black/60 px-2.5 py-0.5 text-xs text-white" data-gallery-counter aria-hidden="true">1/{{ count($gallery) }}</span>
                     @endif
                 </div>
-                @if (count($images) > 1)
+                @if (count($gallery) > 1)
                     <div class="swiper sq-thumbs w-full lg:order-1" data-gallery-thumbs='{"spaceBetween":10,"breakpoints":{"1024":{"direction":"vertical","spaceBetween":24}}}'>
                         <div class="swiper-wrapper">
-                            @foreach ($images as $index => $image)
+                            @foreach ($gallery as $index => $item)
                                 <div class="swiper-slide !h-auto !w-[64px] cursor-pointer lg:!h-[96px] lg:!w-[95px] @if ($index === 0) is-active @endif">
-                                    <span class="sq-thumb"><img src="{{ $image }}" alt="" width="190" height="192" loading="lazy" decoding="async"></span>
+                                    @if ($item['type'] === 'video')<span class="sq-thumb"><x-sf::gallery.video-thumb :item="$item" :width="190" :height="192" /></span>@else<span class="sq-thumb"><img src="{{ $item['url'] }}" alt="" width="190" height="192" loading="lazy" decoding="async"></span>@endif
                                 </div>
                             @endforeach
                         </div>
