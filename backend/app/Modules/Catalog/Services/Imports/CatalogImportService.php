@@ -20,7 +20,6 @@ use App\Modules\Catalog\Repositories\Contracts\CatalogImportRepositoryContract;
 use App\Modules\Identity\Models\Admin;
 use App\Shared\Money\Money;
 use App\Shared\Services\BaseService;
-use Closure;
 use DomainException;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
@@ -122,7 +121,7 @@ class CatalogImportService extends BaseService
                     'update_existing' => $data->updateExisting,
                     'max_pages' => $data->maxPages,
                     'from_page' => max(1, $data->fromPage),
-                    'mode' => $data->inline ? CatalogImportRun::MODE_INLINE : CatalogImportRun::MODE_QUEUE,
+                    'auto_create' => $data->autoCreate,
                 ],
                 'started_by' => $admin?->id,
             ]);
@@ -130,9 +129,7 @@ class CatalogImportService extends BaseService
             return $run;
         }, $this->connection());
 
-        if (! $data->inline) {
-            StartCatalogImport::dispatch($run->id)->onQueue(self::QUEUE)->afterCommit();
-        }
+        StartCatalogImport::dispatch($run->id)->onQueue(self::QUEUE)->afterCommit();
 
         return $run;
     }
@@ -154,94 +151,21 @@ class CatalogImportService extends BaseService
             return;
         }
 
-        $batch = Bus::batch(array_map(static fn (int $page): ImportCatalogPage => new ImportCatalogPage($runId, $page), $pages))
-            ->name('catalog-import-'.$runId)
-            ->onQueue(self::QUEUE)
-            ->allowFailures()
-            ->finally(static function (Batch $batch) use ($runId): void {
-                app(self::class)->finish($runId, $batch->failedJobs >= $batch->totalJobs && $batch->totalJobs > 0);
-            })
-            ->dispatch();
-
-        $this->imports->query()->whereKey($runId)->whereNull('batch_id')->update(['batch_id' => $batch->id]);
+        $this->dispatchPages($runId, $pages);
     }
 
     /**
-     * Imports the pages of an inline run (CLI `--sync`) one after the other in this
-     * process: a queued run is planned first, a reopened one continues with its next
-     * page. Stops when the run is paused / cancelled (admin page) or `$shouldStop`
-     * answers true (the CLI got SIGINT / SIGTERM: the run is paused so it can be
-     * resumed). `$afterPage` is called after every page.
+     * Continues a run from the CLI (`--resume`): paused, cancelled, failed or interrupted
+     * runs (still "running" without progress for STALE_MINUTES, e.g. the worker died).
+     * A paused run whose batch is still queued just runs on; otherwise the pages not
+     * finished yet are queued again as a new batch (one ImportCatalogPage job each).
      *
-     * @param  (Closure(int, CatalogImportRun): void)|null  $afterPage
-     * @param  (Closure(): bool)|null  $shouldStop
+     * @throws DomainException when the run cannot be continued
      */
-    public function runInline(int $runId, ?Closure $afterPage = null, ?Closure $shouldStop = null): ?CatalogImportRun
+    public function continueRun(CatalogImportRun $run): CatalogImportRun
     {
-        $run = $this->run($runId);
-
-        if ($run === null || ! $run->isInline() || ! $run->status->isActive()) {
-            return $run;
-        }
-
-        $pages = $run->status === ImportStatus::Queued ? $this->plan($run) : $this->remainingPages($run);
-
-        foreach ($pages ?? [] as $page) {
-            if ($shouldStop !== null && $shouldStop()) {
-                $current = $this->run($runId);
-
-                if ($current !== null && $current->status->canPause()) {
-                    $this->pause($current);
-                }
-
-                return $this->run($runId);
-            }
-
-            try {
-                $done = $this->importPage($runId, $page);
-            } catch (Throwable $exception) {
-                report($exception);
-                $this->pageFailed($runId, $page, mb_substr($exception->getMessage(), 0, 200));
-                $done = true;
-            }
-
-            $current = $this->run($runId);
-
-            if (! $done || $current === null || $current->status !== ImportStatus::Running) {
-                return $current;
-            }
-
-            if ($afterPage !== null) {
-                $afterPage($page, $current);
-            }
-        }
-
-        if ($pages !== null) {
-            $this->finish($runId);
-        }
-
-        return $this->run($runId);
-    }
-
-    /**
-     * Reopens an inline run that was paused, cancelled, failed or interrupted (its
-     * process died: still "running" without progress for STALE_MINUTES) so runInline()
-     * continues with its next page. Queued runs resume through resume() instead.
-     *
-     * @throws DomainException when the run cannot be continued inline
-     */
-    public function reopenInline(CatalogImportRun $run): CatalogImportRun
-    {
-        if (! $run->isInline()) {
-            throw new DomainException(__('catalog::imports.errors.not_inline'));
-        }
-
         if ($run->status === ImportStatus::Completed) {
             throw new DomainException(__('catalog::imports.errors.already_completed'));
-        }
-
-        if ($run->status === ImportStatus::Queued || $run->total_pages === null) {
-            return $run;
         }
 
         if ($run->status === ImportStatus::Running && $run->updated_at !== null && $run->updated_at->gt(now()->subMinutes(self::STALE_MINUTES))) {
@@ -256,22 +180,23 @@ class CatalogImportService extends BaseService
             }
         }
 
-        return $this->imports->update($run, ['status' => ImportStatus::Running, 'failure_message' => null, 'finished_at' => null]);
+        return $this->relaunch($run);
     }
 
     /**
-     * Pages of a started run not imported yet (inline runs import in page order, so
-     * pages_done counts the pages from the first one).
+     * Pages of a started run not finished yet (pages finish in any order on the queue).
      *
      * @return list<int>
      */
     public function remainingPages(CatalogImportRun $run): array
     {
-        if ($run->total_pages === null || $run->pages_done >= $run->total_pages) {
+        if ($run->total_pages === null || $run->total_pages < 1) {
             return [];
         }
 
-        return range($run->fromPage() + $run->pages_done, $run->fromPage() + $run->total_pages - 1);
+        $planned = range($run->fromPage(), $run->fromPage() + $run->total_pages - 1);
+
+        return array_values(array_diff($planned, $this->imports->donePages($run)));
     }
 
     /**
@@ -288,6 +213,17 @@ class CatalogImportService extends BaseService
 
         if ($run->status === ImportStatus::Paused) {
             return false;
+        }
+
+        if (! $this->imports->tracksPages()) {
+            $this->fail($run, __('catalog::imports.errors.schema_outdated'));
+
+            return true;
+        }
+
+        // A page queued twice (resume after a lost worker) is imported once.
+        if ($this->imports->isPageDone($run, $page)) {
+            return true;
         }
 
         try {
@@ -317,7 +253,9 @@ class CatalogImportService extends BaseService
             $this->record($run, $outcome, ['external_id' => $item->externalId, 'sku' => $item->sku, 'item_name' => $item->displayName(), 'product_id' => $outcome->productId]);
         }
 
-        $this->imports->increment($run, ['pages_done' => 1]);
+        if ($this->imports->markPageDone($run, $page)) {
+            $this->imports->increment($run, ['pages_done' => 1]);
+        }
 
         return true;
     }
@@ -337,11 +275,19 @@ class CatalogImportService extends BaseService
         $this->imports->increment($run, ['error_count' => 1, 'pages_done' => 1]);
     }
 
-    public function finish(int $runId, bool $everyPageFailed = false): void
+    /**
+     * Ends a run once its batch has finished; `$batchId` ignores the late finish of a
+     * batch the run was re-queued away from (resume).
+     */
+    public function finish(int $runId, bool $everyPageFailed = false, ?string $batchId = null): void
     {
         $run = $this->run($runId);
 
         if ($run === null || ! in_array($run->status, [ImportStatus::Running, ImportStatus::Paused], true)) {
+            return;
+        }
+
+        if ($batchId !== null && $run->batch_id !== null && $run->batch_id !== $batchId) {
             return;
         }
 
@@ -369,12 +315,7 @@ class CatalogImportService extends BaseService
             throw new DomainException(__('catalog::imports.errors.cannot_resume'));
         }
 
-        // Nothing would pick an inline (CLI) run up again: it is continued by the CLI.
-        if ($run->isInline()) {
-            throw new DomainException(__('catalog::imports.errors.resume_from_cli', ['id' => $run->id]));
-        }
-
-        return $this->imports->update($run, ['status' => ImportStatus::Running]);
+        return $this->relaunch($run);
     }
 
     public function cancel(CatalogImportRun $run): CatalogImportRun
@@ -410,7 +351,7 @@ class CatalogImportService extends BaseService
             'status_tone' => $run->status->tone(),
             'active' => $run->status->isActive(),
             'can_pause' => $run->status->canPause(),
-            'can_resume' => $run->status->canResume() && ! $run->isInline(),
+            'can_resume' => $run->status->canResume(),
             'can_cancel' => $run->status->canCancel(),
             'products' => ['done' => $run->processed_count, 'total' => max($run->total_items, $run->processed_count), 'percent' => $run->percent($run->processed_count, max($run->total_items, $run->processed_count))],
             'images' => ['done' => $run->images_done, 'total' => $run->images_total, 'percent' => $run->percent($run->images_done, $run->images_total)],
@@ -483,24 +424,30 @@ class CatalogImportService extends BaseService
     {
         $from = $run->fromPage();
 
+        if (! $this->imports->tracksPages()) {
+            $this->fail($run, __('catalog::imports.errors.schema_outdated'));
+
+            return null;
+        }
+
         try {
-            $first = $this->fetch($run->driver, $from);
-        } catch (DomainException $exception) {
+            $first = $this->drivers->driver($run->driver)->pageInfo($from);
+        } catch (ExternalCatalogException $exception) {
             $this->fail($run, $exception->getMessage());
 
             return null;
         }
 
-        if ($from > $first->lastPage) {
-            $this->fail($run, __('catalog::imports.errors.page_out_of_range', ['page' => $from, 'last' => $first->lastPage]));
+        if ($from > $first['last_page']) {
+            $this->fail($run, __('catalog::imports.errors.page_out_of_range', ['page' => $from, 'last' => $first['last_page']]));
 
             return null;
         }
 
-        $available = $first->lastPage - $from + 1;
+        $available = $first['last_page'] - $from + 1;
         $pages = $run->maxPages() !== null ? min($run->maxPages(), $available) : $available;
-        $perPage = max(1, $first->count());
-        $remaining = max(0, $first->total - ($from - 1) * $perPage);
+        $perPage = max(1, $first['count']);
+        $remaining = max(0, $first['total'] - ($from - 1) * $perPage);
         $total = $pages >= $available ? $remaining : min($remaining, $pages * $perPage);
 
         $this->imports->update($run, [
@@ -511,6 +458,74 @@ class CatalogImportService extends BaseService
         ]);
 
         return range($from, $from + $pages - 1);
+    }
+
+    /**
+     * Sets a run running again: a never-planned run is started again, a paused run with
+     * its batch still queued runs on, any other run gets its unfinished pages queued.
+     */
+    private function relaunch(CatalogImportRun $run): CatalogImportRun
+    {
+        if ($run->total_pages === null) {
+            $run = $this->imports->update($run, ['status' => ImportStatus::Queued, 'failure_message' => null, 'finished_at' => null]);
+            StartCatalogImport::dispatch($run->id)->onQueue(self::QUEUE);
+
+            return $run;
+        }
+
+        if (! $this->imports->tracksPages()) {
+            throw new DomainException(__('catalog::imports.errors.schema_outdated'));
+        }
+
+        $batch = $run->batch_id !== null ? Bus::findBatch($run->batch_id) : null;
+
+        if ($run->status === ImportStatus::Paused && $batch !== null && ! $batch->finished() && ! $batch->cancelled()) {
+            return $this->imports->update($run, ['status' => ImportStatus::Running]);
+        }
+
+        if ($batch !== null && ! $batch->finished() && ! $batch->cancelled()) {
+            $batch->cancel();
+        }
+
+        $pages = $this->remainingPages($run);
+        $run = $this->imports->update($run, [
+            'status' => ImportStatus::Running,
+            'pages_done' => count($this->imports->donePages($run)),
+            'failure_message' => null,
+            'finished_at' => null,
+        ]);
+
+        if ($pages === []) {
+            $this->finish($run->id);
+
+            return $this->run($run->id) ?? $run;
+        }
+
+        $this->dispatchPages($run->id, $pages);
+
+        return $this->run($run->id) ?? $run;
+    }
+
+    /**
+     * One queued ImportCatalogPage job per page, in one Bus batch.
+     *
+     * @param  list<int>  $pages
+     */
+    private function dispatchPages(int $runId, array $pages): void
+    {
+        $batch = Bus::batch(array_map(static fn (int $page): ImportCatalogPage => new ImportCatalogPage($runId, $page), $pages))
+            ->name('catalog-import-'.$runId)
+            ->onQueue(self::QUEUE)
+            ->allowFailures()
+            ->before(static function (Batch $batch) use ($runId): void {
+                app(CatalogImportRepositoryContract::class)->query()->whereKey($runId)->update(['batch_id' => $batch->id]);
+            })
+            ->finally(static function (Batch $batch) use ($runId): void {
+                app(self::class)->finish($runId, $batch->failedJobs >= $batch->totalJobs && $batch->totalJobs > 0, $batch->id);
+            })
+            ->dispatch();
+
+        $this->imports->query()->whereKey($runId)->update(['batch_id' => $batch->id]);
     }
 
     private function fail(CatalogImportRun $run, string $message): void

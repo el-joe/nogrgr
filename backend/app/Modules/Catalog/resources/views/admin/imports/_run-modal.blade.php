@@ -11,6 +11,7 @@
             <x-ui::input name="max_pages" type="number" min="1" max="10000" inputmode="numeric" :label="__('catalog::imports.modal.max_pages')" :helper="__('catalog::imports.modal.max_pages_help')" />
         </div>
         <x-ui::switch name="update_existing" :label="__('catalog::imports.modal.update_existing')" :description="__('catalog::imports.modal.update_existing_help')" checked />
+        <x-ui::switch name="auto_create" :label="__('catalog::imports.modal.auto_create')" :description="__('catalog::imports.modal.auto_create_help')" checked />
 
         <section class="grid gap-3 border-t border-line pt-4" aria-labelledby="import-preview-title">
             <h3 id="import-preview-title" class="text-sm font-semibold text-ink">{{ __('catalog::imports.modal.preview_title') }}</h3>

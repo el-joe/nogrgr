@@ -20,9 +20,11 @@ use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
 /**
- * Neozena catalog API (credentials in Admin › Integrations › Neozena):
+ * Neozena public catalog API (no token needed; base URL override and optional token in
+ * Admin › Integrations › Neozena):
  *   GET {base_url}/products?page=N  → {data: [...], meta: {last_page, total}}
  *   GET {base_url}/products/{id}    → {data: {...}} (used when a list item is a summary)
+ *   GET {base_url}/categories/{id}  → {data: {...}} (creating a missing category)
  * Prices are USD decimals; translations arrive as [{locale, title|name, ...}].
  */
 class NeozenaDriver implements ExternalCatalogDriver
@@ -33,6 +35,16 @@ class NeozenaDriver implements ExternalCatalogDriver
 
     public const RETRIES = 2;
 
+    /**
+     * Safety cap of the GET /variants pages read for unknown options.
+     */
+    public const VARIANT_PAGES_MAX = 50;
+
+    /**
+     * @var array<int, array{attribute_id: int, attribute_name: array<string, string>, name: array<string, string>, swatch: string|null}>|null
+     */
+    private ?array $variantCatalog = null;
+
     public function __construct(private readonly IntegrationSettingsService $settings) {}
 
     public function driver(): ImportDriver
@@ -42,9 +54,7 @@ class NeozenaDriver implements ExternalCatalogDriver
 
     public function isConfigured(): bool
     {
-        $values = $this->settings->values(IntegrationSection::Neozena);
-
-        return ($values['enabled'] ?? false) === true && filled($values['base_url'] ?? null);
+        return filled($this->settings->values(IntegrationSection::Neozena)['base_url'] ?? null);
     }
 
     public function endpoint(): ?string
@@ -89,12 +99,57 @@ class NeozenaDriver implements ExternalCatalogDriver
             }
         }
 
+        $info = $this->info($payload, $rows, $page);
+
+        return new ExternalCatalogPage($page, $info['last_page'], $info['total'], $items, $invalid);
+    }
+
+    public function pageInfo(int $page): array
+    {
+        if (! $this->isConfigured()) {
+            throw ExternalCatalogException::notConfigured();
+        }
+
+        $payload = $this->get('/products', $page, ['page' => $page]);
+        $rows = $payload['data'] ?? null;
+
+        if (! is_array($rows)) {
+            throw ExternalCatalogException::invalidResponse($page);
+        }
+
+        return $this->info($payload, $rows, $page);
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @param  array<mixed>  $rows
+     * @return array{last_page: int, total: int, count: int}
+     */
+    private function info(array $payload, array $rows, int $page): array
+    {
         // A page past the end keeps the source's real last page (the CLI --from-page check).
         $reported = $payload['meta']['last_page'] ?? $payload['last_page'] ?? null;
         $lastPage = is_numeric($reported) && ($rows === [] || (int) $reported >= $page) ? max(1, (int) $reported) : $page;
         $total = (int) ($payload['meta']['total'] ?? $payload['total'] ?? count($rows));
 
-        return new ExternalCatalogPage($page, $lastPage, max($total, count($rows)), $items, $invalid);
+        return ['last_page' => $lastPage, 'total' => max($total, count($rows)), 'count' => count($rows)];
+    }
+
+    public function fetchCategory(int $externalId): ?ExternalCategoryData
+    {
+        if (! $this->isConfigured()) {
+            throw ExternalCatalogException::notConfigured();
+        }
+
+        try {
+            $payload = $this->get('/categories/'.$externalId, 1);
+        } catch (ExternalCatalogException) {
+            return null;
+        }
+
+        $row = $payload['data'] ?? $payload;
+
+        return is_array($row) && is_numeric($row['id'] ?? null) ? ($this->categories([$row])[0] ?? null) : null;
     }
 
     /**
@@ -228,14 +283,18 @@ class NeozenaDriver implements ExternalCatalogDriver
                     'attribute_id' => (int) $raw['variant_id'],
                     'attribute_name' => $this->localized($this->translationRows($raw['variant_translations'] ?? []), 'name', $raw['variant_name'] ?? null),
                     'name' => $this->localized($this->translationRows($raw['translations'] ?? []), 'name', $raw['value'] ?? null),
+                    'swatch' => $this->swatch($raw),
                 ];
             }
+
+            // Not described by the product: the source's attribute list (GET /variants).
+            $known ??= $this->variantCatalog()[$optionId] ?? null;
 
             if ($known === null || $known['name'] === [] || $known['attribute_name'] === []) {
                 throw new InvalidArgumentException(__('catalog::imports.errors.unknown_option', ['id' => $optionId]));
             }
 
-            $options[] = new ExternalOptionData($known['attribute_id'], $known['attribute_name'], $optionId, $known['name']);
+            $options[] = new ExternalOptionData($known['attribute_id'], $known['attribute_name'], $optionId, $known['name'], $known['swatch'] ?? null);
         }
 
         $sku = is_scalar($combination['sku'] ?? null) && trim((string) $combination['sku']) !== '' ? mb_substr(trim((string) $combination['sku']), 0, 191) : null;
@@ -248,13 +307,14 @@ class NeozenaDriver implements ExternalCatalogDriver
             weightGrams: is_numeric($combination['weight'] ?? null) && (float) $combination['weight'] > 0 ? (int) round((float) $combination['weight']) : null,
             isActive: (bool) ($combination['is_active'] ?? true),
             options: $options,
+            imageUrl: is_string($combination['thumbnail_path'] ?? null) && filter_var($combination['thumbnail_path'], FILTER_VALIDATE_URL) !== false ? $combination['thumbnail_path'] : null,
         );
     }
 
     /**
      * Option id => its attribute and names, from the product's variant groups.
      *
-     * @return array<int, array{attribute_id: int, attribute_name: array<string, string>, name: array<string, string>}>
+     * @return array<int, array{attribute_id: int, attribute_name: array<string, string>, name: array<string, string>, swatch: string|null}>
      */
     private function optionGroups(mixed $groups): array
     {
@@ -273,12 +333,69 @@ class NeozenaDriver implements ExternalCatalogDriver
                         'attribute_id' => (int) $group['id'],
                         'attribute_name' => $attributeName,
                         'name' => $this->localized($this->translationRows($option['translations'] ?? []), 'name', $option['value'] ?? $option['name'] ?? null),
+                        'swatch' => $this->swatch($option),
                     ];
                 }
             }
         }
 
         return $map;
+    }
+
+    /**
+     * Colour code of an option (`color`, `color_code`, `hex`, `swatch` or `code` as #hex).
+     *
+     * @param  array<string, mixed>  $option
+     */
+    private function swatch(array $option): ?string
+    {
+        foreach (['color', 'color_code', 'hex', 'swatch', 'code'] as $key) {
+            $value = $option[$key] ?? null;
+
+            if (is_string($value) && preg_match('/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i', trim($value)) === 1) {
+                return '#'.strtolower(ltrim(trim($value), '#'));
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Every option of the source's attribute list (GET /variants, all pages), read once
+     * per process and only when a product names an option it does not describe.
+     *
+     * @return array<int, array{attribute_id: int, attribute_name: array<string, string>, name: array<string, string>, swatch: string|null}>
+     */
+    private function variantCatalog(): array
+    {
+        if ($this->variantCatalog !== null) {
+            return $this->variantCatalog;
+        }
+
+        $this->variantCatalog = [];
+
+        for ($page = 1; $page <= self::VARIANT_PAGES_MAX; $page++) {
+            try {
+                $payload = $this->get('/variants', $page, ['page' => $page]);
+            } catch (ExternalCatalogException) {
+                break;
+            }
+
+            $rows = $payload['data'] ?? null;
+
+            if (! is_array($rows) || $rows === []) {
+                break;
+            }
+
+            $this->variantCatalog += $this->optionGroups($rows);
+            $last = $payload['meta']['last_page'] ?? $payload['last_page'] ?? 1;
+
+            if (! is_numeric($last) || $page >= (int) $last) {
+                break;
+            }
+        }
+
+        return $this->variantCatalog;
     }
 
     /**
@@ -317,11 +434,17 @@ class NeozenaDriver implements ExternalCatalogDriver
                 continue;
             }
 
-            $name = $this->localized($this->translationRows($category['translations'] ?? []), 'name', $category['name'] ?? null);
+            $translations = $this->translationRows($category['translations'] ?? []);
+            $name = $this->localized($translations, 'name', $category['name'] ?? null);
+            $slug = $translations['en']['slug'] ?? $category['slug'] ?? null;
+            $image = $category['thumbnail_path'] ?? $category['image_path'] ?? $category['banner_path'] ?? null;
             $result[] = new ExternalCategoryData(
                 (int) $category['id'],
                 $name !== [] ? $name : ['en' => '#'.(int) $category['id']],
-                is_numeric($category['parent_id'] ?? null) ? (int) $category['parent_id'] : null,
+                is_numeric($category['parent_id'] ?? null) && (int) $category['parent_id'] > 0 ? (int) $category['parent_id'] : null,
+                is_string($slug) && trim($slug) !== '' ? trim($slug) : null,
+                $this->localized($translations, 'description'),
+                is_string($image) && filter_var($image, FILTER_VALIDATE_URL) !== false ? $image : null,
             );
         }
 

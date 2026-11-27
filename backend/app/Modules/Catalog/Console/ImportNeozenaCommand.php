@@ -5,25 +5,39 @@ namespace App\Modules\Catalog\Console;
 use App\Modules\Catalog\DTOs\Imports\StartImportData;
 use App\Modules\Catalog\Enums\ImportDriver;
 use App\Modules\Catalog\Enums\ImportStatus;
+use App\Modules\Catalog\Imports\Drivers\NeozenaDriver;
 use App\Modules\Catalog\Models\CatalogImportRun;
 use App\Modules\Catalog\Services\Imports\CatalogImportService;
 use DomainException;
 use Illuminate\Console\Command;
+use Illuminate\Support\Sleep;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
  * CLI front of the Neozena catalog import (ADM-013): the same CatalogImportService runs
- * as Admin › Catalog › Import, products land only in the central catalog (#65). Queued
- * by default; `--sync` imports the pages in this process with a progress bar.
+ * as Admin › Catalog › Import, products land only in the central catalog (#65). Every
+ * page is a queued ImportCatalogPage job of the run's batch (a queue worker must run);
+ * the command then watches the run row (progress bar, final counts) unless `--no-wait`.
+ * Neozena's public API works without a token or saved settings (#112).
  */
 class ImportNeozenaCommand extends Command
 {
     public const FAILURES_SHOWN = 20;
 
+    public const POLL_SECONDS = 2;
+
+    /**
+     * Still "queued" after this long: most likely no queue worker is running.
+     */
+    public const NO_WORKER_HINT_SECONDS = 30;
+
+    public const WORKER_HINT = 'Pages are imported by queue jobs: keep a worker running, e.g. `php artisan queue:work --queue='.CatalogImportService::QUEUE.'` (Supervisor / Horizon in production).';
+
     protected $signature = 'catalog:import-neozena
         {--pages= : Import at most this many pages}
         {--from-page=1 : First source page to import}
-        {--sync : Import the pages in this process (progress bar) instead of queuing them}
+        {--no-wait : Queue the run and exit instead of showing its progress}
+        {--no-auto-create : Skip products of unmapped categories / unknown attributes instead of creating them}
         {--dry-run : Show what the source returns and the planned pages; write nothing}
         {--resume= : Continue an earlier run by its id}
         {--update-existing : Refresh prices, stock and images of products imported before}
@@ -49,7 +63,7 @@ class ImportNeozenaCommand extends Command
         $overview = $imports->overview($driver);
 
         if (! $overview['configured']) {
-            $this->components->error('Neozena is not configured. Enable it and set the API base URL in Admin › Integrations › Neozena, then run this command again.');
+            $this->components->error('Neozena has no API base URL. Set it in Admin › Integrations › Neozena (the default is '.NeozenaDriver::DEFAULT_BASE_URL.'), then run this command again.');
 
             return self::FAILURE;
         }
@@ -62,7 +76,6 @@ class ImportNeozenaCommand extends Command
             return $this->resume($imports, $resume);
         }
 
-        $sync = (bool) $this->option('sync');
         $updateExisting = (bool) $this->option('update-existing');
         $scope = ($pages !== null ? $pages.' page(s)' : 'every page').' from page '.$fromPage;
 
@@ -73,28 +86,16 @@ class ImportNeozenaCommand extends Command
         }
 
         try {
-            $run = $imports->start(new StartImportData($driver, $updateExisting, $pages, $fromPage, $sync), null);
+            $run = $imports->start(new StartImportData($driver, $updateExisting, $pages, $fromPage, ! $this->option('no-auto-create')), null);
         } catch (DomainException $exception) {
             $this->components->error($exception->getMessage());
 
             return self::FAILURE;
         }
 
-        $this->components->info('Run #'.$run->id.' started ('.$scope.', '.($sync ? 'inline' : 'queued').').');
+        $this->components->info('Run #'.$run->id.' queued ('.$scope.').');
 
-        if ($sync) {
-            return $this->runInline($imports, $run->id);
-        }
-
-        $run = $imports->run($run->id) ?? $run;
-
-        if ($run->status->isActive()) {
-            $this->line('  Pages run on the "'.CatalogImportService::QUEUE.'" queue. Follow it in Admin › Catalog › Import.');
-
-            return self::SUCCESS;
-        }
-
-        return $this->summary($imports, $run);
+        return $this->follow($imports, $run->id);
     }
 
     /**
@@ -145,27 +146,42 @@ class ImportNeozenaCommand extends Command
             return self::FAILURE;
         }
 
+        $left = $run->total_pages !== null ? count($imports->remainingPages($run)) : null;
+
         try {
-            if (! $run->isInline()) {
-                $imports->resume($run);
-                $this->components->info('Run #'.$run->id.' resumed: its queued pages continue on the "'.CatalogImportService::QUEUE.'" queue.');
-
-                return self::SUCCESS;
-            }
-
-            $imports->reopenInline($run);
+            $run = $imports->continueRun($run);
         } catch (DomainException $exception) {
             $this->components->error($exception->getMessage());
 
             return self::FAILURE;
         }
 
-        $this->components->info('Run #'.$run->id.' continues from page '.($run->fromPage() + $run->pages_done).'.');
+        $this->components->info('Run #'.$run->id.' resumed on the queue'.($left !== null ? ' ('.$left.' page(s) left)' : '').'.');
 
-        return $this->runInline($imports, $run->id);
+        return $this->follow($imports, $run->id);
     }
 
-    private function runInline(CatalogImportService $imports, int $runId): int
+    /**
+     * Exits right away with `--no-wait`, else watches the run until it is no longer active.
+     */
+    private function follow(CatalogImportService $imports, int $runId): int
+    {
+        $this->line('  '.self::WORKER_HINT);
+
+        if ($this->option('no-wait')) {
+            $this->line('  Follow it in Admin › Catalog › Import, or continue it later with: php artisan catalog:import-neozena --resume='.$runId);
+
+            return self::SUCCESS;
+        }
+
+        return $this->watch($imports, $runId);
+    }
+
+    /**
+     * Polls the run row (the queue worker updates it) with a progress bar until it
+     * completes, fails, is cancelled or paused. Ctrl+C only stops watching.
+     */
+    private function watch(CatalogImportService $imports, int $runId): int
     {
         if (extension_loaded('pcntl') && defined('SIGINT') && defined('SIGTERM')) {
             $this->trap([SIGINT, SIGTERM], function (): void {
@@ -173,27 +189,47 @@ class ImportNeozenaCommand extends Command
             });
         }
 
-        $run = $imports->runInline(
-            $runId,
-            function (int $page, CatalogImportRun $run): void {
-                if ($this->bar === null) {
-                    $this->bar = $this->output->createProgressBar((int) $run->total_pages);
-                    $this->bar->setFormat(' %current%/%max% pages [%bar%] %percent:3s%% · %message%');
-                }
+        $waitingSince = now();
+        $hinted = false;
 
+        while (true) {
+            $run = $imports->run($runId);
+
+            if ($run === null) {
+                return self::FAILURE;
+            }
+
+            if ($run->total_pages !== null) {
+                $this->bar ??= tap($this->output->createProgressBar((int) $run->total_pages), static function (ProgressBar $bar): void {
+                    $bar->setFormat(' %current%/%max% pages [%bar%] %percent:3s%% · %message%');
+                });
                 $this->bar->setMessage(sprintf('%d created, %d updated, %d skipped, %d failed', $run->created_count, $run->updated_count, $run->skipped_count, $run->error_count));
                 $this->bar->setProgress(min($run->pages_done, (int) $run->total_pages));
-            },
-            fn (): bool => $this->stopping,
-        );
+            }
+
+            if (! $run->status->isActive() || $run->status === ImportStatus::Paused) {
+                break;
+            }
+
+            if ($this->stopping) {
+                $this->bar?->finish();
+                $this->newLine(2);
+                $this->components->warn('Stopped watching. Run #'.$runId.' goes on in the queue; follow it in Admin › Catalog › Import.');
+
+                return self::SUCCESS;
+            }
+
+            if (! $hinted && $run->status === ImportStatus::Queued && $waitingSince->diffInSeconds(now()) >= self::NO_WORKER_HINT_SECONDS) {
+                $this->components->warn('Still queued: is a queue worker running? Start one with `php artisan queue:work`.');
+                $hinted = true;
+            }
+
+            Sleep::for(self::POLL_SECONDS)->seconds();
+        }
 
         if ($this->bar !== null) {
             $this->bar->finish();
             $this->newLine(2);
-        }
-
-        if ($run === null) {
-            return self::FAILURE;
         }
 
         return $this->summary($imports, $run);

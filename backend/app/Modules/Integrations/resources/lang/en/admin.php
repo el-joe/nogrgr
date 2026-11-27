@@ -160,10 +160,9 @@ return [
         ],
         'neozena' => [
             'title' => 'Neozena catalog',
-            'description' => 'External product catalog read by Catalog › Products › Import.',
+            'description' => 'Public product catalog read by Catalog › Products › Import. Works out of the box with the default API URL; no token needed.',
             'test' => 'Test connection',
             'fields' => [
-                'enabled' => 'Enabled',
                 'base_url' => 'API base URL',
                 'api_token' => 'API token',
                 'daily_sync' => 'Daily product sync',

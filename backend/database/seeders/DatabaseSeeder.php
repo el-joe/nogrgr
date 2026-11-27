@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Modules\Content\Database\Seeders\ContentStarterSeeder;
 use App\Modules\Identity\Database\Seeders\CentralPermissionSeeder;
+use App\Modules\Inventory\Database\Seeders\DefaultBranchSeeder;
 use App\Modules\Localization\Database\Seeders\CitySeeder;
 use App\Modules\Localization\Database\Seeders\CountrySeeder;
 use App\Modules\Localization\Database\Seeders\CurrencySeeder;
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
             CitySeeder::class,
             CurrencySeeder::class,
             LanguageSeeder::class,
+            DefaultBranchSeeder::class,
             ContentStarterSeeder::class,
         ]);
     }

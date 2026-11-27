@@ -32,9 +32,8 @@ use App\Modules\Catalog\Services\BadgeService;
 use App\Modules\Catalog\Services\ProductService;
 use App\Modules\Catalog\Support\VariantMatrix;
 use App\Modules\Inventory\Services\BranchService;
-use Illuminate\Http\Client\ConnectionException;
+use DomainException;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Http;
 
 /**
  * Upserts one external product into the central catalog through ProductService (same
@@ -46,10 +45,6 @@ use Illuminate\Support\Facades\Http;
  */
 class ExternalProductImporter
 {
-    public const IMAGE_TIMEOUT_SECONDS = 30;
-
-    public const IMAGE_MAX_BYTES = 10_485_760;
-
     public function __construct(
         private readonly ProductService $productService,
         private readonly ProductRepositoryContract $products,
@@ -58,6 +53,8 @@ class ExternalProductImporter
         private readonly BadgeService $badgeService,
         private readonly BranchService $branches,
         private readonly CatalogImportRepositoryContract $imports,
+        private readonly ExternalImageDownloader $downloader,
+        private readonly ExternalCategoryCreator $categoryCreator,
     ) {}
 
     public function import(CatalogImportRun $run, ExternalProductData $item): ImportItemOutcome
@@ -69,6 +66,21 @@ class ExternalProductImporter
         $this->imports->discoverCategories($driver, $item->categories);
         $mapping = $this->imports->categoryMapping($driver, array_map(static fn ($category): int => $category->externalId, $item->categories));
         $unmapped = array_values(array_filter($item->categories, static fn ($category): bool => ($mapping[$category->externalId] ?? null) === null));
+        $categoryWarnings = [];
+
+        // Missing categories are created from the source (an admin mapping always wins);
+        // one that cannot be created never blocks the product.
+        if ($unmapped !== [] && $run->autoCreates()) {
+            foreach ($unmapped as $category) {
+                try {
+                    $mapping[$category->externalId] = $this->categoryCreator->resolve($driver, $category);
+                } catch (DomainException $exception) {
+                    $categoryWarnings[] = $exception->getMessage();
+                }
+            }
+
+            $unmapped = [];
+        }
 
         if ($unmapped !== []) {
             return $skip(__('catalog::imports.messages.category_unmapped', ['name' => implode(', ', array_map(static fn ($category): string => $category->displayName(), $unmapped))]));
@@ -92,8 +104,14 @@ class ExternalProductImporter
 
         $isNew = $product === null;
         $previousPrice = $product?->costBasis();
-        $variants = $this->variantRows($driver, $product, $item);
+        try {
+            $variants = $this->variantRows($driver, $product, $item, $run->autoCreates());
+        } catch (DomainException $exception) {
+            return $skip($exception->getMessage(), $product?->id);
+        }
+
         [$keepMediaIds, $downloads, $warnings, $linkedImages] = $this->gallery($driver, $product, $item);
+        $warnings = [...$categoryWarnings, ...$warnings];
         $stock = $this->stockCells($item, $variants, $warnings);
 
         try {
@@ -104,13 +122,19 @@ class ExternalProductImporter
             foreach ($downloads as $download) {
                 @unlink($download['file']->getRealPath());
             }
+
+            foreach ($variants as $variant) {
+                if ($variant['row']->image !== null) {
+                    @unlink($variant['row']->image->getRealPath());
+                }
+            }
         }
 
         $this->products->update($product, ['external_source' => $driver->value, 'external_id' => $item->externalId]);
         $this->linkRecords($driver, $product, $item, $variants, $mediaBefore, array_column($downloads, 'external_id'));
         $this->imports->saveLink($driver, ImportLinkType::Product, $item->externalId, $product->id, $item->checksum());
 
-        $summary = __('catalog::imports.messages.summary', ['variants' => count($variants), 'images' => $images]);
+        $summary = trans_choice('catalog::imports.messages.summary', count($variants), ['variants' => count($variants), 'images' => $images]);
         $newPrice = $product->refresh()->costBasis();
 
         if (! $isNew && $previousPrice !== null && ! $previousPrice->equals($newPrice)) {
@@ -160,7 +184,7 @@ class ExternalProductImporter
     /**
      * @return list<array{external: ExternalVariantData, row: ProductVariantData}>
      */
-    private function variantRows(ImportDriver $driver, ?Product $product, ExternalProductData $item): array
+    private function variantRows(ImportDriver $driver, ?Product $product, ExternalProductData $item, bool $create = true): array
     {
         $withOptions = array_values(array_filter($item->variants, static fn (ExternalVariantData $variant): bool => $variant->options !== []));
 
@@ -174,7 +198,7 @@ class ExternalProductImporter
         $rows = [];
 
         foreach ($withOptions as $variant) {
-            $optionIds = array_map(fn (ExternalOptionData $option): int => $this->optionId($driver, $option), $variant->options);
+            $optionIds = array_map(fn (ExternalOptionData $option): int => $this->optionId($driver, $option, $create), $variant->options);
             sort($optionIds);
             $key = VariantMatrix::key($optionIds);
 
@@ -197,7 +221,11 @@ class ExternalProductImporter
                     sku: $this->variantSku($variant, $matchId),
                     priceMinor: $variant->priceMinor,
                     weightGrams: $variant->weightGrams,
-                    isActive: $variant->isActive,
+                    // New variants are active; existing ones keep their status.
+                    isActive: $matchId !== null && $match !== null ? $match->status === RecordStatus::Active : true,
+                    image: $variant->imageUrl !== null && ($match === null || $matchId === null || $match->image_path === null)
+                        ? $this->downloader->download($variant->imageUrl, 'variant-'.$variant->externalId)
+                        : null,
                 ),
             ];
         }
@@ -221,18 +249,26 @@ class ExternalProductImporter
     }
 
     /**
-     * Local option of an external attribute value (attribute and option created on first sight).
+     * Local option of an external attribute value (attribute and option created on first
+     * sight, with the option's colour swatch when the source has one).
+     *
+     * @throws DomainException when it does not exist and `$create` is off
      */
-    private function optionId(ImportDriver $driver, ExternalOptionData $option): int
+    private function optionId(ImportDriver $driver, ExternalOptionData $option, bool $create = true): int
     {
         /** @var Attribute|null $attribute */
         $attribute = $this->attributes->query()->withTrashed()->where('external_source', $driver->value)->where('external_id', $option->attributeExternalId)->first();
+        $unknown = static fn (): DomainException => new DomainException(__('catalog::imports.errors.option_unknown', ['name' => ($option->attributeName['en'] ?? reset($option->attributeName)).': '.($option->name['en'] ?? reset($option->name))]));
+
+        if ($attribute === null && ! $create) {
+            throw $unknown();
+        }
 
         if ($attribute === null) {
             /** @var Attribute $attribute */
             $attribute = $this->attributes->create([
                 'name' => $option->attributeName,
-                'display_type' => AttributeDisplayType::Text,
+                'display_type' => $option->swatch !== null ? AttributeDisplayType::Color : AttributeDisplayType::Text,
                 'status' => RecordStatus::Active,
                 'sort_order' => $this->attributes->nextSortOrder(),
                 'external_source' => $driver->value,
@@ -245,9 +281,14 @@ class ExternalProductImporter
         /** @var AttributeOption|null $local */
         $local = AttributeOption::query()->withTrashed()->where('external_source', $driver->value)->where('external_id', $option->externalId)->first();
 
+        if ($local === null && ! $create) {
+            throw $unknown();
+        }
+
         if ($local === null) {
             $local = $this->attributes->createOption($attribute, [
                 'name' => $option->name,
+                'swatch' => $option->swatch,
                 'is_active' => true,
                 'sort_order' => (int) $attribute->options()->max('sort_order') + 1,
                 'external_source' => $driver->value,
@@ -306,38 +347,11 @@ class ExternalProductImporter
 
     private function download(ExternalImageData $image): ?UploadedFile
     {
-        try {
-            $response = Http::timeout(self::IMAGE_TIMEOUT_SECONDS)->retry(1, 500, throw: false)->get($image->url);
-        } catch (ConnectionException) {
-            return null;
-        }
-
-        $mime = strtolower(trim(explode(';', (string) $response->header('Content-Type'))[0]));
-        $body = $response->body();
-
-        if (! $response->successful() || ! str_starts_with($mime, 'image/') || $body === '' || strlen($body) > self::IMAGE_MAX_BYTES) {
-            return null;
-        }
-
-        $path = tempnam(sys_get_temp_dir(), 'catalog-import-');
-
-        if ($path === false || file_put_contents($path, $body) === false) {
-            return null;
-        }
-
-        $extension = match ($mime) {
-            'image/png' => 'png',
-            'image/webp' => 'webp',
-            'image/gif' => 'gif',
-            'image/avif' => 'avif',
-            default => 'jpg',
-        };
-
-        return new UploadedFile($path, 'image-'.$image->externalId.'.'.$extension, $mime, null, true);
+        return $this->downloader->download($image->url, 'image-'.$image->externalId);
     }
 
     /**
-     * Stock of the first active branch: [branch_id][variant key | "base"] => qty.
+     * Stock of the default branch (created when there is none): [branch_id][variant key | "base"] => qty.
      *
      * @param  list<array{external: ExternalVariantData, row: ProductVariantData}>  $variants
      * @param  list<string>  $warnings
@@ -349,7 +363,7 @@ class ExternalProductImporter
             return [];
         }
 
-        $branch = $this->branches->active()->first();
+        $branch = $this->branches->defaultOrCreate();
 
         if ($branch === null) {
             $warnings[] = $this->text('catalog::imports.messages.no_branch');
@@ -379,7 +393,9 @@ class ExternalProductImporter
      */
     private function productData(?Product $product, ExternalProductData $item, array $categoryIds, array $variants, array $keepMediaIds, array $newImages, array $stock): ProductData
     {
-        $status = $item->isActive ? ProductStatus::Published : ProductStatus::Draft;
+        // New imports are published (visible to stores as "New products"); an update keeps
+        // the status the product has, so an admin's change is never undone (#112).
+        $status = ProductStatus::Published;
         $compareAt = null;
         $kept = [
             'slug' => null,
@@ -397,7 +413,7 @@ class ExternalProductImporter
 
         if ($product !== null) {
             $product->loadMissing(['categories', 'labels', 'assignedTenants']);
-            $status = $product->status === ProductStatus::Archived ? ProductStatus::Archived : $status;
+            $status = $product->status;
             $compareAt = $product->sale_price !== null ? $product->base_price->minor : null;
             $kept = [
                 'slug' => $product->slug,

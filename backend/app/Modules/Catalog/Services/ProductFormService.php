@@ -150,6 +150,11 @@ class ProductFormService
             }
         }
 
+        // Stock always has a branch to go to: the default one is created on first need.
+        if ($this->branches->active()->isEmpty()) {
+            $this->branches->defaultOrCreate();
+        }
+
         return [
             'attributes' => $attributes,
             'variants' => $variants,

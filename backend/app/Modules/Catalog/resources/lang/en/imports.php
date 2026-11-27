@@ -40,7 +40,7 @@ return [
 
     'not_configured' => [
         'title' => 'Connect a catalog driver first',
-        'description' => 'Add the :driver API URL (and token, if any) in Integrations and switch the card on. Then come back to run the import.',
+        'description' => 'Set the :driver API URL (and token, if the API needs one) in Integrations. Then come back to run the import.',
         'action' => 'Open Integrations',
         'no_access' => 'Ask an admin with access to Integrations to connect it.',
     ],
@@ -134,6 +134,8 @@ return [
         'driver' => 'Driver',
         'update_existing' => 'Update products imported before',
         'update_existing_help' => 'Off: already imported products are skipped. Unchanged products are always skipped.',
+        'auto_create' => 'Create missing categories and attributes',
+        'auto_create_help' => 'Source categories without a mapping become central categories (names, parent, image); missing attributes and options are created too, so every product is imported with all its variants. Off: products of unmapped categories or unknown attributes are skipped.',
         'max_pages' => 'Page limit',
         'max_pages_help' => 'Optional. Leave empty to import every page.',
         'preview_title' => 'Preview',
@@ -190,7 +192,7 @@ return [
     ],
 
     'errors' => [
-        'not_configured' => 'The catalog driver is not configured. Enable it in Integrations.',
+        'not_configured' => 'The catalog driver has no API URL. Set it in Integrations.',
         'already_running' => 'An import of this driver is already running.',
         'cannot_pause' => 'Only a running import can be paused.',
         'cannot_resume' => 'Only a paused import can be resumed.',
@@ -207,10 +209,11 @@ return [
         'item_failed' => 'import failed: :detail',
         'all_pages_failed' => 'No page of the source could be imported.',
         'page_out_of_range' => 'Page :page does not exist: the source has :last pages.',
-        'not_inline' => 'This import runs on the queue. Resume it from Catalog › Import.',
+        'schema_outdated' => 'The database is not up to date for imports. Run php artisan migrate and php artisan queue:restart, then resume the import.',
+        'category_create_failed' => 'Category ":name" could not be created: :detail',
+        'option_unknown' => 'Attribute option ":name" does not exist yet (automatic creation is off).',
         'already_completed' => 'This import has already completed.',
         'still_running' => 'This import is still running in another process.',
-        'resume_from_cli' => 'This import was started from the command line. Continue it with: php artisan catalog:import-neozena --resume=:id',
     ],
 
     'notifications' => [

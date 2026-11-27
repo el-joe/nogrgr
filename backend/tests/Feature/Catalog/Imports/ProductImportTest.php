@@ -2,6 +2,7 @@
 
 use App\Modules\Catalog\Enums\ImportStatus;
 use App\Modules\Catalog\Jobs\ConvertCatalogMedia;
+use App\Modules\Catalog\Jobs\Imports\ImportCatalogPage;
 use App\Modules\Catalog\Models\Attribute;
 use App\Modules\Catalog\Models\AttributeOption;
 use App\Modules\Catalog\Models\CatalogImportCategoryMap;
@@ -16,8 +17,10 @@ use App\Modules\Catalog\Services\Imports\CatalogImportService;
 use App\Modules\Integrations\Repositories\Contracts\SettingsRepositoryContract;
 use App\Modules\Inventory\Models\Branch;
 use App\Modules\Inventory\Models\BranchStock;
+use Illuminate\Bus\PendingBatch;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
@@ -33,9 +36,9 @@ require_once __DIR__.'/../CatalogHelpers.php';
 
 const NEOZENA_BASE = 'https://neozena.test/api/catalog';
 
-function configureNeozena(bool $enabled = true): void
+function configureNeozena(string $baseUrl = NEOZENA_BASE): void
 {
-    app(SettingsRepositoryContract::class)->put('neozena', ['enabled' => $enabled, 'base_url' => NEOZENA_BASE, 'api_token' => 'test-token'], ['api_token']);
+    app(SettingsRepositoryContract::class)->put('neozena', ['base_url' => $baseUrl, 'api_token' => 'test-token'], ['api_token']);
 }
 
 /**
@@ -160,7 +163,9 @@ it('redirects guests and forbids admins without the import permission', function
     }
 })->with('import endpoints');
 
-it('shows the not-configured state with a link to Integrations', function (): void {
+it('shows the not-configured state with a link to Integrations once the base URL is cleared', function (): void {
+    configureNeozena('');
+
     $this->actingAs(catalogAdmin(), 'admin')
         ->get($this->centralUrl('/admin/catalog/imports'))
         ->assertOk()
@@ -170,6 +175,15 @@ it('shows the not-configured state with a link to Integrations', function (): vo
     $this->postJson($this->centralUrl('/admin/catalog/imports'), ['driver' => 'neozena'])
         ->assertUnprocessable()
         ->assertJsonPath('message', __('catalog::imports.errors.not_configured'));
+});
+
+it('works out of the box: the never-imported state with the default public API and no saved settings', function (): void {
+    $this->actingAs(catalogAdmin(['catalog.imports.view']), 'admin')
+        ->get($this->centralUrl('/admin/catalog/imports'))
+        ->assertOk()
+        ->assertSee(__('catalog::imports.never.title'))
+        ->assertSee('neozena.com')
+        ->assertDontSee(__('catalog::imports.not_configured.title'));
 });
 
 it('shows the never-imported state once the driver is configured', function (): void {
@@ -340,12 +354,12 @@ it('logs a bad item as an error and keeps importing the rest', function (): void
         ->and(collect($errors['data'])->pluck('message')->implode(' '))->toContain(__('catalog::imports.errors.missing_name'))->toContain(__('catalog::imports.errors.negative_price'));
 });
 
-it('skips products of unmapped categories with a log line', function (): void {
+it('skips products of unmapped categories with a log line when automatic creation is off', function (): void {
     configureNeozena();
     fakeNeozena([[neozenaProduct(1)]]);
     $this->actingAs(catalogAdmin(), 'admin');
 
-    $run = runImport();
+    $run = runImport(['auto_create' => '0']);
 
     expect($run->skipped_count)->toBe(1)
         ->and(Product::query()->count())->toBe(0)
@@ -367,8 +381,9 @@ it('fails the run when the source cannot be read', function (): void {
 
 it('refuses a second run while one is active, and pauses, resumes and cancels it', function (): void {
     configureNeozena();
+    Bus::fake();
     $this->actingAs(catalogAdmin(), 'admin');
-    $run = CatalogImportRun::query()->create(['driver' => 'neozena', 'status' => 'running', 'total_items' => 10]);
+    $run = CatalogImportRun::query()->create(['driver' => 'neozena', 'status' => 'running', 'total_items' => 10, 'total_pages' => 2]);
 
     $this->postJson($this->centralUrl('/admin/catalog/imports'), ['driver' => 'neozena'])
         ->assertUnprocessable()
@@ -387,6 +402,36 @@ it('refuses a second run while one is active, and pauses, resumes and cancels it
     $this->patchJson($this->centralUrl("/admin/catalog/imports/runs/{$run->id}/cancel"))->assertUnprocessable();
 
     expect($run->refresh()->finished_at)->not->toBeNull();
+    // The paused run had no live batch: its two unfinished pages were queued again.
+    Bus::assertBatched(fn (PendingBatch $batch): bool => $batch->jobs->count() === 2);
+});
+
+it('queues one ImportCatalogPage job per page in one batch', function (): void {
+    configureNeozena();
+    fakeNeozena([[neozenaProduct(1)], [neozenaProduct(2)], [neozenaProduct(3)]]);
+    Bus::fake([ImportCatalogPage::class]);
+    $this->actingAs(catalogAdmin(), 'admin');
+
+    $run = runImport(['max_pages' => 2]);
+
+    expect($run->status)->toBe(ImportStatus::Running)->and($run->total_pages)->toBe(2)->and($run->batch_id)->not->toBeNull();
+    Bus::assertBatched(fn (PendingBatch $batch): bool => $batch->jobs->map(fn (ImportCatalogPage $job): int => $job->page)->all() === [1, 2]
+        && $batch->jobs->every(fn (ImportCatalogPage $job): bool => $job->runId === $run->id));
+});
+
+it('creates a missing category from Neozena by default and imports its products', function (): void {
+    configureNeozena();
+    fakeNeozena([[neozenaProduct(1)]]);
+    $this->actingAs(catalogAdmin(), 'admin');
+
+    $run = runImport();
+    $category = Category::query()->where('external_source', 'neozena')->where('external_id', 501)->sole();
+
+    expect($run->created_count)->toBe(1)
+        ->and($category->getTranslation('name', 'en'))->toBe('Shirts')
+        ->and($category->getTranslation('name', 'ar'))->toBe('قمصان')
+        ->and(CatalogImportCategoryMap::query()->where('external_id', 501)->value('category_id'))->toBe($category->id)
+        ->and(Product::query()->sole()->categories->pluck('id')->all())->toBe([$category->id]);
 });
 
 it('stops importing items once the run is cancelled', function (): void {

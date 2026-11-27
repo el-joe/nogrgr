@@ -7,8 +7,8 @@ use App\Shared\DTOs\BaseDTO;
 
 /**
  * "Run import": which driver, whether already imported products are refreshed, an
- * optional page limit / first page (partial sync) and whether the pages run inline in
- * the calling process (`catalog:import-neozena --sync`) instead of as a queued batch.
+ * optional page limit / first page (partial sync) and whether source categories without
+ * a mapping become central categories (default) instead of skipping their products.
  */
 final class StartImportData extends BaseDTO
 {
@@ -17,6 +17,6 @@ final class StartImportData extends BaseDTO
         public readonly bool $updateExisting = true,
         public readonly ?int $maxPages = null,
         public readonly int $fromPage = 1,
-        public readonly bool $inline = false,
+        public readonly bool $autoCreate = true,
     ) {}
 }

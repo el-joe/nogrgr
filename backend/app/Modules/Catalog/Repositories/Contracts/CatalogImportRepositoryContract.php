@@ -34,6 +34,23 @@ interface CatalogImportRepositoryContract extends RepositoryContract
     public function increment(CatalogImportRun $run, array $amounts): void;
 
     /**
+     * Records a finished source page; false when it was already recorded.
+     */
+    public function markPageDone(CatalogImportRun $run, int $page): bool;
+
+    /**
+     * The page table exists (false until `php artisan migrate` ran after an update).
+     */
+    public function tracksPages(): bool;
+
+    public function isPageDone(CatalogImportRun $run, int $page): bool;
+
+    /**
+     * @return list<int>
+     */
+    public function donePages(CatalogImportRun $run): array;
+
+    /**
      * @param  array{external_id?: int|null, sku?: string|null, item_name?: string|null, product_id?: int|null}  $item
      */
     public function log(CatalogImportRun $run, ImportLogResult $result, string $message, array $item = []): CatalogImportLog;
@@ -83,6 +100,11 @@ interface CatalogImportRepositoryContract extends RepositoryContract
     /**
      * @return Builder<CatalogImportCategoryMap>
      */
+    /**
+     * Maps a source category to a local one (an automatically created category).
+     */
+    public function mapCategory(ImportDriver $driver, ExternalCategoryData $category, int $categoryId): void;
+
     public function categoryMapsQuery(ImportDriver $driver): Builder;
 
     public function unmappedCount(ImportDriver $driver): int;

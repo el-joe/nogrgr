@@ -18,6 +18,13 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class BranchService extends BaseService
 {
+    public const DEFAULT_CODE = 'MAIN';
+
+    /**
+     * Name of the automatically created branch (stored as data, like an admin-typed name).
+     */
+    public const DEFAULT_NAME = ['en' => 'Main warehouse', 'ar' => 'المستودع الرئيسي'];
+
     public function __construct(
         private readonly BranchRepositoryContract $branches,
         private readonly BranchStockRepositoryContract $stock,
@@ -30,6 +37,49 @@ class BranchService extends BaseService
     public function active(): Collection
     {
         return $this->branches->active();
+    }
+
+    /**
+     * The branch stock goes to when nobody picked one (product import, product form):
+     * the active default branch (platform country first); with active branches but no
+     * default, the first one becomes the default of its country; with no active branch
+     * at all, "Main warehouse" is created (active, default of the platform country, no
+     * address). Null only while no country exists (fresh install before seeding).
+     */
+    public function defaultOrCreate(): ?Branch
+    {
+        $countryId = $this->branches->platformCountryId();
+        $default = $this->branches->activeDefault($countryId);
+
+        if ($default !== null) {
+            return $default;
+        }
+
+        $first = $this->branches->active()->first();
+
+        if ($first !== null) {
+            $this->branches->markDefaultIfMissing($first);
+
+            return $first;
+        }
+
+        if ($countryId === null) {
+            return null;
+        }
+
+        return $this->transaction(function () use ($countryId): Branch {
+            /** @var Branch $branch */
+            $branch = $this->branches->create([
+                'name' => $this->locales->forStorage(['en' => self::DEFAULT_NAME['en'], 'ar' => self::DEFAULT_NAME['ar']]),
+                'code' => $this->branches->freeCode(self::DEFAULT_CODE),
+                'country_id' => $countryId,
+                'allows_pickup' => false,
+                'is_active' => true,
+            ]);
+            $this->branches->markDefaultIfMissing($branch);
+
+            return $branch;
+        }, $this->connection());
     }
 
     /**

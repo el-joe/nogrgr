@@ -125,11 +125,11 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->job(new RefreshBadgeAutoFill)->dailyAt(self::BADGE_REFRESH_AT)->name('catalog:refresh-badge-auto-fill')->onOneServer();
 
-            // Daily Neozena refresh: only while switched on in Admin › Integrations › Neozena.
+            // Daily Neozena refresh (queued page jobs, the scheduler does not wait): only while switched on in Admin › Integrations › Neozena.
             $neozenaAt = $this->app->make(ScheduledCatalogSync::class)->dailyAt(ImportDriver::Neozena);
 
             if ($neozenaAt !== null) {
-                $schedule->command(ImportNeozenaCommand::class, ['--update-existing', '--force'])
+                $schedule->command(ImportNeozenaCommand::class, ['--update-existing', '--force', '--no-wait'])
                     ->dailyAt($neozenaAt)
                     ->name('catalog:import-neozena')
                     ->onOneServer()

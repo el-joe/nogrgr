@@ -151,7 +151,7 @@ class IntegrationSettingsService extends BaseService
     {
         $values = $this->settings->group($section->value);
 
-        if ($values === [] || ($section->hasEnabledSwitch() && ($values['enabled'] ?? false) !== true)) {
+        if (($values === [] && ! $section->worksWithDefaults()) || ($section->hasEnabledSwitch() && ($values['enabled'] ?? false) !== true)) {
             return ConnectionStatus::NotConfigured;
         }
 

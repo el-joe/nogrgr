@@ -6,7 +6,7 @@ use App\Shared\DTOs\BaseDTO;
 
 /**
  * One attribute value of an external variant (e.g. Color = Black), with the external
- * ids of both the attribute and the option.
+ * ids of both the attribute and the option and its colour swatch (#hex) when known.
  */
 final class ExternalOptionData extends BaseDTO
 {
@@ -19,5 +19,6 @@ final class ExternalOptionData extends BaseDTO
         public readonly array $attributeName,
         public readonly int $externalId,
         public readonly array $name,
+        public readonly ?string $swatch = null,
     ) {}
 }

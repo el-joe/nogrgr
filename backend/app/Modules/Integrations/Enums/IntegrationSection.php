@@ -91,7 +91,16 @@ enum IntegrationSection: string
      */
     public function hasEnabledSwitch(): bool
     {
-        return $this !== self::Ai && ! $this->isBusiness();
+        return $this !== self::Ai && $this !== self::Neozena && ! $this->isBusiness();
+    }
+
+    /**
+     * Sections that work out of the box with their defaults, before anything is saved:
+     * Neozena's public catalog API needs no token or switch (client feedback on #112).
+     */
+    public function worksWithDefaults(): bool
+    {
+        return $this === self::Neozena;
     }
 
     /**
@@ -159,8 +168,8 @@ enum IntegrationSection: string
                 new SettingField('freellmapi_api_key', SettingFieldType::Secret),
                 new SettingField('freellmapi_model', required: true, maxLength: 120, default: TranslationProvider::FreeLlmApi->defaultModel()),
             ],
+            // Public API: no "Enabled" switch, the token is optional (#112).
             self::Neozena => [
-                $enabled,
                 new SettingField('base_url', SettingFieldType::Url, true, default: 'https://neozena.com/api/catalog'),
                 new SettingField('api_token', SettingFieldType::Secret),
                 // Daily `catalog:import-neozena --update-existing` (off by default).

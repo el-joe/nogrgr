@@ -21,6 +21,7 @@ final class ExternalVariantData extends BaseDTO
         public readonly ?int $weightGrams,
         public readonly bool $isActive,
         public readonly array $options,
+        public readonly ?string $imageUrl = null,
     ) {}
 
     /**

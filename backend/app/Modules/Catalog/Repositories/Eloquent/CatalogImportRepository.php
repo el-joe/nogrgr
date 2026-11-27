@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Repositories\Eloquent;
 
+use App\Modules\Catalog\DTOs\Imports\ExternalCategoryData;
 use App\Modules\Catalog\Enums\ImportDriver;
 use App\Modules\Catalog\Enums\ImportLinkType;
 use App\Modules\Catalog\Enums\ImportLogResult;
@@ -14,13 +15,20 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Repositories\Contracts\CatalogImportRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * @extends BaseRepository<CatalogImportRun>
  */
 class CatalogImportRepository extends BaseRepository implements CatalogImportRepositoryContract
 {
+    /**
+     * Remembered once true; checked again while false (a worker started before the migration).
+     */
+    private static bool $tracksPages = false;
+
     protected function model(): string
     {
         return CatalogImportRun::class;
@@ -56,6 +64,30 @@ class CatalogImportRepository extends BaseRepository implements CatalogImportRep
         }
 
         $this->query()->whereKey($run->id)->toBase()->update($updates);
+    }
+
+    public function markPageDone(CatalogImportRun $run, int $page): bool
+    {
+        return $this->pages()->insertOrIgnore(['run_id' => $run->id, 'page' => $page, 'created_at' => now()]) > 0;
+    }
+
+    public function tracksPages(): bool
+    {
+        if (self::$tracksPages) {
+            return true;
+        }
+
+        return self::$tracksPages = Schema::connection((new CatalogImportRun)->getConnectionName())->hasTable('catalog_import_run_pages');
+    }
+
+    public function isPageDone(CatalogImportRun $run, int $page): bool
+    {
+        return $this->pages()->where('run_id', $run->id)->where('page', $page)->exists();
+    }
+
+    public function donePages(CatalogImportRun $run): array
+    {
+        return array_map('intval', $this->pages()->where('run_id', $run->id)->orderBy('page')->pluck('page')->all());
     }
 
     public function log(CatalogImportRun $run, ImportLogResult $result, string $message, array $item = []): CatalogImportLog
@@ -157,6 +189,18 @@ class CatalogImportRepository extends BaseRepository implements CatalogImportRep
         return $result;
     }
 
+    public function mapCategory(ImportDriver $driver, ExternalCategoryData $category, int $categoryId): void
+    {
+        $map = CatalogImportCategoryMap::query()->firstOrNew(['driver' => $driver->value, 'external_id' => $category->externalId]);
+
+        // A mapping chosen by an admin meanwhile is kept.
+        if ($map->exists && $map->category_id !== null && Category::query()->whereKey($map->category_id)->exists()) {
+            return;
+        }
+
+        $map->fill(['name' => $category->name, 'parent_external_id' => $category->parentExternalId, 'category_id' => $categoryId])->save();
+    }
+
     public function categoryMapsQuery(ImportDriver $driver): Builder
     {
         return CatalogImportCategoryMap::query()->with('category')->where('driver', $driver->value);
@@ -185,5 +229,10 @@ class CatalogImportRepository extends BaseRepository implements CatalogImportRep
     private function links(ImportDriver $driver, ImportLinkType $type): Builder
     {
         return CatalogImportLink::query()->where('driver', $driver->value)->where('type', $type->value);
+    }
+
+    private function pages(): QueryBuilder
+    {
+        return DB::connection((new CatalogImportRun)->getConnectionName())->table('catalog_import_run_pages');
     }
 }
