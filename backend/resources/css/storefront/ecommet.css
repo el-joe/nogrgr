@@ -350,6 +350,27 @@
         background: var(--eco-black);
     }
 
+    /* Phone tabs (m 1:2697 category strip, 1:2682 product tabs): a short centred line
+       (--eco-tab-line wide) 8px under the label instead of a full-width bar. */
+    .eco-tab-short::after {
+        inset-inline: calc(50% - var(--eco-tab-line, 39px) / 2);
+    }
+
+    /* Before Swiper's own stylesheet loads, keep the phone category strip on one line
+       with the 16px lead-in it gets from slidesOffsetBefore once initialised. */
+    .eco-strip .swiper:not(.swiper-initialized) {
+        overflow: hidden;
+    }
+
+    .eco-strip .swiper:not(.swiper-initialized) > .swiper-wrapper {
+        display: flex;
+        padding-inline-start: 16px;
+    }
+
+    .eco-strip .swiper:not(.swiper-initialized) .swiper-slide {
+        flex-shrink: 0;
+    }
+
     /* ---------- Product cards (1:1067 deal, 1:1089 grid) ---------- */
     .eco-card {
         position: relative;
@@ -721,6 +742,87 @@
             inset-inline-end: 16px;
             width: 44px;
             height: 44px;
+        }
+    }
+
+    /* Phone cards (m 1:2656): grid card 1:2684 (166 × 208, 6px radius, 110px image, 4px
+       body inset, 12px compare / stars, 32 × 24 cart) and the borderless deal card
+       1:2666 (148 wide, 114px image, red 14px price, no stars). */
+    @media (max-width: 1023.98px) {
+        .eco-card {
+            border-radius: 6px;
+            padding-bottom: 8px;
+        }
+
+        .eco-card-img {
+            aspect-ratio: 166 / 110;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .eco-card-body {
+            padding-inline: 4px;
+        }
+
+        .eco-card .eco-compare {
+            font-size: 12px;
+        }
+
+        .eco-price {
+            color: var(--eco-black);
+        }
+
+        .eco-card .eco-stars svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .eco-card-cart {
+            width: 32px;
+            height: 24px;
+            padding-inline: 0;
+        }
+
+        .eco-card-cart svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .eco-ribbon {
+            height: 20px;
+            padding-inline: 4px 14px;
+            font-size: 10px;
+            line-height: 20px;
+            clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 50%, 100% 100%, 0 100%);
+        }
+
+        [dir='rtl'] .eco-ribbon {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 10px 50%);
+        }
+
+        .eco-card-deal {
+            border: 0;
+            border-radius: 0;
+            padding-bottom: 0;
+            background: transparent;
+        }
+
+        .eco-card-deal .eco-card-img {
+            aspect-ratio: 148 / 114;
+            border-radius: 0;
+        }
+
+        .eco-card-deal .eco-card-body {
+            padding-inline: 0;
+        }
+
+        .eco-card-deal .eco-discount {
+            padding: 2px 4px;
+            font-size: 8px;
+        }
+
+        .eco-card-deal .eco-countdown {
+            font-size: 10px;
+            font-weight: 700;
         }
     }
 

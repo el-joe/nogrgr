@@ -69,7 +69,7 @@
                 </div>
             @endif
             <a href="{{ $card->url }}" class="absolute inset-0 rounded-lg" aria-label="{{ $card->name }}"></a>
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5 max-lg:hidden">
                 <x-sf::stars :rating="$card->rating" />
                 @if ($card->reviewCount > 0)<span class="text-xs tracking-[0.5px] text-eco-gray">{{ $card->reviewCount }}</span>@endif
             </div>
