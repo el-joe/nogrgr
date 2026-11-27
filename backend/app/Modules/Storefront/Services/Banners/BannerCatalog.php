@@ -11,6 +11,7 @@ use App\Modules\Storefront\Models\StoreBanner;
 use App\Modules\Storefront\Repositories\Contracts\BannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\HiddenBannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StoreBannerRepositoryContract;
+use App\Modules\Storefront\Services\Catalog\CategoryCatalog;
 use App\Modules\Storefront\Services\StorefrontContext;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,6 +31,7 @@ class BannerCatalog
         private readonly BannerRepositoryContract $central,
         private readonly StoreBannerRepositoryContract $store,
         private readonly HiddenBannerRepositoryContract $hidden,
+        private readonly CategoryCatalog $categories,
     ) {}
 
     /**
@@ -48,7 +50,25 @@ class BannerCatalog
 
         $countryId ??= app(StorefrontContext::class)->countryId();
 
-        return $this->merged($kind, $countryId, $locale ?? app()->getLocale(), liveOnly: true, includeHidden: false);
+        return array_map(
+            fn (BannerData $banner): BannerData => $this->withReachableLink($banner),
+            $this->merged($kind, $countryId, $locale ?? app()->getLocale(), liveOnly: true, includeHidden: false),
+        );
+    }
+
+    /**
+     * A banner linking to `/category/{slug}` the store does not sell (central banners target
+     * every store; QA-FINAL-007) is shown without its link instead of leading to a 404.
+     */
+    private function withReachableLink(BannerData $banner): BannerData
+    {
+        $path = is_string($banner->url) ? (string) parse_url($banner->url, PHP_URL_PATH) : '';
+
+        if (preg_match('#^/category/([A-Za-z0-9][A-Za-z0-9_-]{0,190})/?$#', $path, $match) !== 1 || $this->categories->findBySlug($match[1]) !== null) {
+            return $banner;
+        }
+
+        return new BannerData(...[...get_object_vars($banner), 'url' => null]);
     }
 
     /**

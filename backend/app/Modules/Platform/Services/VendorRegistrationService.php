@@ -275,6 +275,7 @@ class VendorRegistrationService extends BaseService
                 ownerId: $owner->id,
                 paymentLogId: $paymentLogId,
                 sellingCategoryIds: $data->sellingCategoryIds,
+                themeId: is_numeric(($registration->meta ?? [])['theme_id'] ?? null) ? (int) $registration->meta['theme_id'] : null,
             ));
 
             $this->registrations->update($registration, [

@@ -59,6 +59,9 @@ class TenantProvisioningService extends BaseService
 
     public const STALE_MINUTES = 15;
 
+    /** Attribute (tenants.data): catalogue theme id picked at registration. */
+    public const THEME = 'theme_id';
+
     public function __construct(
         private readonly TenantRepositoryContract $tenants,
         private readonly VendorRegistrationRepositoryContract $registrations,
@@ -111,6 +114,11 @@ class TenantProvisioningService extends BaseService
                 'admin_id' => $data->adminId,
                 'payment_log_id' => $data->paymentLogId,
             ]);
+            if ($data->themeId !== null) {
+                // Registration theme (WEB-004): StoreThemeService renders it until the store saves its own choice.
+                $tenant->setAttribute(self::THEME, $data->themeId);
+            }
+
             $tenant->setInternal('create_database', false);
             $tenant->save();
 

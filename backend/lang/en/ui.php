@@ -184,6 +184,23 @@ return [
     ],
     'http' => [
         'forbidden' => 'You do not have access to this page. Ask the account owner for the permission if you need it.',
+        'errors' => [
+            '403_title' => 'Access denied',
+            '403_text' => 'Your account does not have permission to open this page. Ask an administrator for access if you need it.',
+            '404_title' => 'Page not found',
+            '404_text' => 'The page may have been moved or deleted. Check the address or go back to the dashboard.',
+            '419_title' => 'Session expired',
+            '419_text' => 'Your session expired for security. Sign in again, then repeat the last step.',
+            '500_title' => 'Something went wrong',
+            '500_text' => 'We could not complete your request. Our team has been notified. Please try again in a moment.',
+            '503_title' => 'Down for maintenance',
+            '503_text' => 'We are making improvements and will be back shortly. Please try again in a few minutes.',
+            'dashboard' => 'Back to dashboard',
+            'back' => 'Go back',
+            'sign_in' => 'Sign in again',
+            'reload' => 'Reload page',
+            'retry' => 'Try again',
+        ],
     ],
     'icons' => [
         'alert-triangle' => 'Warning',

@@ -3,7 +3,7 @@
     e-mail, phone (intl-tel-input, visitor country pre-selected), compliance accept and
     "Sign up with Google / Apple" (only providers enabled in Integrations). A signed-in
     owner signs up with the owner e-mail (read-only). Inputs: $draft, $owner, $providers,
-    $socialError.
+    $socialError, $theme (?Theme picked on the central theme preview, WEB-004).
 --}}
 @extends('platform::central.register._page', ['title' => __('platform::signup.page_title'), 'page' => 'register-signup'])
 
@@ -31,6 +31,13 @@
                 <p class="flex items-center gap-2.5 rounded-xl bg-(--reg-tint) px-3.5 py-2.5 text-sm leading-5 text-ink">
                     <x-ui::icon name="users" :size="18" class="shrink-0 text-primary" />
                     <span class="min-w-0 flex-1 break-words">{{ __('platform::signup.form.signed_in_as', ['email' => $owner->email]) }}</span>
+                </p>
+            @endif
+
+            @if (! empty($theme))
+                <p class="flex items-center gap-2.5 rounded-xl bg-(--reg-tint) px-3.5 py-2.5 text-sm leading-5 text-ink" data-preselected-theme="{{ $theme->slug }}">
+                    <x-ui::icon name="layers" :size="18" class="shrink-0 text-primary" />
+                    <span class="min-w-0 flex-1 break-words">{{ __('platform::signup.form.theme_picked', ['theme' => $theme->name]) }}</span>
                 </p>
             @endif
 

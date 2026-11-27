@@ -302,6 +302,14 @@ class StoreThemeService extends BaseService
 
     private function registrationTheme(?int $countryId): ?Theme
     {
+        // The theme picked on the central theme preview (WEB-004) wins over the family.
+        $picked = tenancy()->initialized ? filter_var(tenant('theme_id'), FILTER_VALIDATE_INT) : false;
+        $theme = is_int($picked) ? $this->activeThemes()->find($picked) : null;
+
+        if ($theme instanceof Theme && $theme->allowsCountry($countryId)) {
+            return $theme;
+        }
+
         $family = tenancy()->initialized ? ThemeFamily::tryFrom((string) tenant('theme_family')) : null;
 
         if ($family === null) {

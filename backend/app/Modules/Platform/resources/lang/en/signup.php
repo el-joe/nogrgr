@@ -9,6 +9,7 @@ return [
     'page_title' => 'Sign up',
 
     'form' => [
+        'theme_picked' => 'Your store will start with the :theme theme. You can change it any time.',
         'heading' => 'Get Started with :app',
         'heading_plain' => 'Get Started with',
         'intro' => 'Set up your account in just a few steps and start building your online store.',

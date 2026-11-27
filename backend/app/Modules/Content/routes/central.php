@@ -9,16 +9,20 @@ use App\Modules\Content\Http\Controllers\Central\PageController;
 use App\Modules\Content\Http\Controllers\Central\PricingController;
 use App\Modules\Content\Http\Controllers\Central\SeoController;
 use App\Modules\Content\Http\Controllers\Central\TemplateController;
+use App\Modules\Content\Http\Controllers\Central\ThemeShowcaseController;
 use Illuminate\Support\Facades\Route;
 
 /*
 | Surface: central — {central}/, names "central.*". Public marketing website (P6,
-| WEB-001 … 015, 025). Theme preview (WEB-004) arrives in P7.
+| WEB-001 … 015, 025) and the theme gallery + live preview (WEB-004).
 */
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('templates', [TemplateController::class, 'index'])->name('templates');
 Route::get('templates/category/{slug}', [TemplateController::class, 'category'])->where('slug', '[a-z0-9-]+')->name('templates.category');
+Route::get('themes', [ThemeShowcaseController::class, 'index'])->name('themes');
+Route::get('themes/{slug}', [ThemeShowcaseController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('themes.show');
+Route::permanentRedirect('preview/{slug}', '/themes/{slug}')->where('slug', '[a-z0-9-]+')->name('preview');
 Route::get('pricing', PricingController::class)->name('pricing');
 Route::get('how-it-works', [PageController::class, 'howItWorks'])->name('how-it-works');
 Route::get('about', [PageController::class, 'about'])->name('about');

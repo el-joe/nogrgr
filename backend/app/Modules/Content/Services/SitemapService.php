@@ -34,7 +34,7 @@ class SitemapService extends BaseService
     {
         $paths = [];
 
-        foreach (['central.home', 'central.templates', 'central.pricing', 'central.how-it-works', 'central.contact', 'central.faqs', 'central.blog.index', 'central.register'] as $name) {
+        foreach (['central.home', 'central.templates', 'central.themes', 'central.pricing', 'central.how-it-works', 'central.contact', 'central.faqs', 'central.blog.index', 'central.register'] as $name) {
             $paths[] = [route($name), null];
         }
 

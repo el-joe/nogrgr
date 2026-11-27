@@ -4,7 +4,9 @@
     $retryAfter = is_numeric($retrySeconds) ? now()->addSeconds((int) $retrySeconds) : null;
 @endphp
 @include('errors._locale')
-@if (in_array(request()->getHost(), \App\Shared\Tenancy\CentralDomains::all(), true))
+@if ($panelSurface = \App\Shared\Http\PanelErrorPage::surface())
+    @include(\App\Shared\Http\PanelErrorPage::VIEW, ['surface' => $panelSurface, 'code' => '503'])
+@elseif (in_array(request()->getHost(), \App\Shared\Tenancy\CentralDomains::all(), true))
     @include('content::central.errors.503', ['retryAfter' => $retryAfter])
 @elseif ($storeView = \App\Modules\Storefront\Support\StoreErrorPage::view('503'))
     @include($storeView)

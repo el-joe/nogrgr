@@ -1,0 +1,144 @@
+/*
+ * Central theme live preview (WEB-004, Figma Central Website additions 127:11426 /
+ * 127:11559): brown bar, warm canvas and a device frame around the demo-store iframe.
+ * Frame size changes animate (width / radius / border) and are instant under
+ * prefers-reduced-motion. Dark mode (`.dark` on <html>) darkens the canvas only; the bar
+ * is dark in both modes like the design.
+ */
+@layer components {
+    .site-tp {
+        --tp-canvas: #f5f0ec;
+        --tp-bar-height: 72px;
+        background: var(--tp-canvas);
+    }
+
+    .dark .site-tp {
+        --tp-canvas: #1c1513;
+    }
+
+    .site-tp__device {
+        color: rgb(255 255 255 / 0.8);
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .site-tp__device[aria-pressed='true'] {
+        background: #fff;
+        color: var(--color-site-ink);
+    }
+
+    .site-tp__device:focus-visible,
+    .site-tp__bar a:focus-visible,
+    .site-tp__bar button:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+
+    .site-tp__title {
+        touch-action: pan-y;
+        user-select: none;
+    }
+
+    .site-tp__title.is-dragging {
+        cursor: grabbing;
+    }
+
+    .site-tp__menu.is-open {
+        display: block;
+        animation: site-tp-pop 0.18s var(--ease-out, ease-out);
+    }
+
+    .site-tp__frame {
+        height: calc(100dvh - var(--tp-bar-height) - 4rem);
+        min-height: 520px;
+        max-width: 1360px;
+        border-radius: 14px;
+        border: 0 solid var(--color-site-ink);
+        border-top-width: 6px;
+        box-shadow: 0 24px 60px rgb(65 37 30 / 0.14);
+        transition: max-width 0.45s var(--ease-out, ease-out), border-radius 0.45s ease, border-width 0.3s ease, height 0.45s ease;
+    }
+
+    .site-tp__frame[data-device='tablet'] {
+        max-width: 820px;
+        max-height: 1080px;
+        border-width: 8px;
+        border-radius: 32px;
+    }
+
+    .site-tp__frame[data-device='mobile'] {
+        max-width: 390px;
+        max-height: 844px;
+        border-width: 8px;
+        border-radius: 40px;
+    }
+
+    .site-tp__loading {
+        transition: opacity 0.35s ease, visibility 0.35s;
+    }
+
+    .site-tp__loading.is-done {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .site-tp__spinner {
+        animation: site-tp-spin 0.8s linear infinite;
+    }
+
+    .site-tp__frame.is-switching {
+        animation: site-tp-enter 0.45s var(--ease-out, ease-out);
+    }
+
+    @media (max-width: 1023.98px) {
+        .site-tp {
+            --tp-bar-height: 112px;
+        }
+    }
+
+    @media (max-width: 639.98px) {
+        .site-tp__frame,
+        .site-tp__frame[data-device] {
+            max-width: none;
+            border-width: 6px 0 0;
+            border-radius: 12px;
+            min-height: 480px;
+        }
+    }
+
+    @keyframes site-tp-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes site-tp-pop {
+        from {
+            opacity: 0;
+            transform: translateY(-4px) scale(0.98);
+        }
+    }
+
+    @keyframes site-tp-enter {
+        from {
+            opacity: 0.4;
+            transform: translateY(8px);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .site-tp__frame,
+        .site-tp__loading,
+        .site-tp__device {
+            transition: none !important;
+        }
+
+        .site-tp__frame.is-switching,
+        .site-tp__menu.is-open {
+            animation: none !important;
+        }
+
+        .site-tp__spinner {
+            animation-duration: 2.4s;
+        }
+    }
+}

@@ -2,7 +2,7 @@
     Template card (Figma Card 12:41069): 325×268, 1px #C4C4C4 border, radius 16, the
     theme's home page screenshot. Micro-interaction: hover/focus scrolls the long
     screenshot and lifts the card; a caption with name, family and categories slides up.
-    No preview link (WEB-004 is P7) — the CTA starts registration.
+    Actions: live preview (WEB-004) and "start with" (registration with the theme preselected).
 --}}
 @props(['theme', 'eager' => false])
 @php
@@ -34,8 +34,11 @@
                 @endforeach
             </ul>
         @endif
-        @if (\Illuminate\Support\Facades\Route::has('central.register'))
-            <a href="{{ route('central.register') }}" class="site-template__cta mt-1 inline-flex h-9 items-center justify-center self-start rounded-[40px] bg-primary px-4 text-sm font-medium text-white hover:bg-primary-hover">{{ __('content::site.templates.start_with', ['name' => $theme->name]) }}</a>
-        @endif
+        <div class="mt-1 flex flex-wrap gap-2">
+            <a href="{{ route('central.themes.show', ['slug' => $slug]) }}" class="site-template__cta inline-flex h-9 items-center justify-center gap-1.5 rounded-[40px] bg-white px-4 text-sm font-medium text-site-ink hover:bg-site-tint"><x-ui::icon name="eye" :size="16" />{{ __('content::theme_preview.gallery.preview') }}</a>
+            @if (\Illuminate\Support\Facades\Route::has('central.register'))
+                <a href="{{ route('central.register', ['theme' => $slug]) }}" class="site-template__cta inline-flex h-9 items-center justify-center rounded-[40px] bg-primary px-4 text-sm font-medium text-white hover:bg-primary-hover">{{ __('content::site.templates.start_with', ['name' => $theme->name]) }}</a>
+            @endif
+        </div>
     </div>
 </article>

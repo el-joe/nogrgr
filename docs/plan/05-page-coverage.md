@@ -198,11 +198,11 @@
 | ADM-115a | ↳ Docs topic | `admin.system.docs.show` | | admin.dev-docs.show | designed: Admin Panel 80:94467 | P9 | done — P9 (decision #90): Getting started, Store API v1, Payment webhooks, Mobile API, Storefront themes |
 | ADM-116 | Support tickets | `admin.support.tickets.index` | Std; filter status/priority | admin.support.index | designed: Admin Panel 80:95200 | P9 | done — P9 (decision #92): tabs open / waiting / resolved / closed / all, filters priority / assignee / category / store, search, resolve |
 | ADM-116a | ↳ Ticket detail (live chat, status, priority) | `admin.support.tickets.show` | reply, attach | admin.support.show | designed: Admin Panel 80:96112 | P9 | done — P9 (decision #92): live thread (Reverb + polling), replies + internal notes with files, status / priority / assignee, SLA, impersonate link, resolve |
-| ADM-120 | Error 403 | view `errors.admin.403` | back / login | bootstrap/app.php JSON 403 | designed: Admin Panel 81:97588 | P2 | todo |
-| ADM-121 | Error 404 | view `errors.admin.404` | | bootstrap/app.php JSON 404 | designed: Admin Panel 81:98238 | P2 | todo |
-| ADM-122 | Error 419 (session expired) | view `errors.admin.419` | reload | bootstrap/app.php 419 | designed: Admin Panel 81:98888 | P2 | todo |
-| ADM-123 | Error 500 | view `errors.admin.500` | | — | designed: Admin Panel 81:98906 | P2 | todo |
-| ADM-124 | Error 503 (maintenance) | view `errors.admin.503` | | — | designed: Admin Panel 81:98931 | P2 | todo |
+| ADM-120 | Error 403 | view `errors.admin.403` | back / login | bootstrap/app.php JSON 403 | designed: Admin Panel 81:97588 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
+| ADM-121 | Error 404 | view `errors.admin.404` | | bootstrap/app.php JSON 404 | designed: Admin Panel 81:98238 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
+| ADM-122 | Error 419 (session expired) | view `errors.admin.419` | reload | bootstrap/app.php 419 | designed: Admin Panel 81:98888 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
+| ADM-123 | Error 500 | view `errors.admin.500` | | — | designed: Admin Panel 81:98906 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
+| ADM-124 | Error 503 (maintenance) | view `errors.admin.503` | | — | designed: Admin Panel 81:98931 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
 
 ## 2. Vendor panel (`{store-domain}/admin`)
 
@@ -364,10 +364,10 @@
 | VEN-093 | UI kit / component gallery (internal) | `vendor.ui-kit` | | tenant.ui-kit, tenant.ui-kit.data | designed: Vendor Panel (new screens) 191:30163 aligned to Tenant Panel (old 92:130313 superseded) | P2 | todo |
 | VEN-094 | Plan-limit reached / upgrade modal | modal | upgrade CTA | PlanLimitService | designed: Vendor Panel (new screens) 82:102216 | P2 | todo |
 | VEN-095 | Subscription expired / store suspended screen | view | renew CTA | — (new) | designed: Vendor Panel (new screens) 82:101634 | P2 | todo |
-| VEN-096 | Error 403 | view | | AJAX contract 403 | designed: Vendor Panel (new screens) 82:102128 | P2 | todo |
-| VEN-097 | Error 404 | view | | — | designed: Vendor Panel (new screens) 82:102150 | P2 | todo |
-| VEN-098 | Error 419 | view | reload | AJAX contract 419 | designed: Vendor Panel (new screens) 82:102172 | P2 | todo |
-| VEN-099 | Error 500 | view | | — | designed: Vendor Panel (new screens) 82:102194 | P2 | todo |
+| VEN-096 | Error 403 | view | | AJAX contract 403 | designed: Vendor Panel (new screens) 82:102128 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
+| VEN-097 | Error 404 | view | | — | designed: Vendor Panel (new screens) 82:102150 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
+| VEN-098 | Error 419 | view | reload | AJAX contract 419 | designed: Vendor Panel (new screens) 82:102172 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
+| VEN-099 | Error 500 | view | | — | designed: Vendor Panel (new screens) 82:102194 | P2 | done — view `errors.panel` (App\Shared\Http\PanelErrorPage routes resources/views/errors/{code} by surface; signed-in admin = panel shell, guest / unmatched URL = card; panel fallback routes run the session middleware); en/ar; tests/Feature/Shared/PanelErrorPagesTest.php (decision #123) |
 
 ## 3. Affiliate panel (`{central}/affiliate`)
 
@@ -416,7 +416,7 @@
 | WEB-001 | Home | `central.home` | scroll animations, auto-scroll strips, `?ref=` tracking, "store does not exist" notice state | website.home | 12:41421, m 12:42786 | P6 | done |
 | WEB-002 | Templates (themes gallery) | `central.templates` | filter, preview | website.templates | 12:41985, m 12:43584 | P6 | done |
 | WEB-003 | Templates by category | `central.templates.category` | empty | — (Figma) | 12:42161, m 12:43373 | P6 | done — coverage audit 2026-11-27: `central.templates.category`; CentralPagesTest dataset "templates by category" (en + ar RTL) + unknown slug 404 |
-| WEB-004 | Theme preview | `central.preview` (`/preview/{slug}`) | country switch, exit | preview (central `/preview/*`) | designed: Central Website additions 127:11426 · mobile view 127:11559 | P7 | todo |
+| WEB-004 | Theme preview | `central.preview` (`/preview/{slug}`) | country switch, exit | preview (central `/preview/*`) | designed: Central Website additions 127:11426 · mobile view 127:11559 | P7 | done — `central.themes` gallery `/themes` + `central.themes.show` `/themes/{slug}` (`/preview/{slug}` 301) — ThemeShowcaseService, platform demo store (`storefront:demo-store theme-demo --platform`, read-only GuardDemoStore, noindex), device frame desktop/tablet/mobile, EN/AR, theme switcher + swipe, "Use this template" → `central.register?theme=` (stored on the registration → tenant `theme_id`); tests/Feature/Content/ThemeShowcaseTest.php (decision #123) |
 | WEB-005 | Plans / pricing | `central.pricing` | billing term toggle | website.pricing | 12:42011, m 12:43222 | P6 | done |
 | WEB-006 | How it works | `central.how-it-works` | | website.how-it-works | 12:41810, m 12:43441 | P6 | done |
 | WEB-007 | About | `central.about` | | website.about | 12:41879, m 12:43671 | P6 | done |

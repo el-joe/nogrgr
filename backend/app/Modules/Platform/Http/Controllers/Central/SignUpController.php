@@ -9,6 +9,8 @@ use App\Modules\Platform\DTOs\SignUpDraftData;
 use App\Modules\Platform\Http\Requests\Central\SignUpRequest;
 use App\Modules\Platform\Services\RegistrationFlowService;
 use App\Modules\Platform\Support\RegistrationSession;
+use App\Modules\Storefront\Models\Theme;
+use App\Modules\Storefront\Repositories\Contracts\ThemeRepositoryContract;
 use App\Shared\Http\Controller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +27,7 @@ class SignUpController extends Controller
     public function __construct(
         private readonly RegistrationFlowService $flow,
         private readonly OwnerService $owners,
+        private readonly ThemeRepositoryContract $themes,
     ) {}
 
     public function show(Request $request): View
@@ -37,7 +40,17 @@ class SignUpController extends Controller
             $session->putPreselectedPlan(['plan' => $planId, 'term' => ($term ?? BillingTerm::Monthly)->value]);
         }
 
+        // "Start with this theme" on the central theme preview (WEB-004): ?theme={slug}.
+        $picked = is_string($request->query('theme')) ? $this->themes->findActiveBySlug($request->query('theme')) : null;
+
+        if ($picked instanceof Theme) {
+            $session->putPreselectedTheme($picked->id);
+        }
+
+        $themeId = $session->preselectedTheme();
+
         return view('platform::central.signup.sign-up', [
+            'theme' => $picked ?? ($themeId !== null ? $this->themes->find($themeId) : null),
             'draft' => $session->draft(),
             'owner' => $this->owners->current(),
             'providers' => SocialProvider::enabled(),

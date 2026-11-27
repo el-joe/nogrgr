@@ -20,6 +20,8 @@ final class RegistrationSession
 
     private const PLAN = 'central_registration.plan';
 
+    private const THEME = 'central_registration.theme';
+
     public function __construct(private readonly Session $session) {}
 
     public function draft(): ?SignUpDraftData
@@ -95,8 +97,23 @@ final class RegistrationSession
         return is_array($plan) && is_int($plan['plan'] ?? null) && is_string($plan['term'] ?? null) ? $plan : null;
     }
 
+    /**
+     * Catalogue theme picked on the central theme preview (WEB-004 "Start with this theme").
+     */
+    public function putPreselectedTheme(int $themeId): void
+    {
+        $this->session->put(self::THEME, $themeId);
+    }
+
+    public function preselectedTheme(): ?int
+    {
+        $theme = $this->session->get(self::THEME);
+
+        return is_int($theme) ? $theme : null;
+    }
+
     public function forget(): void
     {
-        $this->session->forget([self::DRAFT, self::CURRENT, self::SOCIAL, self::PLAN]);
+        $this->session->forget([self::DRAFT, self::CURRENT, self::SOCIAL, self::PLAN, self::THEME]);
     }
 }

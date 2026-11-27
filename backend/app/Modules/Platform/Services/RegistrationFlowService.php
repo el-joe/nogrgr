@@ -132,6 +132,8 @@ class RegistrationFlowService extends BaseService
                 'social_provider' => $draft->socialProvider,
                 'default_country_id' => $draft->defaultCountryId,
                 'plan_choice' => $needsPayment ? PlanChoice::Paid->value : PlanChoice::Trial->value,
+                // Theme picked on the central theme preview (WEB-004); the new store starts with it.
+                'theme_id' => $session->preselectedTheme(),
                 // Affiliate attribution survives the e-mail link being opened in another browser.
                 'affiliate_click_id' => $this->referrals->currentClickId(request()),
             ], static fn (mixed $value): bool => $value !== null),

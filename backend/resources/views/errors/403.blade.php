@@ -14,6 +14,8 @@
 @endphp
 @if (\App\Modules\Affiliates\Support\AffiliateErrorPage::applies())
     @include('affiliates::errors.page', ['code' => '403', 'message' => $generic ? null : $forbiddenMessage])
+@elseif ($panelSurface = \App\Shared\Http\PanelErrorPage::surface())
+    @include(\App\Shared\Http\PanelErrorPage::VIEW, ['surface' => $panelSurface, 'code' => '403', 'message' => $generic ? null : $forbiddenMessage])
 @elseif ($storeView = \App\Modules\Storefront\Support\StoreErrorPage::view('403'))
     @include($storeView)
 @else

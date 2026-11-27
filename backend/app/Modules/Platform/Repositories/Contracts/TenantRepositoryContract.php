@@ -38,4 +38,14 @@ interface TenantRepositoryContract extends RepositoryContract
     public function listing(array $filters = []): Builder;
 
     public function slugExists(string $slug, ?int $exceptId = null): bool;
+
+    /**
+     * The active platform demo store (decision #117 a: `is_demo` flag, WEB-004 theme previews).
+     */
+    public function platformDemoStore(): ?Tenant;
+
+    /**
+     * Flag one store as the platform demo store and clear the flag on every other store.
+     */
+    public function markPlatformDemoStore(Tenant $tenant): void;
 }

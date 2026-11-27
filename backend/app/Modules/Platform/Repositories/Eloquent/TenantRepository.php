@@ -6,6 +6,7 @@ use App\Modules\Billing\Enums\SubscriptionStatus;
 use App\Modules\Platform\Enums\TenantStatus;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Platform\Repositories\Contracts\TenantRepositoryContract;
+use App\Modules\Platform\Support\DemoStore;
 use App\Shared\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -96,5 +97,25 @@ class TenantRepository extends BaseRepository implements TenantRepositoryContrac
             ->where('slug', strtolower($slug))
             ->when($exceptId !== null, fn (Builder $query) => $query->whereKeyNot($exceptId))
             ->exists();
+    }
+
+    public function platformDemoStore(): ?Tenant
+    {
+        return $this->query()
+            ->where('status', TenantStatus::Active)
+            ->where('data->'.DemoStore::FLAG, true)
+            ->orderBy('id')
+            ->first();
+    }
+
+    public function markPlatformDemoStore(Tenant $tenant): void
+    {
+        foreach ($this->query()->where('data->'.DemoStore::FLAG, true)->whereKeyNot($tenant->getKey())->get() as $other) {
+            $other->setAttribute(DemoStore::FLAG, false);
+            $other->save();
+        }
+
+        $tenant->setAttribute(DemoStore::FLAG, true);
+        $tenant->save();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Shared\Routing;
 
+use App\Shared\Http\Controllers\PanelFallbackController;
 use App\Shared\Tenancy\CentralDomains;
 use Illuminate\Foundation\Http\HealthCheck;
 use Illuminate\Http\RedirectResponse;
@@ -77,6 +78,37 @@ class SurfaceRouter
             foreach ($files as $file) {
                 require $file;
             }
+        });
+
+        $this->mountPanelFallback($mount);
+    }
+
+    /**
+     * Unknown URLs under a panel prefix (`/admin/…`, `/my-account/…`, `/tenant/{store}/…`,
+     * store-host `/admin/…`) run through the panel's middleware before answering 404, so
+     * the panel error page (ADM-121, VEN-097) sees the session, the signed-in user and the
+     * store. Named outside the panel prefixes ("panel-fallback.*"): it is not a panel page.
+     */
+    private function mountPanelFallback(RouteMount $mount): void
+    {
+        if (! in_array($mount->surface, [Surface::Admin, Surface::Owner, Surface::Vendor], true) || $mount->prefix === '') {
+            return;
+        }
+
+        $group = Route::middleware($mount->middleware)->prefix($mount->prefix);
+
+        if ($mount->domain !== null) {
+            $group->domain($mount->domain);
+        }
+
+        if ($mount->wheres !== []) {
+            $group->where($mount->wheres);
+        }
+
+        $name = 'panel-fallback.'.$mount->surface->value.($mount->isCentralHost() ? '.central' : '.store');
+
+        $group->group(static function () use ($name): void {
+            Route::fallback(PanelFallbackController::class)->name($name);
         });
     }
 
