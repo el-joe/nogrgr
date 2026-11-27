@@ -164,7 +164,8 @@ function initFileUpload(root) {
 /* The first IMAGE tile is "Main"; gallery videos never are (#114). */
 function refreshMain(grid) {
     const tiles = [...grid.querySelectorAll('[data-image-tile]')];
-    const main = tiles.find((tile) => !tile.hasAttribute('data-video-tile'));
+    // data-no-main: the main image is chosen elsewhere (admin product primary image, #115).
+    const main = grid.closest('[data-no-main]') ? null : tiles.find((tile) => !tile.hasAttribute('data-video-tile'));
     tiles.forEach((tile) => {
         tile.querySelector('[data-main-badge]').hidden = tile !== main;
     });

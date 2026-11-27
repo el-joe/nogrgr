@@ -186,6 +186,7 @@ return [
         'exists' => 'already imported (updates off)',
         'unchanged' => 'unchanged since the last import',
         'duplicate_sku' => 'duplicate SKU in catalog (:sku)',
+        'duplicate_variant' => 'variant :variant repeats the option combination of :first — skipped',
         'trashed' => 'product is in the trash; restore it to import again',
         'image_failed' => 'image could not be downloaded: :url',
         'video_failed' => 'video could not be downloaded: :url',

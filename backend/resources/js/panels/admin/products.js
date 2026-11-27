@@ -6,11 +6,13 @@
  *  - unsaved-changes bar + leave-page warning while the form is dirty;
  *  - validate-on-blur: [data-validate] fields POST the form to data-validate-url with
  *    `field` and show / clear only that field's error;
- *  - slug follows the English name until edited; live margin;
- *  - country / tenant pickers shown for "selected";
+ *  - slug follows the English name until edited; live margin (promotional price, else base);
+ *  - tenant picker shown for "selected";
+ *  - category drill-down: one Select2 per level, the deepest level is added as a tag (#115);
  *  - variant builder: attribute groups (Select2 multi) → one row per combination,
  *    keyed by the sorted option ids; edits survive regeneration;
- *  - stock grid: one row per variant (or the product) × active branch.
+ *  - stock table: one row per variant (or the product) with its default-branch quantity
+ *    (`variants[key][stock]` / `stock`, #115) and the total across all branches.
  * Sort (ADM-012): pages of products by drag and drop / arrow keys, Save order.
  */
 import { loadSortable } from '../core.js';
@@ -155,6 +157,7 @@ function bindSlug(form) {
 
 function bindMargin(form) {
     const price = form.querySelector('[data-price]');
+    const sale = form.querySelector('[data-sale-price]');
     const cost = form.querySelector('[data-cost]');
     const margin = form.querySelector('[data-margin]');
 
@@ -163,13 +166,13 @@ function bindMargin(form) {
     }
 
     const update = () => {
-        const p = Number.parseFloat(price.value);
+        const promo = Number.parseFloat(sale?.value ?? '');
+        const p = promo > 0 ? promo : Number.parseFloat(price.value);
         const c = Number.parseFloat(cost.value);
         margin.value = p > 0 && !Number.isNaN(c) ? `${(((p - c) / p) * 100).toFixed(1)}%` : '';
     };
 
-    price.addEventListener('input', update);
-    cost.addEventListener('input', update);
+    [price, sale, cost].forEach((input) => input?.addEventListener('input', update));
 }
 
 function bindToggles(form) {
@@ -186,7 +189,6 @@ function bindToggles(form) {
         }
     };
 
-    toggle('country_mode', '[data-country-select]', 'selected');
     toggle('assignment_scope', '[data-tenant-select]', 'selected');
 }
 
@@ -212,7 +214,9 @@ function initBuilder(form) {
     const table = form.querySelector('[data-variants-table]');
     const empty = form.querySelector('[data-variants-empty]');
     const stockHost = form.querySelector('[data-stock-rows]');
-    const branches = state.branches ?? [];
+    const branch = state.branch ?? null;
+    const quantities = state.quantities ?? {};
+    const totals = state.totals ?? {};
     const rows = new Map();
     const stockRows = new Map();
     const groups = new Map();
@@ -353,7 +357,8 @@ function initBuilder(form) {
         return node;
     };
 
-    const stockValue = (branchId, key) => state.stock?.[branchId]?.[key] ?? 0;
+    /* Quantity of the default branch (editable) + what the other branches hold. */
+    const otherBranches = (key) => Math.max(0, (Number(totals[key]) || 0) - (Number(quantities[key]) || 0));
 
     const createStockRow = (key, label) => {
         const row = document.createElement('tr');
@@ -364,21 +369,21 @@ function initBuilder(form) {
         head.textContent = label;
         row.appendChild(head);
 
-        branches.forEach((branch) => {
-            const cell = document.createElement('td');
-            cell.className = 'px-3 py-2 text-end';
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.min = '0';
-            input.step = '1';
-            input.dir = 'ltr';
-            input.className = 'ui-control ms-auto h-9 w-24 px-2 text-end';
-            input.name = `stock[${branch.id}][${key}]`;
-            input.value = String(stockValue(branch.id, key));
-            input.setAttribute('aria-label', `${label} — ${branch.name}`);
-            cell.appendChild(input);
-            row.appendChild(cell);
-        });
+        const cell = document.createElement('td');
+        cell.className = 'px-3 py-2 text-end';
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '0';
+        input.step = '1';
+        input.dir = 'ltr';
+        input.className = 'ui-control ms-auto h-9 w-24 px-2 text-end';
+        input.name = key === 'base' ? 'stock' : `variants[${key}][stock]`;
+        input.value = String(quantities[key] ?? 0);
+        input.dataset.validate = '';
+        input.dataset.other = String(otherBranches(key));
+        input.setAttribute('aria-label', `${label} — ${branch?.name ?? ''}`);
+        cell.appendChild(input);
+        row.appendChild(cell);
 
         const total = document.createElement('td');
         total.className = 'px-3 py-2 text-end font-semibold text-ink';
@@ -391,7 +396,8 @@ function initBuilder(form) {
 
     const updateTotals = () => {
         stockHost?.querySelectorAll('tr').forEach((row) => {
-            const sum = [...row.querySelectorAll('input')].reduce((total, input) => total + (Number.parseInt(input.value, 10) || 0), 0);
+            const input = row.querySelector('input');
+            const sum = (Number.parseInt(input.value, 10) || 0) + (Number(input.dataset.other) || 0);
             row.querySelector('[data-total]').textContent = sum.toLocaleString();
         });
     };
@@ -468,12 +474,108 @@ function initBuilder(form) {
     regenerate();
 }
 
+/* ------------------------------------------------- category drill-down */
+
+function initCategoryPicker(form) {
+    const picker = form.querySelector('[data-category-picker]');
+    const island = form.querySelector('[data-category-tree]');
+
+    if (!picker || !island) {
+        return;
+    }
+
+    const nodes = JSON.parse(island.textContent || '[]');
+    const byId = new Map(nodes.map((node) => [node.id, node]));
+    const childrenOf = (parent) => nodes.filter((node) => node.parent === parent);
+    const levels = picker.querySelector('[data-category-levels]');
+    const tags = picker.querySelector('[data-category-tags]');
+    const empty = picker.querySelector('[data-category-empty]');
+    const template = form.querySelector('template[data-category-tag-template]');
+    const error = picker.querySelector('[data-error-for="category_ids"]');
+    const markDirty = () => form.dispatchEvent(new Event('input', { bubbles: true }));
+
+    const refreshEmpty = () => {
+        empty.hidden = tags.children.length > 0;
+    };
+
+    const addTag = (node) => {
+        if (tags.querySelector(`[data-category-tag][data-id="${node.id}"]`)) {
+            return;
+        }
+
+        const tag = template.content.firstElementChild.cloneNode(true);
+        tag.dataset.id = String(node.id);
+        tag.querySelector('[data-category-path]').textContent = node.path;
+        tag.querySelector('[data-category-remove]').setAttribute('aria-label', picker.dataset.removeLabel.replace(':name', node.path));
+        tag.querySelector('input').value = String(node.id);
+        tags.appendChild(tag);
+        error.hidden = true;
+        refreshEmpty();
+        markDirty();
+    };
+
+    const renderLevel = (depth, parent) => {
+        [...levels.children].slice(depth).forEach((child) => child.remove());
+        const options = childrenOf(parent);
+
+        if (options.length === 0) {
+            return;
+        }
+
+        const wrap = document.createElement('div');
+        const label = picker.dataset.levelLabel.replace(':level', String(depth + 1));
+        const select = document.createElement('select');
+        select.className = 'ui-control';
+        select.dataset.select = '';
+        select.dataset.placeholder = picker.dataset.placeholder;
+        select.dataset.unsavedIgnore = '';
+        select.setAttribute('aria-label', label);
+        select.appendChild(new Option(picker.dataset.placeholder, ''));
+        options.forEach((node) => select.appendChild(new Option(node.leaf ? node.name : `${node.name} ›`, String(node.id))));
+        wrap.appendChild(select);
+        levels.appendChild(wrap);
+        initSelect2(wrap);
+
+        // Select2 fires a jQuery change that bubbles as a native event on the select.
+        select.addEventListener('change', () => {
+            const node = byId.get(Number(select.value));
+
+            if (!node) {
+                renderLevel(depth + 1, -1);
+
+                return;
+            }
+
+            if (node.leaf) {
+                addTag(node);
+                // Rebuild after Select2 has closed its dropdown.
+                window.setTimeout(() => renderLevel(0, null), 0);
+            } else {
+                renderLevel(depth + 1, node.id);
+            }
+        });
+    };
+
+    tags.addEventListener('click', (event) => {
+        const remove = event.target.closest('[data-category-remove]');
+
+        if (remove) {
+            remove.closest('[data-category-tag]').remove();
+            refreshEmpty();
+            markDirty();
+        }
+    });
+
+    renderLevel(0, null);
+}
+
 function initProductForm(form) {
     bindValidateOnBlur(form);
     bindLeaveGuard(form);
     bindSlug(form);
     bindMargin(form);
     bindToggles(form);
+    initCategoryPicker(form);
     initBuilder(form);
 }
 

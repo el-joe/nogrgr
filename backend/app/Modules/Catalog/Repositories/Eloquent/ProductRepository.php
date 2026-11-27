@@ -184,9 +184,6 @@ class ProductRepository extends BaseRepository implements ProductRepositoryContr
         return $this->query()
             ->with(['media', 'categories'])
             ->when($filters['category_id'] !== null, static fn (Builder $query) => $query->whereHas('categories', static fn (Builder $inner) => $inner->whereKey($filters['category_id'])))
-            ->when($filters['country_id'] !== null, static fn (Builder $query) => $query->where(static fn (Builder $inner) => $inner
-                ->whereNull('allowed_country_ids')
-                ->orWhereJsonContains('allowed_country_ids', $filters['country_id'])))
             ->when($search !== '', static function (Builder $query) use ($search): void {
                 $like = '%'.mb_strtolower(addcslashes($search, '%_\\')).'%';
                 $query->where(static fn (Builder $inner) => $inner

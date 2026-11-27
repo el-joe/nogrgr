@@ -29,6 +29,16 @@ class ProductFieldRequest extends ProductRequest
         return $rules;
     }
 
+    /**
+     * The category leaf check runs only when the categories field itself is validated.
+     *
+     * @return list<callable>
+     */
+    public function after(): array
+    {
+        return str_starts_with($this->field(), 'category_ids') ? parent::after() : [];
+    }
+
     public function field(): string
     {
         $field = $this->input('field');

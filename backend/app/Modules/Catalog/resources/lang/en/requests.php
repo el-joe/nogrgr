@@ -220,6 +220,7 @@ return [
         'payment_not_payable' => 'This payment request is not open for payment.',
     ],
     'notifications' => [
+        'product_assigned' => ['title' => 'New product added for you', 'body' => ':product (:sku) is waiting in New products — review it and add it to your store.'],
         'admin_replied' => ['title' => 'New reply on :reference', 'body' => 'The platform replied to ":subject": :excerpt'],
         'vendor_replied' => ['title' => ':store replied on :reference', 'body' => '":subject": :excerpt'],
         'status_changed' => ['title' => ':reference is now :status', 'body' => 'Your request ":subject" moved to :status.'],

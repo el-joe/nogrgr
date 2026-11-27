@@ -7,8 +7,10 @@ use App\Modules\Catalog\Console\ImportNeozenaCommand;
 use App\Modules\Catalog\Enums\ImportDriver;
 use App\Modules\Catalog\Enums\RequestKind;
 use App\Modules\Catalog\Events\CatalogImportFinished;
+use App\Modules\Catalog\Events\ProductOfferedToStores;
 use App\Modules\Catalog\Jobs\RefreshBadgeAutoFill;
 use App\Modules\Catalog\Listeners\NotifyCatalogImportFinished;
+use App\Modules\Catalog\Listeners\NotifyStoresOfOfferedProduct;
 use App\Modules\Catalog\Listeners\Requests\SendRequestNotifications;
 use App\Modules\Catalog\Listeners\Requests\SettleRequestPayment;
 use App\Modules\Catalog\Models\Requests\BrandRequest;
@@ -113,6 +115,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         parent::boot();
 
         Event::listen(CatalogImportFinished::class, NotifyCatalogImportFinished::class);
+        Event::listen(ProductOfferedToStores::class, NotifyStoresOfOfferedProduct::class);
 
         $this->bootRequests();
 

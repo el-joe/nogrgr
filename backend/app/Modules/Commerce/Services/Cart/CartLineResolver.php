@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Collection;
  * through StoreCatalogReader (central ⊕ override, decision #65), unit prices through
  * StoreProductPricingService / UnitPricing, flash sales through FlashSaleCatalog. A line
  * is purchasable when the product is active for the store, sellable in the country
- * (store selling countries ∩ allowed_country_ids / own country_ids) and in stock.
+ * (store selling countries; own products also their country_ids) and in stock.
  */
 class CartLineResolver
 {

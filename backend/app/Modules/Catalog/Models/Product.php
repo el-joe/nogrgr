@@ -49,7 +49,6 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property bool $requires_shipping
  * @property int|null $weight_grams
  * @property array<string, int>|null $fixed_shipping_costs
- * @property list<int>|null $allowed_country_ids
  * @property string|null $factory
  * @property int $sold_count
  * @property int $sort_order
@@ -88,7 +87,7 @@ class Product extends Model implements AiTranslatable
         'slug', 'sku', 'name', 'label', 'summary', 'description', 'meta_title', 'meta_keywords', 'meta_description',
         'status', 'delivery_scope', 'assignment_scope', 'base_price', 'sale_price', 'cost_price',
         'stock', 'min_stock', 'manage_stock', 'is_taxable', 'requires_shipping', 'weight_grams',
-        'fixed_shipping_costs', 'allowed_country_ids', 'factory', 'sold_count', 'sort_order',
+        'fixed_shipping_costs', 'factory', 'sold_count', 'sort_order',
         'published_at', 'out_of_stock_at', 'external_source', 'external_id',
     ];
 
@@ -111,7 +110,6 @@ class Product extends Model implements AiTranslatable
             'requires_shipping' => 'boolean',
             'weight_grams' => 'integer',
             'fixed_shipping_costs' => 'array',
-            'allowed_country_ids' => 'array',
             'sold_count' => 'integer',
             'sort_order' => 'integer',
             'published_at' => 'datetime',

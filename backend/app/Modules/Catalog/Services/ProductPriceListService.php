@@ -11,7 +11,8 @@ use App\Modules\Shipping\Services\FixedShippingCostService;
 use App\Shared\Money\Money;
 
 /**
- * Price list of a central product (ADM-010b): one row per allowed country × variant.
+ * Price list of a central product (ADM-010b): one row per active country × variant
+ * (every product sells in every country, #115).
  * Shopper price = cost basis + fixed shipping of that country (weight × rate), computed
  * by Commerce\Pricing\CountryPriceTable with no vendor margin (tenants add theirs). The fixed
  * shipping comes from the precomputed fixed_shipping_costs map (Shipping recomputes it); `rate`
@@ -29,13 +30,7 @@ class ProductPriceListService
      */
     public function rows(Product $product): array
     {
-        $allowed = $product->allowed_country_ids;
-
-        if ($allowed === []) {
-            return [];
-        }
-
-        $countries = $this->countries->active($allowed === null ? null : array_map('intval', $allowed));
+        $countries = $this->countries->active(null);
         $rates = $this->fixedShipping->ratesByCountry();
         $targets = $product->variants()->with('options')->where('status', 'active')->get();
         $rows = [];

@@ -73,12 +73,12 @@ it('refuses inactive products, unsold countries and missing stock', function ():
         ->assertJsonPath('data.reason', 'inactive')
         ->assertJsonPath('message', __('commerce::cart.issues.inactive'));
 
-    $this->shop->central->update(['allowed_country_ids' => [$this->shop->ae->id]]);
-    $this->postJson(storeApi('cart/items'), ['store_product_id' => $this->shop->catalog->id], $headers)
+    $this->shop->tenant->run(fn () => $this->shop->own->forceFill(['is_active' => true, 'country_ids' => [$this->shop->ae->id]])->save());
+    $this->postJson(storeApi('cart/items'), ['store_product_id' => $this->shop->own->id], $headers)
         ->assertUnprocessable()
         ->assertJsonPath('data.reason', 'not_sold_in_country');
 
-    $this->shop->central->update(['allowed_country_ids' => null, 'stock' => 1]);
+    $this->shop->central->update(['stock' => 1]);
     $this->postJson(storeApi('cart/items'), ['store_product_id' => $this->shop->catalog->id, 'quantity' => 2], $headers)
         ->assertUnprocessable()
         ->assertJsonPath('data.reason', 'insufficient_stock')

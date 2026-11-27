@@ -555,3 +555,25 @@ it('logs a warning and keeps the images when a video cannot be downloaded', func
         ->and(CatalogMedia::query()->where('type', 'image')->count())->toBe(1)
         ->and(CatalogImportLog::query()->where('run_id', $run->id)->where('result', 'warning')->pluck('message')->all())->toContain(__('catalog::imports.messages.video_failed', ['url' => 'https://cdn.neozena.test/clip.txt']));
 });
+
+it('imports a product whose source repeats a variant combination: the repeat is skipped with a warning', function (): void {
+    configureNeozena();
+    mapNeozenaCategory();
+    Branch::factory()->create();
+    fakeNeozena([[neozenaProduct(1, ['variant_combinations' => [
+        ['id' => 11, 'sku' => 'NZ-1-M', 'price' => '24.00', 'stock' => 4, 'weight' => 350, 'is_active' => true, 'option_ids' => [701]],
+        ['id' => 12, 'sku' => 'NZ-1-L', 'price' => '26.50', 'stock' => 6, 'weight' => 360, 'is_active' => true, 'option_ids' => [702]],
+        ['id' => 13, 'sku' => 'NZ-1-M-B', 'price' => '25.00', 'stock' => 9, 'weight' => 350, 'is_active' => true, 'option_ids' => [701]],
+    ]])]]);
+    $this->actingAs(catalogAdmin(), 'admin');
+
+    $run = runImport();
+
+    $product = Product::query()->where('external_id', 1)->firstOrFail();
+    expect($run->created_count)->toBe(1)
+        ->and($run->error_count)->toBe(0)
+        ->and($product->variants()->pluck('sku')->sort()->values()->all())->toBe(['NZ-1-L', 'NZ-1-M'])
+        ->and($product->stock)->toBe(10)
+        ->and(CatalogImportLog::query()->where('run_id', $run->id)->pluck('message')->implode(' '))
+        ->toContain(__('catalog::imports.messages.duplicate_variant', ['variant' => 'NZ-1-M-B', 'first' => 'NZ-1-M']));
+});

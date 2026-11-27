@@ -1,6 +1,6 @@
 {{--
     Admin › Catalog › Products › Sort (ADM-012, Figma Admin Panel 65:21308): products in
-    storefront order, 20 per page with "Load more", filtered by category / country /
+    storefront order, 20 per page with "Load more", filtered by category /
     search; drag rows (or arrow keys on a handle), Save order keeps the positions the
     loaded rows held; Reset to newest orders everything newest first.
 --}}
@@ -58,7 +58,6 @@
             <x-ui::card :title="__('catalog::products.sort.filter')">
                 <div class="grid gap-4">
                     <x-ui::select name="category_id" :label="__('catalog::products.filters.category')" :options="$categoryOptions" :placeholder="__('catalog::products.sort.all_categories')" allow-clear data-sort-filter />
-                    <x-ui::select name="country_id" :label="__('catalog::products.prices.country')" :options="$countryOptions" :placeholder="__('catalog::products.sort.all_countries')" allow-clear data-sort-filter />
                     <x-ui::input name="search" type="search" :label="__('catalog::products.sort.search')" :placeholder="__('catalog::products.sort.search_placeholder')" data-sort-filter />
                     <p class="flex gap-2 rounded-control bg-info-bg p-3 text-xs text-info"><x-ui::icon name="info" :size="16" class="shrink-0" />{{ __('catalog::products.sort.tip') }}</p>
                 </div>

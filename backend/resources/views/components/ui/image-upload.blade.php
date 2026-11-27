@@ -4,8 +4,9 @@
     :images="[['id' => 1, 'url' => '…']]" are kept via <name>_keep[] in display order.
     Gallery videos (#114): items with 'type' => 'video' (+ optional 'poster') render a
     muted <video> preview with a play badge and are never "Main" (the first image is).
+    :main="false" = no "Main" badge (the main image is picked in another field).
 --}}
-@props(['name', 'label' => null, 'images' => [], 'max' => 0, 'accept' => 'image/*', 'videos' => false, 'id' => null, 'required' => false, 'helper' => null, 'error' => null])
+@props(['name', 'label' => null, 'images' => [], 'max' => 0, 'accept' => 'image/*', 'videos' => false, 'main' => true, 'id' => null, 'required' => false, 'helper' => null, 'error' => null])
 @php
     $errorKey = \App\Shared\Support\Ui::errorKey($name);
     $id ??= \App\Shared\Support\Ui::id($name);
@@ -14,7 +15,7 @@
     $accept = $videos ? $accept.','.\App\Modules\Catalog\Enums\MediaType::videoAccept() : $accept;
 @endphp
 <x-ui::field :label="$label" :for="$id" :required="$required" :helper="$helper" :error="$error" :error-key="$errorKey" {{ $attributes->only('class') }}>
-    <div data-image-upload data-max="{{ (int) $max }}">
+    <div data-image-upload data-max="{{ (int) $max }}" @unless ($main) data-no-main @endunless>
         <div class="flex flex-wrap gap-3" data-image-grid>
             @php $mainIndex = collect($images)->search(fn ($image) => ($image['type'] ?? 'image') !== 'video'); @endphp
             @foreach ($images as $index => $image)
@@ -27,7 +28,7 @@
                         <img src="{{ $image['url'] }}" alt="{{ $image['alt'] ?? '' }}" class="size-full object-contain bg-media" loading="lazy">
                     @endif
                     <input type="hidden" name="{{ $base }}_keep[]" value="{{ $image['id'] }}">
-                    <span data-main-badge class="absolute bottom-1.5 start-1.5 rounded-chip bg-inverse px-1.5 text-xs font-medium text-on-inverse" @if ($isVideo || $index !== $mainIndex) hidden @endif>{{ __('ui.upload.main') }}</span>
+                    <span data-main-badge class="absolute bottom-1.5 start-1.5 rounded-chip bg-inverse px-1.5 text-xs font-medium text-on-inverse" @if (! $main || $isVideo || $index !== $mainIndex) hidden @endif>{{ __('ui.upload.main') }}</span>
                     <button type="button" data-image-remove class="absolute end-1.5 top-1.5 grid size-7 place-items-center rounded-chip bg-surface/90 text-ink opacity-0 shadow-card transition-opacity group-hover/tile:opacity-100 hover:text-danger focus-visible:opacity-100" aria-label="{{ $isVideo ? __('ui.upload.remove_video') : __('ui.upload.remove_image') }}" title="{{ $isVideo ? __('ui.upload.remove_video') : __('ui.upload.remove_image') }}">
                         <x-ui::icon name="trash" :size="16" />
                     </button>

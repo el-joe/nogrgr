@@ -238,18 +238,17 @@ class CatalogStep implements LegacyStepHandler
             $attributes = $source->table('product_variation')->whereIn('product_id', $ids)->get()->groupBy('product_id');
             $labels = $source->table('product_label_product')->whereIn('product_id', $ids)->get()->groupBy('product_id');
             $badges = $source->table('product_badge_product')->whereIn('product_id', $ids)->get()->groupBy('product_id');
-            $countries = $source->getSchemaBuilder()->hasTable('product_country') ? $source->table('product_country')->whereIn('product_id', $ids)->get()->groupBy('product_id') : collect();
             $assigned = $source->table('product_tenant_assignments')->whereIn('product_id', $ids)->pluck('product_id')->map('intval')->unique()->all();
             $variants = $source->table('product_variants')->whereIn('product_id', $ids)->orderBy('position')->get()->groupBy('product_id');
             $variantIds = $variants->flatten()->pluck('id')->map('intval')->all();
             $variantImages = $this->files($context, 'App\\Models\\ProductVariant', $variantIds);
             $variantOptions = $variantIds === [] ? collect() : $source->table('product_variant_option')->whereIn('product_variant_id', $variantIds)->get()->groupBy('product_variant_id');
 
-            $writer->transaction(function () use ($rows, $context, $texts, $images, $categories, $attributes, $labels, $badges, $countries, $assigned, $variants, $variantImages, $variantOptions, $morph): void {
+            $writer->transaction(function () use ($rows, $context, $texts, $images, $categories, $attributes, $labels, $badges, $assigned, $variants, $variantImages, $variantOptions, $morph): void {
                 foreach ($rows as $row) {
                     $context->report->read('central', 'products');
                     $id = (int) $row->id;
-                    $productId = $this->product($context, $row, $texts, in_array($id, $assigned, true), $countries->get($id));
+                    $productId = $this->product($context, $row, $texts, in_array($id, $assigned, true));
 
                     $this->productPivots($context, $productId, $id, $categories->get($id), $attributes->get($id), $labels->get($id), $badges->get($id));
                     $this->productMedia($context, $productId, $id, $images[$id] ?? [], $morph);
@@ -265,7 +264,7 @@ class CatalogStep implements LegacyStepHandler
     /**
      * @param  array<int, array<string, array<string, string>>>  $texts
      */
-    private function product(LegacyContext $context, object $row, array $texts, bool $assigned, ?Collection $countries): int
+    private function product(LegacyContext $context, object $row, array $texts, bool $assigned): int
     {
         $writer = $context->central;
         $id = (int) $row->id;
@@ -281,8 +280,6 @@ class CatalogStep implements LegacyStepHandler
         if ((float) $row->base_price < 0) {
             $context->report->issue(LegacyIssueLevel::Error, 'central', 'products', $id, 'Negative base price');
         }
-
-        $countryIds = $countries === null ? null : $this->countryIds($context, $countries->pluck('country_id')->all());
 
         return $writer->upsert('product', $id, 'products', [
             'slug' => LegacyUnique::value($writer, 'products', 'slug', Str::slug((string) $row->slug) ?: 'product-'.$id, $ownId, $id),
@@ -307,7 +304,6 @@ class CatalogStep implements LegacyStepHandler
             'requires_shipping' => (bool) $row->requires_shipping,
             'weight_grams' => $row->weight_grams,
             'fixed_shipping_costs' => $this->countryMap($context, LegacyValues::json($row->fixed_shipping_costs)),
-            'allowed_country_ids' => $countryIds,
             'factory' => $row->factory,
             'sold_count' => (int) $row->sold_count,
             'sort_order' => (int) $row->order_number,
@@ -497,15 +493,6 @@ class CatalogStep implements LegacyStepHandler
         }
 
         return $out;
-    }
-
-    /**
-     * @param  list<mixed>  $ids
-     * @return list<int>
-     */
-    private function countryIds(LegacyContext $context, array $ids): array
-    {
-        return array_values(array_filter(array_map(static fn (mixed $id): ?int => $context->central->id('country', (int) $id), $ids)));
     }
 
     /**

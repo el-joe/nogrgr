@@ -21,7 +21,6 @@ return [
         'free_shipping_min' => 'Free shipping minimum',
     ],
     'product_status' => ['draft' => 'Draft', 'published' => 'Active', 'archived' => 'Archived'],
-    'country_availability' => ['all' => 'All countries', 'selected' => 'Selected countries', 'none' => 'Nowhere (hidden)'],
     'assignment_scope' => ['all' => 'All tenants', 'selected' => 'Selected tenants (tenant-owned)'],
     'delivery_scope' => ['all_zones' => 'Every delivery zone', 'selected_zones' => 'Selected zones only', 'digital' => 'Digital (no delivery)'],
     'stock_state' => ['in_stock' => 'In stock', 'low' => 'Low stock', 'out_of_stock' => 'Out of stock'],

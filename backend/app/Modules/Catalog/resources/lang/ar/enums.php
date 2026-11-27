@@ -21,7 +21,6 @@ return [
         'free_shipping_min' => 'الحد الأدنى للشحن المجاني',
     ],
     'product_status' => ['draft' => 'مسودة', 'published' => 'نشط', 'archived' => 'مؤرشف'],
-    'country_availability' => ['all' => 'كل الدول', 'selected' => 'دول محددة', 'none' => 'لا مكان (مخفي)'],
     'assignment_scope' => ['all' => 'كل المتاجر', 'selected' => 'متاجر محددة (خاص بالمتجر)'],
     'delivery_scope' => ['all_zones' => 'كل مناطق التوصيل', 'selected_zones' => 'مناطق محددة فقط', 'digital' => 'رقمي (بدون توصيل)'],
     'stock_state' => ['in_stock' => 'متوفر', 'low' => 'مخزون منخفض', 'out_of_stock' => 'نفد المخزون'],

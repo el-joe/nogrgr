@@ -20,11 +20,10 @@ class ProductExportService
     public function write($stream, array $filters): void
     {
         fwrite($stream, "\xEF\xBB\xBF");
-        fputcsv($stream, ['id', 'sku', 'name_en', 'name_ar', 'status', 'price_usd', 'compare_at_usd', 'cost_usd', 'stock', 'weight_g', 'categories', 'assignment', 'countries', 'updated_at'], escape: '\\');
+        fputcsv($stream, ['id', 'sku', 'name_en', 'name_ar', 'status', 'price_usd', 'compare_at_usd', 'cost_usd', 'stock', 'weight_g', 'categories', 'assignment', 'updated_at'], escape: '\\');
 
         foreach ($this->products->exportRows($filters) as $product) {
             /** @var Product $product */
-            $countries = $product->allowed_country_ids;
             fputcsv($stream, [
                 $product->id,
                 $product->sku,
@@ -38,7 +37,6 @@ class ProductExportService
                 $product->weight_grams,
                 $product->categories->pluck('name')->implode(' | '),
                 $product->assignment_scope->value,
-                $countries === null ? 'all' : ($countries === [] ? 'none' : implode(' ', $countries)),
                 $product->updated_at?->toIso8601String(),
             ], escape: '\\');
         }

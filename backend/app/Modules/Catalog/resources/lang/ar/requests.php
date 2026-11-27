@@ -220,6 +220,7 @@ return [
         'payment_not_payable' => 'طلب الدفع هذا غير متاح للدفع.',
     ],
     'notifications' => [
+        'product_assigned' => ['title' => 'منتج جديد أُضيف لك', 'body' => 'المنتج :product (:sku) بانتظارك في المنتجات الجديدة — راجعه وأضفه إلى متجرك.'],
         'admin_replied' => ['title' => 'رد جديد على :reference', 'body' => 'ردّت المنصة على "‎:subject": :excerpt'],
         'vendor_replied' => ['title' => 'ردّ :store على :reference', 'body' => '"‎:subject": :excerpt'],
         'status_changed' => ['title' => 'أصبحت حالة :reference ‏:status', 'body' => 'انتقل طلبك "‎:subject" إلى :status.'],

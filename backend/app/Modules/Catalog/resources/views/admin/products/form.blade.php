@@ -1,25 +1,30 @@
 {{--
     Admin › Catalog › Products › Create / Edit (ADM-011a–h, Figma Admin Panel 46:14760 ·
-    47:15543 · 65:28688): one form, eight tabs — General & translations, Variants
-    (attribute builder + per-variant SKU / price / weight / image), Pricing & weight,
-    Media gallery (webp / avif job state), Countries & shipping, Categories / labels /
-    badges, Tenant assignment, Stock per branch. Fields are validated on blur; the sticky
-    bar and the leave-page warning guard unsaved changes.
+    47:15543 · 65:28688): one form, seven tabs — General & translations (identifiers,
+    factory, label, SEO meta), Variants (attribute builder + per-variant SKU / price /
+    weight / image), Pricing & weight (base + promotional price), Media (primary image +
+    gallery, webp / avif job state), Categories (drill-down, deepest level as a tag) /
+    labels / badges, Tenant assignment, Stock (product / per variant, default branch).
+    Fields and saved data follow the old controller form (#115); there is no country /
+    shipping tab — every product sells in every country. Fields are validated on blur;
+    the sticky bar and the leave-page warning guard unsaved changes.
 --}}
 @php
     $isNew = ! $product->exists;
     $title = $isNew ? __('catalog::products.create_title') : __('catalog::products.edit_title');
     $required = \App\Modules\Catalog\Support\CatalogLocales::REQUIRED;
     $value = fn (string $field, string $code) => $isNew ? null : $product->getTranslation($field, $code, false);
-    $priceValue = $isNew ? null : $product->costBasis()->toDecimal();
-    $compareValue = $isNew ? null : $product->compareAtPrice()?->toDecimal();
+    $baseValue = $isNew ? null : $product->base_price?->toDecimal();
+    $saleValue = $isNew ? null : $product->sale_price?->toDecimal();
     $costValue = $isNew ? null : $product->cost_price?->toDecimal();
-    $statusCounts = collect($gallery)->countBy(fn ($item) => $item['status']->value);
+    $allMedia = $primaryImage !== null ? [$primaryImage, ...$gallery] : $gallery;
+    $statusCounts = collect($allMedia)->countBy(fn ($item) => $item['status']->value);
+    $mediaItem = fn (array $item): array => ['id' => $item['id'], 'type' => $item['type'], 'url' => $item['url'], 'poster' => $item['poster']];
     $tab = request()->query('tab');
-    $tabs = ['general', 'variants', 'pricing', 'media', 'countries', 'taxonomy', 'tenants', 'stock'];
+    $tabs = ['general', 'variants', 'pricing', 'media', 'taxonomy', 'tenants', 'stock'];
     $tab = in_array($tab, $tabs, true) ? $tab : 'general';
     $variantCount = count($builder['variants']);
-    $fixedShipping = $isNew ? [] : (array) ($product->fixed_shipping_costs ?? []);
+    $branch = $builder['branch'];
 @endphp
 <x-layouts.panel surface="admin" :title="$title" data-page="admin-products">
     <form
@@ -39,6 +44,7 @@
             @method('PUT')
         @endunless
         <script type="application/json" data-product-builder>@json($builder)</script>
+        <script type="application/json" data-category-tree>@json($categoryTree)</script>
 
         <x-ui::page-header
             :title="$title"
@@ -60,7 +66,6 @@
                 'variants' => ['label' => __('catalog::products.tabs.variants'), 'count' => $variantCount],
                 'pricing' => __('catalog::products.tabs.pricing'),
                 'media' => __('catalog::products.tabs.media'),
-                'countries' => __('catalog::products.tabs.countries'),
                 'taxonomy' => __('catalog::products.tabs.taxonomy'),
                 'tenants' => __('catalog::products.tabs.tenants'),
                 'stock' => __('catalog::products.tabs.stock'),
@@ -73,17 +78,19 @@
                                 @foreach ($locales as $code => $language)
                                     <x-ui::locale-pane parent="product-i18n" :locale="$code">
                                         <x-ui::input :name="'name['.$code.']'" :label="__('catalog::products.fields.name')" :value="$value('name', $code)" :required="in_array($code, $required, true)" maxlength="191" :dir="$language['dir']" data-validate :data-slug-source="$code === 'en' ? '' : null" />
+                                        <x-ui::input :name="'label['.$code.']'" :label="__('catalog::products.fields.label')" :value="$value('label', $code)" :helper="__('catalog::products.fields.label_help')" maxlength="191" :dir="$language['dir']" data-validate />
                                         <x-ui::textarea :name="'summary['.$code.']'" :label="__('catalog::products.fields.summary')" :value="$value('summary', $code)" :rows="2" :maxlength="500" :dir="$language['dir']" />
                                         <x-ui::textarea :name="'description['.$code.']'" :label="__('catalog::products.fields.description')" :value="$value('description', $code)" :rows="6" :maxlength="20000" :dir="$language['dir']" />
                                         <x-ui::input :name="'meta_title['.$code.']'" :label="__('catalog::products.fields.meta_title')" :value="$value('meta_title', $code)" maxlength="160" :dir="$language['dir']" />
                                         <x-ui::textarea :name="'meta_description['.$code.']'" :label="__('catalog::products.fields.meta_description')" :value="$value('meta_description', $code)" :rows="2" :maxlength="320" :dir="$language['dir']" />
-                                        <x-ui::input :name="'meta_keywords['.$code.']'" :label="__('catalog::products.fields.meta_keywords')" :value="$value('meta_keywords', $code)" maxlength="255" :dir="$language['dir']" />
+                                        <x-ui::input :name="'meta_keywords['.$code.']'" :label="__('catalog::products.fields.meta_keywords')" :value="$value('meta_keywords', $code)" :helper="__('catalog::products.fields.meta_keywords_help')" maxlength="255" :dir="$language['dir']" />
                                     </x-ui::locale-pane>
                                 @endforeach
                             </x-ui::locale-tabs>
                             <div class="grid gap-5 sm:grid-cols-2">
                                 <x-ui::input name="sku" :label="__('catalog::products.fields.sku')" :value="$product->sku" required maxlength="64" dir="ltr" data-validate />
                                 <x-ui::input name="slug" :label="__('catalog::products.fields.slug')" :value="$product->slug" :helper="__('catalog::products.fields.slug_help')" maxlength="180" dir="ltr" data-validate data-slug-target :data-slug-locked="$isNew ? null : ''" />
+                                <x-ui::input name="factory" :label="__('catalog::products.fields.factory')" :value="$product->getAttributeValue('factory')" :placeholder="__('catalog::products.fields.factory_placeholder')" maxlength="255" data-validate />
                             </div>
                         </div>
                     </x-ui::card>
@@ -153,9 +160,9 @@
                 <x-ui::tab-panel tabs="product-tabs" key="pricing" :active="$tab === 'pricing'" class="pt-6">
                     <x-ui::card :title="__('catalog::products.sections.pricing')">
                         <div class="grid gap-5 sm:grid-cols-2" data-pricing>
-                            <x-ui::input name="price" type="number" step="0.01" min="0" inputmode="decimal" :label="__('catalog::products.fields.price')" :value="$priceValue" :helper="__('catalog::products.fields.price_help')" required dir="ltr" data-validate data-price />
-                            <x-ui::input name="compare_at_price" type="number" step="0.01" min="0" inputmode="decimal" :label="__('catalog::products.fields.compare_at_price')" :value="$compareValue" :helper="__('catalog::products.fields.compare_at_help')" dir="ltr" data-validate />
-                            <x-ui::input name="cost_price" type="number" step="0.01" min="0" inputmode="decimal" :label="__('catalog::products.fields.cost_price')" :value="$costValue" required dir="ltr" data-validate data-cost />
+                            <x-ui::input name="base_price" type="number" step="0.01" min="0" inputmode="decimal" :label="__('catalog::products.fields.base_price')" :value="$baseValue" :helper="__('catalog::products.fields.base_price_help')" required dir="ltr" data-validate data-price />
+                            <x-ui::input name="sale_price" type="number" step="0.01" min="0" inputmode="decimal" :label="__('catalog::products.fields.sale_price')" :value="$saleValue" :helper="__('catalog::products.fields.sale_price_help')" dir="ltr" data-validate data-sale-price />
+                            <x-ui::input name="cost_price" type="number" step="0.01" min="0" inputmode="decimal" :label="__('catalog::products.fields.cost_price')" :value="$costValue" dir="ltr" data-validate data-cost />
                             <x-ui::input name="margin" :label="__('catalog::products.fields.margin')" :value="$isNew || $product->marginPercentage() === null ? '' : $product->marginPercentage().'%'" readonly dir="ltr" data-margin data-unsaved-ignore />
                             <x-ui::input name="weight_grams" type="number" step="1" min="0" :label="__('catalog::products.fields.weight_grams')" :value="$product->weight_grams" :helper="__('catalog::products.fields.weight_help')" dir="ltr" data-validate />
                             <x-ui::select name="is_taxable" :label="__('catalog::products.fields.tax_class')" :options="['1' => __('catalog::products.fields.tax_standard'), '0' => __('catalog::products.fields.tax_exempt')]" :selected="$product->is_taxable ? '1' : '0'" :search="false" />
@@ -167,11 +174,12 @@
                 <x-ui::tab-panel tabs="product-tabs" key="media" :active="$tab === 'media'" class="pt-6">
                     <x-ui::card :title="__('catalog::products.sections.media')">
                         <div class="grid gap-4">
-                            <x-ui::image-upload name="images" videos :max="\App\Modules\Catalog\Http\Requests\Admin\ProductRequest::MAX_IMAGES" accept="image/jpeg,image/png,image/webp" :images="collect($gallery)->map(fn ($item) => ['id' => $item['id'], 'type' => $item['type'], 'url' => $item['url'], 'poster' => $item['poster']])->all()" :helper="__('catalog::products.fields.gallery_help', ['mb' => \App\Modules\Catalog\Support\GalleryMedia::videoMaxMegabytes()])" :label="__('catalog::products.fields.images')" />
+                            <x-ui::image-upload name="primary_image" :max="1" accept="image/jpeg,image/png,image/webp" :images="$primaryImage !== null ? [$mediaItem($primaryImage)] : []" :helper="__('catalog::products.fields.primary_image_help')" :label="__('catalog::products.fields.primary_image')" />
+                            <x-ui::image-upload name="images" videos :main="false" :max="\App\Modules\Catalog\Http\Requests\Admin\ProductRequest::MAX_IMAGES" accept="image/jpeg,image/png,image/webp" :images="array_map($mediaItem, $gallery)" :helper="__('catalog::products.fields.gallery_help', ['mb' => \App\Modules\Catalog\Support\GalleryMedia::videoMaxMegabytes()])" :label="__('catalog::products.fields.images')" />
                             <p class="flex items-center gap-2 rounded-control bg-info-bg px-3 py-2.5 text-[13px] text-info" role="status">
                                 <x-ui::icon name="info" :size="16" class="shrink-0" />
-                                {{ trans_choice('catalog::products.media_state', count($gallery), [
-                                    'count' => count($gallery),
+                                {{ trans_choice('catalog::products.media_state', count($allMedia), [
+                                    'count' => count($allMedia),
                                     'done' => ($statusCounts['done'] ?? 0) + ($statusCounts['skipped'] ?? 0),
                                     'pending' => $statusCounts['pending'] ?? 0,
                                     'failed' => $statusCounts['failed'] ?? 0,
@@ -181,43 +189,11 @@
                     </x-ui::card>
                 </x-ui::tab-panel>
 
-                {{-- 011e Countries & shipping --}}
-                <x-ui::tab-panel tabs="product-tabs" key="countries" :active="$tab === 'countries'" class="grid gap-6 pt-6">
-                    <x-ui::card :title="__('catalog::products.sections.countries')" :subtitle="__('catalog::products.sections.countries_hint')">
-                        <div class="grid gap-4" data-country-mode-scope>
-                            <x-ui::radio-group name="country_mode" :label="__('catalog::products.fields.country_mode')" :options="$countryModes" :value="$countryMode->value" :inline="false" data-country-mode />
-                            <div data-country-select @if ($countryMode !== \App\Modules\Catalog\Enums\CountryAvailability::Selected) hidden @endif>
-                                <x-ui::select name="country_ids" multiple :label="__('catalog::products.fields.country_ids')" :options="$countryOptions" :selected="$countryMode === \App\Modules\Catalog\Enums\CountryAvailability::Selected ? (array) $product->allowed_country_ids : []" :placeholder="__('catalog::products.fields.country_ids')" />
-                            </div>
-                        </div>
-                    </x-ui::card>
-                    <x-ui::card :title="__('catalog::products.sections.shipping')">
-                        <div class="grid gap-5">
-                            <div class="grid gap-5 sm:grid-cols-2 sm:items-end">
-                                <x-ui::select name="delivery_scope" :label="__('catalog::products.fields.delivery_scope')" :options="$deliveryScopes" :selected="$product->delivery_scope?->value ?? 'all_zones'" :search="false" required />
-                                <x-ui::switch name="requires_shipping" class="pb-3" :label="__('catalog::products.fields.requires_shipping')" :checked="$isNew || $product->requires_shipping" />
-                            </div>
-                            <div class="grid gap-2">
-                                <h3 class="text-sm font-medium text-ink">{{ __('catalog::products.fixed_shipping') }}</h3>
-                                @if ($fixedShipping === [])
-                                    <p class="text-[13px] text-ink-secondary">{{ __('catalog::products.fixed_shipping_empty') }}</p>
-                                @else
-                                    <ul class="grid gap-1 text-[13px]">
-                                        @foreach ($fixedShipping as $countryId => $minor)
-                                            <li class="flex justify-between gap-3"><span>{{ $countryOptions[(int) $countryId] ?? $countryId }}</span><span dir="ltr" class="font-medium">{{ \App\Shared\Money\Money::ofMinor((int) $minor)->format() }}</span></li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                            </div>
-                        </div>
-                    </x-ui::card>
-                </x-ui::tab-panel>
-
                 {{-- 011f Categories, labels, badges --}}
                 <x-ui::tab-panel tabs="product-tabs" key="taxonomy" :active="$tab === 'taxonomy'" class="pt-6">
                     <x-ui::card :title="__('catalog::products.sections.taxonomy')">
                         <div class="grid gap-5">
-                            <x-ui::select name="category_ids" multiple :label="__('catalog::products.fields.category_ids')" :options="$categoryOptions" :selected="$isNew ? [] : $product->categories->pluck('id')->all()" :placeholder="__('catalog::products.fields.category_ids')" />
+                            @include('catalog::admin.products._category-picker')
                             <x-ui::select name="label_ids" multiple :label="__('catalog::products.fields.label_ids')" :options="$labelOptions" :selected="$isNew ? [] : $product->labels->pluck('id')->all()" :placeholder="__('catalog::products.fields.label_ids')" />
                             <x-ui::select name="badges" multiple :label="__('catalog::products.fields.badges')" :options="$badgeOptions" :selected="$selectedBadges" :placeholder="__('catalog::products.fields.badges')" :helper="__('catalog::products.fields.badges_help')" :search="false" />
                         </div>
@@ -236,7 +212,7 @@
                     </x-ui::card>
                 </x-ui::tab-panel>
 
-                {{-- 011h Stock per branch --}}
+                {{-- 011h Stock (product / per variant, default branch) --}}
                 <x-ui::tab-panel tabs="product-tabs" key="stock" :active="$tab === 'stock'" class="pt-6">
                     <x-ui::card :title="__('catalog::products.sections.stock')" :subtitle="__('catalog::products.sections.stock_hint')">
                         <div class="grid gap-5">
@@ -244,7 +220,7 @@
                                 <x-ui::switch name="manage_stock" class="pb-3" :label="__('catalog::products.fields.manage_stock')" :checked="$isNew || $product->manage_stock" />
                                 <x-ui::input name="min_stock" type="number" min="0" :label="__('catalog::products.fields.min_stock')" :value="$isNew ? 0 : $product->min_stock" dir="ltr" data-validate />
                             </div>
-                            @if ($builder['branches'] === [])
+                            @if ($branch === null)
                                 <x-ui::empty-state compact icon="building" :description="__('catalog::products.stock.no_branches')">
                                     @can('shipping.branches.manage')
                                         <x-ui::button variant="secondary" size="sm" icon="plus" :href="route('admin.shipping.branches.create')">{{ __('catalog::products.stock.add_branch') }}</x-ui::button>
@@ -256,15 +232,16 @@
                                         <thead class="bg-subtle text-xs text-ink-secondary">
                                             <tr data-stock-head>
                                                 <th scope="col" class="px-3 py-2.5 text-start font-medium">{{ __('catalog::products.variants.variant') }}</th>
-                                                @foreach ($builder['branches'] as $branch)
-                                                    <th scope="col" class="px-3 py-2.5 text-end font-medium">{{ $branch['name'] }}</th>
-                                                @endforeach
+                                                <th scope="col" class="px-3 py-2.5 text-end font-medium">{{ __('catalog::products.stock.quantity_in', ['branch' => $branch['name']]) }}</th>
                                                 <th scope="col" class="px-3 py-2.5 text-end font-medium">{{ __('catalog::products.stock.total') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody data-stock-rows class="divide-y divide-line" data-label-product="{{ __('catalog::products.stock.product') }}"></tbody>
                                     </table>
                                 </div>
+                                @if ($builder['branch_count'] > 1)
+                                    <p class="text-[13px] text-ink-secondary">{{ __('catalog::products.stock.other_branches') }}</p>
+                                @endif
                             @endif
                         </div>
                     </x-ui::card>

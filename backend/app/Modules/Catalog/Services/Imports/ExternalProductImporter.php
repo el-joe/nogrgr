@@ -12,7 +12,6 @@ use App\Modules\Catalog\DTOs\ProductVariantData;
 use App\Modules\Catalog\Enums\AssignmentScope;
 use App\Modules\Catalog\Enums\AttributeDisplayType;
 use App\Modules\Catalog\Enums\BadgeType;
-use App\Modules\Catalog\Enums\CountryAvailability;
 use App\Modules\Catalog\Enums\DeliveryScope;
 use App\Modules\Catalog\Enums\ImportDriver;
 use App\Modules\Catalog\Enums\ImportLinkType;
@@ -41,7 +40,7 @@ use Illuminate\Http\UploadedFile;
  * path as the admin editor: variants, gallery + queued conversions, stock, events).
  * Idempotent: the product is found by its external id (then by SKU), variants and
  * gallery images and videos through catalog_import_links, attributes / options by
- * external_source + external_id. Admin-only data (labels, badges, tenants, countries,
+ * external_source + external_id. Admin-only data (labels, badges, tenants,
  * extra categories and images) is kept on update. Unchanged payloads are skipped.
  */
 class ExternalProductImporter
@@ -105,15 +104,16 @@ class ExternalProductImporter
 
         $isNew = $product === null;
         $previousPrice = $product?->costBasis();
+        $variantWarnings = [];
         try {
-            $variants = $this->variantRows($driver, $product, $item, $run->autoCreates());
+            $variants = $this->variantRows($driver, $product, $item, $variantWarnings, $run->autoCreates());
         } catch (DomainException $exception) {
             return $skip($exception->getMessage(), $product?->id);
         }
 
         [$keepMediaIds, $downloads, $warnings, $linkedImages] = $this->gallery($driver, $product, $item);
         $downloadedImages = count(array_filter($downloads, static fn (array $download): bool => ! str_starts_with($download['file']->getClientOriginalName(), 'video-')));
-        $warnings = [...$categoryWarnings, ...$warnings];
+        $warnings = [...$categoryWarnings, ...$variantWarnings, ...$warnings];
         $stock = $this->stockCells($item, $variants, $warnings);
 
         try {
@@ -189,9 +189,14 @@ class ExternalProductImporter
     }
 
     /**
+     * Variant rows keyed by their option combination. The source may list the same
+     * combination twice (Neozena does): the first one is imported, every repeat is
+     * skipped with a warning, so the product still imports.
+     *
+     * @param  list<string>  $warnings
      * @return list<array{external: ExternalVariantData, row: ProductVariantData}>
      */
-    private function variantRows(ImportDriver $driver, ?Product $product, ExternalProductData $item, bool $create = true): array
+    private function variantRows(ImportDriver $driver, ?Product $product, ExternalProductData $item, array &$warnings, bool $create = true): array
     {
         $withOptions = array_values(array_filter($item->variants, static fn (ExternalVariantData $variant): bool => $variant->options !== []));
 
@@ -202,12 +207,24 @@ class ExternalProductImporter
         $existing = $product?->variants()->with('options')->get()->keyBy('id') ?? collect();
         $linked = $this->imports->linkedIds($driver, ImportLinkType::Variant, array_map(static fn (ExternalVariantData $variant): int => $variant->externalId, $withOptions));
         $used = [];
+        $seen = [];
         $rows = [];
 
         foreach ($withOptions as $variant) {
             $optionIds = array_map(fn (ExternalOptionData $option): int => $this->optionId($driver, $option, $create), $variant->options);
             sort($optionIds);
             $key = VariantMatrix::key($optionIds);
+
+            if (isset($seen[$key])) {
+                $warnings[] = $this->text('catalog::imports.messages.duplicate_variant', [
+                    'variant' => $variant->sku ?? (string) $variant->externalId,
+                    'first' => $seen[$key],
+                ]);
+
+                continue;
+            }
+
+            $seen[$key] = $variant->sku ?? (string) $variant->externalId;
 
             /** @var ProductVariant|null $match */
             $match = $existing->get($linked[$variant->externalId] ?? 0)
@@ -417,10 +434,8 @@ class ExternalProductImporter
             'slug' => null,
             'cost' => $item->priceMinor,
             'delivery' => $item->requiresShipping ? DeliveryScope::AllZones : DeliveryScope::Digital,
-            'countries' => CountryAvailability::All,
             'scope' => AssignmentScope::All,
             'minStock' => 0,
-            'countryIds' => [],
             'categoryIds' => [],
             'labelIds' => [],
             'tenantIds' => [],
@@ -435,10 +450,8 @@ class ExternalProductImporter
                 'slug' => $product->slug,
                 'cost' => $product->cost_price !== null ? $product->cost_price->minor : $item->priceMinor,
                 'delivery' => $product->delivery_scope,
-                'countries' => CountryAvailability::fromIds($product->allowed_country_ids),
                 'scope' => $product->assignment_scope,
                 'minStock' => $product->min_stock,
-                'countryIds' => array_map('intval', $product->allowed_country_ids ?? []),
                 'categoryIds' => array_map('intval', $product->categories->pluck('id')->all()),
                 'labelIds' => array_map('intval', $product->labels->pluck('id')->all()),
                 'tenantIds' => array_map('intval', $product->assignedTenants->pluck('id')->all()),
@@ -458,7 +471,6 @@ class ExternalProductImporter
             isTaxable: $item->isTaxable,
             requiresShipping: $item->requiresShipping,
             deliveryScope: $kept['delivery'],
-            countryAvailability: $kept['countries'],
             assignmentScope: $kept['scope'],
             manageStock: ! $item->unlimitedStock,
             minStock: $kept['minStock'],
@@ -467,7 +479,8 @@ class ExternalProductImporter
             metaTitle: $this->translations($product, 'meta_title'),
             metaDescription: $item->metaDescription !== [] ? $item->metaDescription : $this->translations($product, 'meta_description'),
             metaKeywords: $item->metaKeywords !== [] ? $item->metaKeywords : $this->translations($product, 'meta_keywords'),
-            countryIds: $kept['countryIds'],
+            factory: $product?->getAttributeValue('factory'),
+            label: $this->translations($product, 'label'),
             categoryIds: array_values(array_unique([...$categoryIds, ...$kept['categoryIds']])),
             labelIds: $kept['labelIds'],
             badges: $kept['badges'],

@@ -131,7 +131,7 @@ it('shows the Ship/g rate and the correct shopper price in the product price lis
     $this->actingAs(shippingAdmin(), 'admin');
     $sa = Country::factory()->iso('SA')->create();
     FixedShippingCost::factory()->create(['country_id' => $sa->id, 'price_per_gram' => '0.004']);
-    $product = Product::factory()->create(['weight_grams' => 180, 'base_price' => 5900, 'sale_price' => null, 'allowed_country_ids' => [$sa->id]]);
+    $product = Product::factory()->create(['weight_grams' => 180, 'base_price' => 5900, 'sale_price' => null]);
     app(ProductFixedShippingSync::class)->sync([$product->id]);
 
     $rows = app(ProductPriceListService::class)->rows($product->refresh());

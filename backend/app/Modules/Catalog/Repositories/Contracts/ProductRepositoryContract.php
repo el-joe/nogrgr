@@ -107,7 +107,7 @@ interface ProductRepositoryContract extends RepositoryContract
     /**
      * Products in storefront order for the sort page.
      *
-     * @param  array{category_id: int|null, country_id: int|null, search: string|null}  $filters
+     * @param  array{category_id: int|null, search: string|null}  $filters
      * @return LengthAwarePaginator<int, Product>
      */
     public function sortPage(array $filters, int $page, int $perPage): LengthAwarePaginator;

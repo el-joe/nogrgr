@@ -7,6 +7,7 @@ use App\Modules\Catalog\Models\VariantOverride;
 use App\Modules\Storefront\Services\StorefrontContext;
 use App\Shared\Money\Money;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 require_once __DIR__.'/../Commerce/StoreApiHelpers.php';
 
@@ -157,11 +158,12 @@ it('redirects a product URL without the canonical slug', function (): void {
         ->assertMovedPermanently();
 });
 
-it('returns 404 for products not sold in the shopping country or inactive', function (): void {
+it('returns 404 for inactive products; central products sell in every country (#115)', function (): void {
     $shop = catalogShop();
-    $shop->central->forceFill(['allowed_country_ids' => [$shop->ae->id]])->save();
+    // An old country restriction left in the unused column is ignored.
+    DB::table('products')->where('id', $shop->central->id)->update(['allowed_country_ids' => json_encode([$shop->ae->id])]);
 
-    $this->withSession(inSa($shop))->get($this->tenantUrl($shop->tenant, '/products/'.$shop->catalog->id.'/x'))->assertNotFound();
+    expect($this->withSession(inSa($shop))->get($this->tenantUrl($shop->tenant, '/products/'.$shop->catalog->id.'/x'))->status())->not->toBe(404);
 
     $shop->tenant->run(fn () => $shop->own->forceFill(['is_active' => false])->save());
     $this->withSession(inSa($shop))->get($this->tenantUrl($shop->tenant, '/products/'.$shop->own->id.'/x'))->assertNotFound();

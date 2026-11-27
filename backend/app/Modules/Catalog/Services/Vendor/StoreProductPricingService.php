@@ -56,8 +56,8 @@ class StoreProductPricingService
     }
 
     /**
-     * Countries the store sells a central product in: store selling countries ∩ the
-     * product's allowed countries (null = all).
+     * Countries the store sells a central product in = the store's selling countries
+     * (every central product sells in every country, #115).
      *
      * @return Collection<int, Country>
      */
@@ -70,10 +70,7 @@ class StoreProductPricingService
             return new Collection;
         }
 
-        $allowed = $central?->allowed_country_ids;
-        $ids = $allowed === null ? $selling : array_values(array_intersect($selling, array_map('intval', $allowed)));
-
-        return $ids === [] ? new Collection : $this->countries->active($ids)->values();
+        return $this->countries->active($selling)->values();
     }
 
     /**

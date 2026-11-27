@@ -20,15 +20,15 @@
 | ADM-010 | Products list | `admin.catalog.products.index` | Std; list, filter (status/category/scope/stock/trashed), delete, restore, export | admin.products.index | designed: Admin Panel 44:13636 · m 45:14601 · filters sheet 45:14748 | P3 | done |
 | ADM-010a | ↳ Image search modal | `admin.catalog.products.image-search` | upload, results, no-match, quota error | ProductsList image search | designed: Admin Panel 65:29682 | P10 | todo |
 | ADM-010b | ↳ Price list modal (per-country price) | modal | per-country/variant prices | ProductsList price list | designed: Admin Panel 65:29682 | P3 | done |
-| ADM-011 | Product create / edit | `admin.catalog.products.create` / `.edit` | Std; create, edit, validate-on-blur, unsaved-changes guard | admin.products.create, .edit | designed: Admin Panel 46:14760 · 47:15543 | P3 | done |
-| ADM-011a | ↳ Tab: General & translations (locale tabs) | tab | per-locale fields | AddEditProduct | designed: Admin Panel 47:15543 | P3 | done |
-| ADM-011b | ↳ Tab: Pricing & weight (cost/sale, grams) | tab | money validation | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
-| ADM-011c | ↳ Tab: Variants (attribute options, per-variant image/price) | tab | build/remove variants | AddEditProduct | designed: Admin Panel 46:14760 | P3 | done |
-| ADM-011d | ↳ Tab: Media gallery | tab | upload, reorder, remove, AVIF/embedding job state | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
-| ADM-011e | ↳ Tab: Countries & shipping (`allowed_country_ids` NULL/[]/list) | tab | all/none/selected | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
-| ADM-011f | ↳ Tab: Categories, labels, badges | tab | multi-select | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
-| ADM-011g | ↳ Tab: Tenant assignment (all / selected) | tab | tenant picker | AddEditProduct | designed: Admin Panel 65:28688 | P3 | done |
-| ADM-011h | ↳ Tab: Stock per branch | tab | per-branch/variant qty | AddEditProduct, branch_products | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011 | Product create / edit — our tabbed design with the old CONTROLLER form's fields / data (#115) | `admin.catalog.products.create` / `.edit` | Std; create, edit, validate-on-blur, unsaved-changes guard | admin/product/add-edit-product + Admin\ProductController | designed: Admin Panel 46:14760 · 47:15543 (sections per #115) | P3 | done |
+| ADM-011a | ↳ Tab: General (SKU, slug, factory) + translations (name, label, summary, description, SEO meta title / description / keywords per locale) | tab | per-locale fields | add-edit-product | designed: Admin Panel 47:15543 | P3 | done |
+| ADM-011b | ↳ Tab: Pricing & weight (base price, promotional price < base, cost, weight, tax) | tab | money validation | add-edit-product | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011c | ↳ Tab: Variants (combination builder; price / SKU / weight / thumbnail per variant, its stock in the Stock tab) | tab | build/remove variants | add-edit-product, _variant-row | designed: Admin Panel 46:14760 | P3 | done |
+| ADM-011d | ↳ Tab: Media — primary image + gallery (images + videos, #114) | tab | upload, reorder, remove, replace primary, WebP/AVIF job state | add-edit-product | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011e | ↳ ~~Countries & shipping~~ removed (#115): every product sells in every country; `allowed_country_ids` cleared + unused | — | migration 2026_12_03_000100 | — | — | P3 | done |
+| ADM-011f | ↳ Tab: Categories (drill-down, deepest level added as tag) + Badges & labels | tab | leaf-only rule, multi-select | add-edit-product | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011g | ↳ Tab: Tenants (all stores / specific stores; newly offered stores notified → New products) | tab | tenant picker + ProductOfferedToStores notification | add-edit-product | designed: Admin Panel 65:28688 | P3 | done |
+| ADM-011h | ↳ Tab: Stock — manage stock, low-stock threshold, qty per product / variant in the default branch (+ all-branch total); other branches in Shipping › Branches › Stock | tab | default-branch qty, total shown | branch_products | designed: Admin Panel 65:28688 | P3 | done |
 | ADM-012 | Product sort | `admin.catalog.products.sort` | drag & drop, save | admin.products.sort | designed: Admin Panel 65:21308 | P3 | done |
 | ADM-013 | Product import (external catalog, Neozena driver) | `admin.catalog.imports.index` | run import, progress, log, errors | /prod (DevTools@importNeozenaProducts) | designed: Admin Panel 65:22120 | P3 | done |
 | ADM-014 | Categories list (tree) | `admin.catalog.categories.index` | Std; list, delete, toggle featured | admin.categories.index | designed: Admin Panel 65:22996 | P3 | done |
