@@ -89,10 +89,12 @@ class NeozenaDriver implements ExternalCatalogDriver
             }
         }
 
-        $lastPage = (int) ($payload['meta']['last_page'] ?? $payload['last_page'] ?? $page);
+        // A page past the end keeps the source's real last page (the CLI --from-page check).
+        $reported = $payload['meta']['last_page'] ?? $payload['last_page'] ?? null;
+        $lastPage = is_numeric($reported) && ($rows === [] || (int) $reported >= $page) ? max(1, (int) $reported) : $page;
         $total = (int) ($payload['meta']['total'] ?? $payload['total'] ?? count($rows));
 
-        return new ExternalCatalogPage($page, max($page, $lastPage), max($total, count($rows)), $items, $invalid);
+        return new ExternalCatalogPage($page, $lastPage, max($total, count($rows)), $items, $invalid);
     }
 
     /**

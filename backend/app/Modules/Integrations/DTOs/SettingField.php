@@ -46,6 +46,7 @@ final class SettingField extends BaseDTO
             SettingFieldType::Url => ['string', 'url:http,https', 'max:'.$this->maxLength],
             SettingFieldType::Number => ['integer', 'min:'.$this->min, 'max:'.$this->max],
             SettingFieldType::Ipv4 => ['string', 'ipv4'],
+            SettingFieldType::Time => ['string', 'date_format:H:i'],
             SettingFieldType::File => ['file', 'max:16'],
             default => ['string', 'max:'.$this->maxLength],
         };

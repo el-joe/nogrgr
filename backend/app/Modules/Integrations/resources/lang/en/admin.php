@@ -166,10 +166,14 @@ return [
                 'enabled' => 'Enabled',
                 'base_url' => 'API base URL',
                 'api_token' => 'API token',
+                'daily_sync' => 'Daily product sync',
+                'daily_sync_at' => 'Sync time (server time)',
             ],
             'help' => [
                 'base_url' => 'Catalog API root, e.g. https://neozena.com/api/catalog.',
                 'api_token' => 'Optional. Sent as a bearer token when the API requires one.',
+                'daily_sync' => 'Refreshes prices, stock and images of imported products every day (catalog:import-neozena --update-existing). New products are imported too. Off by default.',
+                'daily_sync_at' => '24-hour time the daily sync starts, e.g. 03:30.',
             ],
         ],
         'geocoding' => [

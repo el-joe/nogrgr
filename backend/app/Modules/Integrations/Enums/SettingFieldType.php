@@ -23,6 +23,9 @@ enum SettingFieldType: string
     case Textarea = 'textarea';
     case Ipv4 = 'ipv4';
 
+    /** Time of day, 24 h "HH:MM" (e.g. the daily Neozena sync). */
+    case Time = 'time';
+
     public function isSecret(): bool
     {
         return $this === self::Secret || $this === self::File;

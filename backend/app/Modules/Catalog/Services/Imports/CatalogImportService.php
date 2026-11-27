@@ -14,11 +14,13 @@ use App\Modules\Catalog\Imports\Exceptions\ExternalCatalogException;
 use App\Modules\Catalog\Imports\ExternalCatalogManager;
 use App\Modules\Catalog\Jobs\Imports\ImportCatalogPage;
 use App\Modules\Catalog\Jobs\Imports\StartCatalogImport;
+use App\Modules\Catalog\Models\CatalogImportLog;
 use App\Modules\Catalog\Models\CatalogImportRun;
 use App\Modules\Catalog\Repositories\Contracts\CatalogImportRepositoryContract;
 use App\Modules\Identity\Models\Admin;
 use App\Shared\Money\Money;
 use App\Shared\Services\BaseService;
+use Closure;
 use DomainException;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
@@ -37,6 +39,11 @@ class CatalogImportService extends BaseService
      * Items shown by the "Preview" step.
      */
     public const PREVIEW_ITEMS = 5;
+
+    /**
+     * An inline run "running" without progress for this long is treated as interrupted.
+     */
+    public const STALE_MINUTES = 15;
 
     public function __construct(
         private readonly CatalogImportRepositoryContract $imports,
@@ -72,11 +79,11 @@ class CatalogImportService extends BaseService
      *
      * @return array{total: int, pages: int, invalid: int, items: list<array{external_id: int, sku: string, name: string, price: string, variants: int, images: int, categories: string}>}
      */
-    public function preview(ImportDriver $driver): array
+    public function preview(ImportDriver $driver, int $pageNumber = 1, bool $discover = true): array
     {
-        $page = $this->fetch($driver, 1);
+        $page = $this->fetch($driver, max(1, $pageNumber));
 
-        foreach ($page->items as $item) {
+        foreach ($discover ? $page->items : [] as $item) {
             $this->imports->discoverCategories($driver, $item->categories);
         }
 
@@ -111,14 +118,21 @@ class CatalogImportService extends BaseService
             $run = $this->imports->create([
                 'driver' => $data->driver,
                 'status' => ImportStatus::Queued,
-                'options' => ['update_existing' => $data->updateExisting, 'max_pages' => $data->maxPages],
+                'options' => [
+                    'update_existing' => $data->updateExisting,
+                    'max_pages' => $data->maxPages,
+                    'from_page' => max(1, $data->fromPage),
+                    'mode' => $data->inline ? CatalogImportRun::MODE_INLINE : CatalogImportRun::MODE_QUEUE,
+                ],
                 'started_by' => $admin?->id,
             ]);
 
             return $run;
         }, $this->connection());
 
-        StartCatalogImport::dispatch($run->id)->onQueue(self::QUEUE)->afterCommit();
+        if (! $data->inline) {
+            StartCatalogImport::dispatch($run->id)->onQueue(self::QUEUE)->afterCommit();
+        }
 
         return $run;
     }
@@ -134,26 +148,13 @@ class CatalogImportService extends BaseService
             return;
         }
 
-        try {
-            $first = $this->fetch($run->driver, 1);
-        } catch (DomainException $exception) {
-            $this->fail($run, $exception->getMessage());
+        $pages = $this->plan($run);
 
+        if ($pages === null) {
             return;
         }
 
-        $pages = $run->maxPages() !== null ? min($run->maxPages(), $first->lastPage) : $first->lastPage;
-        $perPage = max(1, $first->count());
-        $total = $pages >= $first->lastPage ? $first->total : min($first->total, $pages * $perPage);
-
-        $this->imports->update($run, [
-            'status' => ImportStatus::Running,
-            'total_pages' => $pages,
-            'total_items' => $total,
-            'started_at' => now(),
-        ]);
-
-        $batch = Bus::batch(array_map(static fn (int $page): ImportCatalogPage => new ImportCatalogPage($runId, $page), range(1, $pages)))
+        $batch = Bus::batch(array_map(static fn (int $page): ImportCatalogPage => new ImportCatalogPage($runId, $page), $pages))
             ->name('catalog-import-'.$runId)
             ->onQueue(self::QUEUE)
             ->allowFailures()
@@ -163,6 +164,114 @@ class CatalogImportService extends BaseService
             ->dispatch();
 
         $this->imports->query()->whereKey($runId)->whereNull('batch_id')->update(['batch_id' => $batch->id]);
+    }
+
+    /**
+     * Imports the pages of an inline run (CLI `--sync`) one after the other in this
+     * process: a queued run is planned first, a reopened one continues with its next
+     * page. Stops when the run is paused / cancelled (admin page) or `$shouldStop`
+     * answers true (the CLI got SIGINT / SIGTERM: the run is paused so it can be
+     * resumed). `$afterPage` is called after every page.
+     *
+     * @param  (Closure(int, CatalogImportRun): void)|null  $afterPage
+     * @param  (Closure(): bool)|null  $shouldStop
+     */
+    public function runInline(int $runId, ?Closure $afterPage = null, ?Closure $shouldStop = null): ?CatalogImportRun
+    {
+        $run = $this->run($runId);
+
+        if ($run === null || ! $run->isInline() || ! $run->status->isActive()) {
+            return $run;
+        }
+
+        $pages = $run->status === ImportStatus::Queued ? $this->plan($run) : $this->remainingPages($run);
+
+        foreach ($pages ?? [] as $page) {
+            if ($shouldStop !== null && $shouldStop()) {
+                $current = $this->run($runId);
+
+                if ($current !== null && $current->status->canPause()) {
+                    $this->pause($current);
+                }
+
+                return $this->run($runId);
+            }
+
+            try {
+                $done = $this->importPage($runId, $page);
+            } catch (Throwable $exception) {
+                report($exception);
+                $this->pageFailed($runId, $page, mb_substr($exception->getMessage(), 0, 200));
+                $done = true;
+            }
+
+            $current = $this->run($runId);
+
+            if (! $done || $current === null || $current->status !== ImportStatus::Running) {
+                return $current;
+            }
+
+            if ($afterPage !== null) {
+                $afterPage($page, $current);
+            }
+        }
+
+        if ($pages !== null) {
+            $this->finish($runId);
+        }
+
+        return $this->run($runId);
+    }
+
+    /**
+     * Reopens an inline run that was paused, cancelled, failed or interrupted (its
+     * process died: still "running" without progress for STALE_MINUTES) so runInline()
+     * continues with its next page. Queued runs resume through resume() instead.
+     *
+     * @throws DomainException when the run cannot be continued inline
+     */
+    public function reopenInline(CatalogImportRun $run): CatalogImportRun
+    {
+        if (! $run->isInline()) {
+            throw new DomainException(__('catalog::imports.errors.not_inline'));
+        }
+
+        if ($run->status === ImportStatus::Completed) {
+            throw new DomainException(__('catalog::imports.errors.already_completed'));
+        }
+
+        if ($run->status === ImportStatus::Queued || $run->total_pages === null) {
+            return $run;
+        }
+
+        if ($run->status === ImportStatus::Running && $run->updated_at !== null && $run->updated_at->gt(now()->subMinutes(self::STALE_MINUTES))) {
+            throw new DomainException(__('catalog::imports.errors.still_running'));
+        }
+
+        if (! $run->status->isActive()) {
+            $other = $this->imports->activeRun($run->driver);
+
+            if ($other !== null && $other->id !== $run->id) {
+                throw new DomainException(__('catalog::imports.errors.already_running'));
+            }
+        }
+
+        return $this->imports->update($run, ['status' => ImportStatus::Running, 'failure_message' => null, 'finished_at' => null]);
+    }
+
+    /**
+     * Pages of a started run not imported yet (inline runs import in page order, so
+     * pages_done counts the pages from the first one).
+     *
+     * @return list<int>
+     */
+    public function remainingPages(CatalogImportRun $run): array
+    {
+        if ($run->total_pages === null || $run->pages_done >= $run->total_pages) {
+            return [];
+        }
+
+        return range($run->fromPage() + $run->pages_done, $run->fromPage() + $run->total_pages - 1);
     }
 
     /**
@@ -260,6 +369,11 @@ class CatalogImportService extends BaseService
             throw new DomainException(__('catalog::imports.errors.cannot_resume'));
         }
 
+        // Nothing would pick an inline (CLI) run up again: it is continued by the CLI.
+        if ($run->isInline()) {
+            throw new DomainException(__('catalog::imports.errors.resume_from_cli', ['id' => $run->id]));
+        }
+
         return $this->imports->update($run, ['status' => ImportStatus::Running]);
     }
 
@@ -296,7 +410,7 @@ class CatalogImportService extends BaseService
             'status_tone' => $run->status->tone(),
             'active' => $run->status->isActive(),
             'can_pause' => $run->status->canPause(),
-            'can_resume' => $run->status->canResume(),
+            'can_resume' => $run->status->canResume() && ! $run->isInline(),
             'can_cancel' => $run->status->canCancel(),
             'products' => ['done' => $run->processed_count, 'total' => max($run->total_items, $run->processed_count), 'percent' => $run->percent($run->processed_count, max($run->total_items, $run->processed_count))],
             'images' => ['done' => $run->images_done, 'total' => $run->images_total, 'percent' => $run->percent($run->images_done, $run->images_total)],
@@ -310,6 +424,24 @@ class CatalogImportService extends BaseService
             'failure' => $run->failure_message,
             'finished_at' => $run->finished_at?->toIso8601String(),
         ];
+    }
+
+    /**
+     * The run's error log rows, oldest first (CLI summary).
+     *
+     * @return list<CatalogImportLog>
+     */
+    public function failures(CatalogImportRun $run, int $limit = 20): array
+    {
+        /** @var list<CatalogImportLog> $logs */
+        $logs = $this->imports->logsQuery($run)
+            ->where('result', ImportLogResult::Error->value)
+            ->reorder('id')
+            ->limit($limit)
+            ->get()
+            ->all();
+
+        return $logs;
     }
 
     public function run(int $id): ?CatalogImportRun
@@ -338,6 +470,47 @@ class CatalogImportService extends BaseService
             'images_done' => $outcome->imagesDone,
             ...($counter !== null ? [$counter => 1] : []),
         ]));
+    }
+
+    /**
+     * Reads the run's first page for the totals, marks it running and returns its
+     * pages (`from_page` … at most `max_pages`); null when the source cannot be read
+     * or the first page is past the source's last page (the run failed).
+     *
+     * @return list<int>|null
+     */
+    private function plan(CatalogImportRun $run): ?array
+    {
+        $from = $run->fromPage();
+
+        try {
+            $first = $this->fetch($run->driver, $from);
+        } catch (DomainException $exception) {
+            $this->fail($run, $exception->getMessage());
+
+            return null;
+        }
+
+        if ($from > $first->lastPage) {
+            $this->fail($run, __('catalog::imports.errors.page_out_of_range', ['page' => $from, 'last' => $first->lastPage]));
+
+            return null;
+        }
+
+        $available = $first->lastPage - $from + 1;
+        $pages = $run->maxPages() !== null ? min($run->maxPages(), $available) : $available;
+        $perPage = max(1, $first->count());
+        $remaining = max(0, $first->total - ($from - 1) * $perPage);
+        $total = $pages >= $available ? $remaining : min($remaining, $pages * $perPage);
+
+        $this->imports->update($run, [
+            'status' => ImportStatus::Running,
+            'total_pages' => $pages,
+            'total_items' => $total,
+            'started_at' => now(),
+        ]);
+
+        return range($from, $from + $pages - 1);
     }
 
     private function fail(CatalogImportRun $run, string $message): void

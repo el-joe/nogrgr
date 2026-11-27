@@ -17,7 +17,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property int $id
  * @property ImportDriver $driver
  * @property ImportStatus $status
- * @property array{max_pages?: int|null, update_existing?: bool}|null $options
+ * @property array{max_pages?: int|null, update_existing?: bool, from_page?: int, mode?: string}|null $options
  * @property int|null $total_pages
  * @property int $pages_done
  * @property int $total_items
@@ -40,6 +40,10 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 class CatalogImportRun extends Model
 {
     use CentralConnection;
+
+    public const MODE_QUEUE = 'queue';
+
+    public const MODE_INLINE = 'inline';
 
     protected $table = 'catalog_import_runs';
 
@@ -102,6 +106,24 @@ class CatalogImportRun extends Model
         $max = $this->options['max_pages'] ?? null;
 
         return is_numeric($max) && (int) $max > 0 ? (int) $max : null;
+    }
+
+    /**
+     * First source page of the run (`--from-page`, 1 by default).
+     */
+    public function fromPage(): int
+    {
+        $from = $this->options['from_page'] ?? null;
+
+        return is_numeric($from) && (int) $from > 0 ? (int) $from : 1;
+    }
+
+    /**
+     * Pages imported inline by the CLI (`--sync`) rather than by a queued batch.
+     */
+    public function isInline(): bool
+    {
+        return ($this->options['mode'] ?? null) === CatalogImportRun::MODE_INLINE;
     }
 
     public function percent(int $done, int $total): int

@@ -206,6 +206,11 @@ return [
         'unknown_option' => 'variant option :id is not described by the source',
         'item_failed' => 'import failed: :detail',
         'all_pages_failed' => 'No page of the source could be imported.',
+        'page_out_of_range' => 'Page :page does not exist: the source has :last pages.',
+        'not_inline' => 'This import runs on the queue. Resume it from Catalog › Import.',
+        'already_completed' => 'This import has already completed.',
+        'still_running' => 'This import is still running in another process.',
+        'resume_from_cli' => 'This import was started from the command line. Continue it with: php artisan catalog:import-neozena --resume=:id',
     ],
 
     'notifications' => [

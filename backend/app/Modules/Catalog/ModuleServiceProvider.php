@@ -3,6 +3,8 @@
 namespace App\Modules\Catalog;
 
 use App\Modules\Billing\Events\InvoicePaid;
+use App\Modules\Catalog\Console\ImportNeozenaCommand;
+use App\Modules\Catalog\Enums\ImportDriver;
 use App\Modules\Catalog\Enums\RequestKind;
 use App\Modules\Catalog\Events\CatalogImportFinished;
 use App\Modules\Catalog\Jobs\RefreshBadgeAutoFill;
@@ -53,6 +55,7 @@ use App\Modules\Catalog\Repositories\Eloquent\StoreCategoryRepository;
 use App\Modules\Catalog\Repositories\Eloquent\StorePriceListRunRepository;
 use App\Modules\Catalog\Repositories\Eloquent\StoreProductRepository;
 use App\Modules\Catalog\Repositories\Eloquent\TenantChangeRequestRepository;
+use App\Modules\Catalog\Services\Imports\ScheduledCatalogSync;
 use App\Modules\Catalog\Support\RequestsBadgeCounter;
 use App\Modules\Catalog\Support\VendorRequestsBadgeCounter;
 use App\Modules\Identity\Models\Admin;
@@ -115,8 +118,23 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 
         Gate::policy(StoreProduct::class, StoreProductPolicy::class);
 
-        $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
+        if ($this->app->runningInConsole()) {
+            $this->commands([ImportNeozenaCommand::class]);
+        }
+
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->job(new RefreshBadgeAutoFill)->dailyAt(self::BADGE_REFRESH_AT)->name('catalog:refresh-badge-auto-fill')->onOneServer();
+
+            // Daily Neozena refresh: only while switched on in Admin › Integrations › Neozena.
+            $neozenaAt = $this->app->make(ScheduledCatalogSync::class)->dailyAt(ImportDriver::Neozena);
+
+            if ($neozenaAt !== null) {
+                $schedule->command(ImportNeozenaCommand::class, ['--update-existing', '--force'])
+                    ->dailyAt($neozenaAt)
+                    ->name('catalog:import-neozena')
+                    ->onOneServer()
+                    ->withoutOverlapping();
+            }
         });
     }
 

@@ -35,3 +35,37 @@ php artisan up
   ledger and corrects orders whose ledger postings drifted from the settlement figures (for
   example a refund above the vendor share posted by an earlier release, QA-P5-011).
   `--dry-run` reports without writing.
+
+## Neozena catalog import from the CLI (`catalog:import-neozena`)
+
+Same import as Admin › Catalog › Import (`CatalogImportService`, decision #61): products go
+only into the **central** catalog; stores select them later (#65). Credentials come from
+Admin › Integrations › Neozena (#69) — the command refuses with a clear message while the
+section is disabled or has no API base URL. Source categories must be mapped first
+(unmapped → product skipped and logged).
+
+```bash
+php artisan catalog:import-neozena --dry-run                 # totals, pages, mapping, sample items; writes nothing
+php artisan catalog:import-neozena --force                   # queued batch on "default" (needs a worker)
+php artisan catalog:import-neozena --sync --force            # inline in this process with a progress bar
+php artisan catalog:import-neozena --sync --pages=5 --from-page=11 --force   # page window
+php artisan catalog:import-neozena --sync --update-existing --force          # refresh prices / stock / images of imported products
+php artisan catalog:import-neozena --resume=42               # continue run #42
+```
+
+- Without `--force` it asks for confirmation (non-interactive → not started, exit 1).
+- Prints the run id, pages, created / updated / skipped / failed counts and the first 20
+  failures. Exit code 0 only when the run completed without failures; 1 otherwise; 2 for
+  invalid options.
+- Without `--update-existing` products imported before are skipped; unchanged products
+  (same payload checksum) are always skipped, so re-runs never duplicate.
+- `--sync` runs are resumable: Ctrl+C / SIGTERM pauses the run after the current page;
+  `--resume=<id>` continues a paused, cancelled, failed or interrupted (no progress for
+  15 min) inline run from its next page. `--resume` on a paused **queued** run sets it
+  running again (its batch continues); queued runs cannot be resumed inline, and inline runs
+  cannot be resumed from the admin page.
+- **Daily sync (optional, off by default):** Admin › Integrations › Neozena › "Daily product
+  sync" + "Sync time" registers `catalog:import-neozena --update-existing --force` (queued)
+  daily at that server time (`onOneServer`, `withoutOverlapping`). It needs the usual
+  `* * * * * php artisan schedule:run` cron and a queue worker; check with
+  `php artisan schedule:list`.

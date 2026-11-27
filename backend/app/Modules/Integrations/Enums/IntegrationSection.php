@@ -163,6 +163,9 @@ enum IntegrationSection: string
                 $enabled,
                 new SettingField('base_url', SettingFieldType::Url, true, default: 'https://neozena.com/api/catalog'),
                 new SettingField('api_token', SettingFieldType::Secret),
+                // Daily `catalog:import-neozena --update-existing` (off by default).
+                new SettingField('daily_sync', SettingFieldType::Toggle, default: false),
+                new SettingField('daily_sync_at', SettingFieldType::Time, true, default: '03:30', maxLength: 5),
             ],
             self::Geocoding => [
                 $enabled,

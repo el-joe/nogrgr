@@ -206,6 +206,11 @@ return [
         'unknown_option' => 'خيار المتغير :id غير موصوف في المصدر',
         'item_failed' => 'فشل الاستيراد: :detail',
         'all_pages_failed' => 'تعذّر استيراد أي صفحة من المصدر.',
+        'page_out_of_range' => 'الصفحة :page غير موجودة: المصدر يحتوي على :last صفحات.',
+        'not_inline' => 'هذا الاستيراد يعمل عبر قائمة الانتظار. استأنفه من الكتالوج › الاستيراد.',
+        'already_completed' => 'اكتمل هذا الاستيراد بالفعل.',
+        'still_running' => 'هذا الاستيراد ما زال يعمل في عملية أخرى.',
+        'resume_from_cli' => 'بدأ هذا الاستيراد من سطر الأوامر. تابعه بالأمر: php artisan catalog:import-neozena --resume=:id',
     ],
 
     'notifications' => [

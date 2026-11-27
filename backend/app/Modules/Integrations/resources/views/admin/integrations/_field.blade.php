@@ -44,6 +44,9 @@
     @case(SettingFieldType::Textarea)
         <x-ui::textarea :name="$field->key" :label="$label" :value="$state['value']" :required="$required" :helper="$help" :maxlength="$field->maxLength" :disabled="! $editable" rows="3" class="md:col-span-2" />
         @break
+    @case(SettingFieldType::Time)
+        <x-ui::input :name="$field->key" type="time" :label="$label" :value="$state['value']" :required="$required" :helper="$help" dir="ltr" step="60" :disabled="! $editable" />
+        @break
     @case(SettingFieldType::Number)
         <x-ui::input
             :name="$field->key"
