@@ -131,16 +131,9 @@ class HomeService
      */
     public function bestSelling(int $page = 1, int $perPage = self::GRID): array
     {
-        $best = $this->grid(ListingKind::BestSelling, $page, $perPage);
-
-        if (! $best->isEmpty() || $page > 1) {
-            return ['best' => $best, 'bestFallback' => false];
-        }
-
-        return [
-            'best' => $this->listing->listing(new ListingQuery(kind: ListingKind::NewIn, sort: ListingSort::BestSelling, page: $page, perPage: $perPage, period: SalesPeriod::Days30, inStockOnly: true)),
-            'bestFallback' => true,
-        ];
+        // The listing scope itself falls back to in-stock products without sales (ProductListing::bestSellingScope),
+        // so the home grid and the best-selling page rank and page identically.
+        return ['best' => $this->grid(ListingKind::BestSelling, $page, $perPage), 'bestFallback' => false];
     }
 
     public function grid(ListingKind $kind, int $page = 1, int $perPage = self::GRID): ListingResult

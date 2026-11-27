@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Http\Controllers\Storefront;
 
+use App\Modules\Catalog\Models\Category;
 use App\Modules\Storefront\DTOs\Catalog\ListingQuery;
 use App\Modules\Storefront\Enums\ListingKind;
 use App\Modules\Storefront\Http\Controllers\Storefront\Concerns\RendersListings;
@@ -38,6 +39,37 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * /category without a slug: every product of the store (visitor's country) with the top-level
+     * categories as the tile row, like the old Ecommet "all products" category page.
+     */
+    public function all(Request $request): View|JsonResponse
+    {
+        $query = ListingQuery::fromRequest($request, ListingKind::Category);
+        $result = $this->listing->listing($query, null);
+        $title = __st('catalog.categories.title');
+        $crumbs = [['name' => __st('shell.home'), 'url' => route('storefront.home')], ['name' => $title, 'url' => route('storefront.category.all')]];
+
+        return $this->listingResponse($request, 'pages.listing', $query, $result, [
+            'kind' => ListingKind::Category,
+            'title' => $title,
+            'crumbs' => $crumbs,
+            'category' => null,
+            'parentCategory' => null,
+            'subcategories' => array_map(static fn (array $node): Category => $node['category'], $this->categories->tree()),
+            'categoryOptions' => [],
+            'cardTag' => null,
+            'seo' => $this->seo->listing(
+                $title,
+                __st('catalog.categories.description'),
+                $result->cards,
+                $crumbs,
+                ['page' => $query->page],
+                $query->activeFilters() === 0,
+            ),
+        ]);
+    }
+
     public function show(Request $request, string $slug): View|JsonResponse
     {
         $category = $this->categories->findBySlug($slug);
@@ -58,7 +90,9 @@ class CategoryController extends Controller
             'title' => (string) $category->name,
             'crumbs' => $crumbs,
             'category' => $category,
-            'subcategories' => $children !== [] ? $children : ($category->parent_id !== null && ($parent = $this->categories->find($category->parent_id)) !== null ? $this->categories->children($parent) : []),
+            'parentCategory' => $parent = $category->parent_id !== null ? $this->categories->find($category->parent_id) : null,
+            // Old Ecommet behaviour: a category's own children, else its siblings, else the top-level categories.
+            'subcategories' => $children !== [] ? $children : ($parent !== null ? $this->categories->children($parent) : array_map(static fn (array $node): Category => $node['category'], $this->categories->tree())),
             'categoryOptions' => [],
             'cardTag' => null,
             'seo' => $this->seo->listing(

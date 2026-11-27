@@ -2,6 +2,8 @@
 
 namespace App\Modules\Storefront\Services\Catalog;
 
+use App\Modules\Catalog\Models\Attribute;
+use App\Modules\Catalog\Models\AttributeOption;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Storefront\DTOs\Catalog\IndexEntry;
 use App\Modules\Storefront\DTOs\Catalog\ListingQuery;
@@ -11,6 +13,8 @@ use App\Modules\Storefront\Enums\ListingSort;
 use App\Modules\Storefront\Enums\SalesPeriod;
 use App\Modules\Storefront\Repositories\Contracts\StorefrontCatalogRepositoryContract;
 use App\Modules\Storefront\Services\StorefrontContext;
+use App\Modules\Storefront\Support\SwatchColor;
+use BackedEnum;
 use Carbon\CarbonImmutable;
 
 /**
@@ -114,13 +118,31 @@ class ProductListing
         $entries = array_values($this->index->entries());
 
         return array_values(match ($query->kind) {
-            ListingKind::Category => $category === null ? [] : $this->inCategories($entries, $this->categories->scopeIds($category)),
+            ListingKind::Category => $category === null ? $entries : $this->inCategories($entries, $this->categories->scopeIds($category)),
             ListingKind::TopRated => array_filter($entries, static fn (IndexEntry $entry): bool => $entry->reviewCount > 0 && $entry->rating >= 4.0),
             ListingKind::Offers => array_filter($entries, static fn (IndexEntry $entry): bool => $entry->discount() !== null),
             ListingKind::Search => $query->term === null ? [] : array_filter($entries, fn (IndexEntry $entry): bool => $this->relevance($entry, $query->term) > 0),
-            ListingKind::BestSelling => array_filter($entries, fn (IndexEntry $entry): bool => ($this->soldIn($query->period)[$entry->id] ?? 0) > 0 || $entry->soldCount > 0),
+            ListingKind::BestSelling => $this->bestSellingScope($entries, $query),
             ListingKind::NewIn => $entries,
         });
+    }
+
+    /**
+     * Best-selling scope: products with real sales (units sold in the period or ever) plus the
+     * store's Best-selling badge list. A store without either lists its in-stock products (the
+     * old Ecommet behaviour), ranked the best-selling way, so the page is never empty and the
+     * home grid and this page agree.
+     *
+     * @param  list<IndexEntry>  $entries
+     * @return list<IndexEntry>
+     */
+    private function bestSellingScope(array $entries, ListingQuery $query): array
+    {
+        $sold = $this->soldIn($query->period);
+        $badge = array_flip(app(BadgeShelves::class)->bestSellingIds());
+        $qualifying = array_values(array_filter($entries, static fn (IndexEntry $entry): bool => ($sold[$entry->id] ?? 0) > 0 || $entry->soldCount > 0 || isset($badge[$entry->id])));
+
+        return $qualifying !== [] ? $qualifying : array_values(array_filter($entries, static fn (IndexEntry $entry): bool => $entry->inStock));
     }
 
     private function matches(IndexEntry $entry, ListingQuery $query): bool
@@ -173,12 +195,14 @@ class ProductListing
         }
 
         $sold = $query->sort === ListingSort::BestSelling ? $this->soldIn($query->period) : [];
+        // Best-selling ranking: the Best-selling badge list first (its own order), then units sold in the period, ever, rating.
+        $badgePos = $query->sort === ListingSort::BestSelling ? array_flip(app(BadgeShelves::class)->bestSellingIds()) : [];
         $term = $query->term;
 
         usort($entries, fn (IndexEntry $a, IndexEntry $b): int => match ($query->sort) {
             ListingSort::Recommended => [$b->featured, $a->sortOrder, $b->soldCount] <=> [$a->featured, $b->sortOrder, $a->soldCount],
             ListingSort::Relevance => [$this->relevance($b, (string) $term), $b->soldCount] <=> [$this->relevance($a, (string) $term), $a->soldCount],
-            ListingSort::BestSelling => [$sold[$b->id] ?? 0, $b->soldCount, $b->rating] <=> [$sold[$a->id] ?? 0, $a->soldCount, $a->rating],
+            ListingSort::BestSelling => [$badgePos[$a->id] ?? PHP_INT_MAX, $sold[$b->id] ?? 0, $b->soldCount, $b->rating, $b->createdAt] <=> [$badgePos[$b->id] ?? PHP_INT_MAX, $sold[$a->id] ?? 0, $a->soldCount, $a->rating, $a->createdAt],
             ListingSort::Newest => [$b->createdAt, $b->id] <=> [$a->createdAt, $a->id],
             ListingSort::PriceAsc => [$a->price, $a->id] <=> [$b->price, $b->id],
             ListingSort::PriceDesc => [$b->price, $a->id] <=> [$a->price, $b->id],
@@ -307,13 +331,17 @@ class ProductListing
         }
 
         $optionFacet = [];
+        $displayTypes = $options === [] ? [] : Attribute::query()->whereIn('id', array_keys($options))->pluck('display_type', 'id')->map(static fn ($type) => $type instanceof BackedEnum ? $type->value : (string) $type)->all();
 
         foreach ($options as $attribute => $values) {
             arsort($values);
+            $name = $attributes[$attribute] ?? '#'.$attribute;
+            $isColor = ($displayTypes[$attribute] ?? null) === 'color' || preg_match('/colou?r|لون/iu', $name) === 1;
             $optionFacet[] = [
                 'id' => (int) $attribute,
-                'name' => $attributes[$attribute] ?? '#'.$attribute,
+                'name' => $name,
                 'values' => array_map(static fn (string $value, int $count): array => ['value' => $value, 'count' => $count], array_keys($values), array_values($values)),
+                'swatches' => $isColor ? $this->swatchGroups((int) $attribute, $values) : null,
             ];
         }
 
@@ -324,6 +352,43 @@ class ProductListing
             'categories' => $categoryFacet,
             'in_stock' => $inStock,
         ];
+    }
+
+    /**
+     * Colour facet as swatches: values of the same colour (stored swatch hex, else the colour named in
+     * the value) merge into one swatch that filters by all of them; values without a colour become a
+     * letter swatch when they are short names. At most 48 swatches, most products first.
+     *
+     * @param  array<string, int>  $values  option name => product count
+     * @return list<array{label: string, hex: string|null, light: bool, count: int, values: list<string>}>
+     */
+    private function swatchGroups(int $attributeId, array $values): array
+    {
+        $stored = AttributeOption::query()->where('attribute_id', $attributeId)->whereNotNull('swatch')->get(['name', 'swatch'])
+            ->mapWithKeys(static fn (AttributeOption $option): array => [(string) $option->name => (string) $option->swatch])->all();
+        $groups = [];
+
+        foreach ($values as $value => $count) {
+            $value = (string) $value;
+            $key = SwatchColor::key($stored[$value] ?? null, $value);
+
+            if ($key === null) {
+                if (mb_strlen($value) < 2 || mb_strlen($value) > 14 || preg_match('/^[#\d\W]/u', $value) === 1) {
+                    continue;
+                }
+
+                $key = 'name:'.mb_strtolower($value);
+            }
+
+            $hex = str_starts_with($key, 'name:') ? null : SwatchColor::hex($stored[$value] ?? null, $value);
+            $groups[$key] ??= ['label' => $value, 'hex' => $hex, 'light' => $hex !== null && SwatchColor::isLight($hex), 'count' => 0, 'values' => []];
+            $groups[$key]['count'] += $count;
+            $groups[$key]['values'][] = $value;
+        }
+
+        usort($groups, static fn (array $a, array $b): int => [$a['hex'] === null, -$a['count']] <=> [$b['hex'] === null, -$b['count']]);
+
+        return array_slice($groups, 0, 48);
     }
 
     /**

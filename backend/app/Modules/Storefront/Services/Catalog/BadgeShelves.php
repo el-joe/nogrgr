@@ -2,6 +2,7 @@
 
 namespace App\Modules\Storefront\Services\Catalog;
 
+use App\Modules\Catalog\Enums\BadgeType;
 use App\Modules\Catalog\Models\ProductBadge;
 use App\Modules\Catalog\Repositories\Contracts\ProductBadgeRepositoryContract;
 use App\Modules\Catalog\Services\Vendor\StoreTaxonomyReader;
@@ -20,6 +21,9 @@ class BadgeShelves
      * @var array<int, ProductBadge>|null
      */
     private ?array $badges = null;
+
+    /** @var list<int>|null */
+    private ?array $bestSelling = null;
 
     public function __construct(
         private readonly ProductBadgeRepositoryContract $repository,
@@ -68,6 +72,28 @@ class BadgeShelves
         }
 
         return array_values($result);
+    }
+
+    /**
+     * Store product ids of the active Best-selling badge list, in badge order (manual picks or the
+     * auto-filled top sellers); [] when the badge is off or empty.
+     *
+     * @return list<int>
+     */
+    public function bestSellingIds(): array
+    {
+        return $this->bestSelling ??= (function (): array {
+            $badge = $this->repository->findByType(BadgeType::BestSelling);
+
+            if ($badge === null || ! $badge->is_active) {
+                return [];
+            }
+
+            $members = $this->taxonomy->badgeMembers($badge);
+            $entries = $this->index->entries();
+
+            return array_values(array_filter([...$members['store'], ...$members['admin']], static fn (int $id): bool => isset($entries[$id])));
+        })();
     }
 
     /**

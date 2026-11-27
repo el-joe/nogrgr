@@ -6,6 +6,9 @@ namespace App\Modules\Storefront\DTOs\Catalog;
  * Everything a product card renders (Ecommet cards 1:1067 deal / 1:1089 grid), already
  * formatted in the display currency.
  *
+ * `badge` = the product's own badge (assigned / auto-filled central badge); `ribbon` = the ONE corner label
+ * (discount / flash first, then the badge; `ribbonKind` discount|flash|badge), decided per product.
+ *
  * @property-read array{percentage: float, starts_at: string, ends_at: string}|null $flash
  */
 final readonly class ProductCardData
@@ -34,6 +37,8 @@ final readonly class ProductCardData
         public ?int $stockLeft = null,
         public ?string $weight = null,
         public ?string $badge = null,
+        public ?string $ribbon = null,
+        public ?string $ribbonKind = null,
     ) {}
 
     /**

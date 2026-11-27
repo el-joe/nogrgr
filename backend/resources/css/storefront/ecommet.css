@@ -17,6 +17,36 @@
 }
 
 @layer components {
+    /* ONE card size everywhere: the grid columns and the rail slides (deals, related, picks) share these
+       tokens, so a card is the same width in a grid and in a rail at every breakpoint. */
+    :root {
+        --eco-cols: 2;
+        --eco-gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+        :root {
+            --eco-cols: 3;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        :root {
+            --eco-cols: 5;
+            --eco-gap: 16px;
+        }
+    }
+
+    .eco-card-grid {
+        display: grid;
+        grid-template-columns: repeat(var(--eco-cols), minmax(0, 1fr));
+        gap: var(--eco-gap);
+    }
+
+    .eco-rail-slide {
+        width: calc((100% - (var(--eco-cols) - 1) * var(--eco-gap)) / var(--eco-cols)) !important;
+    }
+
     .eco-container {
         width: 100%;
         max-width: calc(var(--eco-container) + 32px);
@@ -211,6 +241,34 @@
         object-fit: contain;
         background: var(--eco-img-bg);
         transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
+    }
+
+    /* Placeholder without a category image: brand-tinted disc, centred initial. */
+    .eco-cat-tile .eco-cat-ph {
+        background: color-mix(in srgb, var(--eco-red) 9%, #fff);
+        color: var(--eco-red);
+        line-height: 1;
+    }
+
+    .eco-cat-tile .eco-cat-back {
+        display: grid;
+        place-items: center;
+        background: var(--eco-black);
+        color: #fff;
+    }
+
+    .eco-cat-tile .eco-cat-back svg {
+        display: block;
+        margin: 0;
+    }
+
+    .eco-cat-tile[aria-current='page'] img,
+    .eco-cat-tile[aria-current='page'] .eco-cat-ph {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--eco-black);
+    }
+
+    .eco-cat-tile[aria-current='page'] span:last-child {
+        font-weight: 500;
     }
 
     .eco-cat-tile:hover img,
@@ -876,22 +934,6 @@
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 10px 50%);
         }
 
-        .eco-card-deal {
-            border: 0;
-            border-radius: 0;
-            padding-bottom: 0;
-            background: transparent;
-        }
-
-        .eco-card-deal .eco-card-img {
-            aspect-ratio: 148 / 114;
-            border-radius: 0;
-        }
-
-        .eco-card-deal .eco-card-body {
-            padding-inline: 0;
-        }
-
         .eco-card-deal .eco-discount {
             padding: 2px 4px;
             font-size: 8px;
@@ -1078,10 +1120,71 @@
         cursor: pointer;
     }
 
+    /* White box, black border; the checked mark / radio dot is black. */
     .eco-check input {
+        appearance: none;
+        flex: none;
+        display: inline-grid;
+        place-content: center;
         width: 18px;
         height: 18px;
-        accent-color: var(--eco-black);
+        margin: 0;
+        border: 1.5px solid var(--eco-black);
+        border-radius: 4px;
+        background: #fff;
+        color-scheme: light;
+        cursor: pointer;
+        transition: box-shadow var(--motion-fast, 120ms) var(--ease-out);
+    }
+
+    .eco-check input[type='radio'] {
+        border-radius: 999px;
+    }
+
+    .eco-check input::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        transform: scale(0);
+        transition: transform var(--motion-fast, 120ms) var(--ease-out);
+    }
+
+    .eco-check input[type='checkbox']::before {
+        background: var(--eco-black);
+        clip-path: polygon(14% 44%, 0 59%, 40% 100%, 100% 20%, 85% 6%, 40% 68%);
+    }
+
+    .eco-check input[type='radio']::before {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--eco-black);
+    }
+
+    .eco-check input:checked::before {
+        transform: scale(1);
+    }
+
+    .eco-check input:focus-visible {
+        outline: 2px solid var(--eco-black);
+        outline-offset: 2px;
+    }
+
+    /* Facet sections never scroll on their own: the whole filter drawer scrolls. */
+    .eco-accordion .sf-swatch-grid {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .eco-chip-select {
+        appearance: none;
+        background: transparent;
+        border: 0;
+        padding: 0;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        outline: none;
     }
 
     .eco-select {
@@ -1268,6 +1371,57 @@
         [dir='rtl'] .mo-sheet[data-sheet-mode='drawer'][data-open] .mo-sheet-panel {
             transform: none;
         }
+    }
+}
+
+/* Phone category drawer (m 1:2979): side panel at every width, slides from the start side. */
+@layer components {
+    .mo-sheet[data-sheet-mode='side'] {
+        align-items: stretch;
+        justify-content: flex-start;
+        padding: 0;
+    }
+
+    .mo-sheet[data-sheet-mode='side'] .mo-sheet-panel.mo-side-panel {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 420px;
+        height: 100%;
+        max-height: 100dvh;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 0;
+        opacity: 1;
+        transform: translateX(-100%);
+        transition: transform var(--motion-slow) cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    [dir='rtl'] .mo-sheet[data-sheet-mode='side'] .mo-sheet-panel.mo-side-panel {
+        transform: translateX(100%);
+    }
+
+    .mo-sheet[data-sheet-mode='side'][data-open] .mo-sheet-panel.mo-side-panel,
+    [dir='rtl'] .mo-sheet[data-sheet-mode='side'][data-open] .mo-sheet-panel.mo-side-panel {
+        transform: none;
+    }
+
+    .eco-drawer-cat {
+        display: block;
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        text-align: start;
+        color: var(--eco-black);
+        border-inline-start: 2px solid transparent;
+        transition: background-color var(--motion-fast) ease-out;
+    }
+
+    .eco-drawer-cat[aria-selected='true'] {
+        background: #eaeaea;
+        border-inline-start-color: var(--eco-black);
+        font-weight: 500;
     }
 }
 

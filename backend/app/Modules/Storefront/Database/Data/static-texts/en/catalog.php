@@ -12,6 +12,8 @@ return [
         'best_selling' => 'Best-Selling',
         'best_selling_tag' => '#Best-Selling Item',
         'rank' => '#:rank Best-Selling',
+        'ribbon_flash' => 'Flash -:percent%',
+        'ribbon_discount' => '-:percent%',
         'new' => 'New',
         'rating' => ':rating ★ rated',
         'discount_off' => '-:percent% off',

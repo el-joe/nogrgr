@@ -27,6 +27,7 @@ export function openSheet(target) {
     }
 
     sheet.__opener = document.activeElement;
+    sheet.__opener?.hasAttribute?.('aria-expanded') && sheet.__opener.setAttribute('aria-expanded', 'true');
     sheet.hidden = false;
     document.documentElement.style.overflow = 'hidden';
     open.push(sheet);
@@ -46,6 +47,7 @@ export function closeSheet(target) {
     }
 
     delete sheet.dataset.open;
+    sheet.__opener?.hasAttribute?.('aria-expanded') && sheet.__opener.setAttribute('aria-expanded', 'false');
     sheet.style.removeProperty('--sheet-drag');
     open.splice(open.indexOf(sheet), 1);
     const done = () => {

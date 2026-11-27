@@ -69,6 +69,9 @@
         @endif
         <x-sf::footer :family="$family" />
         <x-sf::mobile-nav :family="$family" :active="$nav" />
+        @if ($family === 'ecommet' && ! $mobileTitle)
+            <x-sf::mobile-nav.categories-drawer />
+        @endif
     </div>
     @if ($family === 'ecommet')
         <x-sf::back-to-top />

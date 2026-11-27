@@ -12,6 +12,8 @@ return [
         'best_selling' => 'الأكثر مبيعًا',
         'best_selling_tag' => '#الأكثر_مبيعًا',
         'rank' => '#:rank الأكثر مبيعًا',
+        'ribbon_flash' => 'عرض سريع -:percent%',
+        'ribbon_discount' => '-:percent%',
         'new' => 'جديد',
         'rating' => 'تقييم :rating ★',
         'discount_off' => 'خصم :percent%',

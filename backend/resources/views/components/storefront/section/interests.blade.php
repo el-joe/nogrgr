@@ -24,7 +24,7 @@
                 <button type="button" class="absolute end-0 top-1/2 z-10 grid size-[62px] -translate-y-1/2 place-items-center bg-gradient-to-l from-white via-white to-transparent text-eco-black disabled:hidden rtl:bg-gradient-to-r" data-motion-next aria-label="{{ __st('catalog.rail.next') }}"><x-ui::icon name="chevron-right" :size="32" class="rtl:-scale-x-100" /></button>
             </div>
         @endif
-        <div id="sf-interests-grid" role="tabpanel" aria-live="polite" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4 lg:px-7" data-reveal-stagger>
+        <div id="sf-interests-grid" role="tabpanel" aria-live="polite" class="eco-card-grid lg:px-7" data-reveal-stagger>
             @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $result->cards])
         </div>
         <p class="py-10 text-center text-sm text-eco-gray" data-interests-empty @unless ($result->isEmpty()) hidden @endunless>{{ __st('catalog.home.interests_empty') }}</p>

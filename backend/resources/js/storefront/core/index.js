@@ -5,6 +5,7 @@ import Alpine from 'alpinejs';
 import { boot } from '../../core/index.js';
 import { initSliders } from './sliders';
 import { initMotion } from './motion/index.js';
+import { initSwatches } from './swatches';
 
 export { initSliders } from './sliders';
 export { initMotion, openSheet, closeSheet } from './motion/index.js';
@@ -30,6 +31,7 @@ export function bootStorefront(callback) {
 
     boot(() => {
         initMotion(document);
+        initSwatches(document);
         initSliders(document);
 
         /* Hooks inside [data-lazy-account] (e.g. the header preferences panel) load the

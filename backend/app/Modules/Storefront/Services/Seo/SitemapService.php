@@ -31,7 +31,7 @@ class SitemapService
 
         $add(route('storefront.home'), null, '1.0');
 
-        foreach (['storefront.best-sellers', 'storefront.new-in', 'storefront.top-rated', 'storefront.offers', 'storefront.categories.index'] as $name) {
+        foreach (['storefront.best-sellers', 'storefront.new-in', 'storefront.top-rated', 'storefront.offers', 'storefront.categories.index', 'storefront.category.all'] as $name) {
             $add(route($name), null, '0.6');
         }
 

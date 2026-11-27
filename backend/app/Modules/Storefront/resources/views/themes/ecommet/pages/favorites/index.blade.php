@@ -13,7 +13,7 @@
         </form>
     @endif
 
-    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4" data-filter-list="wishlist" data-reveal-stagger>
+    <div class="eco-card-grid" data-filter-list="wishlist" data-reveal-stagger>
         @foreach ($cards as $card)
             <article class="sf-card group flex flex-col overflow-hidden transition-[opacity,transform] duration-300 data-[removing]:scale-95 data-[removing]:opacity-0" data-reveal="fade-up" data-product="{{ $card->id }}" data-filter-item data-filter-text="{{ \Illuminate\Support\Str::lower($card->name) }}" data-wishlist-card>
                 <a href="{{ $card->url }}" class="relative block aspect-square overflow-hidden bg-[#f6f6f6]">

@@ -33,7 +33,7 @@
         @if ($cards !== [])
             <section class="mt-16 grid gap-4" aria-labelledby="sf-404-picks">
                 <h2 id="sf-404-picks" class="text-lg font-medium text-sf-ink" data-reveal="fade-up">{{ __st('errors.404.you_may_like') }}</h2>
-                <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4" data-reveal-stagger>
+                <div class="eco-card-grid" data-reveal-stagger>
                     @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $cards, 'variant' => 'grid'])
                 </div>
             </section>

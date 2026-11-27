@@ -22,8 +22,8 @@
             <a href="{{ $tabs[count($tabs) - 1]['more'] }}" class="hidden items-center gap-0.5 text-sm text-eco-black hover:underline lg:inline-flex">{{ $tabs[count($tabs) - 1]['more_label'] }}<x-ui::icon name="chevron-right" :size="16" class="rtl:-scale-x-100" /></a>
         </div>
         @foreach ($tabs as $index => $tab)
-            <div id="sf-deals-{{ $tab['key'] }}" role="tabpanel" aria-labelledby="sf-deals-tab-{{ $tab['key'] }}" class="lg:px-12" @if ($index !== 0) hidden @endif>
-                <x-sf::section.rail :cards="$tab['cards']" variant="deal" slide-class="!w-[148px] lg:!w-[224px]" :label="$tab['label']" />
+            <div id="sf-deals-{{ $tab['key'] }}" role="tabpanel" aria-labelledby="sf-deals-tab-{{ $tab['key'] }}"  @if ($index !== 0) hidden @endif>
+                <x-sf::section.rail :cards="$tab['cards']" variant="deal" :label="$tab['label']" />
             </div>
         @endforeach
     </section>

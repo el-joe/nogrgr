@@ -20,16 +20,17 @@
     $stars = (int) round($card->rating);
     $favoriteUrl = \Illuminate\Support\Facades\Route::has('storefront.favorites.toggle') ? route('storefront.favorites.toggle') : null;
     $tagText = match ($tag) {
-        'best' => __st('catalog.card.best_selling_tag'),
-        'new' => __st('catalog.card.new'),
+        // Per product, never per section: the corner ribbon is the discount (or the badge); a badge hidden
+        // behind a discount ribbon shows as the red line; "best" / "new" sections no longer force a label.
+        'best', 'new' => $card->ribbonKind !== 'badge' ? $card->badge : null,
         'rating' => $card->reviewCount > 0 ? __st('catalog.card.rating', ['rating' => number_format($card->rating, 1)]) : null,
         'discount' => $card->discount ? __st('catalog.card.discount_off', ['percent' => $card->discount]) : null,
         default => null,
     };
 @endphp
 <article {{ $attributes->class(['eco-card', 'eco-card-deal' => $deal]) }} data-product="{{ $card->id }}">
-    @if ($ribbon)
-        <span class="eco-ribbon">{{ $rank ? __st('catalog.card.rank', ['rank' => $rank]) : __st('catalog.card.best_selling') }}</span>
+    @if ($card->ribbon && ! $deal)
+        <span class="eco-ribbon" data-ribbon="{{ $card->ribbonKind }}">{{ $card->ribbon }}</span>
     @endif
     <div class="eco-card-img">
         @if ($card->image)
@@ -76,8 +77,8 @@
                 @if ($card->compare)<span class="eco-compare"><span class="sr-only">{{ __st('catalog.card.was') }}</span>{{ $card->compare }}</span>@endif
                 <span class="eco-price"><span class="sr-only">{{ __st('catalog.card.now') }}</span>{{ $card->price }}</span>
             </p>
-            @if ($tagText)
-                <p class="text-xs tracking-[0.5px] text-[#ff3b2f]">{{ $tagText }}</p>
+            @if ($tagText ?? ($card->ribbonKind === 'discount' || $card->ribbonKind === 'flash' ? $card->badge : null))
+                <p class="text-xs tracking-[0.5px] text-[#ff3b2f]">{{ $tagText ?? $card->badge }}</p>
             @endif
             <div class="flex items-end justify-between gap-2">
                 <div class="grid gap-2">

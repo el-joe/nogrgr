@@ -2,9 +2,9 @@
     Horizontal product rail (Swiper "rail": touch swipe, mouse drag, trackpad, keys, RTL)
     with prev / next buttons on desktop. Cards: x-sf::product-card variant.
 --}}
-@props(['cards' => [], 'variant' => 'grid', 'slideClass' => '!w-[164px] lg:!w-[224px]', 'label' => null])
+@props(['cards' => [], 'variant' => 'grid', 'slideClass' => 'eco-rail-slide', 'label' => null])
 <div {{ $attributes->class(['group/rail relative']) }}>
-    <div class="swiper !overflow-visible lg:!overflow-hidden" data-rail='{"spaceBetween":16}' @if ($label) aria-label="{{ $label }}" @endif>
+    <div class="swiper !overflow-visible lg:!overflow-hidden" data-rail='{"spaceBetween":12,"breakpoints":{"1024":{"spaceBetween":16}}}' @if ($label) aria-label="{{ $label }}" @endif>
         <div class="swiper-wrapper">
             @foreach ($cards as $index => $card)
                 <div class="swiper-slide !h-auto {{ $slideClass }}" data-reveal="fade-up">

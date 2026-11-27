@@ -134,7 +134,36 @@ function bindHomeTabs(section) {
     }));
 }
 
+let facetChipsBound = false;
+
+/** Facet chips of the listing filter row open the filter sheet with their accordion expanded. */
+function bindFacetChips() {
+    if (facetChipsBound) {
+        return;
+    }
+
+    facetChipsBound = true;
+    document.addEventListener('click', (event) => {
+        const chip = event.target.closest('[data-facet-chip]');
+
+        if (!chip) {
+            return;
+        }
+
+        window.setTimeout(() => {
+            const panel = document.querySelector(`#sf-filters [data-facet="${CSS.escape(chip.dataset.facetChip)}"]`);
+
+            if (panel) {
+                panel.open = true;
+                panel.scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+            }
+        }, 60);
+    });
+}
+
 export function initListing(root = document) {
+    bindFacetChips();
+
     root.querySelectorAll('[data-load-more]:not([data-ready])').forEach((link) => {
         link.dataset.ready = '';
         bindLoadMore(link);

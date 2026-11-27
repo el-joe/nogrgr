@@ -32,6 +32,8 @@ final class CatalogCards
 
             $items[] = (new ProductSummaryResource($entry, $card->favorited))->toArray($request) + [
                 'badge' => $card->badge,
+                'ribbon' => $card->ribbon,
+                'ribbon_kind' => $card->ribbonKind,
                 'sold_count' => $card->soldCount,
                 'weight' => $card->weight,
                 'star_seller' => $card->starSeller,

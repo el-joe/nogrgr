@@ -105,7 +105,7 @@
                     <ul class="swiper-wrapper" role="list" aria-label="{{ __st('shell.nav.categories') }}">
                         @foreach ($circles as $circle)
                             <li class="swiper-slide !w-[82px]">
-                                <a href="{{ route('storefront.category', ['slug' => $circle->slug]) }}" class="elo-cat" @if ($isCategory && $circle->id === $category->id) aria-current="page" @endif>
+                                <a href="{{ route('storefront.category', ['slug' => $circle->slug]) }}" class="elo-cat" @if ($isCategory && $circle->id === $category?->id) aria-current="page" @endif>
                                     <x-sf::category-image :category="$circle" :size="64" :eager="$loop->index < 8" />
                                     <span class="line-clamp-2">{{ $circle->name }}</span>
                                 </a>

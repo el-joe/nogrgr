@@ -18,7 +18,7 @@
 <x-sf::layout :seo="$seo" :page="'listing-'.$kind->value">
     <div class="eco-wide pb-12 pt-4 lg:pt-8">
         @if ($isCategory || $kind === ListingKind::Search)
-            <nav aria-label="{{ __st('shell.breadcrumb') }}" class="mb-4 text-sm text-eco-gray">
+            <nav aria-label="{{ __st('shell.breadcrumb') }}" @class(['text-sm text-eco-gray', 'sr-only' => $isCategory, 'mb-4' => ! $isCategory])>
                 <ol class="flex flex-wrap items-center gap-1">
                     @foreach ($crumbs as $crumb)
                         <li class="inline-flex items-center gap-1">
@@ -29,23 +29,73 @@
             </nav>
         @endif
 
-        @if ($isCategory && $subcategories !== [])
-            <div class="mb-6 border-b border-[#c4c4c4] pb-6">
-                <div class="swiper" data-rail='{"spaceBetween":24}'>
-                    <ul class="swiper-wrapper" role="list">
-                        @foreach ($subcategories as $sub)
-                            <li class="swiper-slide !w-[96px]">
-                                <a href="{{ route('storefront.category', ['slug' => $sub->slug]) }}" class="eco-cat-tile" @if ($sub->id === $category->id) aria-current="page" @endif>
-                                    <x-sf::category-image :category="$sub" :size="82" :eager="$loop->index < 8" />
-                                    <span class="line-clamp-2">{{ $sub->name }}</span>
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
+        @if ($isCategory && ($subcategories !== [] || ($parentCategory ?? null) !== null))
+            {{-- Sub-category circles (Figma 1:1695): 85px tiles, 81px circles, wrapping rows. --}}
+            <div class="mb-6 border-b border-[#c4c4c4] pb-6 lg:mb-9 lg:pb-9">
+                <ul class="flex flex-wrap gap-x-4 gap-y-6 lg:gap-x-[39px] lg:gap-y-[39px]" role="list" data-reveal-stagger>
+                    @if ($category ?? null)
+                        {{-- Back tile (old Ecommet): to the parent category, or to all categories from a top-level one. --}}
+                        <li class="w-[76px] lg:w-[85px]" data-reveal="zoom">
+                            <a href="{{ ($parentCategory ?? null) ? route('storefront.category', ['slug' => $parentCategory->slug]) : route('storefront.category.all') }}" class="eco-cat-tile" rel="up" title="{{ ($parentCategory ?? null) ? $parentCategory->name : __st('catalog.categories.title') }}">
+                                <span class="eco-cat-ph eco-cat-back" aria-hidden="true"><x-ui::icon name="chevron-left" :size="32" class="rtl:-scale-x-100" /></span>
+                                <span class="line-clamp-2">{{ __st('shell.back') }}</span>
+                            </a>
+                        </li>
+                    @endif
+                    @foreach ($subcategories as $sub)
+                        <li class="w-[76px] lg:w-[85px]" data-reveal="zoom">
+                            <a href="{{ route('storefront.category', ['slug' => $sub->slug]) }}" class="eco-cat-tile" @if ($sub->id === ($category->id ?? null)) aria-current="page" @endif>
+                                <x-sf::category-image :category="$sub" :size="82" :eager="$loop->index < 8" />
+                                <span class="line-clamp-2">{{ $sub->name }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
+        @if ($isCategory)
+            @php
+                $facets = $result->facets;
+                $chips = array_values(array_filter([
+                    $facets['price'] !== [] ? ['key' => 'price', 'label' => __st('catalog.filters.price'), 'active' => $query->priceMin !== null || $query->priceMax !== null] : null,
+                    ...array_map(static fn (array $attribute): array => ['key' => 'opt-'.$attribute['id'], 'label' => $attribute['name'], 'active' => isset($query->options[$attribute['id']])], $facets['options']),
+                    $facets['rating'] !== [] ? ['key' => 'rating', 'label' => __st('catalog.filters.rating'), 'active' => (bool) $query->minRating] : null,
+                    ['key' => 'availability', 'label' => __st('catalog.filters.availability'), 'active' => $query->inStockOnly],
+                ]));
+            @endphp
+            <h1 class="sr-only">{{ $title }} ({{ $result->total }})</h1>
+            {{-- Filter chip row (Figma 1:1777): Filter, Sort by, then one chip per facet opening its accordion; swipes / drags sideways. --}}
+            <div class="relative mb-6 lg:mb-10">
+                <div class="swiper" data-rail='{"spaceBetween":8,"freeMode":{"enabled":true,"sticky":false}}'>
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide !w-auto">
+                            <button type="button" class="eco-filter-chip" data-sheet-open="sf-filters" @if ($filtersActive) data-active @endif>
+                                <x-ui::icon name="filter" :size="16" />{{ __st('catalog.filters.title') }}@if ($filtersActive)<span class="grid size-5 place-items-center rounded-full bg-eco-black text-[11px] text-white">{{ $filtersActive }}</span>@endif
+                            </button>
+                        </div>
+                        <div class="swiper-slide !w-auto">
+                            <label class="eco-filter-chip relative cursor-pointer pe-9">
+                                <span class="sr-only">{{ __st('catalog.sort.label') }}</span>
+                                <select id="sf-sort" class="eco-chip-select" data-auto-filter="sort">
+                                    @foreach ($sortOptions as $sort)
+                                        <option value="{{ $sort->value }}" @selected($query->sort === $sort)>{{ __st('catalog.sort.prefix') }} {{ __st('catalog.sort.'.$sort->value) }}</option>
+                                    @endforeach
+                                </select>
+                                <x-ui::icon name="chevron-down" :size="16" class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2" />
+                            </label>
+                        </div>
+                        @foreach ($chips as $chip)
+                            <div class="swiper-slide !w-auto">
+                                <button type="button" class="eco-filter-chip" data-sheet-open="sf-filters" data-facet-chip="{{ $chip['key'] }}" @if ($chip['active']) data-active @endif>
+                                    {{ $chip['label'] }}<x-ui::icon name="chevron-down" :size="16" />
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @else
         {{-- Title row + quick filters --}}
         <div class="mb-6 flex flex-wrap items-center gap-x-4 gap-y-3 lg:mb-10">
             <h1 class="text-base text-eco-black lg:text-lg">{{ $title }}@if (! $result->isEmpty() && $kind !== ListingKind::Search)<span class="ms-1 text-sm text-eco-gray">({{ $result->total }})</span>@endif</h1>
@@ -80,6 +130,8 @@
             </div>
         </div>
 
+        @endif
+
         @if ($result->isEmpty())
             <section class="grid justify-items-center gap-4 py-16 text-center" data-reveal="fade-up">
                 <x-ui::icon :name="$kind === ListingKind::Search ? 'search' : 'box'" :size="48" class="text-eco-semi" />
@@ -103,13 +155,13 @@
             @if ($popular !== [])
                 <section class="grid gap-6" aria-labelledby="sf-popular-title">
                     <h2 id="sf-popular-title" class="eco-section-title justify-self-center text-eco-black">{{ __st('search.popular') }}</h2>
-                    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4 lg:px-7">
+                    <div class="eco-card-grid lg:px-7">
                         @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $popular])
                     </div>
                 </section>
             @endif
         @else
-            <div id="sf-listing-grid" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4 lg:px-7" data-reveal-stagger>
+            <div id="sf-listing-grid" class="eco-card-grid lg:px-7" data-reveal-stagger>
                 @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $result->cards, 'tag' => $cardTag ?? null, 'eager' => $query->page === 1])
             </div>
             <div class="mt-10">

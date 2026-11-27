@@ -12,7 +12,7 @@
         @if ($result->isEmpty())
             <p class="py-10 text-center text-sm text-eco-gray" data-reveal="fade">{{ $empty }}</p>
         @else
-            <div id="{{ $id }}" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4 lg:px-7" data-reveal-stagger>
+            <div id="{{ $id }}" class="eco-card-grid lg:px-7" data-reveal-stagger>
                 @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $result->cards, 'variant' => 'grid', 'tag' => $tag, 'ribbon' => $ribbon])
             </div>
             <x-sf::section.load-more :url="$result->hasMore() ? $moreUrl : null" :target="'#'.$id" />

@@ -24,7 +24,7 @@
                 @unless ($picks->isEmpty())
                     <section class="grid gap-4" aria-labelledby="sf-cart-picks-title">
                         <h2 id="sf-cart-picks-title" class="text-lg font-medium text-eco-black" data-reveal="fade-up">{{ __st('cart.picks', ['store' => $store]) }}</h2>
-                        <div id="sf-cart-picks" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-4" data-reveal-stagger>
+                        <div id="sf-cart-picks" class="eco-card-grid" data-reveal-stagger>
                             @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $picks->cards, 'variant' => 'grid'])
                         </div>
                         <x-sf::section.load-more :url="$picksMoreUrl" target="#sf-cart-picks" class="mt-4" />

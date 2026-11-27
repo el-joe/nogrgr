@@ -37,8 +37,13 @@ enum ListingKind: string
     public function sorts(): array
     {
         $common = [ListingSort::BestSelling, ListingSort::Newest, ListingSort::PriceAsc, ListingSort::PriceDesc, ListingSort::Rating];
+        $price = [ListingSort::PriceAsc, ListingSort::PriceDesc];
 
+        // The three curated pages lead with their own ranking instead of "Recommended".
         return match ($this) {
+            self::BestSelling => [ListingSort::BestSelling, ListingSort::Newest, ListingSort::Rating, ...$price],
+            self::NewIn => [ListingSort::Newest, ListingSort::BestSelling, ListingSort::Rating, ...$price],
+            self::TopRated => [ListingSort::Rating, ListingSort::BestSelling, ListingSort::Newest, ...$price],
             self::Search => [ListingSort::Relevance, ...$common],
             self::Offers => [ListingSort::Discount, ...$common],
             default => [ListingSort::Recommended, ...$common],

@@ -239,7 +239,7 @@
         @if ($page->related !== [])
             <section class="mt-12 grid gap-6 lg:mt-16" aria-labelledby="sf-related-title">
                 <h2 id="sf-related-title" class="text-center text-xl font-medium text-eco-black lg:text-2xl" data-reveal="fade-up">{{ __st('product.related') }}</h2>
-                <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4" data-reveal-stagger>
+                <div class="eco-card-grid" data-reveal-stagger>
                     @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $page->related])
                 </div>
             </section>

@@ -27,7 +27,7 @@
         @endif
 
         @if ($facets['price'] !== [])
-            <details class="eco-accordion border-t border-eco-stroke" @if ($price !== '') open @endif>
+            <details class="eco-accordion border-t border-eco-stroke" data-facet="price" @if ($price !== '') open @endif>
                 <summary>{{ __st('catalog.filters.price') }}<x-ui::icon name="chevron-down" :size="22" /></summary>
                 <div class="grid pb-3">
                     <label class="eco-check"><input type="radio" name="price" value="" @checked($price === '')><span class="flex-1">{{ __st('catalog.filters.any') }}</span></label>
@@ -39,18 +39,37 @@
         @endif
 
         @foreach ($facets['options'] as $attribute)
-            <details class="eco-accordion border-t border-eco-stroke" @if (isset($query->options[$attribute['id']])) open @endif>
+            <details class="eco-accordion border-t border-eco-stroke" data-facet="opt-{{ $attribute['id'] }}" @if (isset($query->options[$attribute['id']])) open @endif>
                 <summary>{{ $attribute['name'] }}<x-ui::icon name="chevron-down" :size="22" /></summary>
-                <div class="grid max-h-64 overflow-y-auto pb-3">
-                    @foreach ($attribute['values'] as $option)
-                        <label class="eco-check"><input type="checkbox" name="opt[{{ $attribute['id'] }}][]" value="{{ $option['value'] }}" @checked(in_array($option['value'], $query->options[$attribute['id']] ?? [], true))><span class="flex-1">{{ $option['value'] }}</span><span class="text-xs text-eco-gray">{{ $option['count'] }}</span></label>
-                    @endforeach
-                </div>
+                @if (($attribute['swatches'] ?? null) !== null && $attribute['swatches'] !== [])
+                    {{-- Colour facet: round swatches (shared .sf-swatch), merged per colour; JS adds every value of a merged colour. --}}
+                    <div class="sf-swatch-grid pb-4" role="group" aria-label="{{ $attribute['name'] }}">
+                        @foreach ($attribute['swatches'] as $swatch)
+                            @php($selected = count(array_intersect($swatch['values'], $query->options[$attribute['id']] ?? [])) > 0)
+                            @php($tip = $swatch['label'].' ('.$swatch['count'].')')
+                            <label class="sf-swatch-opt" title="{{ $tip }}">
+                                <input type="checkbox" class="sf-swatch-input" name="opt[{{ $attribute['id'] }}][]" value="{{ $swatch['values'][0] }}" @checked($selected) aria-label="{{ $tip }}" @if (count($swatch['values']) > 1) data-swatch-values="{{ json_encode($swatch['values'], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG) }}" data-swatch-name="opt[{{ $attribute['id'] }}][]" @endif>
+                                <x-sf::swatch :hex="$swatch['hex']" :label="$swatch['label']" :light="$swatch['light']" />
+                            </label>
+                            @if ($selected)
+                                @foreach (array_slice($swatch['values'], 1) as $extra)
+                                    @if (in_array($extra, $query->options[$attribute['id']] ?? [], true))<input type="hidden" name="opt[{{ $attribute['id'] }}][]" value="{{ $extra }}" data-swatch-extra>@endif
+                                @endforeach
+                            @endif
+                        @endforeach
+                    </div>
+                @else
+                    <div class="grid pb-3">
+                        @foreach ($attribute['values'] as $option)
+                            <label class="eco-check"><input type="checkbox" name="opt[{{ $attribute['id'] }}][]" value="{{ $option['value'] }}" @checked(in_array($option['value'], $query->options[$attribute['id']] ?? [], true))><span class="flex-1">{{ $option['value'] }}</span><span class="text-xs text-eco-gray">{{ $option['count'] }}</span></label>
+                        @endforeach
+                    </div>
+                @endif
             </details>
         @endforeach
 
         @if ($facets['rating'] !== [] && $kind !== \App\Modules\Storefront\Enums\ListingKind::TopRated)
-            <details class="eco-accordion border-t border-eco-stroke" @if ($query->minRating) open @endif>
+            <details class="eco-accordion border-t border-eco-stroke" data-facet="rating" @if ($query->minRating) open @endif>
                 <summary>{{ __st('catalog.filters.rating') }}<x-ui::icon name="chevron-down" :size="22" /></summary>
                 <div class="grid pb-3">
                     <label class="eco-check"><input type="radio" name="rating" value="" @checked(! $query->minRating)><span>{{ __st('catalog.filters.any') }}</span></label>
@@ -94,7 +113,7 @@
             </details>
         @endif
 
-        <details class="eco-accordion border-y border-eco-stroke" @if ($query->inStockOnly) open @endif>
+        <details class="eco-accordion border-y border-eco-stroke" data-facet="availability" @if ($query->inStockOnly) open @endif>
             <summary>{{ __st('catalog.filters.availability') }}<x-ui::icon name="chevron-down" :size="22" /></summary>
             <div class="grid pb-3">
                 <label class="eco-check"><input type="checkbox" name="in_stock" value="1" @checked($query->inStockOnly)><span class="flex-1">{{ __st('catalog.filters.in_stock') }}</span><span class="text-xs text-eco-gray">{{ $facets['in_stock'] }}</span></label>

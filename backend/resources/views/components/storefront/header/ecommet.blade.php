@@ -58,6 +58,7 @@
                                             <span class="truncate">{{ $node['category']->name }}</span><x-ui::icon name="chevron-right" :size="16" class="shrink-0 rtl:-scale-x-100" />
                                         </button></li>
                                     @endforeach
+                                <li role="presentation"><a href="{{ route('storefront.category.all') }}" class="eco-mega-cat font-medium underline-offset-2 hover:underline">{{ __st('catalog.categories.title') }}</a></li>
                                 </ul>
                                 <div class="max-h-[440px] min-w-0 flex-1 overflow-y-auto p-5">
                                     @foreach ($menu as $index => $node)
@@ -99,7 +100,7 @@
                 <x-sf::logo size="sm" />
                 <x-sf::header.search variant="ecommet-mobile" class="min-w-0 flex-1" />
                 <x-sf::locale-button tone="dark" compact />
-                <a href="{{ route('storefront.categories.index') }}" class="grid size-8 shrink-0 place-items-center text-eco-black" aria-label="{{ __st('shell.nav.categories') }}"><x-ui::icon name="menu" :size="24" /></a>
+                <a href="{{ route('storefront.categories.index') }}" class="grid size-8 shrink-0 place-items-center text-eco-black" aria-label="{{ __st('shell.nav.categories') }}" data-sheet-open="sf-cat-drawer" aria-haspopup="dialog" aria-controls="sf-cat-drawer" aria-expanded="false"><x-ui::icon name="menu" :size="24" /></a>
             </div>
         @endif
     </div>

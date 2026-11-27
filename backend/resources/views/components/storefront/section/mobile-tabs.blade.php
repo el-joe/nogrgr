@@ -19,7 +19,7 @@
             <div class="swiper-wrapper items-start">
                 @foreach ($tabs as $tab)
                     <div class="swiper-slide grid gap-6 px-4" role="tabpanel" id="sf-mtab-{{ $tab['key'] }}" aria-labelledby="sf-mtab-btn-{{ $tab['key'] }}">
-                        <div id="sf-mtab-grid-{{ $tab['key'] }}" class="grid grid-cols-2 gap-x-[11px] gap-y-4">
+                        <div id="sf-mtab-grid-{{ $tab['key'] }}" class="eco-card-grid gap-y-4">
                             @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $tab['result']->cards, 'ribbon' => $tab['ribbon'] ?? false, 'tag' => $tab['tag'] ?? null])
                         </div>
                         <x-sf::section.load-more :url="$tab['result']->hasMore() ? $tab['more'] : null" :target="'#sf-mtab-grid-'.$tab['key']" />

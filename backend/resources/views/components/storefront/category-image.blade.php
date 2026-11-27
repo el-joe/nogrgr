@@ -11,5 +11,5 @@
         <img src="{{ $src }}" alt="" width="{{ $size }}" height="{{ $size }}" loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async" {{ $attributes }}>
     </picture>
 @else
-    <span class="eco-cat-ph grid place-items-center text-2xl font-medium text-eco-gray" aria-hidden="true" {{ $attributes }}>{{ mb_strtoupper(mb_substr($name, 0, 1)) }}</span>
+    <span class="eco-cat-ph grid place-items-center text-2xl font-medium" aria-hidden="true" {{ $attributes }}>{{ mb_strtoupper(mb_substr($name, 0, 1)) }}</span>
 @endif

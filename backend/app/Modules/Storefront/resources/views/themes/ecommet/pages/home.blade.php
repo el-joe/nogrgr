@@ -47,7 +47,7 @@
                         @if ($member['type'] === 'why-choose')
                             <x-sf::section.why-choose :store="$store" class="hidden lg:block" />
                         @else
-                            <x-sf::section.deals :deals="$member['cards'] ?? $deals" :clearance="$clearance" class="max-lg:ps-4" />
+                            <x-sf::section.deals :deals="$member['cards'] ?? $deals" :clearance="$clearance" class="max-lg:px-4" />
                         @endif
                     @endforeach
                 </div>

@@ -30,6 +30,7 @@ Route::get('new-in', [ListingController::class, 'newIn'])->name('new-in');
 Route::get('top-rated', [ListingController::class, 'topRated'])->name('top-rated');
 Route::get('offers', [ListingController::class, 'offers'])->name('offers');
 Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('category', [CategoryController::class, 'all'])->name('category.all');
 Route::get('category/{slug}', [CategoryController::class, 'show'])->where('slug', '[A-Za-z0-9][A-Za-z0-9_-]{0,190}')->name('category');
 Route::get('products/{product}/{slug?}', ProductController::class)->whereNumber('product')->name('product');
 Route::get('search', [SearchController::class, 'index'])->name('search');
