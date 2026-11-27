@@ -4,6 +4,7 @@ namespace App\Modules\Storefront\Http\Controllers\Storefront;
 
 use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Services\Catalog\HomeService;
+use App\Modules\Storefront\Services\Layouts\HomeSectionHydrator;
 use App\Modules\Storefront\Services\Seo\StorefrontSeo;
 use App\Modules\Storefront\Services\StorefrontContext;
 use App\Modules\Storefront\Services\Themes\HomeLayoutService;
@@ -30,8 +31,9 @@ class HomeController extends Controller
 
         return StorefrontView::make('pages.home', $this->home->sections() + $extra + [
             'seo' => $this->seo->home(),
-            // Home sections in the theme's admin order, disabled ones removed (ADM-087, decision #120).
-            'homeSections' => app(HomeLayoutService::class)->sections($theme),
+            // Home sections: the store's published page-builder layout (VEN-032) or the theme's admin
+            // order (ADM-087, decision #120), disabled / hidden-in-country ones removed, settings applied.
+            'homeSections' => app(HomeSectionHydrator::class)->hydrate($theme->family, app(HomeLayoutService::class)->sections($theme)),
         ]);
     }
 

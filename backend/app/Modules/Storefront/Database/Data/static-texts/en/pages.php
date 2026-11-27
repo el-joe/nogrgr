@@ -39,4 +39,11 @@ return [
             'body' => '<h2>How do I track my order?</h2><p>Open My orders in your account: every order shows its current status and tracking number once shipped.</p><h2>Which payment methods do you accept?</h2><p>The available payment methods for your country are shown at checkout.</p><h2>Can I change or cancel my order?</h2><p>You can cancel an order from My orders until it is shipped.</p><h2>How do I return a product?</h2><p>Start a return from My orders within 14 days of delivery. See our return policy for details.</p>',
         ],
     ],
+    // Page-builder sections of a store page (VEN-032).
+    'sections' => [
+        'banner' => 'Banner',
+        'products' => 'Products',
+        'categories' => 'Shop by category',
+        'faq' => 'Frequently asked questions',
+    ],
 ];

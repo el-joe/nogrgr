@@ -263,6 +263,6 @@ it('shows a translated, friendly 403 page instead of the permission package mess
     $this->actingAsVendor(($this->member)(['email' => 'none@teamshop.test'], 'nobody'), $this->tenant);
 
     $this->get(($this->staffUrl)('?lang='.$locale))->assertForbidden()
-        ->assertSee(trans('ui.http.forbidden', [], $locale))
+        ->assertSee(trans('ui.http.errors.403_text', [], $locale))
         ->assertDontSee('User does not have the right permissions.');
 })->with(['en', 'ar']);

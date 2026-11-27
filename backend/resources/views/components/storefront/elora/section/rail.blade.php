@@ -12,7 +12,7 @@
     @endphp
     <section @class(['elo-section', 'elo-band-'.$band => $band]) aria-label="{{ $title }}">
         <div class="elo-home-wrap">
-            <x-sf::elora.heading :title="$title" :more="$more" :style="$section['heading'] ?? 'start'" :icon="$section['icon'] ?? null" class="mb-6 max-lg:mb-4" />
+            <x-sf::elora.heading :title="$title" :subtitle="$section['subtitle_text'] ?? null" :more="$more" :style="$section['heading'] ?? 'start'" :icon="$section['icon'] ?? null" class="mb-6 max-lg:mb-4" />
             <x-sf::elora.rail :cards="$cards" :label="$title" />
         </div>
     </section>

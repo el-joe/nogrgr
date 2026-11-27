@@ -12,7 +12,10 @@ use App\Modules\Localization\Services\StoreCountries;
 use App\Modules\Localization\Services\StoreCurrencyService;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Storefront\DTOs\ResolvedThemeData;
+use App\Modules\Storefront\Enums\StoreLayoutScope;
+use App\Modules\Storefront\Models\Theme;
 use App\Modules\Storefront\Services\CustomThemes\CustomThemePreviewService;
+use App\Modules\Storefront\Services\Layouts\StoreLayoutPreviewService;
 use App\Modules\Storefront\Services\Themes\ThemePreviewService;
 use App\Shared\Money\Money;
 use App\Shared\Support\Locale;
@@ -84,6 +87,18 @@ class StorefrontContext
             // A custom Twig theme version preview (decision #121) renders over the store's built-in theme.
             if ($this->preview === null && ($custom = $this->customPreviews->current(request())) !== null) {
                 $this->preview = $this->themes->resolveBuiltIn($this->countryId())->withCustom($custom->id, $custom->name.' '.$custom->version);
+            }
+
+            // Page-builder draft preview (VEN-032): the home renders the theme the layout was built for, in its country.
+            if ($this->preview === null && ($layout = app(StoreLayoutPreviewService::class)->current(request())) !== null
+                && $layout->scope === StoreLayoutScope::Home && $layout->theme_id !== null
+                && ($theme = $this->themes->activeThemes()->find($layout->theme_id)) instanceof Theme) {
+                $this->preview = ResolvedThemeData::fromTheme($theme, true);
+
+                if ($layout->country_id !== null && request()->hasSession()) {
+                    request()->session()->put(self::COUNTRY_SESSION_KEY, $layout->country_id);
+                    $this->countryResolved = false;
+                }
             }
 
             // A preview link may carry the shopping country (decision #85).

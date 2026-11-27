@@ -6,7 +6,7 @@
 @props(['cards' => [], 'offers' => [], 'section' => []])
 @if ($cards !== [])
     @php
-        $title = __st($section['title']);
+        $title = $section['title_text'] ?? __st($section['title']);
         $more = isset($section['more']) && Route::has($section['more']) ? route($section['more']) : null;
         $best = max(array_map(static fn ($card): int => (int) ($card->discount ?? 0), array_merge($offers, $cards)) + [0 => 0]);
         $offersUrl = Route::has('storefront.offers') ? route('storefront.offers') : null;
@@ -20,7 +20,7 @@
             </a>
         @endif
         <div class="sq-hwrap py-8 max-lg:py-5">
-            <x-sf::souqify.heading :title="$title" :more="$more" tone="light" class="mb-6 max-lg:mb-3" />
+            <x-sf::souqify.heading :title="$title" :subtitle="$section['subtitle_text'] ?? null" :more="$more" tone="light" class="mb-6 max-lg:mb-3" />
             <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,84px)] max-lg:hidden">
                 <div class="grid grid-cols-3 gap-4" data-reveal-stagger>
                     @foreach ($grid as $card)<x-sf::souqify.product-card :card="$card" class="sq-pc-grid" data-reveal="fade-up" />@endforeach

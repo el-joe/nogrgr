@@ -15,7 +15,7 @@ use App\Modules\Storefront\Http\Resources\StoreApi\CategoryResource;
 use App\Modules\Storefront\Http\Resources\StoreApi\ListingPresenter;
 use App\Modules\Storefront\Services\Catalog\HomeService;
 use App\Modules\Storefront\Services\StorefrontContext;
-use App\Modules\Storefront\Services\Themes\HomeLayoutService;
+use App\Modules\Storefront\Services\Themes\HomeSectionPayloads;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
 use Illuminate\Http\JsonResponse;
@@ -40,14 +40,17 @@ class HomeController extends Controller
         $this->prepareCatalog($request);
         $theme = $this->context->theme();
         $sections = $this->home->sections();
+        $payload = app(HomeSectionPayloads::class)->build($theme, $request);
         $listing = static fn ($result, ListingKind $kind): array => ListingPresenter::present($result, new ListingQuery(kind: $kind, sort: $kind->defaultSort(), perPage: HomeService::GRID), $request);
 
         $data = [
             'theme' => $theme->toArray(),
             'country' => ($country = $this->context->country()) !== null ? ['id' => $country->id, 'iso2' => $country->iso2, 'name' => (string) $country->name] : null,
             'currency' => $this->context->currencyCode(),
-            // Home section order of the theme (ADM-087 defaults, decision #120): enabled section keys.
-            'layout' => app(HomeLayoutService::class)->keys($theme),
+            // Enabled section keys in order: the store's published page-builder layout (VEN-032) or the
+            // theme's admin defaults (ADM-087, decision #120); layout_sections = per-section builder result.
+            'layout' => $payload['layout'],
+            'layout_sections' => $payload['sections'],
             'sections' => [
                 'hero' => array_map(static fn (BannerData $banner): array => $banner->toArray(), $sections['hero']),
                 'promo' => array_map(static fn (BannerData $banner): array => $banner->toArray(), $sections['promo']),

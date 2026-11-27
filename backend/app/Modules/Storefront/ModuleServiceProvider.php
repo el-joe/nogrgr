@@ -14,6 +14,7 @@ use App\Modules\Storefront\Repositories\Contracts\CustomThemeRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\HiddenBannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StoreBannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StorefrontCatalogRepositoryContract;
+use App\Modules\Storefront\Repositories\Contracts\StoreLayoutRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StoreMenuLinkRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StorePageRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\StoreSocialLinkRepositoryContract;
@@ -23,6 +24,7 @@ use App\Modules\Storefront\Repositories\Eloquent\CustomThemeRepository;
 use App\Modules\Storefront\Repositories\Eloquent\HiddenBannerRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StoreBannerRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StorefrontCatalogRepository;
+use App\Modules\Storefront\Repositories\Eloquent\StoreLayoutRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StoreMenuLinkRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StorePageRepository;
 use App\Modules\Storefront\Repositories\Eloquent\StoreSocialLinkRepository;
@@ -57,6 +59,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         StoreBannerRepositoryContract::class => StoreBannerRepository::class,
         HiddenBannerRepositoryContract::class => HiddenBannerRepository::class,
         StorePageRepositoryContract::class => StorePageRepository::class,
+        StoreLayoutRepositoryContract::class => StoreLayoutRepository::class,
         StoreMenuLinkRepositoryContract::class => StoreMenuLinkRepository::class,
         StoreSocialLinkRepositoryContract::class => StoreSocialLinkRepository::class,
     ];
@@ -102,6 +105,9 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         $registry->add(Surface::Vendor, $this->modulePath('routes/vendor-custom-themes.php'));
         $registry->add(Surface::Admin, $this->modulePath('routes/admin-custom-themes.php'));
         $registry->add(Surface::Storefront, $this->modulePath('routes/storefront-custom-themes.php'));
+
+        // Page builder (VEN-032, decision #117 b).
+        $registry->add(Surface::Vendor, $this->modulePath('routes/vendor-page-builder.php'));
 
         // Theme catalogue admin (ADM-086 / 087 / 088, decisions #119 / #120).
         $registry->add(Surface::Admin, $this->modulePath('routes/admin-themes.php'));

@@ -11,12 +11,12 @@
 @if ($cards !== [])
     @php
         $style = $section['style'] ?? 'rail';
-        $title = __st('souqify.home.best_seller');
+        $title = $section['title_text'] ?? __st('souqify.home.best_seller');
         $more = isset($section['more']) && Route::has($section['more']) ? route($section['more']) : null;
     @endphp
     <section @class(['sq-best sq-section', 'sq-best-'.$style]) aria-label="{{ $title }}">
         <div class="sq-hwrap">
-            <x-sf::souqify.heading :title="$title" :more="$style === 'rail' ? null : $more" :center="$style === 'rail'" tone="light" class="mb-6 max-lg:mb-3" />
+            <x-sf::souqify.heading :title="$title" :subtitle="$section['subtitle_text'] ?? null" :more="$style === 'rail' ? null : $more" :center="$style === 'rail'" tone="light" class="mb-6 max-lg:mb-3" />
             @if ($style === 'groups')
                 @php
                     $groups = [];

@@ -43,6 +43,7 @@ return [
                 ['key' => 'store.themes', 'label' => 'navigation.vendor.themes', 'route' => 'vendor.store.themes.index', 'permission' => 'store.themes.view', 'active' => 'vendor.store.themes.*'],
                 ['key' => 'store.home-variants', 'label' => 'content::vendor_themes.by_country_nav', 'route' => 'vendor.store.home-variants', 'permission' => 'store.themes.view', 'active' => 'vendor.store.home-variants*'],
                 ['key' => 'store.custom-themes', 'label' => 'navigation.vendor.custom_theme', 'route' => 'vendor.store.custom-themes.index', 'permission' => 'store.custom-themes.view', 'active' => 'vendor.store.custom-themes.*'],
+                ['key' => 'store.page-builder', 'label' => 'navigation.vendor.page_builder', 'route' => 'vendor.store.page-builder', 'permission' => 'store.design.view', 'active' => 'vendor.store.page-builder*'],
                 ['key' => 'store.banners', 'label' => 'navigation.vendor.banners', 'route' => 'vendor.store.banners.index', 'permission' => 'store.banners.view', 'active' => 'vendor.store.banners.*'],
                 ['key' => 'store.pages', 'label' => 'navigation.vendor.pages', 'route' => 'vendor.store.pages.index', 'permission' => 'store.pages.view', 'active' => 'vendor.store.pages.*'],
                 ['key' => 'store.appearance', 'label' => 'navigation.vendor.appearance', 'route' => 'vendor.store.appearance', 'permission' => 'store.appearance.view', 'active' => 'vendor.store.appearance*'],

@@ -88,6 +88,7 @@ return [
         'support.tickets' => 'تذاكر الدعم',
         'support' => 'الدعم الفني',
         'partner' => 'برنامج الشركاء',
+        'store.design' => 'منشئ الصفحات',
         'store.mobile-app' => 'تطبيق الجوال',
         'marketing.ads' => 'استوديو الإعلانات بالذكاء الاصطناعي',
         'dashboard' => 'لوحة التحكم',

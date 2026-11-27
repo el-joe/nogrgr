@@ -20,6 +20,7 @@ const pages = {
     'vendor-invoices': () => import('./invoices.js'),
     'vendor-compliance': () => import('./compliance.js'),
     'vendor-themes': () => import('./themes.js'),
+    'vendor-page-builder': () => import('./page-builder.js'),
     'vendor-staff': () => import('./staff.js'),
     'vendor-store-pages': () => import('./store-pages.js'),
     'vendor-appearance': () => import('./appearance.js'),

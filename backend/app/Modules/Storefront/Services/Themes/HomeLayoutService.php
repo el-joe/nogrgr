@@ -6,6 +6,9 @@ use App\Modules\Storefront\DTOs\ResolvedThemeData;
 use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Models\Theme;
 use App\Modules\Storefront\Repositories\Contracts\ThemeRepositoryContract;
+use App\Modules\Storefront\Services\Layouts\StoreLayoutPreviewService;
+use App\Modules\Storefront\Services\Layouts\StoreLayoutService;
+use App\Modules\Storefront\Services\StorefrontContext;
 use App\Modules\Storefront\Support\ThemeSectionLibrary;
 use App\Shared\Services\BaseService;
 
@@ -14,7 +17,9 @@ use App\Shared\Services\BaseService;
  * `home_sections` ([{key, enabled}] in display order, null = library order, all on)
  * applied to its section library. Sections the config does not mention (new in code) are
  * appended switched on; keys the library no longer has are ignored. The page builder
- * (VEN-032) starts from this layout.
+ * (VEN-032) starts from this layout; on the storefront the store's published page-builder
+ * layout (StoreLayoutService::homeItems) replaces it, sections hidden in the shopping
+ * country are left out.
  */
 class HomeLayoutService extends BaseService
 {
@@ -39,11 +44,31 @@ class HomeLayoutService extends BaseService
     {
         $theme = $resolved->id !== null ? $this->themes->find($resolved->id) : $this->themes->findBySlug($resolved->slug);
         $config = $theme instanceof Theme && $theme->family === $resolved->family && (int) $theme->variant === $resolved->variant ? $theme->home_sections : null;
+        $countryId = null;
+        $store = null;
+
+        // The store's published page-builder layout (or the signed draft preview), VEN-032.
+        if (tenancy()->initialized) {
+            $countryId = app(StorefrontContext::class)->countryId();
+            $store = app(StoreLayoutService::class)->homeItems($resolved, $countryId, app(StoreLayoutPreviewService::class)->current(request()));
+        }
 
         return array_values(array_filter(
-            $this->arrange($resolved->family, $resolved->variant, $config),
-            static fn (array $section): bool => $section['enabled'],
+            $this->arrange($resolved->family, $resolved->variant, $store ?? $config),
+            static fn (array $section): bool => $section['enabled'] && ($section['countries'] === [] || ($countryId !== null && in_array($countryId, $section['countries'], true))),
         ));
+    }
+
+    /**
+     * Library sections of a family / variant arranged by page-builder items (carrying
+     * `settings` and `countries`).
+     *
+     * @param  list<array<string, mixed>>|null  $items
+     * @return list<array<string, mixed>>
+     */
+    public function arrangeItems(ThemeFamily $family, int $variant, ?array $items): array
+    {
+        return $this->arrange($family, $variant, $items);
     }
 
     /**
@@ -81,7 +106,7 @@ class HomeLayoutService extends BaseService
         $library = [];
 
         foreach (ThemeSectionLibrary::sections($family, $variant) as $section) {
-            $library[$section['key']] = $section + ['enabled' => true];
+            $library[$section['key']] = $section + ['enabled' => true, 'settings' => [], 'countries' => []];
         }
 
         $ordered = [];
@@ -90,7 +115,11 @@ class HomeLayoutService extends BaseService
             $key = is_array($item) ? ($item['key'] ?? null) : null;
 
             if (is_string($key) && isset($library[$key]) && ! isset($ordered[$key])) {
-                $ordered[$key] = ['enabled' => (bool) ($item['enabled'] ?? true)] + $library[$key];
+                $ordered[$key] = [
+                    'enabled' => (bool) ($item['enabled'] ?? true),
+                    'settings' => is_array($item['settings'] ?? null) ? $item['settings'] : [],
+                    'countries' => is_array($item['countries'] ?? null) ? array_values(array_map('intval', $item['countries'])) : [],
+                ] + $library[$key];
             }
         }
 

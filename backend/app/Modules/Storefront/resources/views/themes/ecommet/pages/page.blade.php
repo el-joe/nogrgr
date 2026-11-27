@@ -3,7 +3,7 @@
     breadcrumb, pages menu (desktop), article card (title, last updated, store-managed body,
     help box). The contact page is the support request layout (SF-ECO-035, 114:108109 /
     m 114:108353): form + other ways to reach us + newsletter signup.
-    Data: $page (StorePage), $showSupportForm, $menu (published pages: title, url, group), $currentUrl, $seo (SeoData).
+    Data: $page (StorePage), $sections (page-builder sections, PageSectionRenderer), $showSupportForm, $menu (published pages: title, url, group), $currentUrl, $seo (SeoData).
 --}}
 @php
     $title = (string) $page->title;
@@ -44,6 +44,14 @@
                         <span class="min-w-0 flex-1">{{ __st('pages.help_box') }}</span>
                     </a>
                 </article>
+            </div>
+        @endif
+        @if (($sections ?? []) !== [])
+            {{-- Page-builder sections of the page (VEN-032), one component per section type. --}}
+            <div class="mt-8 grid gap-10 md:mt-12 md:gap-16" data-page-sections>
+                @foreach ($sections as $section)
+                    <x-dynamic-component :component="$section['component']" :section="$section" />
+                @endforeach
             </div>
         @endif
     </div>

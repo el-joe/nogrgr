@@ -1,7 +1,8 @@
 {{--
     Elora home, all six variants (Figma "Elora Variants": v1 1:15432 / m 1:21125, v2 1:26559,
     v3 1:26978, v4 1:27464, v5 1:28050, v6 1:28992). The section list of the store's variant
-    comes from EloraVariants (config, decision #79); colours from the variant tokens. Every
+    comes from EloraVariants (config, decision #79), arranged / re-sourced by the store's page
+    builder (VEN-032: $section cards / banners / title_text); colours from the variant tokens. Every
     section hides itself when it has no data.
 --}}
 @php
@@ -33,7 +34,7 @@
         @foreach ($homeSections ?? EloraVariants::sections($variant) as $section)
             @switch($section['type'])
                 @case('hero')
-                    <x-sf::elora.section.hero :banners="$hero" :style="$section['style']" />
+                    <x-sf::elora.section.hero :banners="$section['banners'] ?? $hero" :style="$section['style']" />
                     @break
                 @case('features')
                     <x-sf::elora.section.features :style="$section['style']" :store="$store" />
@@ -48,13 +49,13 @@
                     <x-sf::elora.section.flash :sale="$flash" :deals="$deals" :promo="$promo" :style="$section['style']" />
                     @break
                 @case('rail')
-                    <x-sf::elora.section.rail :cards="$rails[$section['data']]" :section="$section" />
+                    <x-sf::elora.section.rail :cards="$section['cards'] ?? $rails[$section['data']]" :section="$section" />
                     @break
                 @case('wide')
-                    <x-sf::elora.section.wide :cards="$rails[$section['data']]" :section="$section" />
+                    <x-sf::elora.section.wide :cards="$section['cards'] ?? $rails[$section['data']]" :section="$section" />
                     @break
                 @case('spotlight')
-                    <x-sf::elora.section.spotlight :cards="$rails[$section['data']]" :section="$section" />
+                    <x-sf::elora.section.spotlight :cards="$section['cards'] ?? $rails[$section['data']]" :section="$section" />
                     @break
                 @case('category-band')
                     <x-sf::elora.section.category-band :categories="$categories" />

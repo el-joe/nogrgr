@@ -88,6 +88,7 @@ return [
         'support.tickets' => 'Support tickets',
         'support' => 'Support',
         'partner' => 'Partner program',
+        'store.design' => 'Page builder',
         'store.mobile-app' => 'Mobile app',
         'marketing.ads' => 'AI Advertising Studio',
         'dashboard' => 'Dashboard',

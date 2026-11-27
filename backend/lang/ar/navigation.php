@@ -121,6 +121,7 @@ return [
         'returns_analytics' => 'تحليلات المرتجعات',
         'pages' => 'الصفحات',
         'appearance' => 'المظهر',
+        'page_builder' => 'منشئ الصفحات',
         'mobile_app' => 'تطبيق الجوال',
         'account' => 'الحساب',
         'general' => 'عام',

@@ -188,6 +188,8 @@ final class PermissionCatalog
                 'marketing.ads.view', 'marketing.ads.manage',
                 // P11: mobile app settings (VEN-037 / 037a)
                 'store.mobile-app.view', 'store.mobile-app.manage',
+                // P12: page builder (VEN-032, decision #117 b)
+                'store.design.view', 'store.design.manage',
             ],
         ];
     }

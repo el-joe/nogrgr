@@ -5,14 +5,14 @@
 @props(['cards' => [], 'section' => []])
 @if ($cards !== [])
     @php
-        $title = __st($section['title']);
+        $title = $section['title_text'] ?? __st($section['title']);
         $more = isset($section['more']) && Route::has($section['more']) ? route($section['more']) : null;
         $band = $section['band'] ?? null;
         $rows = $section['rows'] ?? '1';
     @endphp
     <section @class(['elo-section', 'elo-band-'.$band => $band]) aria-label="{{ $title }}">
         <div class="elo-home-wrap">
-            <x-sf::elora.heading :title="$title" :more="$more" class="mb-6 max-lg:mb-4" />
+            <x-sf::elora.heading :title="$title" :subtitle="$section['subtitle_text'] ?? null" :more="$more" class="mb-6 max-lg:mb-4" />
             @if ($rows === 'mixed')
                 @php($groups = array_chunk($cards, 3))
                 <div class="elo-rail relative">

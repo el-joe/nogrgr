@@ -1,7 +1,8 @@
 {{--
     Souqify home, all six variants (Figma "Souqify Variants": v1 1:72835 / m 1:77852, v2 1:81585,
     v3 1:82288, v4 1:82796, v5 1:83157, v6 1:83936). The section list of the store's variant
-    comes from SouqifyVariants (config, like EloraVariants — decision #79); colours from the
+    comes from SouqifyVariants (config, like EloraVariants — decision #79), arranged / re-sourced by
+    the store's page builder (VEN-032); colours from the
     variant tokens. Every section hides itself when it has no data.
 --}}
 @php
@@ -34,7 +35,7 @@
         @foreach ($homeSections ?? SouqifyVariants::sections($variant) as $section)
             @switch($section['type'])
                 @case('hero')
-                    <x-sf::souqify.section.hero :banners="$hero" :side="$sideBanners" :style="$section['style']" />
+                    <x-sf::souqify.section.hero :banners="$section['banners'] ?? $hero" :side="$sideBanners" :style="$section['style']" />
                     @break
                 @case('features')
                     <x-sf::souqify.section.features :style="$section['style']" />
@@ -46,25 +47,25 @@
                     <x-sf::souqify.section.flash :sale="$flash" :deals="$deals" :style="$section['style']" />
                     @break
                 @case('rail')
-                    <x-sf::souqify.section.rail :cards="$rails[$section['data']]" :section="$section" />
+                    <x-sf::souqify.section.rail :cards="$section['cards'] ?? $rails[$section['data']]" :section="$section" />
                     @break
                 @case('wide')
-                    <x-sf::souqify.section.wide :cards="$rails[$section['data']]" :section="$section" />
+                    <x-sf::souqify.section.wide :cards="$section['cards'] ?? $rails[$section['data']]" :section="$section" />
                     @break
                 @case('promos')
-                    <x-sf::souqify.section.promos :banners="$promoBanners" />
+                    <x-sf::souqify.section.promos :banners="$section['banners'] ?? $promoBanners" />
                     @break
                 @case('side')
-                    <x-sf::souqify.section.side :cards="$rails[$section['data']]" :section="$section" />
+                    <x-sf::souqify.section.side :cards="$section['cards'] ?? $rails[$section['data']]" :section="$section" />
                     @break
                 @case('featured')
-                    <x-sf::souqify.section.featured :cards="$rails[$section['data']]" :offers="$rails['offers']" :section="$section" />
+                    <x-sf::souqify.section.featured :cards="$section['cards'] ?? $rails[$section['data']]" :offers="$rails['offers']" :section="$section" />
                     @break
                 @case('shop-categories')
                     <x-sf::souqify.section.shop-categories :categories="$categories" :style="$section['style']" />
                     @break
                 @case('best')
-                    <x-sf::souqify.section.best :cards="$rails[$section['data']]" :section="$section" />
+                    <x-sf::souqify.section.best :cards="$section['cards'] ?? $rails[$section['data']]" :section="$section" />
                     @break
                 @case('badges')
                     @foreach ($badges as $shelf)

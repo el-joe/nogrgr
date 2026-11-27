@@ -121,6 +121,7 @@ return [
         'returns_analytics' => 'Return analytics',
         'pages' => 'Pages',
         'appearance' => 'Appearance',
+        'page_builder' => 'Page builder',
         'mobile_app' => 'Mobile app',
         'account' => 'Account',
         'general' => 'General',

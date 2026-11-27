@@ -9,6 +9,7 @@ use App\Modules\Storefront\Models\StorePage;
 use App\Modules\Storefront\Services\Appearance\StorefrontAppearance;
 use App\Modules\Storefront\Services\Catalog\CategoryCatalog;
 use App\Modules\Storefront\Services\Catalog\StorefrontShell;
+use App\Modules\Storefront\Services\Layouts\PageSectionRenderer;
 use App\Modules\Storefront\Services\Pages\StorePageReader;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
@@ -46,7 +47,10 @@ class ContentController extends Controller
             return JsonResponder::error((string) __('api::store.page_not_found'), 404);
         }
 
-        return JsonResponder::success('', (new StorePageResource($page))->toArray($request));
+        $this->prepareCatalog($request);
+
+        // Page-builder sections of the page (VEN-032), the same the web page renders.
+        return JsonResponder::success('', (new StorePageResource($page))->toArray($request) + ['sections' => app(PageSectionRenderer::class)->plain($page)]);
     }
 
     public function shell(Request $request): JsonResponse

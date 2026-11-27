@@ -12,7 +12,7 @@
     @endphp
     <section @class(['sq-section', 'sq-hband sq-hband-'.$band => $band]) aria-label="{{ $title }}">
         <div class="sq-hwrap">
-            <x-sf::souqify.heading :title="$title" :more="$more" :tone="$band ? 'light' : 'dark'" class="mb-6 max-lg:mb-3" />
+            <x-sf::souqify.heading :title="$title" :subtitle="$section['subtitle_text'] ?? null" :more="$more" :tone="$band ? 'light' : 'dark'" class="mb-6 max-lg:mb-3" />
             <x-sf::souqify.rail :cards="$cards" :label="$title" />
         </div>
     </section>

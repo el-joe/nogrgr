@@ -3,6 +3,7 @@
 namespace App\Modules\Storefront\Http\Controllers\Storefront;
 
 use App\Modules\Storefront\Enums\SystemStorePage;
+use App\Modules\Storefront\Services\Layouts\PageSectionRenderer;
 use App\Modules\Storefront\Services\Pages\StorePageReader;
 use App\Modules\Storefront\Services\Seo\StorefrontSeo;
 use App\Modules\Storefront\Support\StorefrontView;
@@ -37,6 +38,7 @@ class PageController extends Controller
 
         return StorefrontView::make('pages.page', [
             'page' => $page,
+            'sections' => app(PageSectionRenderer::class)->render($page),
             'showSupportForm' => $page->slug === SystemStorePage::Contact->value,
             'menu' => $menu,
             'currentUrl' => $url,
