@@ -125,7 +125,7 @@ class VendorDashboardWidgetService extends BaseService
 
             if ($theme !== null) {
                 $previews[(string) $key] = vendor_route('store.themes.preview', array_filter([
-                    'theme' => $theme->slug,
+                    'theme' => $theme->id,
                     'country' => $key === ThemePageService::DEFAULT_SCOPE ? null : $key,
                 ]));
             }

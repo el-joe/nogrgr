@@ -6,9 +6,10 @@ use App\Modules\Storefront\Models\Theme;
 use App\Modules\Storefront\Services\Themes\ThemePageService;
 
 /**
- * One scope of the vendor themes pages (VEN-030 tab / VEN-031 row): the store default
- * (countryId null) or a selling country, with the theme it renders and whether the
- * country has its own theme or follows the store default.
+ * One scope of the vendor themes pages (VEN-030 / VEN-031 row): the store default
+ * (countryId null) or a selling country, with the theme it renders. ownTheme = the
+ * country has its own theme (store default row: the store picked a default instead of
+ * following the platform default).
  */
 final readonly class ThemePageRowData
 {

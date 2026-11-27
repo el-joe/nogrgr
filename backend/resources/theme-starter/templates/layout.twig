@@ -1,0 +1,37 @@
+{#- Shared page shell: every page template extends this file and fills the "content" block. -#}
+<!DOCTYPE html>
+<html lang="{{ store.locale }}" dir="{{ store.dir }}" style="--accent: {{ setting('accent')|default('#0F766E') }}; --text: {{ setting('text_color')|default('#1F2937') }}; --bg: {{ setting('background_color')|default('#FFFFFF') }}; --font-heading: {{ setting('heading_font')|default('system-ui, sans-serif') }}; --font-body: {{ setting('body_font')|default('system-ui, sans-serif') }};">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{ head() }}
+    <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
+</head>
+<body class="tpl-{{ template }} cards-{{ setting('card_style')|default('bordered') }} cols-{{ setting('products_per_row')|default('4') }}">
+    <a class="skip-link" href="#main">{{ t('common.skip_to_content') }}</a>
+
+    {% if setting('announcement') is not empty %}
+        <div class="announcement" role="note">
+            <div class="container">{{ setting('announcement') }}</div>
+        </div>
+    {% endif %}
+
+    {% include "partials/header.twig" %}
+
+    <main id="main" class="site-main" tabindex="-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "partials/footer.twig" %}
+
+    <div class="status-toast" data-nt-status role="status" aria-live="polite"
+         data-msg-added="{{ t('status.added') }}"
+         data-msg-error="{{ t('status.error') }}"
+         data-msg-favorited="{{ t('status.favorited') }}"
+         data-msg-unfavorited="{{ t('status.unfavorited') }}"
+         data-msg-subscribed="{{ t('status.subscribed') }}"></div>
+
+    {{ scripts() }}
+    {{ script('js/theme.js') }}
+</body>
+</html>

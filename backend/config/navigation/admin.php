@@ -128,6 +128,8 @@ return [
         'items' => [
             ['key' => 'storefront', 'label' => 'navigation.admin.storefront', 'icon' => 'palette', 'children' => [
                 ['key' => 'storefront.themes', 'label' => 'navigation.admin.themes', 'route' => 'admin.storefront.themes.index', 'permission' => 'storefront.themes.view'],
+                ['key' => 'storefront.home-sections', 'label' => 'navigation.admin.home_sections', 'route' => 'admin.storefront.home-sections.index', 'permission' => 'storefront.themes.view'],
+                ['key' => 'storefront.template-parts', 'label' => 'navigation.admin.template_parts', 'route' => 'admin.storefront.template-parts.index', 'permission' => 'storefront.template-parts.view'],
                 ['key' => 'storefront.theme-review', 'label' => 'navigation.admin.theme_review_queue', 'route' => 'admin.storefront.theme-reviews.index', 'permission' => 'storefront.theme-reviews.view'],
                 ['key' => 'storefront.banners', 'label' => 'navigation.admin.banners', 'route' => 'admin.storefront.banners.index', 'permission' => 'storefront.banners.view'],
                 ['key' => 'storefront.return-policy', 'label' => 'navigation.admin.return_policy', 'route' => 'admin.storefront.return-policy.edit', 'permission' => 'storefront.return-policy.manage'],

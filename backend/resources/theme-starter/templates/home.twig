@@ -1,0 +1,93 @@
+{% extends "layout.twig" %}
+{% import "partials/macros.twig" as ui %}
+
+{% block content %}
+    {% if setting('show_hero') and home.hero is not empty %}
+        <section class="hero" aria-label="{{ t('home.featured') }}">
+            <div class="container">
+                <div class="hero__track" data-rail-track data-hero>
+                    {% for banner in home.hero %}
+                        <a class="hero__slide" href="{{ banner.url ?: url('new_in') }}">
+                            <picture>
+                                {% if banner.mobile_image %}<source media="(max-width: 640px)" srcset="{{ banner.mobile_image }}">{% endif %}
+                                <img src="{{ banner.image }}" alt="{{ banner.alt ?: banner.title }}" width="{{ banner.width|default(1600) }}" height="{{ banner.height|default(600) }}"{% if not loop.first %} loading="lazy"{% endif %}>
+                            </picture>
+                            {% if banner.title or banner.subtitle %}
+                                <span class="hero__text">
+                                    {% if banner.title %}<span class="hero__title">{{ banner.title }}</span>{% endif %}
+                                    {% if banner.subtitle %}<span class="hero__subtitle">{{ banner.subtitle }}</span>{% endif %}
+                                    <span class="btn">{{ banner.cta_label ?: t('home.shop_now') }}</span>
+                                </span>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {% if home.categories is not empty %}
+        <section class="section">
+            <div class="container">
+                {{ ui.section_head(t('home.shop_by_category'), url('categories')) }}
+                <ul class="category-chips" data-rail-track>
+                    {% for category in home.categories %}
+                        <li>
+                            <a class="category-chip" href="{{ category.url }}">
+                                <span class="category-chip__media">
+                                    {% if category.image %}
+                                        <img src="{{ category.image }}" alt="" width="96" height="96" loading="lazy">
+                                    {% else %}
+                                        <span class="category-chip__initial" aria-hidden="true">{{ category.name|slice(0, 1)|upper }}</span>
+                                    {% endif %}
+                                </span>
+                                <span class="category-chip__name">{{ category.name }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+    {% endif %}
+
+    {% if home.flash_sale %}
+        <section class="section">
+            <div class="container">
+                <a class="flash-banner" href="{{ url('offers') }}">
+                    {% if home.flash_sale.banner %}<img src="{{ home.flash_sale.banner }}" alt="" width="1200" height="300" loading="lazy">{% endif %}
+                    <span class="flash-banner__text">
+                        <span class="flash-banner__title">{{ home.flash_sale.title ?: t('home.flash_sale') }}</span>
+                        {% if home.flash_sale.percentage %}<span>{{ t('home.flash_sale_off', {percent: home.flash_sale.percentage|round}) }}</span>{% endif %}
+                        {% if home.flash_sale.ends_at %}<span class="flash-banner__ends">{{ t('home.flash_sale_ends', {date: home.flash_sale.ends_at|date('Y-m-d H:i')}) }}</span>{% endif %}
+                    </span>
+                </a>
+            </div>
+        </section>
+    {% endif %}
+
+    {% include "partials/product-rail.twig" with {title: t('home.flash_deals'), items: home.flash_deals, more_url: url('offers')} only %}
+
+    {% if home.promo is not empty %}
+        <section class="section">
+            <div class="container promo-grid">
+                {% for banner in home.promo %}
+                    <a class="promo" href="{{ banner.url ?: url('offers') }}">
+                        <img src="{{ banner.image }}" alt="{{ banner.alt ?: banner.title }}" width="{{ banner.width|default(800) }}" height="{{ banner.height|default(400) }}" loading="lazy">
+                        {% if banner.title %}<span class="promo__title">{{ banner.title }}</span>{% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% include "partials/product-rail.twig" with {title: t('home.best_sellers'), items: home.best_sellers, more_url: url('best_sellers')} only %}
+    {% include "partials/product-rail.twig" with {title: t('home.new_in'), items: home.new_in, more_url: url('new_in')} only %}
+    {% include "partials/product-rail.twig" with {title: t('home.top_rated'), items: home.top_rated, more_url: url('top_rated')} only %}
+    {% include "partials/product-rail.twig" with {title: t('home.clearance'), items: home.clearance, more_url: url('offers')} only %}
+
+    {% if home.flash_deals is empty and home.best_sellers is empty and home.new_in is empty and home.top_rated is empty and home.clearance is empty %}
+        <div class="container">
+            {{ ui.empty(t('home.empty_title'), t('home.empty_text'), url('categories'), t('common.browse_categories')) }}
+        </div>
+    {% endif %}
+{% endblock %}

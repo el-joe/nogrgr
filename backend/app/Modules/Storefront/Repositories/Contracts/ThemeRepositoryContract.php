@@ -36,4 +36,25 @@ interface ThemeRepositoryContract extends RepositoryContract
      * @return Collection<int, Theme>
      */
     public function active(): Collection;
+
+    public function findBySlug(string $slug): ?Theme;
+
+    /**
+     * Every catalogue theme (active or not) with its countries and part counts, in display order (ADM-086).
+     *
+     * @return Collection<int, Theme>
+     */
+    public function catalogue(): Collection;
+
+    /**
+     * Active themes with their allowed countries loaded, in display order.
+     *
+     * @return Collection<int, Theme>
+     */
+    public function activeWithCountries(): Collection;
+
+    /**
+     * The platform default theme (active), if one is set.
+     */
+    public function platformDefault(): ?Theme;
 }

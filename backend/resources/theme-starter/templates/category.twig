@@ -1,0 +1,27 @@
+{% extends "layout.twig" %}
+{% import "partials/macros.twig" as ui %}
+
+{% block content %}
+    <div class="container page">
+        {{ ui.breadcrumbs(listing.breadcrumbs, store.home_url) }}
+        <header class="category-head">
+            {% if category.image %}<img class="category-head__img" src="{{ category.image }}" alt="" width="120" height="120">{% endif %}
+            <div>
+                <h1 class="page-title">{{ category.name|default(listing.title) }}</h1>
+                {% if category.description %}<p class="lead">{{ category.description }}</p>{% endif %}
+            </div>
+        </header>
+
+        {% if subcategories is not empty %}
+            <nav aria-label="{{ t('category.subcategories') }}">
+                <ul class="chips chips--scroll" data-rail-track>
+                    {% for child in subcategories %}
+                        <li><a class="chip" href="{{ child.url }}">{{ child.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        {% endif %}
+
+        {% include "partials/listing-body.twig" with {listing: listing, empty_title: t('category.empty_title'), empty_text: t('category.empty_text')} only %}
+    </div>
+{% endblock %}

@@ -56,4 +56,24 @@ class ThemeRepository extends BaseRepository implements ThemeRepositoryContract
     {
         return Theme::query()->where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
     }
+
+    public function findBySlug(string $slug): ?Theme
+    {
+        return Theme::query()->where('slug', $slug)->first();
+    }
+
+    public function catalogue(): Collection
+    {
+        return Theme::query()->with('countries:id,name,iso2')->withCount('parts')->orderBy('sort_order')->orderBy('id')->get();
+    }
+
+    public function activeWithCountries(): Collection
+    {
+        return Theme::query()->with('countries:id')->where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
+    }
+
+    public function platformDefault(): ?Theme
+    {
+        return Theme::query()->with('countries:id')->where('is_active', true)->where('is_default', true)->orderBy('id')->first();
+    }
 }

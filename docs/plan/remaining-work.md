@@ -13,7 +13,7 @@
 | P4 Shipping | 0 | — | — |
 | P5 Orders, payments, finance mails | 13 | 9 | 3 product decisions (see D1–D3) |
 | P6 Central website | 0 | — | — |
-| P7 Themes, storefront engine | 15 | 6 | custom Twig themes (L) |
+| P7 Themes, storefront engine | 8 | 5 | theme admin + page builder |
 | P8 Vendor polish | 4 | 4 | public API scope (D4) |
 | P10 AI | 2 | 2 | — |
 | P11 Mobile | 1 | 1 | — |
@@ -66,7 +66,7 @@
 | 21 | Admin › Storefront › Themes (list of 13, edit metadata / preview image / countries) | ADM-086, ADM-086a | M | — | No admin route yet. Stores already pick themes (VEN-030). |
 | 22 | Admin home variants and sections config + template parts CRUD | ADM-087, ADM-088, ADM-088a | M | 21 | The vendor side (VEN-031) reads the variant config. |
 | 23 | Vendor page builder (section order / visibility, preview) | VEN-032 | M–L | 22 | Figma 200:33486. |
-| 24 | Custom Twig themes: vendor upload / validate / versions / submit / activate, starter kit, settings schema; admin review queue + detail; reviewed mail; render engine | VEN-036, 036a, 036b, ADM-089, 089a, MAIL-034, SF-ALL-006 | L | security review (sandbox) | Nothing exists yet. Twig is not installed. Needs a decision record (sandbox policy, allowed tags / filters, asset limits). |
+| 24 | ~~Custom Twig themes~~ **done** (decision #121): vendor upload / validation report / versions / preview / submit / publish / roll back / on-off, starter kit, settings form from theme.json; admin review queue + detail with diff; reviewed / submitted / render-failed notifications; sandboxed render engine with CSP and fallback; docs (docs/themes/README.md + in-panel guide) | VEN-036, 036a, 036b, ADM-089, 089a, MAIL-034, SF-ALL-006 | — | — | Done 2026-11-27 (tests/Feature/Storefront/CustomThemes). Left for later: tracking pixels on custom theme pages (need CSP allowances), custom-theme entries in the 13-theme catalogue UI (#119, admin-themes uses `CustomThemeRepositoryContract::approvedForTenant`). |
 | 25 | Central theme preview `/preview/{slug}` (country switch, exit) | WEB-004 | M | demo store data | Fix QA-FINAL-007 (demo banner category links) at the same time. Figma 127:11426 / 127:11559. |
 | 26 | Customer welcome mail on storefront sign-up | MAIL-042 | S | 8 | |
 

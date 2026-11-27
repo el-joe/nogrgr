@@ -35,7 +35,7 @@ const storeFonts = readdirSync('resources/css/storefront/fonts')
 export default defineConfig({
     plugins: [
         laravel({
-            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages, ...vendorBrand, ...storeFonts],
+            input: [...surfaces.flatMap((surface) => [`resources/css/${surface}.css`, `resources/js/${surface}.js`]), ...demoImages, ...centralImages, ...vendorBrand, ...storeFonts, 'resources/js/storefront/custom-theme.js'],
             refresh: ['resources/views/**', 'app/Modules/**/resources/views/**', 'app/Modules/**/routes/**', 'lang/**'],
         }),
         tailwindcss(),

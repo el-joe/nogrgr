@@ -1,0 +1,68 @@
+{#- Reusable markup. Import with: {% import "partials/macros.twig" as ui %} -#}
+
+{% macro breadcrumbs(items, home_url) %}
+    <nav class="breadcrumbs" aria-label="{{ t('common.breadcrumbs') }}">
+        <ol>
+            <li><a href="{{ home_url }}">{{ t('common.home') }}</a></li>
+            {% for item in items %}
+                {% if item.url != home_url %}
+                    <li>
+                        {% if loop.last %}
+                            <span aria-current="page">{{ item.name }}</span>
+                        {% else %}
+                            <a href="{{ item.url }}">{{ item.name }}</a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+{% endmacro %}
+
+{% macro pagination(pagination) %}
+    {% if pagination and pagination.last_page > 1 %}
+        <nav class="pagination" aria-label="{{ t('pagination.label') }}">
+            {% if pagination.prev_url %}
+                <a class="pagination__step" href="{{ pagination.prev_url }}" rel="prev">{{ t('pagination.previous') }}</a>
+            {% endif %}
+            <ul class="pagination__pages">
+                {% for page in pagination.pages %}
+                    <li>
+                        {% if page.current %}
+                            <span class="pagination__page is-current" aria-current="page">{{ page.number }}</span>
+                        {% else %}
+                            <a class="pagination__page" href="{{ page.url }}" aria-label="{{ t('pagination.page', {number: page.number}) }}">{{ page.number }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if pagination.next_url %}
+                <a class="pagination__step" href="{{ pagination.next_url }}" rel="next">{{ t('pagination.next') }}</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% endmacro %}
+
+{% macro empty(title, text, action_url, action_label) %}
+    <div class="empty-state">
+        <img src="{{ asset('img/empty.svg') }}" alt="" width="120" height="120" class="empty-state__art">
+        <h2 class="empty-state__title">{{ title }}</h2>
+        {% if text %}<p class="empty-state__text">{{ text }}</p>{% endif %}
+        {% if action_url %}<a class="btn" href="{{ action_url }}">{{ action_label }}</a>{% endif %}
+    </div>
+{% endmacro %}
+
+{% macro stars(rating, count) %}
+    <span class="rating" title="{{ t('product.rating_value', {rating: rating|number_format(1)}) }}">
+        <span class="rating__stars" style="--rating: {{ rating|default(0) }};" aria-hidden="true">★★★★★</span>
+        <span class="sr-only">{{ t('product.rating_value', {rating: rating|number_format(1)}) }}</span>
+        {% if count is not null %}<span class="rating__count">({{ count }})</span>{% endif %}
+    </span>
+{% endmacro %}
+
+{% macro section_head(title, more_url) %}
+    <div class="section-head">
+        <h2 class="section-title">{{ title }}</h2>
+        {% if more_url %}<a class="section-more" href="{{ more_url }}">{{ t('common.view_all') }}</a>{% endif %}
+    </div>
+{% endmacro %}

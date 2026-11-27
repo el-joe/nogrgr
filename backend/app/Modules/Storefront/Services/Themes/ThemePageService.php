@@ -6,9 +6,7 @@ use App\Modules\Commerce\Services\Promotions\StoreContext;
 use App\Modules\Localization\Services\StoreCountries;
 use App\Modules\Storefront\DTOs\ThemePageActivationData;
 use App\Modules\Storefront\DTOs\ThemePageRowData;
-use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Models\Theme;
-use App\Modules\Storefront\Repositories\Contracts\ThemeRepositoryContract;
 use App\Modules\Storefront\Services\StoreThemeService;
 use App\Shared\Services\BaseService;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,10 +14,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Page model of Vendor › Your store › Themes (VEN-030 / 030a / 030b) and Home variants
- * (VEN-031). Reads the central `themes` catalogue and the store's `store_theme` setting
- * and writes only through StoreThemeService (decision #76): one scope per tab / row —
- * the store default ("default") or one of the store's selling countries.
+ * Page model of Vendor › Your store › Themes (VEN-030 / 030a / 030b) and Themes by
+ * country (VEN-031), decision #119: the catalogue is a flat list of independent themes
+ * (family / variant stay internal). Lists the active themes allowed in at least one of
+ * the store's selling countries, reads the `store_theme` setting and writes only through
+ * StoreThemeService (decision #76): one scope per row — the store default ("default")
+ * or one of the store's selling countries.
  */
 class ThemePageService extends BaseService
 {
@@ -34,7 +34,6 @@ class ThemePageService extends BaseService
 
     public function __construct(
         private readonly StoreThemeService $themes,
-        private readonly ThemeRepositoryContract $repository,
         private readonly StoreCountries $countries,
         private readonly ThemePreviewService $previews,
     ) {}
@@ -74,38 +73,26 @@ class ThemePageService extends BaseService
     }
 
     /**
-     * Active catalogue themes in display order.
+     * Active themes the store may use: allowed in at least one selling country (or everywhere).
      *
      * @return Collection<int, Theme>
      */
     public function catalogue(): Collection
     {
-        return $this->catalogue ??= $this->repository->active();
+        return $this->catalogue ??= $this->themes->availableIn(array_keys($this->countries()));
     }
 
-    public function findTheme(string $slug): ?Theme
+    public function findTheme(int $id): ?Theme
     {
-        return $this->catalogue()->firstWhere('slug', $slug);
+        return $this->catalogue()->find($id);
     }
 
     /**
-     * Families with at least one active theme: family value => its themes (variant order).
-     *
-     * @return array<string, Collection<int, Theme>>
+     * The theme every store uses until it picks one (admin "default" theme).
      */
-    public function families(): array
+    public function platformDefault(): ?Theme
     {
-        $families = [];
-
-        foreach (ThemeFamily::cases() as $family) {
-            $themes = $this->catalogue()->filter(static fn (Theme $theme): bool => $theme->family === $family)->sortBy('variant')->values();
-
-            if ($themes->isNotEmpty()) {
-                $families[$family->value] = $themes;
-            }
-        }
-
-        return $families;
+        return $this->themes->activeThemes()->firstWhere('is_default', true);
     }
 
     /**
@@ -127,15 +114,51 @@ class ThemePageService extends BaseService
     public function row(string $scope): ThemePageRowData
     {
         $countryId = $this->countryOf($scope);
-        $resolved = $this->themes->resolve($countryId);
         $config = $this->themes->config();
 
         return new ThemePageRowData(
             countryId: $countryId,
             label: $countryId === null ? (string) __('content::vendor_themes.store_default') : $this->countries()[$countryId],
-            theme: $this->findTheme($resolved->slug),
-            ownTheme: $countryId !== null && isset($config['countries'][$countryId]),
+            theme: $this->themes->resolveTheme($countryId),
+            ownTheme: $countryId === null ? $config['default'] !== null : isset($config['countries'][$countryId]),
         );
+    }
+
+    /**
+     * Where each theme is live: theme id => ['default' => bool, 'countries' => [names]].
+     *
+     * @return array<int, array{default: bool, countries: list<string>}>
+     */
+    public function usage(): array
+    {
+        $usage = [];
+
+        foreach ($this->rows() as $row) {
+            if ($row->theme === null) {
+                continue;
+            }
+
+            $id = (int) $row->theme->id;
+            $usage[$id] ??= ['default' => false, 'countries' => []];
+
+            if ($row->countryId === null) {
+                $usage[$id]['default'] = true;
+            } else {
+                $usage[$id]['countries'][] = $row->label;
+            }
+        }
+
+        return $usage;
+    }
+
+    /**
+     * Selling countries the theme may be used in (id => name).
+     *
+     * @return array<int, string>
+     */
+    public function allowedCountries(Theme $theme): array
+    {
+        return array_filter($this->countries(), static fn (string $name, int $id): bool => $theme->allowsCountry($id), ARRAY_FILTER_USE_BOTH);
     }
 
     /**
@@ -143,11 +166,11 @@ class ThemePageService extends BaseService
      *
      * @return list<int>
      */
-    public function countriesUsing(string $slug): array
+    public function countriesUsing(int $themeId): array
     {
-        $own = array_filter($this->themes->config()['countries'], static fn (string $value): bool => $value === $slug);
+        $own = array_keys(array_filter($this->themes->config()['countries'], static fn (int $id): bool => $id === $themeId));
 
-        return array_values(array_intersect(array_keys($own), array_keys($this->countries())));
+        return array_values(array_intersect($own, array_keys($this->countries())));
     }
 
     /**
@@ -155,16 +178,22 @@ class ThemePageService extends BaseService
      */
     public function activate(ThemePageActivationData $data): Theme
     {
-        $theme = $this->findTheme($data->slug)
+        $theme = $this->findTheme($data->themeId)
             ?? throw ValidationException::withMessages(['theme' => __('content::vendor_themes.errors.theme_unavailable')]);
+
+        foreach ($data->countryIds as $countryId) {
+            if (! $theme->allowsCountry($countryId)) {
+                throw ValidationException::withMessages(['country_ids' => __('content::vendor_themes.errors.country_not_allowed', ['theme' => $theme->name])]);
+            }
+        }
 
         DB::transaction(function () use ($data, $theme): void {
             if ($data->asDefault) {
-                $this->themes->activate($theme->slug);
+                $this->themes->activate((int) $theme->id);
             }
 
             if ($data->countryIds !== []) {
-                $this->themes->activate($theme->slug, $data->countryIds);
+                $this->themes->activate((int) $theme->id, $data->countryIds);
             }
         });
 
@@ -172,22 +201,33 @@ class ThemePageService extends BaseService
     }
 
     /**
-     * Pick the home variant of the scope's current family (VEN-030b / VEN-031).
+     * Themes offered for one scope (VEN-030b): every listed theme for the store default,
+     * the ones allowed in that country otherwise (id => name).
+     *
+     * @return array<int, string>
      */
-    public function setVariant(string $scope, int $variant): Theme
+    public function optionsFor(string $scope): array
     {
         $countryId = $this->countryOf($scope);
-        $family = $this->themes->resolve($countryId)->family;
-        $theme = $this->catalogue()->first(static fn (Theme $theme): bool => $theme->family === $family && (int) $theme->variant === $variant)
-            ?? throw ValidationException::withMessages(['variant' => __('content::vendor_themes.errors.variant_unavailable')]);
 
-        if ($countryId === null) {
-            $this->themes->activate($theme->slug);
-        } else {
-            $this->themes->setCountryVariant($countryId, $family, $variant);
-        }
+        return $this->catalogue()
+            ->filter(static fn (Theme $theme): bool => $theme->allowsCountry($countryId))
+            ->mapWithKeys(static fn (Theme $theme): array => [(int) $theme->id => (string) $theme->name])
+            ->all();
+    }
 
-        return $theme;
+    /**
+     * Pick the theme of one scope (VEN-030b, Themes by country).
+     */
+    public function setScopeTheme(string $scope, int $themeId): Theme
+    {
+        $countryId = $this->countryOf($scope);
+
+        return $this->activate(new ThemePageActivationData(
+            themeId: $themeId,
+            asDefault: $countryId === null,
+            countryIds: $countryId === null ? [] : [$countryId],
+        ));
     }
 
     /**
@@ -205,19 +245,11 @@ class ThemePageService extends BaseService
     }
 
     /**
-     * Variants of the scope's current family for the radio list: variant => label.
-     *
-     * @return array<int, string>
+     * Forget every choice: the store follows the platform default theme everywhere.
      */
-    public function variantOptions(string $scope): array
+    public function resetToPlatformDefault(): void
     {
-        $family = $this->themes->resolve($this->countryOf($scope))->family;
-
-        return $this->catalogue()
-            ->filter(static fn (Theme $theme): bool => $theme->family === $family)
-            ->sortBy('variant')
-            ->mapWithKeys(static fn (Theme $theme): array => [(int) $theme->variant => (string) __('content::vendor_themes.home_variant', ['number' => $theme->variant])])
-            ->all();
+        $this->themes->resetToPlatformDefault();
     }
 
     public function previewUrl(Theme $theme, ?int $countryId): string

@@ -147,6 +147,8 @@ return [
         'refunds' => 'المبالغ المستردة',
         'storefront.return-policy' => 'سياسة الإرجاع',
         'storefront.banners' => 'البنرات الافتراضية',
+        'storefront.themes' => 'كتالوج القوالب',
+        'storefront.template-parts' => 'أجزاء القوالب',
         'content.posts' => 'مقالات المدونة',
         'content.post-categories' => 'تصنيفات المدونة',
         'content.pages' => 'الصفحات الثابتة',

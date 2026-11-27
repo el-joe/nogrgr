@@ -1,0 +1,54 @@
+{#- Site footer: about text, link columns, newsletter, social links, legal links. -#}
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <section class="footer-about">
+            <a class="brand brand--footer" href="{{ url('home') }}"><span class="brand__name">{{ store.name }}</span></a>
+            {% if store.about %}<p>{{ store.about }}</p>{% endif %}
+            {% if setting('footer_note') is not empty %}<p class="footer-note">{{ setting('footer_note')|nl2br }}</p>{% endif %}
+            {% if menus.social is not empty %}
+                <ul class="social" aria-label="{{ t('footer.follow_us') }}">
+                    {% for item in menus.social %}
+                        <li><a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.label }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+
+        {% for key, links in menus.footer %}
+            {% if links is not empty %}
+                <nav class="footer-col" aria-label="{{ key in ['company', 'service', 'help'] ? t('footer.columns.' ~ key) : t('footer.columns.more') }}">
+                    <h2 class="footer-col__title">{{ key in ['company', 'service', 'help'] ? t('footer.columns.' ~ key) : t('footer.columns.more') }}</h2>
+                    <ul>
+                        {% for link in links %}
+                            <li><a href="{{ link.url }}"{% if link.external %} target="_blank" rel="noopener"{% endif %}>{{ link.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% endfor %}
+
+        <section class="footer-newsletter">
+            <h2 class="footer-col__title">{{ t('footer.newsletter_title') }}</h2>
+            <p>{{ t('footer.newsletter_text') }}</p>
+            <form class="newsletter" action="{{ url('newsletter') }}" method="post" data-nt-newsletter-form>
+                {{ csrf_field() }}
+                <label class="sr-only" for="newsletter-email">{{ t('footer.newsletter_email') }}</label>
+                <input id="newsletter-email" type="email" name="email" required maxlength="160" placeholder="{{ t('footer.newsletter_email') }}" autocomplete="email">
+                <button class="btn" type="submit">{{ t('footer.newsletter_submit') }}</button>
+            </form>
+        </section>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container footer-bottom__inner">
+            <p>{{ store.copyright ?: t('footer.copyright', {year: store.year, store: store.name}) }}</p>
+            {% if menus.legal is not empty %}
+                <ul class="legal">
+                    {% for link in menus.legal %}
+                        <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</footer>

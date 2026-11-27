@@ -1,0 +1,22 @@
+{#- Shared body of listing.twig, category.twig and search.twig: count, sorting, grid, pagination. -#}
+{% import "partials/macros.twig" as ui %}
+<div class="listing-toolbar">
+    <p class="listing-count">{{ t('listing.count', {count: listing.total}) }}</p>
+    {% if listing.sort and listing.sort.options is not empty and listing.products is not empty %}
+        <nav class="sort" aria-label="{{ t('listing.sort_by') }}">
+            <span class="sort__label">{{ t('listing.sort_by') }}</span>
+            <ul class="chips">
+                {% for option in listing.sort.options %}
+                    <li><a class="chip{% if option.current %} is-active{% endif %}" href="{{ option.url }}"{% if option.current %} aria-current="true"{% endif %}>{{ option.label }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+
+{% if listing.products is not empty %}
+    {% include "partials/product-grid.twig" with {items: listing.products} only %}
+    {{ ui.pagination(listing.pagination) }}
+{% else %}
+    {{ ui.empty(empty_title, empty_text, url('categories'), t('common.browse_categories')) }}
+{% endif %}

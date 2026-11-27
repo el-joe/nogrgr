@@ -1,0 +1,92 @@
+{
+    "name": "Starter",
+    "version": "1.0.0",
+    "engine": "nogrgr-twig/1",
+    "author": {
+        "name": "Nogrgr"
+    },
+    "description": "A clean, responsive starter theme with right-to-left support. Copy it, change the templates and CSS, and upload your own storefront design.",
+    "supports": ["home", "listing", "categories", "category", "product", "search", "cart", "account", "page", "404", "500"],
+    "rtl": true,
+    "settings": [
+        {
+            "id": "accent",
+            "type": "color",
+            "label": {"en": "Accent colour", "ar": "اللون المميز"},
+            "help": {"en": "Buttons, links, badges and highlights.", "ar": "الأزرار والروابط والشارات والعناصر البارزة."},
+            "default": "#0F766E"
+        },
+        {
+            "id": "text_color",
+            "type": "color",
+            "label": {"en": "Text colour", "ar": "لون النص"},
+            "help": {"en": "Keep it dark so text stays easy to read.", "ar": "اختر لونًا داكنًا ليبقى النص سهل القراءة."},
+            "default": "#1F2937"
+        },
+        {
+            "id": "background_color",
+            "type": "color",
+            "label": {"en": "Background colour", "ar": "لون الخلفية"},
+            "help": {"en": "Page background. Keep it light.", "ar": "خلفية الصفحة. يُفضَّل أن تكون فاتحة."},
+            "default": "#FFFFFF"
+        },
+        {
+            "id": "heading_font",
+            "type": "font",
+            "label": {"en": "Heading font", "ar": "خط العناوين"},
+            "help": {"en": "Used for titles on left-to-right pages. Arabic pages use the body font for titles.", "ar": "يُستخدم للعناوين في الصفحات من اليسار إلى اليمين. تستخدم الصفحات العربية خط النص للعناوين."},
+            "default": "outfit"
+        },
+        {
+            "id": "body_font",
+            "type": "font",
+            "label": {"en": "Body font", "ar": "خط النص"},
+            "help": {"en": "Pick a font that supports Arabic (Tajawal, Noto Sans Arabic or IBM Plex Sans Arabic).", "ar": "اختر خطًا يدعم العربية (تجوال أو نوتو سانس العربي أو آي بي إم بلكس سانس العربي)."},
+            "default": "tajawal"
+        },
+        {
+            "id": "show_hero",
+            "type": "toggle",
+            "label": {"en": "Show the home page banner", "ar": "إظهار البانر في الصفحة الرئيسية"},
+            "default": true
+        },
+        {
+            "id": "products_per_row",
+            "type": "select",
+            "label": {"en": "Products per row on large screens", "ar": "عدد المنتجات في الصف على الشاشات الكبيرة"},
+            "options": [
+                {"value": "3", "label": {"en": "3 products", "ar": "3 منتجات"}},
+                {"value": "4", "label": {"en": "4 products", "ar": "4 منتجات"}},
+                {"value": "5", "label": {"en": "5 products", "ar": "5 منتجات"}}
+            ],
+            "default": "4"
+        },
+        {
+            "id": "card_style",
+            "type": "select",
+            "label": {"en": "Product card style", "ar": "شكل بطاقة المنتج"},
+            "options": [
+                {"value": "bordered", "label": {"en": "Bordered", "ar": "بإطار"}},
+                {"value": "shadow", "label": {"en": "Soft shadow", "ar": "ظل خفيف"}},
+                {"value": "minimal", "label": {"en": "Minimal", "ar": "بسيط"}}
+            ],
+            "default": "bordered"
+        },
+        {
+            "id": "announcement",
+            "type": "text",
+            "label": {"en": "Announcement bar text", "ar": "نص شريط الإعلانات"},
+            "help": {"en": "Shown above the header on every page. Leave empty to hide the bar.", "ar": "يظهر أعلى الترويسة في كل الصفحات. اتركه فارغًا لإخفاء الشريط."},
+            "max_length": 160,
+            "default": ""
+        },
+        {
+            "id": "footer_note",
+            "type": "textarea",
+            "label": {"en": "Footer note", "ar": "ملاحظة التذييل"},
+            "help": {"en": "A short message under the store description in the footer. Leave empty to hide it.", "ar": "رسالة قصيرة أسفل وصف المتجر في التذييل. اتركها فارغة لإخفائها."},
+            "max_length": 600,
+            "default": ""
+        }
+    ]
+}

@@ -1,0 +1,137 @@
+{% extends "layout.twig" %}
+{% import "partials/macros.twig" as ui %}
+
+{% block content %}
+    {% set images = product.media|filter(m => m.type == 'image') %}
+    {% set videos = product.media|filter(m => m.type == 'video') %}
+    {% set first_image = images is not empty ? (images|first).url : (product.images|first) %}
+    {% set selected = product.variants|filter(v => v.id == product.selected_variant_id)|first %}
+
+    <div class="container page">
+        {{ ui.breadcrumbs(product.breadcrumbs|merge([{name: product.name, url: product.url}]), store.home_url) }}
+
+        <div class="product">
+            <section class="gallery" data-gallery aria-label="{{ t('product.gallery') }}">
+                <div class="gallery__main">
+                    <img src="{{ first_image ?: asset('img/placeholder.svg') }}" alt="{{ product.name }}" width="800" height="800" data-gallery-main>
+                    {% if product.discount_percent %}<span class="badge badge--sale">{{ t('product.discount', {percent: product.discount_percent}) }}</span>{% endif %}
+                </div>
+                {% if images|length > 1 %}
+                    <ul class="gallery__thumbs" data-rail-track>
+                        {% for image in images %}
+                            <li>
+                                <button class="gallery__thumb{% if loop.first %} is-active{% endif %}" type="button" data-gallery-thumb data-src="{{ image.url }}" aria-label="{{ t('product.show_image', {number: loop.index}) }}" aria-pressed="{{ loop.first ? 'true' : 'false' }}">
+                                    <img src="{{ image.url }}" alt="" width="96" height="96" loading="lazy">
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% for video in videos %}
+                    <video class="gallery__video" src="{{ video.url }}"{% if video.poster %} poster="{{ video.poster }}"{% endif %} controls preload="none" playsinline></video>
+                {% endfor %}
+            </section>
+
+            <section class="product-info">
+                {% if product.best_selling %}<span class="badge badge--soft">{{ t('product.best_seller') }}</span>{% endif %}
+                <h1 class="product-title">{{ product.name }}</h1>
+
+                {% if product.reviews and product.reviews.count %}
+                    <a class="product-rating" href="#reviews">{{ ui.stars(product.reviews.average, product.reviews.count) }}</a>
+                {% endif %}
+
+                <div class="price price--large">
+                    <span class="price__now" data-nt-price>{{ selected ? selected.price : product.price }}</span>
+                    <s class="price__was" data-nt-compare{% if not (selected ? selected.compare_price : product.compare_price) %} hidden{% endif %}>{{ selected ? selected.compare_price : product.compare_price }}</s>
+                </div>
+
+                {% if product.flash_sale %}
+                    <p class="flash-note">{{ t('product.flash_sale', {percent: product.flash_sale.percentage|round}) }}{% if product.flash_sale.ends_at %} · {{ t('product.flash_sale_ends', {date: product.flash_sale.ends_at|date('Y-m-d H:i')}) }}{% endif %}</p>
+                {% endif %}
+
+                {% if product.summary %}<p class="lead">{{ product.summary }}</p>{% endif %}
+
+                {% if product.sold_count %}<p class="muted">{{ t('product.sold', {count: product.sold_count}) }}</p>{% endif %}
+
+                <form class="product-form" data-nt-product-form>
+                    {% if product.variants is not empty %}
+                        <script type="application/json" data-nt-variants>{{ product.variants|json }}</script>
+                        <label class="field">
+                            <span class="field__label">{{ product.attributes|column('name')|join(' / ') ?: t('product.option') }}</span>
+                            <select name="variant_id" data-nt-variant-select required>
+                                {% for variant in product.variants %}
+                                    <option value="{{ variant.id }}"{% if variant.id == product.selected_variant_id %} selected{% endif %}{% if not variant.in_stock %} disabled{% endif %}>{{ variant.label }} · {{ variant.price }}{% if not variant.in_stock %} ({{ t('product.out_of_stock') }}){% endif %}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    {% endif %}
+
+                    <div class="product-form__row">
+                        <label class="field field--qty">
+                            <span class="field__label">{{ t('product.quantity') }}</span>
+                            <input type="number" name="quantity" value="1" min="1"{% if product.stock %} max="{{ product.stock }}"{% endif %} inputmode="numeric">
+                        </label>
+                        {% if product.in_stock %}
+                            <button class="btn btn--large" type="submit" data-nt-add-to-cart data-product-id="{{ product.id }}">{{ t('product.add_to_cart') }}</button>
+                        {% else %}
+                            <p class="stock stock--out">{{ t('product.out_of_stock') }}</p>
+                        {% endif %}
+                        <button class="fav-btn fav-btn--large" type="button" data-nt-favorite data-product-id="{{ product.id }}" aria-pressed="{{ product.favorited ? 'true' : 'false' }}" aria-label="{{ t('product.favorite', {name: product.name}) }}">
+                            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                        </button>
+                    </div>
+
+                    {% if product.in_stock and product.stock and product.stock <= 10 %}
+                        <p class="stock stock--low">{{ t('product.low_stock', {count: product.stock}) }}</p>
+                    {% endif %}
+                </form>
+
+                {% if product.delivery %}
+                    <div class="delivery">
+                        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="7" cy="18" r="1.6" fill="currentColor"/><circle cx="17" cy="18" r="1.6" fill="currentColor"/></svg>
+                        <div>
+                            <p class="delivery__label">{{ product.delivery.label }}</p>
+                            {% if product.delivery.company %}<p class="muted">{{ t('product.shipped_by', {company: product.delivery.company}) }}</p>{% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if product.category %}
+                    <p class="muted">{{ t('product.category') }} <a href="{{ product.category.url }}">{{ product.category.name }}</a></p>
+                {% endif %}
+            </section>
+        </div>
+
+        {% if product.description_html %}
+            <section class="section prose-section">
+                <h2 class="section-title">{{ t('product.description') }}</h2>
+                <div class="prose">{{ product.description_html }}</div>
+            </section>
+        {% endif %}
+
+        <section class="section reviews" id="reviews">
+            <h2 class="section-title">{{ t('product.reviews') }}</h2>
+            {% if product.reviews and product.reviews.count %}
+                <div class="reviews__summary">
+                    <p class="reviews__average">{{ product.reviews.average|number_format(1) }}</p>
+                    {{ ui.stars(product.reviews.average, null) }}
+                    <p class="muted">{{ t('product.reviews_count', {count: product.reviews.count}) }}</p>
+                </div>
+                <ul class="reviews__bars">
+                    {% for stars in [5, 4, 3, 2, 1] %}
+                        {% set amount = product.reviews.distribution[stars]|default(0) %}
+                        <li>
+                            <span>{{ t('product.stars', {count: stars}) }}</span>
+                            <span class="bar"><span class="bar__fill" style="width: {{ product.reviews.count ? (amount / product.reviews.count * 100)|round : 0 }}%;"></span></span>
+                            <span class="muted">{{ amount }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="muted">{{ t('product.no_reviews') }}</p>
+            {% endif %}
+        </section>
+    </div>
+
+    {% include "partials/product-rail.twig" with {title: t('product.related'), items: product.related} only %}
+{% endblock %}

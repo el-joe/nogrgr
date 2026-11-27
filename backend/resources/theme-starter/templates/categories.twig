@@ -1,0 +1,37 @@
+{% extends "layout.twig" %}
+{% import "partials/macros.twig" as ui %}
+
+{% block content %}
+    <div class="container page">
+        {{ ui.breadcrumbs([], store.home_url) }}
+        <h1 class="page-title">{{ t('categories.title') }}</h1>
+
+        {% if categories is not empty %}
+            <ul class="category-grid">
+                {% for category in categories %}
+                    <li class="category-card">
+                        <a class="category-card__main" href="{{ category.url }}">
+                            <span class="category-card__media">
+                                {% if category.image %}
+                                    <img src="{{ category.image }}" alt="" width="160" height="160" loading="lazy">
+                                {% else %}
+                                    <span class="category-chip__initial" aria-hidden="true">{{ category.name|slice(0, 1)|upper }}</span>
+                                {% endif %}
+                            </span>
+                            <span class="category-card__name">{{ category.name }}</span>
+                        </a>
+                        {% if category.children is not empty %}
+                            <ul class="category-card__children">
+                                {% for child in category.children %}
+                                    <li><a href="{{ child.url }}">{{ child.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            {{ ui.empty(t('categories.empty_title'), t('categories.empty_text'), url('home'), t('common.back_home')) }}
+        {% endif %}
+    </div>
+{% endblock %}

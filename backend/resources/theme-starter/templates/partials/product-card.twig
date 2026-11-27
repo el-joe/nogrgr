@@ -1,0 +1,38 @@
+{#- One product card. Include with: {% include "partials/product-card.twig" with {card: item} only %} -#}
+{% import "partials/macros.twig" as ui %}
+<article class="card">
+    <a class="card__media" href="{{ card.url }}">
+        <img src="{{ card.image ?: asset('img/placeholder.svg') }}" alt="{{ card.name }}" loading="lazy" width="480" height="480" class="card__img">
+        {% if card.image_hover %}
+            <img src="{{ card.image_hover }}" alt="" loading="lazy" width="480" height="480" class="card__img card__img--hover">
+        {% endif %}
+        {% if card.discount_percent %}
+            <span class="badge badge--sale">{{ t('product.discount', {percent: card.discount_percent}) }}</span>
+        {% elseif card.badge %}
+            <span class="badge">{{ card.badge }}</span>
+        {% endif %}
+    </a>
+    <button class="fav-btn card__fav" type="button" data-nt-favorite data-product-id="{{ card.id }}" aria-pressed="{{ card.favorited ? 'true' : 'false' }}" aria-label="{{ t('product.favorite', {name: card.name}) }}">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="card__body">
+        <h3 class="card__title"><a href="{{ card.url }}">{{ card.name }}</a></h3>
+        {% if card.review_count %}{{ ui.stars(card.rating, card.review_count) }}{% endif %}
+        <div class="price">
+            <span class="price__now">{{ card.price }}</span>
+            {% if card.compare_price %}<s class="price__was">{{ card.compare_price }}</s>{% endif %}
+        </div>
+        {% if card.in_stock and card.low_stock %}
+            <p class="stock stock--low">{{ t('product.low_stock', {count: card.low_stock}) }}</p>
+        {% endif %}
+        <div class="card__actions">
+            {% if not card.in_stock %}
+                <span class="stock stock--out">{{ t('product.out_of_stock') }}</span>
+            {% elseif card.has_variants %}
+                <a class="btn btn--ghost btn--block" href="{{ card.url }}">{{ t('product.choose_options') }}</a>
+            {% else %}
+                <button class="btn btn--block" type="button" data-nt-add-to-cart data-product-id="{{ card.id }}" data-quantity="1">{{ t('product.add_to_cart') }}</button>
+            {% endif %}
+        </div>
+    </div>
+</article>

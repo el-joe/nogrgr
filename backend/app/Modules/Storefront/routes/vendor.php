@@ -31,23 +31,24 @@ Route::middleware('auth:vendor')->prefix('store/banners')->name('store.banners.'
 });
 
 /*
-|   vendor.store.themes.*        store themes (VEN-030 / 030a / 030b): {theme} = catalogue
-|                                slug, {scope} = "default" | selling country id;
-|   vendor.store.home-variants   home variant per country (VEN-031);
+|   vendor.store.themes.*        store themes (VEN-030 / 030a / 030b, decision #119): {theme} =
+|                                catalogue theme id, {scope} = "default" | selling country id;
+|   vendor.store.home-variants   Themes by country (VEN-031, route name kept for old links);
 |                                permissions store.themes.view | store.themes.manage
 */
 
 Route::middleware('auth:vendor')->controller(ThemeController::class)->group(function (): void {
     Route::middleware('permission:store.themes.view,vendor')->group(function (): void {
         Route::get('store/themes', 'index')->name('store.themes.index');
-        Route::get('store/themes/{theme}/preview', 'preview')->where('theme', '[a-z0-9][a-z0-9-]{0,63}')->name('store.themes.preview');
-        Route::get('store/home-variants', 'homeVariants')->name('store.home-variants');
+        Route::get('store/themes/{theme}/preview', 'preview')->whereNumber('theme')->name('store.themes.preview');
+        Route::get('store/home-variants', 'byCountry')->name('store.home-variants');
     });
     Route::middleware('permission:store.themes.manage,vendor')->prefix('store/themes')->name('store.themes.')->group(function (): void {
         Route::post('activate', 'activate')->name('activate');
-        Route::get('{theme}/countries', 'countries')->where('theme', '[a-z0-9][a-z0-9-]{0,63}')->name('countries');
-        Route::get('variant/{scope}', 'variant')->where('scope', ThemePageService::SCOPE_PATTERN)->name('variant');
-        Route::put('variant/{scope}', 'updateVariant')->where('scope', ThemePageService::SCOPE_PATTERN)->name('variant.update');
+        Route::get('{theme}/countries', 'countries')->whereNumber('theme')->name('countries');
+        Route::get('scope/{scope}', 'scope')->where('scope', ThemePageService::SCOPE_PATTERN)->name('scope');
+        Route::put('scope/{scope}', 'updateScope')->where('scope', ThemePageService::SCOPE_PATTERN)->name('scope.update');
         Route::delete('countries/{scope}', 'reset')->whereNumber('scope')->name('reset');
+        Route::delete('selection', 'resetPlatform')->name('reset-platform');
     });
 });

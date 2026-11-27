@@ -1,0 +1,42 @@
+{#- Language / currency / delivery country switcher (POST url('preferences')). -#}
+<form class="preferences" action="{{ url('preferences') }}" method="post">
+    {{ csrf_field() }}
+    <input type="hidden" name="redirect" value="{{ request.path }}">
+
+    {% if store.locales|length > 1 %}
+        <label class="preferences__field">
+            <span class="preferences__label">{{ t('preferences.language') }}</span>
+            <select name="locale">
+                {% for locale in store.locales %}
+                    <option value="{{ locale.code }}"{% if locale.current %} selected{% endif %}>{{ locale.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    {% endif %}
+
+    {% if store.currencies|length > 1 %}
+        <label class="preferences__field">
+            <span class="preferences__label">{{ t('preferences.currency') }}</span>
+            <select name="currency">
+                {% for currency in store.currencies %}
+                    <option value="{{ currency.code }}"{% if currency.code == store.currency %} selected{% endif %}>{{ currency.code }} · {{ currency.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    {% endif %}
+
+    {% if store.countries|length > 1 %}
+        <label class="preferences__field">
+            <span class="preferences__label">{{ t('preferences.country') }}</span>
+            <select name="country_id">
+                {% for country in store.countries %}
+                    <option value="{{ country.id }}"{% if store.country and country.id == store.country.id %} selected{% endif %}>{{ country.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    {% endif %}
+
+    {% if store.locales|length > 1 or store.currencies|length > 1 or store.countries|length > 1 %}
+        <button class="btn btn--small btn--ghost" type="submit">{{ t('preferences.apply') }}</button>
+    {% endif %}
+</form>

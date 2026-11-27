@@ -1,0 +1,74 @@
+{#- Site header: brand, search, account / wishlist / cart, category menu and store preferences. -#}
+<header class="site-header">
+    <div class="container header-bar">
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="{{ t('header.menu') }}">
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+        </button>
+
+        <a class="brand" href="{{ url('home') }}">
+            {% if store.logo_url %}
+                <img src="{{ store.logo_url }}" alt="{{ store.name }}" class="brand__logo" width="140" height="40">
+            {% else %}
+                <span class="brand__name">{{ store.name }}</span>
+            {% endif %}
+        </a>
+
+        <form class="header-search" action="{{ url('search') }}" method="get" role="search">
+            <label class="sr-only" for="header-search-q">{{ t('header.search_label') }}</label>
+            <input id="header-search-q" type="search" name="q" value="{{ request.query }}" placeholder="{{ t('header.search_placeholder') }}" autocomplete="off" maxlength="100">
+            <button class="icon-btn" type="submit" aria-label="{{ t('header.search_submit') }}">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+        </form>
+
+        <nav class="header-actions" aria-label="{{ t('header.account_menu') }}">
+            {% if customer.signed_in %}
+                <a class="header-link" href="{{ url('account') }}">
+                    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                    <span class="header-link__label">{{ t('header.hello', {name: customer.name}) }}</span>
+                </a>
+            {% else %}
+                <a class="header-link" href="{{ url('login') }}">
+                    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                    <span class="header-link__label">{{ t('header.sign_in') }}</span>
+                </a>
+            {% endif %}
+            <a class="header-link" href="{{ url('wishlist') }}">
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+                <span class="header-link__label">{{ t('header.wishlist') }}</span>
+            </a>
+            <a class="header-link header-link--cart" href="{{ cart.url }}">
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.5" fill="currentColor"/><circle cx="17" cy="20" r="1.5" fill="currentColor"/></svg>
+                <span class="header-link__label">{{ t('header.cart') }}</span>
+                <span class="cart-count" data-nt-cart-count {% if cart.count == 0 %}hidden{% endif %}>{{ cart.count }}</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="nav-wrap" id="site-nav" data-menu>
+        <div class="container nav-inner">
+            <nav class="main-nav" aria-label="{{ t('header.categories') }}">
+                <ul class="main-nav__list">
+                    <li><a class="main-nav__link" href="{{ url('categories') }}">{{ t('header.all_categories') }}</a></li>
+                    {% for category in menus.categories %}
+                        <li class="main-nav__item{% if category.children is not empty %} has-children{% endif %}">
+                            <a class="main-nav__link" href="{{ category.url }}">{{ category.name }}</a>
+                            {% if category.children is not empty %}
+                                <ul class="main-nav__sub">
+                                    {% for child in category.children %}
+                                        <li><a href="{{ child.url }}">{{ child.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    {% for link in menus.header %}
+                        <li><a class="main-nav__link" href="{{ link.url }}"{% if link.external %} target="_blank" rel="noopener"{% endif %}>{{ link.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            {% include "partials/preferences.twig" %}
+        </div>
+    </div>
+</header>

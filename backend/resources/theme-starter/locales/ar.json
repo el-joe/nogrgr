@@ -1,0 +1,192 @@
+{
+    "common": {
+        "skip_to_content": "انتقل إلى المحتوى",
+        "home": "الرئيسية",
+        "breadcrumbs": "مسار التنقل",
+        "view_all": "عرض الكل",
+        "browse_categories": "تصفّح الأقسام",
+        "back_home": "العودة إلى الصفحة الرئيسية",
+        "previous": "السابق",
+        "next": "التالي"
+    },
+    "header": {
+        "menu": "القائمة",
+        "search_label": "ابحث عن المنتجات",
+        "search_placeholder": "عمّ تبحث؟",
+        "search_submit": "بحث",
+        "account_menu": "حسابك",
+        "hello": "مرحبًا، :name",
+        "sign_in": "تسجيل الدخول",
+        "wishlist": "المفضلة",
+        "cart": "السلة",
+        "categories": "الأقسام",
+        "all_categories": "كل الأقسام"
+    },
+    "preferences": {
+        "language": "اللغة",
+        "currency": "العملة",
+        "country": "التوصيل إلى",
+        "apply": "تطبيق"
+    },
+    "footer": {
+        "follow_us": "تابعنا",
+        "columns": {
+            "company": "الشركة",
+            "service": "خدمة العملاء",
+            "help": "المساعدة",
+            "more": "المزيد"
+        },
+        "newsletter_title": "ابقَ على اطّلاع",
+        "newsletter_text": "تصلك أحدث المنتجات والعروض على بريدك الإلكتروني.",
+        "newsletter_email": "بريدك الإلكتروني",
+        "newsletter_submit": "اشترك",
+        "copyright": "© :year :store. جميع الحقوق محفوظة."
+    },
+    "status": {
+        "added": "تمت الإضافة إلى سلتك.",
+        "error": "حدث خطأ ما. يُرجى المحاولة مرة أخرى.",
+        "favorited": "تم الحفظ في المفضلة.",
+        "unfavorited": "تمت الإزالة من المفضلة.",
+        "subscribed": "شكرًا لاشتراكك!"
+    },
+    "pagination": {
+        "label": "الصفحات",
+        "previous": "السابق",
+        "next": "التالي",
+        "page": "الصفحة :number"
+    },
+    "home": {
+        "featured": "مميز",
+        "shop_now": "تسوّق الآن",
+        "shop_by_category": "تسوّق حسب القسم",
+        "flash_sale": "تخفيضات خاطفة",
+        "flash_sale_off": "خصم حتى :percent%",
+        "flash_sale_ends": "ينتهي في :date",
+        "flash_deals": "عروض اليوم",
+        "best_sellers": "الأكثر مبيعًا",
+        "new_in": "وصل حديثًا",
+        "top_rated": "الأعلى تقييمًا",
+        "clearance": "تصفية",
+        "empty_title": "لا توجد منتجات لعرضها بعد",
+        "empty_text": "ستظهر المنتجات الجديدة هنا فور إضافتها من المتجر. في الأثناء، تصفّح الأقسام."
+    },
+    "listing": {
+        "count": ":count منتج",
+        "sort_by": "ترتيب حسب",
+        "empty_title": "لا توجد منتجات هنا",
+        "empty_text": "جرّب قسمًا آخر أو عُد لاحقًا."
+    },
+    "category": {
+        "subcategories": "الأقسام الفرعية",
+        "empty_title": "هذا القسم فارغ",
+        "empty_text": "لا توجد منتجات في هذا القسم حاليًا. تصفّح الأقسام الأخرى."
+    },
+    "categories": {
+        "title": "كل الأقسام",
+        "empty_title": "لا توجد أقسام بعد",
+        "empty_text": "لم ينشر المتجر أي أقسام."
+    },
+    "search": {
+        "title": "البحث",
+        "results_for": "نتائج البحث عن «:term»",
+        "empty_title": "لم نجد نتائج لـ «:term»",
+        "start_title": "ابحث في المتجر",
+        "empty_text": "تحقّق من الإملاء، أو استخدم كلمات أقل، أو تصفّح الأقسام.",
+        "popular": "الأكثر رواجًا الآن"
+    },
+    "product": {
+        "gallery": "صور المنتج",
+        "show_image": "عرض الصورة :number",
+        "discount": "-:percent%",
+        "best_seller": "الأكثر مبيعًا",
+        "favorite": "احفظ :name في المفضلة",
+        "rating_value": "التقييم :rating من 5",
+        "low_stock": "بقي :count فقط",
+        "out_of_stock": "نفدت الكمية",
+        "choose_options": "اختر الخيارات",
+        "add_to_cart": "أضف إلى السلة",
+        "flash_sale": "تخفيضات خاطفة: خصم :percent%",
+        "flash_sale_ends": "ينتهي في :date",
+        "sold": "تم بيع :count",
+        "option": "الخيار",
+        "quantity": "الكمية",
+        "shipped_by": "يُشحن عبر :company",
+        "category": "القسم:",
+        "description": "الوصف",
+        "reviews": "التقييمات",
+        "reviews_count": "بناءً على :count تقييم",
+        "stars": ":count نجوم",
+        "no_reviews": "لا توجد تقييمات بعد. يمكن للعملاء تقييم هذا المنتج بعد توصيل طلباتهم.",
+        "related": "قد يعجبك أيضًا"
+    },
+    "cart": {
+        "title": "سلة التسوق",
+        "items": ":count منتج",
+        "empty_title": "سلتك فارغة",
+        "empty_text": "أضف المنتجات التي تعجبك وستظهر هنا.",
+        "continue": "متابعة التسوق",
+        "unit_price": ":price للقطعة",
+        "unavailable": "هذا المنتج لم يعد متوفرًا. أزِله للمتابعة.",
+        "quantity_for": "كمية :name",
+        "remove": "إزالة",
+        "summary": "ملخص الطلب",
+        "coupon_label": "رمز القسيمة",
+        "coupon_apply": "تطبيق",
+        "coupon_applied": "تم تطبيق القسيمة :code",
+        "coupon_remove": "إزالة القسيمة",
+        "subtotal": "المجموع الفرعي",
+        "flash_discount": "خصم التخفيضات الخاطفة",
+        "coupon_discount": "خصم القسيمة",
+        "shipping": "الشحن",
+        "free": "مجاني",
+        "total": "الإجمالي",
+        "checkout": "إتمام الطلب",
+        "cannot_checkout": "عالج المنتجات المشار إليها أعلاه لتتمكن من إتمام الطلب.",
+        "recommended": "مقترحات لك"
+    },
+    "account": {
+        "menu": "قائمة الحساب",
+        "orders": "طلباتي",
+        "wishlist": "مفضلتي",
+        "returns": "المرتجعات",
+        "profile": "الملف الشخصي",
+        "addresses": "العناوين",
+        "support": "الدعم",
+        "sign_out": "تسجيل الخروج",
+        "tabs": {
+            "all": "الكل",
+            "pending": "بانتظار الدفع",
+            "processing": "قيد التجهيز",
+            "shipped": "تم الشحن",
+            "delivered": "تم التوصيل",
+            "cancelled": "ملغاة",
+            "refunded": "مستردة"
+        },
+        "order_number": "الطلب :number",
+        "placed_on": "تاريخ الطلب :date",
+        "order_items": ":count منتج",
+        "view_order": "عرض الطلب",
+        "track_order": "تتبّع الطلب",
+        "orders_empty_title": "لا توجد طلبات بعد",
+        "orders_empty_text": "عندما تُنشئ طلبًا سيظهر هنا لتتمكن من متابعته.",
+        "wishlist_count": ":count منتج محفوظ",
+        "wishlist_empty_title": "مفضلتك فارغة",
+        "wishlist_empty_text": "اضغط على القلب في أي منتج لحفظه لوقت لاحق."
+    },
+    "page": {
+        "more_pages": "صفحات أخرى",
+        "updated": "آخر تحديث :date",
+        "contact_support": "تواصل مع الدعم"
+    },
+    "errors": {
+        "not_found": {
+            "title": "هذه الصفحة غير موجودة",
+            "message": "قد يكون الرابط معطّلًا أو نُقلت الصفحة. جرّب البحث بدلًا من ذلك."
+        },
+        "server_error": {
+            "title": "حدث خطأ ما",
+            "message": "نعمل على إصلاحه. يُرجى المحاولة مرة أخرى بعد قليل.",
+            "retry": "حاول مرة أخرى"
+        }
+    }
+}

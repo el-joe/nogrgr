@@ -211,15 +211,15 @@ return [
             ],
         ],
         'themes-and-home-variants' => [
-            'title' => 'Choosing a theme and home variant',
-            'summary' => 'Your storefront can use a different theme and home layout for each selling country.',
+            'title' => 'Choosing a theme',
+            'summary' => 'Your storefront can use a different theme for each selling country.',
             'sections' => [
                 [
                     'heading' => 'Pick a theme',
                     'steps' => [
                         'Go to Your Store › Themes and preview the available themes.',
                         'Activate a theme for all countries, or choose one per country.',
-                        'Under Your Store › Home variants, pick the home page layout that fits your products.',
+                        'Under Your Store › Themes by country, check which theme each country shows and switch a country back to your store default.',
                     ],
                 ],
                 [
@@ -228,6 +228,30 @@ return [
                         'Use the live preview on the dashboard and switch the country to see exactly what shoppers there will see — theme, prices, banners and products.',
                         'Themes adapt automatically to Arabic and other right-to-left languages, and to light and dark mode.',
                     ],
+                ],
+            ],
+        ],
+        'custom-twig-themes' => [
+            'title' => 'Building your own theme with Twig',
+            'summary' => 'A developer can build a complete storefront theme with Twig, upload it as a ZIP and publish it after the platform reviews it.',
+            'sections' => [
+                [
+                    'heading' => 'How it works',
+                    'steps' => [
+                        'Go to Your Store › Custom theme and download the starter theme.',
+                        'Change the templates, strings and styles, then zip the folder and upload it.',
+                        'Read the validation report, preview the version on your storefront and submit it for review.',
+                        'When the platform approves it, publish it. You can roll back to any approved version at any time.',
+                    ],
+                ],
+                [
+                    'heading' => 'Safe by design',
+                    'body' => [
+                        'Themes run in a sandbox: no PHP code, no access to the server, no remote files and no inline scripts. Checkout, payment, sign-in and order pages always use the secure built-in pages.',
+                        'If the live theme ever fails to load, shoppers see your built-in theme and you get a notification.',
+                    ],
+                    'tip' => 'The developer guide lists every template, variable, function and limit, generated from the data your store really sends.',
+                    'link' => ['label' => 'Open the developer guide', 'route' => 'store.custom-themes.docs'],
                 ],
             ],
         ],

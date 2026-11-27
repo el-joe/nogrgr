@@ -6,6 +6,7 @@ use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Services\Catalog\HomeService;
 use App\Modules\Storefront\Services\Seo\StorefrontSeo;
 use App\Modules\Storefront\Services\StorefrontContext;
+use App\Modules\Storefront\Services\Themes\HomeLayoutService;
 use App\Modules\Storefront\Support\StorefrontView;
 use App\Shared\Http\Controller;
 use Illuminate\Contracts\View\View;
@@ -27,7 +28,11 @@ class HomeController extends Controller
         $theme = app(StorefrontContext::class)->theme();
         $extra = in_array($theme->family, [ThemeFamily::Elora, ThemeFamily::Souqify], true) ? $this->home->elora() + ['variant' => $theme->variant] : [];
 
-        return StorefrontView::make('pages.home', $this->home->sections() + $extra + ['seo' => $this->seo->home()]);
+        return StorefrontView::make('pages.home', $this->home->sections() + $extra + [
+            'seo' => $this->seo->home(),
+            // Home sections in the theme's admin order, disabled ones removed (ADM-087, decision #120).
+            'homeSections' => app(HomeLayoutService::class)->sections($theme),
+        ]);
     }
 
     /**

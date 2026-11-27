@@ -22,14 +22,17 @@ use App\Modules\Platform\Enums\SetupStepState;
 use App\Modules\Platform\Enums\StoreSettingKey;
 use App\Modules\Platform\Models\StoreSetting;
 use App\Modules\Platform\Services\OnboardingService;
+use App\Modules\Storefront\Database\Seeders\ThemeCatalogSeeder;
+use App\Modules\Storefront\Models\Theme;
+use App\Modules\Storefront\Services\StoreThemeService;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 
 /*
 | VEN-007 setup wizard (82:99932): countries (direct first time, change request after),
-| languages (ar / en on, buying a language through the hosted checkout), theme (available
-| after themes), launch; the import-products checklist step follows store_products.
+| languages (ar / en on, buying a language through the hosted checkout), theme (the chosen
+| theme's own name, #119), launch; the import-products checklist step follows store_products.
 */
 
 beforeEach(function (): void {
@@ -153,6 +156,17 @@ it('links the theme step to the themes page and launches the store once countrie
 
     expect($this->tenant->run(fn () => StoreSetting::query()->where('key', StoreSettingKey::LaunchedAt->value)->value('value')))->not->toBeNull();
     ($this->as)()->get(($this->url)('?step=launch'))->assertOk()->assertSee(__('platform::setup.launch.dashboard'));
+});
+
+it('shows the chosen theme by its own name (not the family) on the theme step', function (): void {
+    $this->seed(ThemeCatalogSeeder::class);
+    $theme = Theme::query()->where('slug', 'elora-3')->firstOrFail();
+    $this->tenant->run(fn () => app(StoreThemeService::class)->activate((int) $theme->id));
+
+    ($this->as)()->get(($this->url)('?step=theme'))->assertOk()
+        ->assertSee(__('platform::setup.theme.current', ['theme' => $theme->name]))
+        ->assertDontSee(__('platform::setup.theme.current', ['theme' => 'Elora']).'<', false)
+        ->assertSee($this->tenantUrl($this->tenant, 'admin/store/themes'), false);
 });
 
 it('computes the import-products checklist step from the store\'s products', function (): void {

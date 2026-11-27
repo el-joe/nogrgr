@@ -83,6 +83,10 @@ final class PermissionCatalog
                 'storefront.return-policy.view', 'storefront.return-policy.manage',
                 // Storefront: default banners (P7, ADM-085)
                 'storefront.banners.view', 'storefront.banners.manage',
+                // Storefront: themes catalogue + home sections, template parts (ADM-086 / 087 / 088)
+                'storefront.themes.view', 'storefront.themes.manage',
+                'storefront.template-parts.view', 'storefront.template-parts.manage',
+                'storefront.theme-reviews.view', 'storefront.theme-reviews.manage',
                 // Billing: ledger, settlements, payouts, transactions (P5 batch 4)
                 'finance.ledger.view', 'finance.ledger.manage',
                 'finance.settlements.view',
@@ -160,6 +164,7 @@ final class PermissionCatalog
                 'finance.invoices.view',
                 // P8: store themes
                 'store.themes.view', 'store.themes.manage',
+                'store.custom-themes.view', 'store.custom-themes.manage',
                 // P8: staff & roles (VEN-076 / 077)
                 'settings.staff.view', 'settings.staff.manage',
                 'settings.roles.view', 'settings.roles.manage',

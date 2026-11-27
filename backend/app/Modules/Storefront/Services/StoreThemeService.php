@@ -8,23 +8,33 @@ use App\Modules\Platform\Repositories\Contracts\StoreSettingRepositoryContract;
 use App\Modules\Storefront\DTOs\ResolvedThemeData;
 use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Models\Theme;
+use App\Modules\Storefront\Repositories\Contracts\CustomThemeRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\ThemeRepositoryContract;
 use App\Shared\Services\BaseService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\ValidationException;
 
 /**
- * The store's active theme per country (tenant `store_settings` key `store_theme`,
- * VEN-030 / 030a / 030b service API; the vendor page comes later):
+ * The store's theme per country (tenant `store_settings` key `store_theme`, decisions #76 /
+ * #119 / #120), stored as central catalogue theme ids:
  *
- *   {"default": "ecommet", "countries": {"191": "elora-3"}}
+ *   {"default": 1, "countries": {"191": 4}}
  *
- * A theme slug carries its family and home variant (central `themes` catalogue). A
- * country without its own entry uses the default; a missing / deactivated theme falls
- * back to the tenant's registration family (`theme_family`) and then to Ecommet.
+ * Resolution for a shopping country: the country's own theme → the store default → (no
+ * setting saved yet) the registration family's first theme → the platform default theme
+ * → the first active theme. A candidate counts only while it is active and allowed in that
+ * country (theme_country, empty = everywhere), so a deactivated or country-restricted
+ * theme falls back without touching the store's saved choice. Leftover slug values (before
+ * the id migration) are still read.
  */
 class StoreThemeService extends BaseService
 {
     public const DEFAULT_SLUG = 'ecommet';
+
+    /**
+     * @var Collection<int, Theme>|null
+     */
+    private ?Collection $active = null;
 
     /**
      * @var array<string, ResolvedThemeData>
@@ -35,85 +45,173 @@ class StoreThemeService extends BaseService
         private readonly StoreSettingRepositoryContract $settings,
         private readonly ThemeRepositoryContract $themes,
         private readonly StoreCountries $countries,
+        private readonly CustomThemeRepositoryContract $customThemes,
     ) {}
 
+    /**
+     * The theme a country renders: the built-in catalogue theme, with the store's live
+     * custom Twig theme version on top when it has one (decision #121).
+     */
     public function resolve(?int $countryId): ResolvedThemeData
     {
-        $config = $this->config();
-        $slug = ($countryId !== null ? ($config['countries'][$countryId] ?? null) : null) ?? $config['default'];
-        $key = (tenancy()->initialized ? (string) tenant()?->getTenantKey() : 'central').'|'.($slug ?? '');
+        $builtIn = $this->resolveBuiltIn($countryId);
+
+        if (! tenancy()->initialized) {
+            return $builtIn;
+        }
+
+        $live = $this->customThemes->liveVersionForTenant((int) tenant()?->getTenantKey());
+
+        return $live !== null ? $builtIn->withCustom((int) $live->id, (string) $live->name) : $builtIn;
+    }
+
+    /**
+     * The built-in catalogue theme a country renders (no custom theme overlay).
+     */
+    public function resolveBuiltIn(?int $countryId): ResolvedThemeData
+    {
+        $key = (tenancy()->initialized ? (string) tenant()?->getTenantKey() : 'central').'|'.($countryId ?? '');
 
         if (isset($this->memo[$key])) {
             return $this->memo[$key];
         }
 
-        $theme = $slug !== null ? $this->themes->findActiveBySlug($slug) : null;
-        $theme ??= $this->registrationTheme();
+        $theme = $this->resolveTheme($countryId);
 
         if ($theme !== null) {
-            return $this->memo[$key] = new ResolvedThemeData($theme->slug, $theme->family, (int) $theme->variant);
+            return $this->memo[$key] = ResolvedThemeData::fromTheme($theme);
         }
 
-        // Catalogue not seeded / theme off: keep the registration family (variant 1).
+        // Catalogue not seeded / every theme off: keep the registration family (variant 1).
         $family = tenancy()->initialized ? ThemeFamily::tryFrom((string) tenant('theme_family')) : null;
 
         return $this->memo[$key] = new ResolvedThemeData($family->value ?? self::DEFAULT_SLUG, $family ?? ThemeFamily::Ecommet, 1);
     }
 
     /**
-     * @return array{default: string|null, countries: array<int, string>}
+     * The catalogue theme a country renders (null when the catalogue has no usable theme).
+     */
+    public function resolveTheme(?int $countryId): ?Theme
+    {
+        $config = $this->config();
+        $candidates = [
+            $countryId !== null ? ($config['countries'][$countryId] ?? null) : null,
+            $config['default'],
+        ];
+
+        foreach ($candidates as $id) {
+            $theme = $id !== null ? $this->activeThemes()->find($id) : null;
+
+            if ($theme instanceof Theme && $theme->allowsCountry($countryId)) {
+                return $theme;
+            }
+        }
+
+        if (! $config['saved']) {
+            $registration = $this->registrationTheme($countryId);
+
+            if ($registration !== null) {
+                return $registration;
+            }
+        }
+
+        $platform = $this->activeThemes()->firstWhere('is_default', true);
+
+        if ($platform instanceof Theme && $platform->allowsCountry($countryId)) {
+            return $platform;
+        }
+
+        return $this->activeThemes()->first(static fn (Theme $theme): bool => $theme->allowsCountry($countryId));
+    }
+
+    /**
+     * The saved setting (ids). saved = the store has saved a theme choice (or a reset) at least once.
+     *
+     * @return array{default: int|null, countries: array<int, int>, saved: bool}
      */
     public function config(): array
     {
-        $value = $this->settings->get(StoreSettingKey::StoreTheme);
-        $value = is_array($value) ? $value : [];
+        $raw = $this->settings->get(StoreSettingKey::StoreTheme);
+        $value = is_array($raw) ? $raw : [];
         $countries = is_array($value['countries'] ?? null) ? $value['countries'] : [];
 
         $map = [];
 
-        foreach ($countries as $countryId => $slug) {
-            if (is_numeric($countryId) && is_string($slug) && $slug !== '') {
-                $map[(int) $countryId] = $slug;
+        foreach ($countries as $countryId => $theme) {
+            $id = $this->toId($theme);
+
+            if (is_numeric($countryId) && $id !== null) {
+                $map[(int) $countryId] = $id;
             }
         }
 
         return [
-            'default' => is_string($value['default'] ?? null) ? $value['default'] : null,
+            'default' => $this->toId($value['default'] ?? null),
             'countries' => $map,
+            'saved' => is_array($raw),
         ];
     }
 
     /**
-     * Activate a theme for the whole store (no countries) or for the given countries (VEN-030a).
+     * Active catalogue themes (allowed countries loaded), display order.
+     *
+     * @return Collection<int, Theme>
+     */
+    public function activeThemes(): Collection
+    {
+        return $this->active ??= $this->themes->activeWithCountries();
+    }
+
+    /**
+     * Active themes allowed in at least one of the given countries (or everywhere).
+     *
+     * @param  list<int>  $countryIds
+     * @return Collection<int, Theme>
+     */
+    public function availableIn(array $countryIds): Collection
+    {
+        return $this->activeThemes()
+            ->filter(static fn (Theme $theme): bool => $theme->countries->isEmpty() || $countryIds === [] || array_intersect($theme->countries->modelKeys(), $countryIds) !== [])
+            ->values();
+    }
+
+    /**
+     * Activate a theme (id or slug) for the whole store (no countries) or for the given
+     * selling countries (VEN-030a). Each country must be one the theme is allowed in.
      *
      * @param  list<int>  $countryIds
      */
-    public function activate(string $slug, array $countryIds = []): void
+    public function activate(int|string $theme, array $countryIds = []): Theme
     {
-        $theme = $this->activeTheme($slug);
+        $model = $this->activeTheme($theme);
         $config = $this->config();
 
         if ($countryIds === []) {
-            $config['default'] = $theme->slug;
+            $config['default'] = (int) $model->id;
         } else {
             foreach ($this->sellingCountries($countryIds) as $countryId) {
-                $config['countries'][$countryId] = $theme->slug;
+                if (! $model->allowsCountry($countryId)) {
+                    throw ValidationException::withMessages(['countries' => __('content::vendor_themes.errors.country_not_allowed', ['theme' => $model->name])]);
+                }
+
+                $config['countries'][$countryId] = (int) $model->id;
             }
         }
 
         $this->save($config);
+
+        return $model;
     }
 
     /**
-     * Pick the home variant of a family for one country (VEN-030b): the theme of that
-     * family + variant in the catalogue.
+     * Pick the theme of a family + variant for one country (kept for the setup / API callers).
      */
     public function setCountryVariant(int $countryId, ThemeFamily $family, int $variant): void
     {
-        $theme = $this->themes->active()->first(static fn (Theme $theme): bool => $theme->family === $family && (int) $theme->variant === $variant)
+        $theme = $this->activeThemes()->first(static fn (Theme $theme): bool => $theme->family === $family && (int) $theme->variant === $variant)
             ?? throw ValidationException::withMessages(['variant' => __('validation.exists', ['attribute' => 'variant'])]);
 
-        $this->activate($theme->slug, [$countryId]);
+        $this->activate((int) $theme->id, [$countryId]);
     }
 
     /**
@@ -127,18 +225,60 @@ class StoreThemeService extends BaseService
     }
 
     /**
-     * @param  array{default: string|null, countries: array<int, string>}  $config
+     * Forget every choice: the whole store uses the platform default theme.
+     */
+    public function resetToPlatformDefault(): void
+    {
+        $this->save(['default' => null, 'countries' => [], 'saved' => true]);
+    }
+
+    /**
+     * Drop the per-request memo (theme saved, custom theme published / switched).
+     */
+    public function forget(): void
+    {
+        $this->memo = [];
+        $this->customThemes->forget();
+    }
+
+    /**
+     * @param  array{default: int|null, countries: array<int, int>, saved?: bool}  $config
      */
     private function save(array $config): void
     {
-        $this->settings->put(StoreSettingKey::StoreTheme, $config);
+        $countries = [];
+
+        foreach ($config['countries'] as $countryId => $id) {
+            $countries[(string) $countryId] = $id;
+        }
+
+        $this->settings->put(StoreSettingKey::StoreTheme, ['default' => $config['default'], 'countries' => (object) $countries]);
         $this->memo = [];
     }
 
-    private function activeTheme(string $slug): Theme
+    private function toId(mixed $value): ?int
     {
-        return $this->themes->findActiveBySlug($slug)
-            ?? throw ValidationException::withMessages(['theme' => __('validation.exists', ['attribute' => 'theme'])]);
+        if (is_int($value) || (is_string($value) && ctype_digit($value))) {
+            return (int) $value;
+        }
+
+        if (is_string($value) && $value !== '') {
+            $theme = $this->activeThemes()->firstWhere('slug', $value) ?? $this->themes->findBySlug($value);
+
+            return $theme !== null ? (int) $theme->id : null;
+        }
+
+        return null;
+    }
+
+    private function activeTheme(int|string $theme): Theme
+    {
+        $model = is_int($theme) || ctype_digit($theme)
+            ? $this->activeThemes()->find((int) $theme)
+            : $this->activeThemes()->firstWhere('slug', $theme);
+
+        return $model instanceof Theme ? $model
+            : throw ValidationException::withMessages(['theme' => __('validation.exists', ['attribute' => 'theme'])]);
     }
 
     /**
@@ -160,14 +300,14 @@ class StoreThemeService extends BaseService
         return $ids;
     }
 
-    private function registrationTheme(): ?Theme
+    private function registrationTheme(?int $countryId): ?Theme
     {
         $family = tenancy()->initialized ? ThemeFamily::tryFrom((string) tenant('theme_family')) : null;
 
         if ($family === null) {
-            return $this->themes->findActiveBySlug(self::DEFAULT_SLUG);
+            return null;
         }
 
-        return $this->themes->active()->first(static fn (Theme $theme): bool => $theme->family === $family);
+        return $this->activeThemes()->first(static fn (Theme $theme): bool => $theme->family === $family && $theme->allowsCountry($countryId));
     }
 }

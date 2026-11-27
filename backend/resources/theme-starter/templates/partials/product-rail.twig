@@ -1,0 +1,19 @@
+{#- Horizontal, swipeable product row (touch swipe, trackpad and mouse drag).
+    Include with: {% include "partials/product-rail.twig" with {title: "…", items: products, more_url: url('new_in')} only %} -#}
+{% import "partials/macros.twig" as ui %}
+{% if items is not empty %}
+    <section class="section">
+        <div class="container">
+            {{ ui.section_head(title, more_url|default(null)) }}
+            <div class="rail" data-rail>
+                <button class="rail__btn rail__btn--prev" type="button" data-rail-prev aria-label="{{ t('common.previous') }}">‹</button>
+                <ul class="rail__track" data-rail-track tabindex="0" aria-label="{{ title }}">
+                    {% for item in items %}
+                        <li class="rail__item">{% include "partials/product-card.twig" with {card: item} only %}</li>
+                    {% endfor %}
+                </ul>
+                <button class="rail__btn rail__btn--next" type="button" data-rail-next aria-label="{{ t('common.next') }}">›</button>
+            </div>
+        </div>
+    </section>
+{% endif %}

@@ -147,6 +147,8 @@ return [
         'refunds' => 'Refunds',
         'storefront.return-policy' => 'Return policy',
         'storefront.banners' => 'Default banners',
+        'storefront.themes' => 'Themes catalogue',
+        'storefront.template-parts' => 'Template parts',
         'content.posts' => 'Blog posts',
         'content.post-categories' => 'Blog categories',
         'content.pages' => 'Static pages',

@@ -1,0 +1,192 @@
+{
+    "common": {
+        "skip_to_content": "Skip to content",
+        "home": "Home",
+        "breadcrumbs": "Breadcrumbs",
+        "view_all": "View all",
+        "browse_categories": "Browse categories",
+        "back_home": "Back to the home page",
+        "previous": "Previous",
+        "next": "Next"
+    },
+    "header": {
+        "menu": "Menu",
+        "search_label": "Search products",
+        "search_placeholder": "What are you looking for?",
+        "search_submit": "Search",
+        "account_menu": "Your account",
+        "hello": "Hi, :name",
+        "sign_in": "Sign in",
+        "wishlist": "Wishlist",
+        "cart": "Cart",
+        "categories": "Categories",
+        "all_categories": "All categories"
+    },
+    "preferences": {
+        "language": "Language",
+        "currency": "Currency",
+        "country": "Deliver to",
+        "apply": "Apply"
+    },
+    "footer": {
+        "follow_us": "Follow us",
+        "columns": {
+            "company": "Company",
+            "service": "Customer service",
+            "help": "Help",
+            "more": "More"
+        },
+        "newsletter_title": "Stay in the loop",
+        "newsletter_text": "Get new arrivals and offers in your inbox.",
+        "newsletter_email": "Your e-mail address",
+        "newsletter_submit": "Subscribe",
+        "copyright": "© :year :store. All rights reserved."
+    },
+    "status": {
+        "added": "Added to your cart.",
+        "error": "Something went wrong. Please try again.",
+        "favorited": "Saved to your wishlist.",
+        "unfavorited": "Removed from your wishlist.",
+        "subscribed": "Thanks for subscribing!"
+    },
+    "pagination": {
+        "label": "Pages",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page :number"
+    },
+    "home": {
+        "featured": "Featured",
+        "shop_now": "Shop now",
+        "shop_by_category": "Shop by category",
+        "flash_sale": "Flash sale",
+        "flash_sale_off": "Up to :percent% off",
+        "flash_sale_ends": "Ends :date",
+        "flash_deals": "Today's deals",
+        "best_sellers": "Best sellers",
+        "new_in": "New in",
+        "top_rated": "Top rated",
+        "clearance": "Clearance",
+        "empty_title": "No products to show yet",
+        "empty_text": "New products will appear here as soon as the store adds them. Meanwhile, have a look around the categories."
+    },
+    "listing": {
+        "count": ":count products",
+        "sort_by": "Sort by",
+        "empty_title": "No products here",
+        "empty_text": "Try another category or come back later."
+    },
+    "category": {
+        "subcategories": "Subcategories",
+        "empty_title": "This category is empty",
+        "empty_text": "There are no products in this category right now. Browse other categories instead."
+    },
+    "categories": {
+        "title": "All categories",
+        "empty_title": "No categories yet",
+        "empty_text": "The store has not published any categories."
+    },
+    "search": {
+        "title": "Search",
+        "results_for": "Results for “:term”",
+        "empty_title": "Nothing found for “:term”",
+        "start_title": "Search the store",
+        "empty_text": "Check the spelling, use fewer words or browse the categories.",
+        "popular": "Popular right now"
+    },
+    "product": {
+        "gallery": "Product images",
+        "show_image": "Show image :number",
+        "discount": "-:percent%",
+        "best_seller": "Best seller",
+        "favorite": "Save :name to your wishlist",
+        "rating_value": "Rated :rating out of 5",
+        "low_stock": "Only :count left",
+        "out_of_stock": "Out of stock",
+        "choose_options": "Choose options",
+        "add_to_cart": "Add to cart",
+        "flash_sale": "Flash sale: :percent% off",
+        "flash_sale_ends": "ends :date",
+        "sold": ":count sold",
+        "option": "Option",
+        "quantity": "Quantity",
+        "shipped_by": "Shipped by :company",
+        "category": "Category:",
+        "description": "Description",
+        "reviews": "Reviews",
+        "reviews_count": "Based on :count reviews",
+        "stars": ":count stars",
+        "no_reviews": "No reviews yet. Customers can review this product after their order is delivered.",
+        "related": "You may also like"
+    },
+    "cart": {
+        "title": "Your cart",
+        "items": ":count items",
+        "empty_title": "Your cart is empty",
+        "empty_text": "Add products you like and they will show up here.",
+        "continue": "Continue shopping",
+        "unit_price": ":price each",
+        "unavailable": "This product is no longer available. Remove it to continue.",
+        "quantity_for": "Quantity of :name",
+        "remove": "Remove",
+        "summary": "Order summary",
+        "coupon_label": "Coupon code",
+        "coupon_apply": "Apply",
+        "coupon_applied": "Coupon :code applied",
+        "coupon_remove": "Remove coupon",
+        "subtotal": "Subtotal",
+        "flash_discount": "Flash sale discount",
+        "coupon_discount": "Coupon discount",
+        "shipping": "Shipping",
+        "free": "Free",
+        "total": "Total",
+        "checkout": "Go to checkout",
+        "cannot_checkout": "Fix the items marked above to continue to checkout.",
+        "recommended": "Recommended for you"
+    },
+    "account": {
+        "menu": "Account menu",
+        "orders": "My orders",
+        "wishlist": "My wishlist",
+        "returns": "Returns",
+        "profile": "Profile",
+        "addresses": "Addresses",
+        "support": "Support",
+        "sign_out": "Sign out",
+        "tabs": {
+            "all": "All",
+            "pending": "Awaiting payment",
+            "processing": "Processing",
+            "shipped": "Shipped",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled",
+            "refunded": "Refunded"
+        },
+        "order_number": "Order :number",
+        "placed_on": "Placed on :date",
+        "order_items": ":count items",
+        "view_order": "View order",
+        "track_order": "Track order",
+        "orders_empty_title": "No orders yet",
+        "orders_empty_text": "When you place an order it will show up here so you can follow it.",
+        "wishlist_count": ":count saved products",
+        "wishlist_empty_title": "Your wishlist is empty",
+        "wishlist_empty_text": "Tap the heart on any product to save it for later."
+    },
+    "page": {
+        "more_pages": "More pages",
+        "updated": "Last updated :date",
+        "contact_support": "Contact support"
+    },
+    "errors": {
+        "not_found": {
+            "title": "This page doesn’t exist",
+            "message": "The link may be broken or the page may have moved. Try searching instead."
+        },
+        "server_error": {
+            "title": "Something went wrong",
+            "message": "We are fixing it. Please try again in a moment.",
+            "retry": "Try again"
+        }
+    }
+}

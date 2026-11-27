@@ -2,7 +2,9 @@
 
 namespace App\Modules\Storefront\Support;
 
+use App\Modules\Storefront\Services\CustomThemes\ThemeViewModels;
 use App\Modules\Storefront\Services\StorefrontContext;
+use App\Modules\Storefront\Support\CustomThemes\CustomThemeView;
 use Illuminate\Contracts\View\View;
 
 /**
@@ -19,6 +21,14 @@ final class StorefrontView
      */
     public static function make(string $name, array $data = []): View
     {
+        $theme = app(StorefrontContext::class)->theme();
+
+        // A store with a live custom Twig theme (or a previewed version) renders its themed
+        // pages through it; secure pages stay on the built-in theme (decision #121).
+        if ($theme->customVersionId !== null && app(ThemeViewModels::class)->templateFor($name, $data) !== null) {
+            return new CustomThemeView($theme->customVersionId, $name, $data);
+        }
+
         return view(self::resolve($name), $data);
     }
 

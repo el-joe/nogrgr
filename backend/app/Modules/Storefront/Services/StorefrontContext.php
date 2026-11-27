@@ -12,6 +12,7 @@ use App\Modules\Localization\Services\StoreCountries;
 use App\Modules\Localization\Services\StoreCurrencyService;
 use App\Modules\Platform\Models\Tenant;
 use App\Modules\Storefront\DTOs\ResolvedThemeData;
+use App\Modules\Storefront\Services\CustomThemes\CustomThemePreviewService;
 use App\Modules\Storefront\Services\Themes\ThemePreviewService;
 use App\Shared\Money\Money;
 use App\Shared\Support\Locale;
@@ -54,6 +55,7 @@ class StorefrontContext
         private readonly MoneyPresenter $money,
         private readonly ThemePreviewService $previews,
         private readonly StoreCurrencyService $storeCurrencies,
+        private readonly CustomThemePreviewService $customPreviews,
     ) {}
 
     public function country(): ?Country
@@ -78,6 +80,11 @@ class StorefrontContext
         if ($this->previewRequest !== request()) {
             $this->previewRequest = request();
             $this->preview = $this->previews->current(request());
+
+            // A custom Twig theme version preview (decision #121) renders over the store's built-in theme.
+            if ($this->preview === null && ($custom = $this->customPreviews->current(request())) !== null) {
+                $this->preview = $this->themes->resolveBuiltIn($this->countryId())->withCustom($custom->id, $custom->name.' '.$custom->version);
+            }
 
             // A preview link may carry the shopping country (decision #85).
             if ($this->preview !== null && request()->query('tp_country') !== null) {

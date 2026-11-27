@@ -38,7 +38,7 @@ use Illuminate\Support\Collection;
  *  - Languages: ar + en are always on; any other active priced language is bought
  *    (AddonPurchaseService::purchaseLanguage, decision #45) and its invoice paid through
  *    the hosted checkout (InvoiceCheckoutService).
- *  - Theme: chosen on the themes page (P7); until it exists the step says so.
+ *  - Theme: chosen on the themes page (VEN-030); the step shows the theme name (#119).
  *  - Launch: stamps `launched_at` in the store settings.
  */
 class SetupWizardService extends BaseService
@@ -222,11 +222,28 @@ class SetupWizardService extends BaseService
         return is_string($family) && $family !== '' ? $family : null;
     }
 
+    /**
+     * Name of the store's theme (decision #119: one of the 13 themes, not the family):
+     * the store default chosen on Store › Themes, else the theme the store renders by
+     * default (sign-up family / platform default).
+     */
     public function themeLabel(Tenant $tenant): ?string
     {
         $family = $this->themeFamily($tenant);
 
-        return $family !== null ? ucfirst($family) : null;
+        if ($family === null) {
+            return null;
+        }
+
+        if (tenancy()->initialized && (string) tenant()?->getTenantKey() === (string) $tenant->getKey()) {
+            $theme = $this->themes->resolveTheme(null);
+
+            if ($theme !== null) {
+                return (string) $theme->name;
+            }
+        }
+
+        return ucfirst($family);
     }
 
     public function launchedAt(): ?string

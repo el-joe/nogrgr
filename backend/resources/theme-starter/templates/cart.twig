@@ -1,0 +1,78 @@
+{% extends "layout.twig" %}
+{% import "partials/macros.twig" as ui %}
+
+{% block content %}
+    <div class="container page">
+        <h1 class="page-title">{{ t('cart.title') }}</h1>
+
+        {% if cart_page.lines is empty %}
+            {{ ui.empty(t('cart.empty_title'), t('cart.empty_text'), url('home'), t('cart.continue')) }}
+        {% else %}
+            <div class="cart">
+                <section class="cart__lines" aria-label="{{ t('cart.items', {count: cart_page.items_count}) }}">
+                    <p class="muted">{{ t('cart.items', {count: cart_page.items_count}) }}</p>
+                    <ul class="cart-lines">
+                        {% for line in cart_page.lines %}
+                            <li class="cart-line{% if not line.available %} is-unavailable{% endif %}">
+                                <img class="cart-line__img" src="{{ line.image ?: asset('img/placeholder.svg') }}" alt="" width="96" height="96" loading="lazy">
+                                <div class="cart-line__info">
+                                    <h2 class="cart-line__name">
+                                        {% if line.url %}<a href="{{ line.url }}">{{ line.name }}</a>{% else %}{{ line.name }}{% endif %}
+                                    </h2>
+                                    {% if line.variant %}<p class="muted">{{ line.variant }}</p>{% endif %}
+                                    <p class="muted">{{ t('cart.unit_price', {price: line.unit_price}) }}</p>
+                                    {% if line.issue %}<p class="alert alert--warning">{{ line.issue }}</p>{% elseif not line.available %}<p class="alert alert--warning">{{ t('cart.unavailable') }}</p>{% endif %}
+                                </div>
+                                <div class="cart-line__controls">
+                                    <label class="field field--qty">
+                                        <span class="sr-only">{{ t('cart.quantity_for', {name: line.name}) }}</span>
+                                        <input type="number" value="{{ line.quantity }}" min="1"{% if line.max_quantity %} max="{{ line.max_quantity }}"{% endif %} inputmode="numeric" data-nt-cart-qty data-line-id="{{ line.id }}"{% if not line.available %} disabled{% endif %}>
+                                    </label>
+                                    <p class="cart-line__total">{{ line.total }}</p>
+                                    <button class="link-btn" type="button" data-nt-cart-remove data-line-id="{{ line.id }}">{{ t('cart.remove') }}</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+
+                <aside class="cart__summary" aria-label="{{ t('cart.summary') }}">
+                    <h2 class="summary-title">{{ t('cart.summary') }}</h2>
+
+                    {% if cart_page.coupon and cart_page.coupon.applied %}
+                        <div class="coupon-applied">
+                            <span>{{ t('cart.coupon_applied', {code: cart_page.coupon.code}) }}</span>
+                            <button class="link-btn" type="button" data-nt-coupon-remove>{{ t('cart.coupon_remove') }}</button>
+                        </div>
+                    {% else %}
+                        <form class="coupon-form" data-nt-coupon-form>
+                            <label class="sr-only" for="coupon-code">{{ t('cart.coupon_label') }}</label>
+                            <input id="coupon-code" type="text" name="code" required maxlength="50" placeholder="{{ t('cart.coupon_label') }}" autocomplete="off">
+                            <button class="btn btn--ghost" type="submit">{{ t('cart.coupon_apply') }}</button>
+                        </form>
+                    {% endif %}
+                    {% if cart_page.coupon and cart_page.coupon.message %}<p class="muted">{{ cart_page.coupon.message }}</p>{% endif %}
+
+                    <dl class="totals">
+                        <div><dt>{{ t('cart.subtotal') }}</dt><dd>{{ cart_page.totals.subtotal }}</dd></div>
+                        {% if cart_page.totals.flash_discount != money(0) %}<div class="is-discount"><dt>{{ t('cart.flash_discount') }}</dt><dd>-{{ cart_page.totals.flash_discount }}</dd></div>{% endif %}
+                        {% if cart_page.totals.coupon_discount != money(0) %}<div class="is-discount"><dt>{{ t('cart.coupon_discount') }}</dt><dd>-{{ cart_page.totals.coupon_discount }}</dd></div>{% endif %}
+                        <div><dt>{{ t('cart.shipping') }}</dt><dd>{{ cart_page.shipping and cart_page.shipping.free ? t('cart.free') : cart_page.totals.shipping }}</dd></div>
+                        <div class="totals__grand"><dt>{{ t('cart.total') }}</dt><dd>{{ cart_page.totals.grand_total }}</dd></div>
+                    </dl>
+
+                    {% if cart_page.shipping and cart_page.shipping.message %}<p class="muted">{{ cart_page.shipping.message }}</p>{% endif %}
+
+                    {% if cart_page.can_checkout %}
+                        <a class="btn btn--large btn--block" href="{{ cart_page.checkout_url ?: url('checkout') }}">{{ t('cart.checkout') }}</a>
+                    {% else %}
+                        <p class="alert alert--warning">{{ t('cart.cannot_checkout') }}</p>
+                    {% endif %}
+                    <a class="btn btn--ghost btn--block" href="{{ url('home') }}">{{ t('cart.continue') }}</a>
+                </aside>
+            </div>
+        {% endif %}
+    </div>
+
+    {% include "partials/product-rail.twig" with {title: t('cart.recommended'), items: cart_page.recommended} only %}
+{% endblock %}

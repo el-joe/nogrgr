@@ -10,7 +10,7 @@ use Illuminate\Validation\Validator;
 
 /**
  * Activate a theme (VEN-030 card action / VEN-030a "Use … in" modal):
- * {theme: slug, default: 1|0, country_ids: [selling country ids]} — at least one target.
+ * {theme: catalogue theme id, default: 1|0, country_ids: [selling country ids]} — at least one target.
  */
 class ThemeActivationRequest extends FormRequest
 {
@@ -27,7 +27,7 @@ class ThemeActivationRequest extends FormRequest
         $pages = app(ThemePageService::class);
 
         return [
-            'theme' => ['required', 'string', 'max:64', Rule::in($pages->catalogue()->pluck('slug')->all())],
+            'theme' => ['required', 'integer', Rule::in($pages->catalogue()->modelKeys())],
             'default' => ['sometimes', 'boolean'],
             'country_ids' => ['sometimes', 'array', 'max:300'],
             'country_ids.*' => ['integer', 'distinct', Rule::in(array_keys($pages->countries()))],
@@ -41,6 +41,7 @@ class ThemeActivationRequest extends FormRequest
     {
         return [
             'theme.in' => __('content::vendor_themes.errors.theme_unavailable'),
+            'theme.integer' => __('content::vendor_themes.errors.theme_unavailable'),
             'country_ids.*.in' => __('content::vendor_themes.errors.country_not_sold'),
         ];
     }
@@ -62,7 +63,7 @@ class ThemeActivationRequest extends FormRequest
     public function toData(): ThemePageActivationData
     {
         return new ThemePageActivationData(
-            slug: (string) $this->validated('theme'),
+            themeId: (int) $this->validated('theme'),
             asDefault: $this->boolean('default'),
             countryIds: array_values(array_map('intval', (array) $this->validated('country_ids', []))),
         );

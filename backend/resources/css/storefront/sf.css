@@ -888,3 +888,16 @@
         }
     }
 }
+
+/*
+ * Product card template part (ADM-088, decision #120): the theme's default part can hide
+ * the star rating and the second (hover) image on every family's cards.
+ */
+[data-card-rating='off'] [data-product] .eco-stars {
+    display: none;
+}
+
+[data-card-hover='off'] [data-product] [data-hover-image],
+[data-card-hover='off'] [data-product] .eco-card-img img + img {
+    display: none;
+}

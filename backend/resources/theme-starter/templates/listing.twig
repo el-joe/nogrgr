@@ -1,0 +1,10 @@
+{% extends "layout.twig" %}
+{% import "partials/macros.twig" as ui %}
+
+{% block content %}
+    <div class="container page">
+        {{ ui.breadcrumbs(listing.breadcrumbs, store.home_url) }}
+        <h1 class="page-title">{{ listing.title }}</h1>
+        {% include "partials/listing-body.twig" with {listing: listing, empty_title: t('listing.empty_title'), empty_text: t('listing.empty_text')} only %}
+    </div>
+{% endblock %}

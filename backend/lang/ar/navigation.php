@@ -73,6 +73,8 @@ return [
         'reports' => 'التقارير',
         'storefront' => 'واجهة المتجر',
         'themes' => 'القوالب',
+        'home_sections' => 'أقسام الرئيسية',
+        'template_parts' => 'أجزاء القوالب',
         'theme_review_queue' => 'مراجعة القوالب',
         'banners' => 'البانرات',
         'return_policy' => 'سياسة الإرجاع',
@@ -136,6 +138,7 @@ return [
         // P8: store themes
         'themes' => 'القوالب',
         'home_variants' => 'تصاميم الرئيسية',
+        'custom_theme' => 'القالب المخصص',
         'invoices' => 'الفواتير',
         'marketing' => 'الإعلانات والتسويق',
         'coupons' => 'الكوبونات',

@@ -21,7 +21,8 @@ export function bindAjaxForms(root = document) {
             const method = form.querySelector('input[name="_method"]')?.value ?? form.getAttribute('method') ?? 'POST';
             // getAttribute: a field named "action" shadows form.action (e.g. refund action modals).
             const url = new URL(form.getAttribute('action') || window.location.href, window.location.href).href;
-            const payload = await http.request(method, url, { data: new FormData(form), form });
+            // The clicked submit button's name / value is sent too (e.g. approve / reject on one form).
+            const payload = await http.request(method, url, { data: new FormData(form, event.submitter?.form === form ? event.submitter : undefined), form });
             form.dispatchEvent(new CustomEvent('ajax:success', { detail: payload, bubbles: true }));
 
             // A modal form opened as a full page (panels/remote-modal-page) returns to its list.

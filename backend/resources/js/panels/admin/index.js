@@ -29,6 +29,7 @@ const pages = {
     'admin-finance': () => import('./finance.js'),
     'admin-content': () => import('./content.js'),
     'admin-banners': () => import('./banners.js'),
+    'admin-themes': () => import('./themes.js'),
     'admin-promotions': () => import('./promotions.js'),
     'admin-reports': () => import('./reports.js'),
     'admin-support': () => import('./support.js'),

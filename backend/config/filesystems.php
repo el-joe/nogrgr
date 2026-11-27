@@ -51,6 +51,20 @@ return [
             'report' => false,
         ],
 
+        /*
+         * Custom Twig theme packages (decision #121): extracted files of every uploaded
+         * version ({tenant}/{version}/…) and the compiled template cache (compiled/…).
+         * Private, central (not re-rooted per store); assets are streamed by the
+         * storefront `theme-assets` route, never served from here directly.
+         */
+        'custom-themes' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/custom-themes'),
+            'serve' => false,
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

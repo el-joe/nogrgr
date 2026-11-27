@@ -1,0 +1,6 @@
+{#- Responsive product grid. Include with: {% include "partials/product-grid.twig" with {items: products} only %} -#}
+<ul class="product-grid">
+    {% for item in items %}
+        <li>{% include "partials/product-card.twig" with {card: item} only %}</li>
+    {% endfor %}
+</ul>

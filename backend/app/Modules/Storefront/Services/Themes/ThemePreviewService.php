@@ -78,7 +78,7 @@ class ThemePreviewService extends BaseService
 
         $theme = $this->themes->findActiveBySlug($preview['slug']);
 
-        return $theme !== null ? new ResolvedThemeData($theme->slug, $theme->family, (int) $theme->variant, (string) $theme->name) : null;
+        return $theme !== null ? ResolvedThemeData::fromTheme($theme, true) : null;
     }
 
     private function start(Request $request): void

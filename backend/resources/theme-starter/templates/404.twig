@@ -1,0 +1,16 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div class="container page error-page">
+        <img src="{{ asset('img/empty.svg') }}" alt="" width="140" height="140" class="empty-state__art">
+        <p class="error-page__code">{{ error.code|default(404) }}</p>
+        <h1 class="page-title">{{ error.title|default(t('errors.not_found.title')) }}</h1>
+        <p class="lead">{{ error.message|default(t('errors.not_found.message')) }}</p>
+        <form class="search-big" action="{{ url('search') }}" method="get" role="search">
+            <label class="sr-only" for="error-search-q">{{ t('header.search_label') }}</label>
+            <input id="error-search-q" type="search" name="q" placeholder="{{ t('header.search_placeholder') }}" maxlength="100">
+            <button class="btn" type="submit">{{ t('header.search_submit') }}</button>
+        </form>
+        <p><a class="btn btn--ghost" href="{{ url('home') }}">{{ t('common.back_home') }}</a></p>
+    </div>
+{% endblock %}

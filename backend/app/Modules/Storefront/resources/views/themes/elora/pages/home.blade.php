@@ -30,7 +30,7 @@
             <p class="max-w-md text-sm text-sf-muted">{{ __st('catalog.home.empty_body') }}</p>
         </section>
     @else
-        @foreach (EloraVariants::sections($variant) as $section)
+        @foreach ($homeSections ?? EloraVariants::sections($variant) as $section)
             @switch($section['type'])
                 @case('hero')
                     <x-sf::elora.section.hero :banners="$hero" :style="$section['style']" />

@@ -1,0 +1,14 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div class="container page error-page">
+        <img src="{{ asset('img/empty.svg') }}" alt="" width="140" height="140" class="empty-state__art">
+        <p class="error-page__code">{{ error.code|default(500) }}</p>
+        <h1 class="page-title">{{ error.title|default(t('errors.server_error.title')) }}</h1>
+        <p class="lead">{{ error.message|default(t('errors.server_error.message')) }}</p>
+        <p class="error-page__actions">
+            <a class="btn" href="{{ request.url }}">{{ t('errors.server_error.retry') }}</a>
+            <a class="btn btn--ghost" href="{{ url('home') }}">{{ t('common.back_home') }}</a>
+        </p>
+    </div>
+{% endblock %}

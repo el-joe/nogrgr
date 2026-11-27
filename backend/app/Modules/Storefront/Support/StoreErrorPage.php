@@ -2,6 +2,9 @@
 
 namespace App\Modules\Storefront\Support;
 
+use App\Modules\Storefront\Services\CustomThemes\CustomThemeService;
+use App\Modules\Storefront\Services\CustomThemes\CustomTwigThemeRenderer;
+use App\Modules\Storefront\Services\StorefrontContext;
 use App\Shared\Tenancy\CentralDomains;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
@@ -39,10 +42,39 @@ final class StoreErrorPage
         }
 
         try {
+            $theme = app(StorefrontContext::class)->theme();
+
+            // Custom Twig theme 404 / 500 (decision #121): a Blade bridge renders the theme's
+            // template and falls back to the built-in view on any error.
+            if ($theme->customVersionId !== null && in_array((int) $code, [404, 500], true)) {
+                return 'storefront::custom-themes.error-'.(int) $code;
+            }
+
             return StorefrontView::resolve(self::VIEWS[(int) $code]);
         } catch (Throwable) {
             return null;
         }
+    }
+
+    /**
+     * HTML of a custom theme error page, else the built-in error view (used by the
+     * storefront::custom-themes.error-{code} bridge views).
+     */
+    public static function customHtml(int $code): string
+    {
+        $fallback = StorefrontView::resolve(self::VIEWS[$code]);
+        $renderer = app(CustomTwigThemeRenderer::class);
+        $version = $renderer->version((int) app(StorefrontContext::class)->theme()->customVersionId);
+
+        if ($version !== null) {
+            try {
+                return $renderer->renderError($version, $code);
+            } catch (Throwable $error) {
+                app(CustomThemeService::class)->reportRenderFailure($version, $error);
+            }
+        }
+
+        return view($fallback)->render();
     }
 
     /**

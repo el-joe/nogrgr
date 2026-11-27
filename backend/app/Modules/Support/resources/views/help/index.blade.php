@@ -71,6 +71,9 @@
                                             <span>{{ $section['tip'] }}</span>
                                         </p>
                                     @endif
+                                    @if (! empty($section['link']['route']) && Route::has('vendor.'.$section['link']['route']))
+                                        <div><x-ui::button variant="secondary" size="sm" icon="arrow-right" :href="vendor_route($section['link']['route'])">{{ $section['link']['label'] }}</x-ui::button></div>
+                                    @endif
                                 </section>
                             @endforeach
 

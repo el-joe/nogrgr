@@ -73,6 +73,8 @@ return [
         'reports' => 'Reports',
         'storefront' => 'Storefront',
         'themes' => 'Themes',
+        'home_sections' => 'Home sections',
+        'template_parts' => 'Template parts',
         'theme_review_queue' => 'Theme review queue',
         'banners' => 'Banners',
         'return_policy' => 'Return policy',
@@ -136,6 +138,7 @@ return [
         // P8: store themes
         'themes' => 'Themes',
         'home_variants' => 'Home variants',
+        'custom_theme' => 'Custom theme',
         'invoices' => 'Invoices',
         'marketing' => 'Ads & Marketing',
         'coupons' => 'Coupons',

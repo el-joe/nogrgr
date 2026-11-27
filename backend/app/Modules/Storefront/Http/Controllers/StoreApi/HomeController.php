@@ -15,6 +15,7 @@ use App\Modules\Storefront\Http\Resources\StoreApi\CategoryResource;
 use App\Modules\Storefront\Http\Resources\StoreApi\ListingPresenter;
 use App\Modules\Storefront\Services\Catalog\HomeService;
 use App\Modules\Storefront\Services\StorefrontContext;
+use App\Modules\Storefront\Services\Themes\HomeLayoutService;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
 use Illuminate\Http\JsonResponse;
@@ -45,6 +46,8 @@ class HomeController extends Controller
             'theme' => $theme->toArray(),
             'country' => ($country = $this->context->country()) !== null ? ['id' => $country->id, 'iso2' => $country->iso2, 'name' => (string) $country->name] : null,
             'currency' => $this->context->currencyCode(),
+            // Home section order of the theme (ADM-087 defaults, decision #120): enabled section keys.
+            'layout' => app(HomeLayoutService::class)->keys($theme),
             'sections' => [
                 'hero' => array_map(static fn (BannerData $banner): array => $banner->toArray(), $sections['hero']),
                 'promo' => array_map(static fn (BannerData $banner): array => $banner->toArray(), $sections['promo']),

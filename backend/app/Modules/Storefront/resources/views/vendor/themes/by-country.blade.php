@@ -1,20 +1,27 @@
 {{--
-    Vendor › Your store › Home variants (VEN-031, Figma Vendor Panel 85:104756 "Home
-    variant" section as its own page): store default + every selling country with the
-    theme it renders, the home variant, own theme / follows default; Change variant =
-    VEN-030b modal (85:110108), Use store default, Preview.
+    Vendor › Your store › Themes by country (VEN-031, route vendor.store.home-variants kept
+    for old links), decision #119: store default + every selling country with the theme
+    it renders and its source (own theme / follows the store default / platform default);
+    Change = VEN-030b theme modal (85:110108), Use store default, Preview.
 --}}
-<x-vendor::layout :title="__('content::vendor_themes.variants_title')" page="vendor-themes">
+<x-vendor::layout :title="__('content::vendor_themes.by_country_title')" page="vendor-themes">
     <div class="grid grid-cols-1 gap-6">
         <x-ui::page-header
-            :title="__('content::vendor_themes.variants_title')"
-            :subtitle="__('content::vendor_themes.variants_subtitle')"
-            :breadcrumbs="[__('content::vendor_themes.crumb') => null, __('content::vendor_themes.variants_title') => null]"
+            :title="__('content::vendor_themes.by_country_title')"
+            :subtitle="__('content::vendor_themes.by_country_subtitle')"
+            :breadcrumbs="[__('content::vendor_themes.crumb') => null, __('content::vendor_themes.title') => vendor_route('store.themes.index'), __('content::vendor_themes.by_country_title') => null]"
         >
             <x-slot:actions>
-                <x-ui::button variant="secondary" icon="palette" :href="vendor_route('store.themes.index')">{{ __('content::vendor_themes.title') }}</x-ui::button>
+                <x-ui::button variant="secondary" icon="palette" :href="vendor_route('store.themes.index')">{{ __('content::vendor_themes.all_themes') }}</x-ui::button>
             </x-slot:actions>
         </x-ui::page-header>
+
+        @if ($hasCatalogue && $countries === [])
+            <div class="flex items-center gap-3 rounded-card bg-info-bg px-4 py-3 text-sm text-ink" role="status" data-theme-no-countries>
+                <x-ui::icon name="info" :size="16" class="shrink-0 text-info" />
+                <span>{{ __('content::vendor_themes.no_countries') }}</span>
+            </div>
+        @endif
 
         <x-ui::card :padding="false">
             @if (! $hasCatalogue)
@@ -26,7 +33,6 @@
                             <tr class="text-start text-sm text-ink-secondary">
                                 <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('content::vendor_themes.columns.scope') }}</th>
                                 <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('content::vendor_themes.columns.theme') }}</th>
-                                <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('content::vendor_themes.columns.variant') }}</th>
                                 <th scope="col" class="px-5 py-3 text-start font-normal">{{ __('content::vendor_themes.columns.source') }}</th>
                                 <th scope="col" class="px-5 py-3"><span class="sr-only">{{ __('ui.table.actions') }}</span></th>
                             </tr>
@@ -39,19 +45,22 @@
                                     <td class="px-5 py-3">
                                         @if ($theme)
                                             <span class="flex items-center gap-3">
-                                                @if ($theme->preview_url)
-                                                    <img src="{{ $theme->preview_url }}" alt="" loading="lazy" class="h-10 w-16 shrink-0 rounded-chip border border-line object-contain bg-media">
-                                                @endif
-                                                <span class="text-ink-muted">{{ $theme->family->label() }}</span>
+                                                <span class="grid h-10 w-16 shrink-0 place-items-center overflow-hidden rounded-chip border border-line bg-media">
+                                                    @if ($theme->preview_url)
+                                                        <img src="{{ $theme->preview_url }}" alt="" loading="lazy" decoding="async" class="size-full object-contain">
+                                                    @else
+                                                        <x-ui::icon name="palette" :size="16" class="text-ink-muted" />
+                                                    @endif
+                                                </span>
+                                                <span class="font-medium text-ink">{{ $theme->name }}</span>
                                             </span>
                                         @else
                                             <span class="text-ink-secondary">{{ __('content::vendor_themes.no_theme') }}</span>
                                         @endif
                                     </td>
-                                    <td class="px-5 py-3 text-ink-muted">{{ $theme ? __('content::vendor_themes.home_variant', ['number' => $theme->variant]) : '—' }}</td>
                                     <td class="px-5 py-3">
                                         @if ($row->countryId === null)
-                                            <x-ui::badge tone="brand">{{ __('content::vendor_themes.store_default') }}</x-ui::badge>
+                                            <x-ui::badge :tone="$row->ownTheme ? 'brand' : 'neutral'">{{ $row->ownTheme ? __('content::vendor_themes.chosen_default') : __('content::vendor_themes.follows_platform') }}</x-ui::badge>
                                         @elseif ($row->ownTheme)
                                             <x-ui::badge tone="success">{{ __('content::vendor_themes.own_theme') }}</x-ui::badge>
                                         @else
@@ -60,19 +69,19 @@
                                     </td>
                                     <td class="px-5 py-3">
                                         <div class="flex items-center justify-end gap-2">
-                                            @if ($canManage && $theme)
-                                                <x-ui::button size="sm" variant="secondary" data-remote-modal="vendor-theme-variant-modal" :data-url="vendor_route('store.themes.variant', ['scope' => $row->scope(), 'return' => 'home-variants'])">{{ __('content::vendor_themes.change_variant') }}</x-ui::button>
+                                            @if ($canManage)
+                                                <x-ui::button size="sm" variant="secondary" data-remote-modal="vendor-theme-scope-modal" :data-url="vendor_route('store.themes.scope', ['scope' => $row->scope(), 'return' => 'by-country'])">{{ __('content::vendor_themes.change') }}</x-ui::button>
                                             @endif
-                                            @if ($canManage && $row->ownTheme)
+                                            @if ($canManage && $row->countryId !== null && $row->ownTheme)
                                                 <x-ui::icon-button size="sm" icon="refresh" :label="__('content::vendor_themes.reset')"
-                                                    :href="vendor_route('store.themes.reset', ['scope' => $row->countryId, 'return' => 'home-variants'])"
+                                                    :href="vendor_route('store.themes.reset', ['scope' => $row->countryId, 'return' => 'by-country'])"
                                                     data-confirm="{{ __('content::vendor_themes.reset_confirm', ['country' => $row->label]) }}"
                                                     data-confirm-title="{{ __('content::vendor_themes.reset_confirm_title', ['country' => $row->label]) }}"
                                                     data-confirm-tone="warning"
                                                     data-confirm-method="DELETE" />
                                             @endif
                                             @if ($theme)
-                                                <x-ui::icon-button size="sm" icon="eye" target="_blank" rel="noopener" :href="vendor_route('store.themes.preview', array_filter(['theme' => $theme->slug, 'country' => $row->countryId]))" :label="__('content::vendor_themes.preview_of', ['theme' => $row->label])" />
+                                                <x-ui::icon-button size="sm" icon="eye" target="_blank" rel="noopener" :href="vendor_route('store.themes.preview', array_filter(['theme' => $theme->id, 'country' => $row->countryId]))" :label="__('content::vendor_themes.preview_of', ['theme' => $row->label])" />
                                             @endif
                                         </div>
                                     </td>
@@ -86,11 +95,11 @@
     </div>
 
     @if ($canManage)
-        <x-ui::modal id="vendor-theme-variant-modal" :title="__('content::vendor_themes.change_variant')">
+        <x-ui::modal id="vendor-theme-scope-modal" :title="__('content::vendor_themes.change_theme')">
             @include('commerce::admin.partials.remote-states')
             <x-slot:footer>
                 <x-ui::button variant="secondary" data-overlay-close>{{ __('content::vendor_themes.cancel') }}</x-ui::button>
-                <x-ui::button type="submit" form="vendor-theme-variant-form" data-remote-submit>{{ __('content::vendor_themes.save') }}</x-ui::button>
+                <x-ui::button type="submit" form="vendor-theme-scope-form" data-remote-submit>{{ __('content::vendor_themes.save') }}</x-ui::button>
             </x-slot:footer>
         </x-ui::modal>
     @endif

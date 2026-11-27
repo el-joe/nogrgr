@@ -182,7 +182,7 @@ class MobileBootstrapService
         }
 
         return [
-            'theme' => ['slug' => $theme->slug, 'family' => $theme->family->value, 'variant' => $theme->variant],
+            'theme' => ['id' => $theme->id, 'slug' => $theme->slug, 'family' => $theme->family->value, 'variant' => $theme->variant],
             'colors' => ['primary' => $colors->primary],
             'fonts' => [
                 'ltr' => $colors->fontLtr?->family(),

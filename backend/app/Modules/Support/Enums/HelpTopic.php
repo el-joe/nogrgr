@@ -44,7 +44,7 @@ enum HelpTopic: string
             self::GettingStarted => ['setup-checklist', 'how-your-store-works'],
             self::Products => ['import-central-products', 'markup-per-country', 'own-products', 'edit-requests'],
             self::Orders => ['order-lifecycle', 'returns-and-refunds'],
-            self::StoreDesign => ['themes-and-home-variants', 'pages-banners-appearance'],
+            self::StoreDesign => ['themes-and-home-variants', 'pages-banners-appearance', 'custom-twig-themes'],
             self::Marketing => ['coupons', 'flash-sales'],
             self::Finance => ['subscription-and-invoices', 'settlements-and-payouts'],
             self::Settings => ['custom-domain', 'staff-and-roles', 'payment-gateways', 'languages-and-currencies'],

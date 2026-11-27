@@ -9,7 +9,8 @@ use Illuminate\Database\Seeder;
 
 /**
  * The 13 storefront themes (Figma: Ecommet 1:1002, Elora 1:15432 + 5 variants,
- * Souqify 1:72835 + 5 variants) and the 8 gallery categories. Idempotent (by slug).
+ * Souqify 1:72835 + 5 variants) and the 8 gallery categories. Idempotent (by slug);
+ * Ecommet is the platform default until the admin picks another (ADM-086).
  */
 class ThemeCatalogSeeder extends Seeder
 {
@@ -62,16 +63,30 @@ class ThemeCatalogSeeder extends Seeder
         }
 
         foreach (self::THEMES as $index => [$slug, $family, $variant, $nameEn, $nameAr, $descriptionEn, $descriptionAr, $themeCategories]) {
-            $theme = Theme::query()->updateOrCreate(['slug' => $slug], [
+            $theme = Theme::query()->firstOrNew(['slug' => $slug]);
+            $theme->fill([
                 'family' => $family,
                 'variant' => $variant,
-                'name' => ['en' => $nameEn, 'ar' => $nameAr],
-                'description' => ['en' => $descriptionEn, 'ar' => $descriptionAr],
-                'is_active' => true,
                 'sort_order' => $index + 1,
             ]);
 
+            // Admin edits (ADM-086a: name, description, active) survive a re-seed.
+            if (! $theme->exists) {
+                $theme->fill([
+                    'name' => ['en' => $nameEn, 'ar' => $nameAr],
+                    'description' => ['en' => $descriptionEn, 'ar' => $descriptionAr],
+                    'is_active' => true,
+                ]);
+            }
+
+            $theme->save();
+
             $theme->categories()->sync(array_map(fn (string $category): int => $categories[$category], $themeCategories));
+        }
+
+        // Platform default theme (decision #120): Ecommet unless the admin picked another one.
+        if (! Theme::query()->where('is_default', true)->exists()) {
+            Theme::query()->where('slug', 'ecommet')->update(['is_default' => true, 'is_active' => true]);
         }
     }
 }

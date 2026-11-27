@@ -14,7 +14,7 @@ use Illuminate\Http\JsonResponse;
 
 /**
  * Admin › Catalog › Products › Sort (ADM-012, Figma 65:21308): storefront order by drag
- * and drop over pages of 20 ("Load more"), filtered by category / country / search;
+ * and drop over pages of 20 ("Load more"), filtered by category / search;
  * Save order and Reset to newest.
  */
 class ProductSortController extends Controller

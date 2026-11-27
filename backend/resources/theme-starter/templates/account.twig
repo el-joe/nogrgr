@@ -1,0 +1,81 @@
+{% extends "layout.twig" %}
+{% import "partials/macros.twig" as ui %}
+
+{% block content %}
+    {% set known_tabs = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'] %}
+    <div class="container page">
+        <h1 class="page-title">{{ account.section == 'wishlist' ? t('account.wishlist') : t('account.orders') }}</h1>
+
+        <div class="account">
+            <nav class="account-nav" aria-label="{{ t('account.menu') }}">
+                {% if customer.name %}<p class="account-nav__hello">{{ t('header.hello', {name: customer.name}) }}</p>{% endif %}
+                <ul>
+                    <li><a href="{{ account.links.orders }}"{% if account.section == 'orders' %} aria-current="page"{% endif %}>{{ t('account.orders') }}</a></li>
+                    <li><a href="{{ account.links.wishlist }}"{% if account.section == 'wishlist' %} aria-current="page"{% endif %}>{{ t('account.wishlist') }}</a></li>
+                    <li><a href="{{ account.links.returns }}">{{ t('account.returns') }}</a></li>
+                    <li><a href="{{ account.links.profile }}">{{ t('account.profile') }}</a></li>
+                    <li><a href="{{ account.links.addresses }}">{{ t('account.addresses') }}</a></li>
+                    <li><a href="{{ account.links.support }}">{{ t('account.support') }}</a></li>
+                </ul>
+                <form action="{{ url('logout') }}" method="post">
+                    {{ csrf_field() }}
+                    <button class="link-btn" type="submit">{{ t('account.sign_out') }}</button>
+                </form>
+            </nav>
+
+            <section class="account-main">
+                {% if account.section == 'wishlist' %}
+                    {% if account.wishlist is not empty %}
+                        <p class="muted">{{ t('account.wishlist_count', {count: account.wishlist_total}) }}</p>
+                        {% include "partials/product-grid.twig" with {items: account.wishlist} only %}
+                        {{ ui.pagination(account.pagination) }}
+                    {% else %}
+                        {{ ui.empty(t('account.wishlist_empty_title'), t('account.wishlist_empty_text'), url('home'), t('cart.continue')) }}
+                    {% endif %}
+                {% else %}
+                    {% if account.order_tabs is not empty %}
+                        <ul class="chips chips--scroll" data-rail-track>
+                            {% for tab in account.order_tabs %}
+                                <li><a class="chip{% if tab.key == account.order_tab %} is-active{% endif %}" href="{{ tab.url }}"{% if tab.key == account.order_tab %} aria-current="true"{% endif %}>{{ tab.key in known_tabs ? t('account.tabs.' ~ tab.key) : tab.key|replace({'_': ' '})|capitalize }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    {% if account.orders is not empty %}
+                        <ul class="orders">
+                            {% for order in account.orders %}
+                                <li class="order">
+                                    <div class="order__head">
+                                        <div>
+                                            <p class="order__number">{{ t('account.order_number', {number: order.number}) }}</p>
+                                            <p class="muted">{{ t('account.placed_on', {date: order.placed_at|date('Y-m-d')}) }} · {{ t('account.order_items', {count: order.items_count}) }}</p>
+                                        </div>
+                                        <span class="pill pill--{{ order.tone }}">{{ order.status_label }}</span>
+                                    </div>
+                                    <ul class="order__items">
+                                        {% for item in order.items %}
+                                            <li>
+                                                <img src="{{ item.image ?: asset('img/placeholder.svg') }}" alt="" width="56" height="56" loading="lazy">
+                                                <span>{{ item.name }}{% if item.variant %} · {{ item.variant }}{% endif %} × {{ item.quantity }}</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <div class="order__foot">
+                                        <p class="order__total">{{ t('cart.total') }}: <strong>{{ order.total }}</strong></p>
+                                        <div class="order__links">
+                                            <a class="btn btn--ghost btn--small" href="{{ order.url }}">{{ t('account.view_order') }}</a>
+                                            {% if order.tracking_url %}<a class="btn btn--small" href="{{ order.tracking_url }}">{{ t('account.track_order') }}</a>{% endif %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        {{ ui.pagination(account.pagination) }}
+                    {% else %}
+                        {{ ui.empty(t('account.orders_empty_title'), t('account.orders_empty_text'), url('home'), t('cart.continue')) }}
+                    {% endif %}
+                {% endif %}
+            </section>
+        </div>
+    </div>
+{% endblock %}

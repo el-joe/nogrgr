@@ -1,0 +1,27 @@
+{% extends "layout.twig" %}
+{% import "partials/macros.twig" as ui %}
+
+{% block content %}
+    <div class="container page">
+        {{ ui.breadcrumbs([{name: cms_page.title, url: request.url}], store.home_url) }}
+        <div class="cms{% if cms_page.menu is not empty %} cms--with-menu{% endif %}">
+            {% if cms_page.menu is not empty %}
+                <nav class="cms-menu" aria-label="{{ t('page.more_pages') }}">
+                    <ul>
+                        {% for item in cms_page.menu %}
+                            <li><a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            {% endif %}
+            <article class="cms-body">
+                <h1 class="page-title">{{ cms_page.title }}</h1>
+                {% if cms_page.updated_at %}<p class="muted">{{ t('page.updated', {date: cms_page.updated_at|date('Y-m-d')}) }}</p>{% endif %}
+                <div class="prose">{{ cms_page.body_html }}</div>
+                {% if cms_page.is_contact and cms_page.support_url %}
+                    <p><a class="btn" href="{{ cms_page.support_url }}">{{ t('page.contact_support') }}</a></p>
+                {% endif %}
+            </article>
+        </div>
+    </div>
+{% endblock %}

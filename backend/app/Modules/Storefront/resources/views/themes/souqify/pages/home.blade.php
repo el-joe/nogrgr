@@ -31,7 +31,7 @@
             <p class="max-w-md text-sm text-sf-muted">{{ __st('catalog.home.empty_body') }}</p>
         </section>
     @else
-        @foreach (SouqifyVariants::sections($variant) as $section)
+        @foreach ($homeSections ?? SouqifyVariants::sections($variant) as $section)
             @switch($section['type'])
                 @case('hero')
                     <x-sf::souqify.section.hero :banners="$hero" :side="$sideBanners" :style="$section['style']" />
