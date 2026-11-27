@@ -106,3 +106,6 @@ Critical path: **P0 → P2 → P3 → P5 → P7 / P11**.
 - Committed 937cd38 (store API catalog/order extras #106), da6f11c + 4ff6752 + eba4bb5 (Flutter batches 1–2, real Arabic 500/600 fonts, #107/#109), 415100f (customer tickets, mobile settings panels, shopper social login #108), 486bd9e (P12 legacy:migrate #110).
 - P12 BLOCKER for client: the 5 old store DBs (dokan_v2_<uuid>) are not on this server → store-side data (selections, customers, orders, reviews, store coupons) not migrated for real; central data migrated into nogrgr_qa twice (idempotent).
 - Running: flutter3 (social buttons, tickets, push toggles/deep links), qa-final (full suite + browser QA P7–P12 + remaining rows list).
+- Committed 43b4401 (Flutter batch 3 #111).
+- CLIENT (2026-11-27): launching fresh — old per-store data migration NOT required (no old store DBs needed). Products come from Neozena: new `catalog:import-neozena` command (agent neozena-cmd) reusing the ADM-013 import. p12-migrate2 narrowed to central items + reconcile.
+- Running: qa-final, p12-migrate2, neozena-cmd (3 briefly; p12-migrate2 narrowed).
