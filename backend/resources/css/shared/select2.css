@@ -96,6 +96,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    min-width: 0;
+    max-width: 100%;
     margin: 0;
     padding: 6px 0;
 }
@@ -106,9 +108,15 @@
     align-items: center;
     gap: 4px;
     margin: 0;
-    padding: 2px 8px;
+    max-width: 100%;
+    min-width: 0;
+    padding: 4px 10px;
     border: 0;
-    border-radius: var(--radius-chip);
+    border-radius: 10px;
+    line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: start;
     background-color: var(--color-primary-subtle);
     color: var(--color-ink-brand);
     font-size: 12px;
@@ -117,6 +125,8 @@
 
 :root .select2-container .select2-selection--multiple .select2-selection__choice__remove {
     position: static;
+    flex: none;
+    align-self: flex-start;
     border: 0;
     padding: 0;
     color: var(--color-ink-brand);

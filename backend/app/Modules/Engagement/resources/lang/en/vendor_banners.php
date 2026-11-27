@@ -6,6 +6,7 @@ return [
     'crumb' => 'Your store',
     'add' => 'Add banner',
     'create_title' => 'New banner',
+    'all_countries' => 'All countries',
     'countries' => 'Countries',
     'show_defaults' => 'Show :app default banners',
     'show_defaults_help' => 'Platform banners appear between yours; hide them all here or one by one.',

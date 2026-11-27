@@ -52,7 +52,7 @@ class VendorBannerPageService
     }
 
     /**
-     * The requested country tab when it is one of the store's countries, else the first.
+     * The requested country tab: 0 = "All" (every banner, the default), or one of the store's countries.
      *
      * @param  array<int, string>  $countries
      */
@@ -60,13 +60,11 @@ class VendorBannerPageService
     {
         $id = filter_var($value, FILTER_VALIDATE_INT);
 
-        if (is_int($id) && array_key_exists($id, $countries)) {
-            return $id;
+        if ($countries === []) {
+            return null;
         }
 
-        $first = array_key_first($countries);
-
-        return $first === null ? null : (int) $first;
+        return is_int($id) && array_key_exists($id, $countries) ? $id : 0;
     }
 
     /**
@@ -77,7 +75,7 @@ class VendorBannerPageService
      */
     public function counts(array $countryIds): array
     {
-        $counts = [];
+        $counts = [0 => count($this->catalog->all())];
 
         foreach ($countryIds as $countryId) {
             $counts[$countryId] = count($this->catalog->all(null, $countryId));
@@ -99,7 +97,7 @@ class VendorBannerPageService
         $term = $search !== null && trim($search) !== '' ? mb_strtolower(trim($search)) : null;
         $rows = collect();
 
-        foreach ($this->catalog->all($placement, $countryId) as $item) {
+        foreach ($this->catalog->all($placement, $countryId > 0 ? $countryId : null) as $item) {
             $isCentral = $item->source === ContentSource::Central->value;
             $model = $isCentral ? $central->get($item->id) : $own->get($item->id);
 

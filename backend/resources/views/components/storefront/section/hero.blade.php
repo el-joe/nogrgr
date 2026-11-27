@@ -5,12 +5,16 @@
     old Ecommet fallback: a red brand band with the store name (pass `fallback`), else nothing.
 --}}
 @props(['banners' => [], 'class' => '', 'fallback' => null])
+@php
+    /* Every active banner with an image becomes one slide (a banner without any image has nothing to show). */
+    $banners = array_values(array_filter($banners, static fn ($banner): bool => (bool) ($banner->imageUrl ?: $banner->mobileImageUrl)));
+@endphp
 @if ($banners === [] && $fallback)
     <section {{ $attributes->class(['eco-hero-fallback']) }} aria-label="{{ __st('catalog.home.hero_label') }}">
         <p class="eco-container text-center text-3xl font-bold tracking-wide text-white lg:text-5xl" data-reveal="fade-up">{{ $fallback }}</p>
     </section>
 @elseif ($banners !== [])
-    <section {{ $attributes->class(['relative']) }} aria-roledescription="carousel" aria-label="{{ __st('catalog.home.hero_label') }}">
+    <section {{ $attributes->class(['relative w-full max-w-none overflow-hidden']) }} aria-roledescription="carousel" aria-label="{{ __st('catalog.home.hero_label') }}">
         <div class="swiper mo-hero" @if (count($banners) > 1) data-hero='{"delay":6000}' @endif>
             <div class="swiper-wrapper">
                 @foreach ($banners as $index => $banner)
@@ -19,7 +23,7 @@
                         <{{ $tag }} @if ($banner->url) href="{{ $banner->url }}" @endif class="block aspect-[375/73] w-full overflow-hidden bg-eco-img lg:aspect-[1440/279]">
                             <picture>
                                 @if ($banner->mobileImageUrl)<source media="(max-width: 767px)" srcset="{{ $banner->mobileImageUrl }}">@endif
-                                <img src="{{ $banner->imageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? '' }}" width="{{ $banner->width ?? 1440 }}" height="{{ $banner->height ?? 279 }}" class="mo-kenburns size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif decoding="async">
+                                <img src="{{ $banner->imageUrl ?: $banner->mobileImageUrl }}" alt="{{ $banner->alt ?? $banner->title ?? '' }}" width="{{ $banner->width ?? 1440 }}" height="{{ $banner->height ?? 279 }}" class="mo-kenburns size-full object-contain bg-media" @if ($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif decoding="async">
                             </picture>
                             @if ($banner->title || $banner->ctaLabel)
                                 <span class="sr-only">{{ $banner->title }} {{ $banner->subtitle }} {{ $banner->ctaLabel }}</span>

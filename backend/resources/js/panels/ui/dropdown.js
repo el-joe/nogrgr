@@ -12,6 +12,43 @@ const menuOf = (dropdown) => dropdown.querySelector(':scope > [data-dropdown-men
 const triggerOf = (dropdown) => dropdown.querySelector(':scope > [data-dropdown-trigger]');
 const itemsOf = (menu) => [...menu.querySelectorAll('[role="menuitem"]:not([disabled]), [data-menu-item]:not([disabled])')];
 
+const FLOAT_PROPS = ['position', 'top', 'left', 'right', 'bottom', 'margin'];
+
+/** Menus inside a datatable are clipped by its scroll wrapper, so float them (fixed) next to the trigger. */
+function floatMenu(dropdown, menu) {
+    const trigger = triggerOf(dropdown);
+
+    if (!trigger || !dropdown.closest('[data-datatable-card]')) {
+        return;
+    }
+
+    const rect = trigger.getBoundingClientRect();
+    const width = menu.offsetWidth;
+    const height = menu.offsetHeight;
+    const rtl = getComputedStyle(dropdown).direction === 'rtl';
+    let left = rtl ? rect.left : rect.right - width;
+    left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
+    let top = rect.bottom + 4;
+
+    if (top + height > window.innerHeight - 8 && rect.top - height - 4 > 8) {
+        top = rect.top - height - 4;
+    }
+
+    Object.assign(menu.style, { position: 'fixed', top: `${top}px`, left: `${left}px`, right: 'auto', bottom: 'auto', margin: '0' });
+}
+
+function unfloatMenu(menu) {
+    FLOAT_PROPS.forEach((prop) => menu.style.removeProperty(prop));
+}
+
+const closeFloating = (event) => {
+    if (event.target?.closest?.('[data-dropdown-menu]')) {
+        return;
+    }
+
+    document.querySelectorAll('[data-datatable-card] [data-dropdown]').forEach((dropdown) => closeDropdown(dropdown));
+};
+
 export function closeDropdown(dropdown, { focusTrigger = false } = {}) {
     const menu = menuOf(dropdown);
 
@@ -20,6 +57,7 @@ export function closeDropdown(dropdown, { focusTrigger = false } = {}) {
     }
 
     delete menu.dataset.open;
+    unfloatMenu(menu);
     triggerOf(dropdown)?.setAttribute('aria-expanded', 'false');
     dropdown.dispatchEvent(new CustomEvent('dropdown:close', { bubbles: true }));
 
@@ -37,6 +75,7 @@ export function openDropdown(dropdown, { focusFirst = false } = {}) {
     }
 
     menu.dataset.open = '';
+    floatMenu(dropdown, menu);
     triggerOf(dropdown)?.setAttribute('aria-expanded', 'true');
     dropdown.dispatchEvent(new CustomEvent('dropdown:open', { bubbles: true }));
 
@@ -51,6 +90,8 @@ export function initDropdowns() {
     }
 
     bound = true;
+    window.addEventListener('scroll', closeFloating, true);
+    window.addEventListener('resize', closeFloating);
 
     document.addEventListener('click', (event) => {
         const trigger = event.target.closest?.('[data-dropdown-trigger]');

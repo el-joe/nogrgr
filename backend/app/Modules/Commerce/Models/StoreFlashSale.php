@@ -4,6 +4,8 @@ namespace App\Modules\Commerce\Models;
 
 use App\Modules\Ai\Contracts\AiTranslatable;
 use App\Modules\Commerce\Database\Factories\StoreFlashSaleFactory;
+use App\Modules\Platform\Models\Tenant;
+use App\Modules\Platform\Services\StoreSettingsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -93,6 +95,14 @@ class StoreFlashSale extends Model implements AiTranslatable
      */
     public function bannerUrl(): ?string
     {
-        return $this->banner_path !== null ? Storage::disk('public')->url($this->banner_path) : null;
+        if ($this->banner_path === null) {
+            return null;
+        }
+
+        $tenant = tenant();
+
+        return $tenant instanceof Tenant
+            ? StoreSettingsService::storeUrl($tenant).'/tenancy/assets/'.$this->banner_path
+            : Storage::disk('public')->url($this->banner_path);
     }
 }

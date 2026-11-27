@@ -251,6 +251,23 @@
         background: #000;
     }
 
+    /* "See More" (1:1100): the arrow drifts down on hover/focus, stays still for reduced motion. */
+    .eco-see-more .eco-see-more-icon {
+        transition: transform var(--motion-fast) ease-out;
+    }
+
+    .eco-see-more:hover .eco-see-more-icon,
+    .eco-see-more:focus-visible .eco-see-more-icon {
+        transform: translateY(3px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .eco-see-more:hover .eco-see-more-icon,
+        .eco-see-more:focus-visible .eco-see-more-icon {
+            transform: none;
+        }
+    }
+
     .eco-pill-dark:active,
     .eco-pill-outline:active {
         transform: scale(var(--motion-press, 0.97));
@@ -888,8 +905,27 @@
 
     /* ---------- Footer (1:573) ---------- */
     .eco-footer {
-        background: #3a3a3a;
+        background: #3b3b3b;
         color: #fff;
+    }
+
+    /* Legal links bar (1:617): grey strip, dark 14px links. */
+    .eco-footer-bar {
+        background: #5e5e5e;
+        color: #000;
+    }
+
+    /* Copyright bar (1:615): 56px charcoal strip. */
+    .eco-footer-bottom {
+        display: grid;
+        place-items: center;
+        min-height: 56px;
+        padding: 16px;
+        background: var(--eco-black, #242424);
+        color: #fff;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        text-align: center;
     }
 
     .eco-footer a {
@@ -904,9 +940,9 @@
     .eco-pay-badge {
         display: grid;
         place-items: center;
-        width: 50px;
-        height: 32px;
-        border-radius: 2px;
+        width: 56px;
+        height: 37px;
+        border-radius: 4px;
         background: #fff;
         color: var(--eco-black);
         font-size: 11px;

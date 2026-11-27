@@ -8,6 +8,9 @@
 @php
     $app = config('app.name');
     $tabItems = [];
+    if ($countries !== []) {
+        $tabItems['0'] = ['label' => __('engagement::vendor_banners.all_countries'), 'href' => vendor_route('store.banners.index', ['country' => 0, 'placement' => $placement->value]), 'count' => number_format((int) ($counts[0] ?? 0))];
+    }
     foreach ($countries as $id => $name) {
         $tabItems[(string) $id] = ['label' => $name, 'href' => vendor_route('store.banners.index', ['country' => $id, 'placement' => $placement->value]), 'count' => number_format((int) ($counts[$id] ?? 0))];
     }
