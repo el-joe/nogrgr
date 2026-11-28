@@ -778,9 +778,9 @@
         min-width: 202px;
         height: 40px;
         padding-inline: 16px;
-        border: 1px solid #ffac88;
+        border: 1px solid var(--elo-accent-line);
         border-radius: 24px;
-        color: #ff4d00;
+        color: var(--nog-primary);
         font-size: 18px;
         font-weight: 500;
         white-space: nowrap;
@@ -792,8 +792,8 @@
     }
 
     .v1-tab[aria-selected='true'] {
-        border-color: #ff4d00;
-        background: #ff4d00;
+        border-color: var(--nog-primary);
+        background: var(--nog-primary);
         color: #fff;
     }
 
@@ -1676,7 +1676,7 @@
     height: 40px;
     border-radius: 999px;
     background: #fdfdfd;
-    color: #ff4d00;
+    color: var(--nog-primary);
 }
 
 .v1-mhead-bell span {
@@ -2062,7 +2062,7 @@
     padding: 0 6px;
     border-start-end-radius: 8px;
     border-end-start-radius: 8px;
-    background: #ff4d00;
+    background: var(--nog-primary);
     color: #fff;
     font-size: 14px;
     line-height: 28px;
@@ -2071,7 +2071,10 @@
     white-space: nowrap;
 }
 
-[data-theme-variant='1'] :is(.v1-card-badge, .elo-card-tag, .sf-result-badge)[data-badge='new_in'] {
+/* The Essence card and image-search badges are shared by every Elora variant (decision #140);
+   .elo-card-tag is the v1 home look of the variants' own card. */
+[data-theme-family='elora'] :is(.v1-card-badge, .sf-result-badge)[data-badge='new_in'],
+[data-theme-variant='1'] .elo-card-tag[data-badge='new_in'] {
     background: #8a38f5;
 }
 
@@ -2085,7 +2088,7 @@
     white-space: nowrap;
 }
 
-[data-theme-variant='1'] .sf-result-badge {
+[data-theme-family='elora'] .sf-result-badge {
     position: absolute;
     top: 0;
     inset-inline-end: 0;
@@ -2093,7 +2096,7 @@
     overflow: hidden;
     padding: 2px 6px;
     border-end-start-radius: 8px;
-    background: #ff4d00;
+    background: var(--nog-primary);
     color: #fff;
     font-size: 11px;
     text-overflow: ellipsis;
@@ -2235,7 +2238,7 @@
     .v1-rail-flash { padding-inline: 16px; }
     .v1-dots { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; min-height: 18px; margin-top: 12px; }
     .v1-dots .swiper-pagination-bullet { display: block; width: 6px; height: 6px; padding: 0; border-radius: 999px; background: #d9d9d9; opacity: 1; transition: width var(--motion-base) var(--ease-out), background-color var(--motion-base) var(--ease-out); cursor: pointer; }
-    .v1-dots .swiper-pagination-bullet-active { width: 18px; background: #ff4d00; }
+    .v1-dots .swiper-pagination-bullet-active { width: 18px; background: var(--nog-primary); }
     .v1-flash-band .v1-dots .swiper-pagination-bullet,
     .v1-mini-band .v1-dots .swiper-pagination-bullet { background: rgb(255 255 255 / 0.4); }
     .v1-flash-band .v1-dots .swiper-pagination-bullet-active,
@@ -2336,7 +2339,7 @@
     .v1-cats-cell .v1-circle-name { font-size: 14px; font-weight: 500; line-height: 18px; }
     .v1-cats-m .v1-dots { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; min-height: 18px; margin-top: 12px; }
     .v1-cats-m .v1-dots .swiper-pagination-bullet { display: block; width: 6px; height: 6px; padding: 0; border-radius: 999px; background: #d9d9d9; opacity: 1; cursor: pointer; transition: width var(--motion-base) var(--ease-out), background-color var(--motion-base) var(--ease-out); }
-    .v1-cats-m .v1-dots .swiper-pagination-bullet-active { width: 18px; background: #ff4d00; }
+    .v1-cats-m .v1-dots .swiper-pagination-bullet-active { width: 18px; background: var(--nog-primary); }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {

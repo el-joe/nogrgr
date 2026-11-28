@@ -55,6 +55,15 @@
     --sf-footer-bottom: #3a3a3a;
 }
 
+/* ==========================================================================
+ * ELORA VARIANT PALETTES — the one place per-variant colours live.
+ * Essence (1) = :root, Bloom (2), Noir (3), Coral (4), Breeze (5), Velvet (6) = the
+ * [data-theme-variant='n'] blocks below (Figma "Elora Variants" home frames v1 1:15432,
+ * v2 1:26559, v3 1:26978, v4 1:27464, v5 1:28050, v6 1:28992; decisions #79 / #140).
+ * Every variant renders the Essence inner pages, so those pages read only these tokens
+ * (--nog-primary*, --sf-accent*, --elo-*) and never a hard-coded accent hex.
+ * ========================================================================== */
+
 /*
  * Elora home-variant tokens (Figma "Elora Variants"; decision #79). The page shell carries
  * data-theme-variant="1…6" (store theme), so the accent also follows on the inner pages.
@@ -83,6 +92,20 @@
     --elo-sold-bg: #ffd428;
     --elo-card-cart-bg: #ffffff;
     --elo-card-cart-ink: #121212;
+
+    /* Accent tints of the shared (Essence) inner pages, exact Essence values. */
+    --elo-tint: #fff5f0; /* selected filter / chip / step backgrounds */
+    --elo-tint-strong: #fde4da; /* notice boxes, progress rings */
+    --elo-accent-line: #ffac88; /* outlined accent pills */
+    --elo-accent-soft: #ff824c; /* light accent text / focus ring */
+}
+
+/* Variants 2–6: the same tints, mixed from the variant's (or the store's brand) primary. */
+[data-theme-variant]:not([data-theme-variant='1']) {
+    --elo-tint: color-mix(in srgb, var(--nog-primary) 5%, #ffffff);
+    --elo-tint-strong: color-mix(in srgb, var(--nog-primary) 16%, #ffffff);
+    --elo-accent-line: color-mix(in srgb, var(--nog-primary) 50%, #ffffff);
+    --elo-accent-soft: color-mix(in srgb, var(--nog-primary) 70%, #ffffff);
 }
 
 [data-theme-variant='2'] {

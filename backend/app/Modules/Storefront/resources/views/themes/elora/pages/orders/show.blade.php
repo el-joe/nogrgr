@@ -294,7 +294,7 @@
                                     <span class="col-start-2 flex items-center gap-1 text-xs text-sf-muted"><x-ui::icon name="map-pin" :size="12" />{{ $step['note'] }}</span>
                                 @endif
                                 @if ($current)
-                                    <p class="col-span-2 col-start-2 mt-2 grid gap-1 rounded-md border border-elo-primary bg-[#fde4da] p-3 text-xs text-elo-ink">
+                                    <p class="col-span-2 col-start-2 mt-2 grid gap-1 rounded-md border border-elo-primary bg-[var(--elo-tint-strong)] p-3 text-xs text-elo-ink">
                                         <span class="flex items-center gap-1.5 font-medium text-elo-primary"><x-ui::icon name="truck" :size="14" />{{ __st('elora_pages.tracking.current') }}</span>
                                         {{ $shipped ? __st('elora_pages.tracking.in_transit') : __st('elora_pages.tracking.preparing') }}
                                     </p>

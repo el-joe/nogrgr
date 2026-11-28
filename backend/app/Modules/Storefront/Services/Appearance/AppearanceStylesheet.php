@@ -50,6 +50,11 @@ class AppearanceStylesheet
 
             if ($family === 'elora') {
                 $tokens['--elo-cta-ink'] = $brand->readableInk();
+                // Accent tints of the shared inner pages (tokens/storefront-elora.css palettes).
+                $tokens['--elo-tint'] = $brand->lighten(0.95)->hex();
+                $tokens['--elo-tint-strong'] = $brand->lighten(0.84)->hex();
+                $tokens['--elo-accent-line'] = $brand->lighten(0.5)->hex();
+                $tokens['--elo-accent-soft'] = $brand->lighten(0.3)->hex();
             }
 
             if ($family === 'souqify') {

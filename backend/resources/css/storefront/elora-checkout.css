@@ -71,7 +71,7 @@
 .elc-change {
     display: inline-flex;
     align-items: center;
-    color: #ff824c;
+    color: var(--elo-accent-soft);
     font-size: 14px;
     letter-spacing: 0.5px;
     transition: color var(--motion-fast) ease-out;
@@ -151,7 +151,7 @@
 
 .elc-ship:not([data-collapsed]) .sf-address-card:has(input[type='radio']:checked) {
     border-color: var(--nog-primary);
-    background: #fff5f0;
+    background: var(--elo-tint);
 }
 
 .elc-ship:not([data-collapsed]) .sf-address-card {
@@ -464,7 +464,7 @@
 }
 
 .elc-stepper button:hover {
-    background: #fff5f0;
+    background: var(--elo-tint);
 }
 
 .elc-stepper button:active {
@@ -597,7 +597,7 @@
 }
 
 .elc-pay-btn:hover:not(:disabled) {
-    background: var(--nog-primary-hover, #e64500);
+    background: var(--nog-primary-hover);
 }
 
 .elc-pay-btn:active:not(:disabled) {

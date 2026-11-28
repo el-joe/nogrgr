@@ -5,6 +5,14 @@
  * page rail (x-sf::elora.v1.pdp-rail inside .epd-rails.v1-home), so card sizes, gaps and the
  * cards-per-view steps are exactly the home / product page ones.
  */
+/* Phone tab bar of variants 2–6 (mobile-nav/elora: 64px bar flush with the bottom). */
+[data-theme-variant] {
+    --elo-nav-h: 64px;
+    --elo-nav-bottom: env(safe-area-inset-bottom, 0px);
+    --elo-nav-clear: calc(var(--elo-nav-bottom) + var(--elo-nav-h));
+    --elo-bar-h: 64px;
+}
+
 [data-theme-variant='1'] {
     /* Floating phone tab bar: pill + "My Cart" circle (elora-v1.css). */
     --elo-nav-h: 74px;
@@ -60,7 +68,7 @@
     line-height: 21px;
 }
 
-.elo-freeship-text b { color: #ff4d00; font-size: 14px; font-weight: 600; }
+.elo-freeship-text b { color: var(--nog-primary); font-size: 14px; font-weight: 600; }
 .elo-freeship-end,
 .elo-freeship-lead { color: #ff522c; font-weight: 500; }
 
@@ -69,7 +77,7 @@
 .elo-track { position: relative; }
 
 .elo-freeship-cart .elo-meter { height: 18px; border-radius: 24px; background: #d9d9d9; overflow: hidden; }
-.elo-freeship-cart .elo-meter > span { border-radius: 24px; background: #ff4d00; }
+.elo-freeship-cart .elo-meter > span { border-radius: 24px; background: var(--nog-primary); }
 
 .elo-track:not([data-width='0']) .elo-meter > span { min-width: 12px; }
 
@@ -155,7 +163,7 @@
 }
 
 .elo-check:has(> input:focus-visible) {
-    outline: 2px solid var(--nog-primary, #ff824c);
+    outline: 2px solid var(--nog-primary);
     outline-offset: 2px;
     border-radius: 6px;
 }
@@ -206,7 +214,7 @@
 .ecl-title { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; letter-spacing: 0.3px; }
 .ecl-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .ecl-name:hover { text-decoration: underline; }
-.ecl-weight { flex-shrink: 0; color: #ff4d00; font-size: 12px; }
+.ecl-weight { flex-shrink: 0; color: var(--nog-primary); font-size: 12px; }
 .ecl-variant { overflow: hidden; color: #adadad; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .ecl-eta { display: none; }
 .ecl-trash { display: none; }
@@ -280,7 +288,7 @@
     flex: 1;
     gap: 8px;
     border-radius: 32px;
-    background: #ff4d00;
+    background: var(--nog-primary);
     color: #fff;
     font-size: 16px;
     font-weight: 500;
@@ -288,7 +296,7 @@
 
 /* Phone: clear the fixed bar (+ its "you save" tab) above the floating tab bar. */
 @media (max-width: 1023px) {
-    .sf-page:has([data-checkout-bar]) .elo-mobile-nav + div[aria-hidden='true'] {
+    .sf-page:has([data-checkout-bar]) :is(.elo-mobile-nav, .elo-mobile-bar) + div[aria-hidden='true'] {
         height: calc(var(--elo-nav-clear) + var(--elo-bar-h) + 28px);
     }
 
@@ -349,7 +357,7 @@
     [data-cart-summary] .elo-coupon input { padding-inline: 11px; font-size: 16px; }
     [data-cart-summary] .elo-coupon input::placeholder { color: #adadad; }
     [data-cart-summary] .elo-coupon button { width: 92px; background: #eb7441; font-size: 20px; }
-    [data-cart-summary] .elo-coupon button:hover { background: #ff4d00; }
+    [data-cart-summary] .elo-coupon button:hover { background: var(--nog-primary); }
 
     .elo-sum-btn { width: 100%; height: 50px; padding-inline: 32px; border-radius: 32px; background: #121212; color: #fff; font-size: 16px; font-weight: 500; }
 
@@ -414,7 +422,7 @@
     .elo-freeship-cart {
         gap: 0;
         padding: 12px 18px;
-        border: 1px solid #ff4d00;
+        border: 1px solid var(--nog-primary);
         border-radius: 8px;
         background: rgb(255 77 0 / 0.04);
         color: #242424;
@@ -435,7 +443,7 @@
         inset-inline-start: min(calc(100% - 28px), max(0px, calc(var(--w, 0%) - 21px)));
         width: 28px;
         height: 28px;
-        color: #ff4d00;
+        color: var(--nog-primary);
     }
 
     .elo-cart-login {
@@ -488,7 +496,7 @@
     .ecl-name { font-size: 16px; }
     .ecl-weight { font-size: 16px; }
     .ecl-variant { color: #121212; font-size: 14px; letter-spacing: 0.5px; }
-    .ecl-eta { display: block; color: #ff4d00; font-size: 14px; letter-spacing: 0.5px; }
+    .ecl-eta { display: block; color: var(--nog-primary); font-size: 14px; letter-spacing: 0.5px; }
 
     .ecl-trash {
         display: grid;
@@ -518,8 +526,8 @@
         background: #fff;
     }
 
-    .ecl .elo-stepper button { width: 18px; height: 18px; border: 0; background: transparent; color: #ff4d00; }
-    .ecl .elo-stepper button:hover { background: #fff1eb; }
+    .ecl .elo-stepper button { width: 18px; height: 18px; border: 0; background: transparent; color: var(--nog-primary); }
+    .ecl .elo-stepper button:hover { background: var(--sf-accent-subtle); }
     .ecl .elo-stepper button:disabled { color: #ffc9b3; }
 
     .ecl .elo-stepper input {
@@ -527,7 +535,7 @@
         height: 18px;
         border-radius: 16px;
         background: #ffd3c0;
-        color: #ff4d00;
+        color: var(--nog-primary);
         font-size: 12px;
         letter-spacing: 0.5px;
     }
@@ -550,7 +558,7 @@
 
 .ecl-trash { color: #adadad; }
 .ecl .elo-stepper button > .ui-icon[data-icon='elo-minus'] { color: #c9c5c5; }
-.ecl .elo-stepper button > .ui-icon[data-icon='elo-plus'] { color: #ff4d00; }
+.ecl .elo-stepper button > .ui-icon[data-icon='elo-plus'] { color: var(--nog-primary); }
 .elo-cart-login .ui-icon { color: #121212; }
 .elo-cart-crumbs .ui-icon { color: #808080; }
 

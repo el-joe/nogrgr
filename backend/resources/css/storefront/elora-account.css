@@ -52,16 +52,16 @@
 .eac-user { justify-items: start; gap: 4px; padding: 8px 16px; }
 .eac-user-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; line-height: 20px; color: #121212; }
 .eac-user-mail { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; line-height: 18px; letter-spacing: 0.5px; color: #8f8f8f; }
-.eac-user-edit { min-width: 44px; padding: 2px 8px; border-radius: 9px; background: #fff3ee; text-align: center; font-size: 12px; line-height: 15px; letter-spacing: 0.5px; color: var(--nog-primary); }
+.eac-user-edit { min-width: 44px; padding: 2px 8px; border-radius: 9px; background: var(--sf-accent-subtle); text-align: center; font-size: 12px; line-height: 15px; letter-spacing: 0.5px; color: var(--nog-primary); }
 .eac-menu { gap: 16px; padding: 8px 16px 16px; }
 .eac-menu-title { display: flex; align-items: center; height: 36px; border-bottom: 1px solid #d4d4d4; font-size: 16px; color: #121212; }
 .eac-menu ul { display: grid; gap: 8px; font-size: 12px; line-height: 15px; letter-spacing: 0.5px; color: #242424; }
 .eac-menu ul a,
 .eac-logout { display: block; width: 100%; padding-inline: 8px; border-inline-start: 2px solid transparent; text-align: start; transition: color var(--motion-fast) var(--ease-out), background-color var(--motion-fast) var(--ease-out), border-color var(--motion-fast) var(--ease-out); }
 .eac-menu ul a:hover { color: var(--nog-primary); }
-.eac-menu ul a[aria-current] { padding-block: 4px; border-color: var(--nog-primary); background: #fff3ee; }
+.eac-menu ul a[aria-current] { padding-block: 4px; border-color: var(--nog-primary); background: var(--sf-accent-subtle); }
 .eac-logout { cursor: pointer; color: #e7000b; }
-.eac-logout:hover { background: #fff3ee; }
+.eac-logout:hover { background: var(--sf-accent-subtle); }
 .eac-settings { padding-inline: 8px; }
 .eac-settings ul { padding-inline: 0; }
 
@@ -190,7 +190,7 @@
 
 /* ---------- Tracking (1:19981 / m 1:23708) ---------- */
 .eac-track { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-.eac-transit { display: inline-flex; flex-shrink: 0; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 16px; background: #fff3ee; font-size: 12px; line-height: 16px; color: var(--nog-primary); }
+.eac-transit { display: inline-flex; flex-shrink: 0; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 16px; background: var(--sf-accent-subtle); font-size: 12px; line-height: 16px; color: var(--nog-primary); }
 .eac-track-head { display: none; }
 .eac-track-grid { display: flex; flex-direction: column; gap: 16px; padding-inline: 16px; }
 .eac-track-side { display: contents; }
@@ -319,7 +319,7 @@
     .eac-pill { min-height: 56px; padding: 16px 24px; font-weight: 400; }
     .eac-pill-sm { min-height: 44px; }
     .eac-pill-review,
-    .eac-pill-review:hover { background: #fff3ee; color: var(--nog-primary); }
+    .eac-pill-review:hover { background: var(--sf-accent-subtle); color: var(--nog-primary); }
 
     .eac-track { gap: 0; }
     .eac-track .eac-crumbs { margin-bottom: 24px; }

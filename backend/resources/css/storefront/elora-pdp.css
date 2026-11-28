@@ -5,7 +5,7 @@
  * Unlayered on purpose: it must win over the home's phone card sizes in elora-v1.css.
  */
 .epd {
-    --epd-orange: #ff4d00;
+    --epd-orange: var(--nog-primary);
     --epd-ink: #121212;
     --epd-gray: #8f8f8f;
     --epd-green: #2aaf2f;
@@ -108,7 +108,7 @@
     justify-content: center;
     border: 1px solid var(--epd-orange);
     border-radius: 8px;
-    background: #fff1ea;
+    background: var(--sf-accent-subtle);
     color: var(--epd-orange);
     font-size: 20px;
     font-weight: 500;
@@ -1089,16 +1089,16 @@
         padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
     }
 
-    [data-sf-page='product'][data-theme-variant='1'] :is(.elo-mobile-nav, .elo-mobile-bar, .elo-header) {
+    [data-sf-page='product'][data-theme-variant] :is(.elo-mobile-nav, .elo-mobile-bar, .elo-header) {
         display: none;
     }
 
-    [data-sf-page='product'][data-theme-variant='1'] :is(.elo-mobile-nav, .elo-mobile-bar) + div[aria-hidden='true'] {
+    [data-sf-page='product'][data-theme-variant] :is(.elo-mobile-nav, .elo-mobile-bar) + div[aria-hidden='true'] {
         display: none;
     }
 
     /* The fixed bar sits over the page end: the footer keeps room for it. */
-    [data-sf-page='product'][data-theme-variant='1'] .v1-footer {
+    [data-sf-page='product'][data-theme-variant] :is(.v1-footer, .elo-footer) {
         padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
     }
 

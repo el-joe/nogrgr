@@ -25,7 +25,7 @@
     --color-elo-muted: var(--nog-ink-muted);
     --color-elo-line: var(--nog-line);
     --color-elo-soft: #f6f6f6;
-    --color-elo-tint: #fff5f0;
+    --color-elo-tint: var(--elo-tint);
     --color-elo-green: #2aaf2f;
 }
 
@@ -175,7 +175,7 @@
 
     .elo-btn-soft {
         border-color: var(--nog-primary);
-        background: var(--color-elo-tint, #fff5f0);
+        background: var(--color-elo-tint);
         color: var(--nog-primary);
     }
 
@@ -231,7 +231,7 @@
     }
 
     .elo-pill:hover {
-        background: #fff5f0;
+        background: var(--elo-tint);
     }
 
     .elo-pill[aria-current='page'],
@@ -479,7 +479,7 @@
         padding: 6px 16px;
         border: 1px solid var(--nog-primary);
         border-radius: 10px;
-        background: #fff5f0;
+        background: var(--elo-tint);
         color: var(--nog-primary);
         font-size: 14px;
         text-align: center;
@@ -751,7 +751,7 @@
         padding: 12px 14px;
         border: 1px solid var(--nog-primary);
         border-radius: 6px;
-        background: #fff5f0;
+        background: var(--elo-tint);
     }
 
     .elo-meter {
@@ -794,7 +794,7 @@
     }
 
     .elo-stepper button:hover {
-        background: #fff5f0;
+        background: var(--elo-tint);
     }
 
     .elo-stepper button:active {
@@ -810,7 +810,7 @@
         width: 26px;
         height: 22px;
         border-radius: 999px;
-        background: #fff1eb;
+        background: var(--sf-accent-subtle);
         color: var(--nog-primary);
         font-size: 12px;
         text-align: center;
@@ -961,7 +961,7 @@
         height: 92px;
         place-items: center;
         border-radius: 999px;
-        background: #fde4da;
+        background: var(--elo-tint-strong);
         color: var(--nog-primary);
         animation: elo-pop var(--motion-slow) var(--ease-out) both;
     }
@@ -1055,7 +1055,7 @@
         height: 120px;
         place-items: center;
         border-radius: 999px;
-        background: #fff1eb;
+        background: var(--sf-accent-subtle);
         color: var(--nog-primary);
         animation: elo-pop var(--motion-slow) var(--ease-out) both;
     }
@@ -1073,7 +1073,7 @@
     .elo-spinner {
         width: 48px;
         height: 48px;
-        border: 3px solid #fde4da;
+        border: 3px solid var(--elo-tint-strong);
         border-top-color: var(--nog-primary);
         border-radius: 999px;
         animation: elo-spin 0.9s linear infinite;

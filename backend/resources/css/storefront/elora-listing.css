@@ -1,6 +1,6 @@
 /*
- * Elora v1 (base) product listing (Figma 1:17172 desktop, m 1:21453, filter sheet m 1:22799).
- * Everything is scoped to .elp-* or [data-theme-variant='1'], so variants 2–6 are untouched. No box shadows or
+ * Elora product listing, every variant (Figma 1:17172 desktop, m 1:21453, filter sheet m 1:22799).
+ * Shared by every Elora variant (decision #140): scoped to .elp-* or the Elora page shell. No box shadows or
  * edge fades on page sections (client); nothing inside a filter group scrolls.
  * Icons are the Figma exports (resources/images/elora/listing).
  */
@@ -144,7 +144,7 @@
         gap: 7px;
         height: 32px;
         padding-inline: 12px;
-        border: 1px solid #ffac88;
+        border: 1px solid var(--elo-accent-line);
         border-radius: 16px;
         color: var(--nog-primary);
         font-size: 12px;
@@ -154,12 +154,12 @@
     }
 
     .elp-pill:hover {
-        background: #fff5f0;
+        background: var(--elo-tint);
     }
 
     .elp-pill[aria-current='true'] {
-        border-color: #ff4d00;
-        background: #ff4d00;
+        border-color: var(--nog-primary);
+        background: var(--nog-primary);
         color: #fff;
     }
 
@@ -378,7 +378,7 @@
         display: none;
         width: 18px;
         height: 18px;
-        border: 2px solid #ffac88;
+        border: 2px solid var(--elo-accent-line);
         border-top-color: var(--nog-primary);
         border-radius: 999px;
         animation: elp-spin 0.8s linear infinite;
@@ -619,7 +619,7 @@
         min-width: 217px;
         height: 51px;
         border-radius: 48px;
-        background: #ff4d00;
+        background: var(--nog-primary);
         color: #fdfdfd;
         pointer-events: auto;
         animation: elp-rise var(--motion-slow) var(--ease-out) both;
@@ -651,7 +651,7 @@
         place-items: center;
         border-radius: 999px;
         background: #fff;
-        color: #ff4d00;
+        color: var(--nog-primary);
         font-size: 11px;
     }
 
@@ -761,7 +761,7 @@
         justify-content: center;
         gap: 6px;
         height: 46px;
-        border: 1px solid #ff4d00;
+        border: 1px solid var(--nog-primary);
         font-size: 16px;
         font-weight: 500;
     }
@@ -769,7 +769,7 @@
     .elp-show {
         width: 200px;
         max-width: 60%;
-        background: #ff4d00;
+        background: var(--nog-primary);
         color: #fff;
     }
 
@@ -786,25 +786,25 @@
     .elp-reset {
         flex: 1;
         background: #fdfdfd;
-        color: #ff4d00;
+        color: var(--nog-primary);
     }
 
     /* Categories browser of the same store: no hover shadow on the round tiles (client). */
-    [data-theme-variant='1'] .elo-cat:hover img,
-    [data-theme-variant='1'] .elo-cat:hover .eco-cat-ph {
+    [data-theme-variant] .elo-cat:hover img,
+    [data-theme-variant] .elo-cat:hover .eco-cat-ph {
         box-shadow: none;
     }
 
     /* ---------- Listing page chrome on phones (m 1:21453) ---------- */
     /* The phone frame draws the search pill instead of the logo bar, and no tab bar. */
     @media (max-width: 1023px) {
-        .sf-page[data-theme-variant='1'][data-sf-page^='listing-'] {
+        .sf-page[data-theme-variant][data-sf-page^='listing-'] {
             padding-bottom: 67px;
         }
 
-        .sf-page[data-theme-variant='1'][data-sf-page^='listing-'] .elo-header > .lg\:hidden,
-        .sf-page[data-theme-variant='1'][data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar),
-        .sf-page[data-theme-variant='1'][data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar) + [aria-hidden='true'] {
+        .sf-page[data-theme-variant][data-sf-page^='listing-'] .elo-header > .lg\:hidden,
+        .sf-page[data-theme-variant][data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar),
+        .sf-page[data-theme-variant][data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar) + [aria-hidden='true'] {
             display: none !important;
         }
     }
@@ -888,12 +888,12 @@
 }
 
 .elp-sort .select2-container--default .select2-results__option--selected {
-    background: #fff5f0;
-    color: #ff4d00;
+    background: var(--elo-tint);
+    color: var(--nog-primary);
 }
 
 .elp-sort .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
-    background: #ff4d00;
+    background: var(--nog-primary);
     color: #fff;
 }
 
