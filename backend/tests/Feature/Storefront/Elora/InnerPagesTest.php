@@ -41,7 +41,7 @@ it('renders the Elora listings with filters, sort sheet and the floating filter 
         ->assertSee('data-elo-autosubmit', false)
         ->assertSee('id="elo-filters"', false)
         ->assertSee('id="elo-sort"', false)
-        ->assertSee('elo-fab', false);
+        ->assertSee('elp-fab', false);
 })->with([
     'new in' => ['/new-in', 'storefront::themes.elora.pages.listing'],
     'best selling' => ['/best-selling?period=7', 'storefront::themes.elora.pages.listing'],
