@@ -40,6 +40,8 @@
     ];
     $grams = $page->freeShippingGrams;
     $weight = $grams === null ? null : ($grams >= 1000 ? __st('cart.weight_kg', ['value' => rtrim(rtrim(number_format($grams / 1000, 2), '0'), '.')]) : __st('cart.weight_g', ['value' => $grams]));
+    // A threshold of 0 g is free shipping from the first gram, not "orders of 0 g".
+    $freeText = $grams === 0 ? __st('shell.free_shipping.title') : __st('elora_pages.product.free_shipping_over', ['weight' => $weight]);
     $detailsText = trim(strip_tags((string) ($page->description ?: $page->summary)));
     $moreUrl = $page->category ? route('storefront.category', ['slug' => $page->category->slug]) : route('storefront.best-sellers');
 @endphp
@@ -57,13 +59,13 @@
                     <input id="epd-search" type="search" name="q" placeholder="{{ __st('shell.search') }}" enterkeyhint="search">
                 </form>
                 @if ($favoriteUrl)
-                    <button type="button" class="epd-circle" data-favorite data-favorite-url="{{ $favoriteUrl }}" data-product-id="{{ $page->view->id() }}" aria-pressed="{{ $page->favorited ? 'true' : 'false' }}" aria-label="{{ __st('product.favorite') }}"><x-ui::icon name="heart" :size="20" /></button>
+                    <button type="button" class="epd-circle" data-favorite data-favorite-url="{{ $favoriteUrl }}" data-product-id="{{ $page->view->id() }}" aria-pressed="{{ $page->favorited ? 'true' : 'false' }}" aria-label="{{ __st('product.favorite') }}"><x-ui::icon name="elo-heart" :size="20" /></button>
                 @endif
-                <button type="button" class="epd-circle" data-elo-share data-share-title="{{ $page->name }}" data-share-url="{{ $page->url }}" data-share-done="{{ __st('elora_pages.product.link_copied') }}" aria-label="{{ __st('elora_pages.product.share') }}"><x-ui::icon name="upload" :size="24" /></button>
+                <button type="button" class="epd-circle" data-elo-share data-share-title="{{ $page->name }}" data-share-url="{{ $page->url }}" data-share-done="{{ __st('elora_pages.product.link_copied') }}" aria-label="{{ __st('elora_pages.product.share') }}"><x-ui::icon name="elo-share" :size="24" /></button>
             </div>
 
             @if ($weight)
-                <button type="button" class="epd-freebar max-lg:hidden" data-sheet-open="sf-free-shipping-elo" data-reveal="fade">{{ __st('elora_pages.product.free_shipping_over', ['weight' => $weight]) }}</button>
+                <button type="button" class="epd-freebar max-lg:hidden" data-sheet-open="sf-free-shipping-elo" data-reveal="fade">{{ $freeText }}</button>
             @endif
 
             <nav aria-label="{{ __st('shell.breadcrumb') }}" class="epd-crumbs max-lg:hidden">
@@ -155,10 +157,10 @@
                         <section class="epd-reviews" aria-labelledby="epd-reviews-title" data-reviews data-reviews-url="{{ $reviewsUrl }}">
                             <h2 id="epd-reviews-title">{{ __st('elora_pages.product.reviews_rating') }}</h2>
                             <div class="epd-rev-head">
-                                <p class="epd-verified"><x-ui::icon name="user" :size="20" />{{ __st('elora_pages.product.verified_note') }}</p>
+                                <p class="epd-verified"><x-ui::icon name="elo-user-check" :size="20" />{{ __st('elora_pages.product.verified_note') }}</p>
                                 <div class="epd-rev-score">
                                     <p class="epd-rev-count">{{ __st('product.reviews.count', ['count' => $reviews['count']]) }}</p>
-                                    <p class="epd-rev-avg"><span>{{ number_format($reviews['average'], 1) }}</span><x-sf::stars :rating="$reviews['average']" :size="32" tone="dark" /></p>
+                                    <p class="epd-rev-avg"><span>{{ number_format($reviews['average'], 1) }}</span><x-sf::stars :rating="$reviews['average']" :size="32" tone="dark" figma /></p>
                                 </div>
                             </div>
                             @if ($reviewsUrl)
@@ -184,7 +186,7 @@
                         </div>
                         <div class="epd-ratingrow">
                             <button type="button" class="epd-rating" @if ($reviewsUrl && $reviews['count'] > 0) data-sheet-open="sf-reviews" @else disabled @endif>
-                                <x-ui::icon name="star" :size="18" class="fill-[#ffb00a] text-[#ffb00a]" /><span>{{ number_format($reviews['average'], 1) }}</span>
+                                <x-ui::icon name="elo-star" :size="18" class="text-[#ffe100]" /><span>{{ number_format($reviews['average'], 1) }}</span>
                                 <span class="epd-rates">{{ __st('elora_pages.product.rates', ['count' => $reviews['count']]) }}</span>
                             </button>
                             @if ($page->soldCount > 0)
@@ -207,7 +209,7 @@
 
                     @if ($page->delivery)
                         <button type="button" class="epd-est" data-sheet-open="elo-delivery">
-                            <x-ui::icon name="truck-tick" :size="24" /><span>{{ __st('elora_pages.product.estimated', ['range' => $page->delivery['label']]) }}</span>
+                            <x-ui::icon name="elo-truck-tick" :size="24" /><span>{{ __st('elora_pages.product.estimated', ['range' => $page->delivery['label']]) }}</span>
                         </button>
                     @endif
 
@@ -242,12 +244,12 @@
                             <button type="button" data-step="1" aria-label="{{ __st('elora_pages.cart.increase') }}" @disabled($maxQty <= 1)><x-ui::icon name="plus" :size="24" /></button>
                         </div>
                         <button type="button" class="epd-add" data-add-to-cart data-product-id="{{ $page->view->id() }}" data-variant-id="{{ $page->selectedVariantId }}" data-state="idle" @disabled(! $page->inStock)>
-                            <x-ui::icon name="cart-add" :size="24" /><span data-cart-label>{{ $page->inStock ? __st('product.add_to_cart') : __st('product.out_of_stock') }}</span>
+                            <x-ui::icon name="elo-cart-add" :size="20" /><span data-cart-label>{{ $page->inStock ? __st('product.add_to_cart') : __st('product.out_of_stock') }}</span>
                         </button>
                         @if ($favoriteUrl)
-                            <button type="button" class="epd-circle epd-circle-shadow max-lg:hidden" data-favorite data-favorite-url="{{ $favoriteUrl }}" data-product-id="{{ $page->view->id() }}" aria-pressed="{{ $page->favorited ? 'true' : 'false' }}" aria-label="{{ __st('product.favorite') }}"><x-ui::icon name="heart" :size="24" /></button>
+                            <button type="button" class="epd-circle epd-circle-shadow max-lg:hidden" data-favorite data-favorite-url="{{ $favoriteUrl }}" data-product-id="{{ $page->view->id() }}" aria-pressed="{{ $page->favorited ? 'true' : 'false' }}" aria-label="{{ __st('product.favorite') }}"><x-ui::icon name="elo-heart" :size="20" /></button>
                         @endif
-                        <button type="button" class="epd-circle epd-circle-shadow max-lg:hidden" data-elo-share data-share-title="{{ $page->name }}" data-share-url="{{ $page->url }}" data-share-done="{{ __st('elora_pages.product.link_copied') }}" aria-label="{{ __st('elora_pages.product.share') }}"><x-ui::icon name="upload" :size="24" /></button>
+                        <button type="button" class="epd-circle epd-circle-shadow max-lg:hidden" data-elo-share data-share-title="{{ $page->name }}" data-share-url="{{ $page->url }}" data-share-done="{{ __st('elora_pages.product.link_copied') }}" aria-label="{{ __st('elora_pages.product.share') }}"><x-ui::icon name="elo-share" :size="24" /></button>
                     </div>
                     @unless ($page->inStock)
                         <p class="rounded-lg bg-sf-danger-bg px-3 py-2 text-sm text-sf-danger" role="status">{{ __st('product.out_of_stock_note') }}</p>
@@ -257,7 +259,7 @@
                     @endunless
 
                     @if ($weight)
-                        <button type="button" class="epd-freeband lg:hidden" data-sheet-open="sf-free-shipping-elo"><x-ui::icon name="box" :size="32" />{{ __st('elora_pages.product.free_shipping_over', ['weight' => $weight]) }}</button>
+                        <button type="button" class="epd-freeband lg:hidden" data-sheet-open="sf-free-shipping-elo"><x-ui::icon name="box" :size="32" />{{ $freeText }}</button>
                     @endif
 
                     <x-sf::elora.inner.product-trust class="epd-trust" :images="true" />
@@ -279,7 +281,7 @@
     @if ($weight)
         <x-sf::modal id="sf-free-shipping-elo" :title="__st('shell.free_shipping.title')" size="sm">
             <ul class="grid gap-3 text-sm text-elo-ink" role="list">
-                <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-elo-green" />{{ __st('elora_pages.product.free_shipping_over', ['weight' => $weight]) }}</li>
+                <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-elo-green" />{{ $freeText }}</li>
                 <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-elo-green" />{{ __st('shell.free_shipping.line_2') }}</li>
                 <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-elo-green" />{{ __st('shell.free_shipping.line_3') }}</li>
             </ul>

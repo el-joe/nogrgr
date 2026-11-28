@@ -28,6 +28,9 @@ return [
     'revenue_split' => 'Revenue split',
     'split_vendor' => 'Store :amount (:percent%)',
     'split_platform' => 'Platform :amount (:percent%)',
+    'split_vendor_plain' => 'Store :amount',
+    'split_platform_plain' => 'Platform :amount',
+    'partially_refunded' => 'Partially refunded',
     'line_parts' => [
         'fixed_shipping' => 'Fixed shipping',
         'discount' => 'Flash discount',

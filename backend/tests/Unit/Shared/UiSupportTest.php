@@ -4,7 +4,7 @@ use App\Shared\Support\Icon;
 use App\Shared\Support\Ui;
 
 it('exports the Figma icons as currentColor SVGs', function (): void {
-    expect(Icon::names())->toHaveCount(130)->toContain('dashboard', 'panel-left', 'openai', 'tp-home', 'tp-bell');
+    expect(Icon::names())->toHaveCount(175)->toContain('dashboard', 'panel-left', 'openai', 'tp-home', 'tp-bell', 'elo-trash', 'elo-track-truck');
 
     $svg = Icon::svg('chevron-right', 16, 'class="x"');
 

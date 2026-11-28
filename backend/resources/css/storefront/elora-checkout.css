@@ -1,0 +1,866 @@
+/*
+ * Elora checkout (Figma 1:18245 desktop / m 1:22186 phone). Classes `elc-*`, scoped under `.elc`
+ * so the shared address / payment components keep their look on the other themes. Unlayered on
+ * purpose: it has to win over the Tailwind utilities baked into the shared payment markup.
+ * Desktop: left = shipping box + payment details, right (480) = summary, pay, trust cards.
+ * Phones: both columns flatten and the blocks are ordered (address, rows, Order Summary card,
+ * trust cards, payment) with the pay button as a fixed bar.
+ */
+.elc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    color: var(--nog-ink);
+}
+
+.elc-main,
+.elc-side {
+    display: contents;
+}
+
+@media (min-width: 1024px) {
+    .elc {
+        grid-template-columns: minmax(0, 1fr) 400px;
+        column-gap: 40px;
+        align-items: start;
+    }
+
+    .elc-main,
+    .elc-side {
+        display: grid;
+        gap: 20px;
+        align-content: start;
+        min-width: 0;
+    }
+
+    .elc-side {
+        position: sticky;
+        top: 112px;
+        gap: 16px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .elc {
+        grid-template-columns: minmax(0, 1fr) 480px;
+        column-gap: 62px;
+    }
+}
+
+/* ---------- Shipping information ---------- */
+.elc-ship {
+    display: grid;
+    gap: 16px;
+    order: 1;
+}
+
+.elc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.elc-head h2 {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--nog-ink);
+}
+
+.elc-change {
+    display: inline-flex;
+    align-items: center;
+    color: #ff824c;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    transition: color var(--motion-fast) ease-out;
+}
+
+.elc-change:hover {
+    color: var(--nog-primary);
+}
+
+.elc-change svg {
+    transition: transform var(--motion-fast) ease-out;
+}
+
+.elc-change[aria-expanded='true'] svg {
+    transform: rotate(90deg);
+}
+
+.elc-list {
+    display: grid;
+    gap: 12px;
+}
+
+.elc .sf-address-card {
+    padding: 16px 12px;
+    border: 1px solid #d4d4d4;
+    border-radius: 8px;
+    background: #fdfdfd;
+}
+
+.elc .sf-address-card:has(input[type='radio']:checked) {
+    border-color: #d4d4d4;
+    background: #fdfdfd;
+}
+
+.elc .sf-address-card [data-field-full-name] {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--nog-ink);
+}
+
+.elc .sf-address-card [data-field-phone],
+.elc .sf-address-card [data-field-one-line] {
+    font-size: 16px;
+    color: #8f8f8f;
+}
+
+.elc .sf-address-card [data-address-edit] {
+    color: var(--nog-ink);
+}
+
+.elc .sf-address-card [data-address-edit] svg {
+    width: 24px;
+    height: 24px;
+}
+
+@media (min-width: 640px) {
+    .elc .sf-address-card label {
+        grid-template-columns: auto 1fr;
+        column-gap: 48px;
+        align-items: center;
+    }
+
+    .elc .sf-address-card label > :last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Folded: only the selected address, shown as the Figma box (no radio, no add button). */
+.elc-ship[data-collapsed] .sf-address-card:not(:has(input[type='radio']:checked)),
+.elc-ship[data-collapsed] .elc-add {
+    display: none;
+}
+
+.elc-ship[data-collapsed] .sf-address-card .sf-radio {
+    display: none;
+}
+
+.elc-ship:not([data-collapsed]) .sf-address-card:has(input[type='radio']:checked) {
+    border-color: var(--nog-primary);
+    background: #fff5f0;
+}
+
+.elc-ship:not([data-collapsed]) .sf-address-card {
+    animation: elc-in var(--motion-base, 240ms) var(--ease-out, ease-out) both;
+}
+
+@keyframes elc-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+.elc-ship-info {
+    order: 2;
+}
+
+.elc-ship-info:empty {
+    display: none;
+}
+
+/* ---------- Payment details ---------- */
+.elc-payment {
+    display: grid;
+    gap: 12px;
+    order: 6;
+}
+
+.elc [data-payment-section] > h2 {
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--nog-ink);
+}
+
+.elc [data-payment-section] [role='radiogroup'] {
+    gap: 16px;
+}
+
+.elc [data-gateway-option] {
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #adadad;
+}
+
+.elc [data-gateway-option]:hover {
+    border-color: transparent;
+}
+
+.elc [data-gateway-option]:has(:checked) {
+    border-color: transparent;
+    color: var(--nog-ink);
+}
+
+.elc [data-gateway-option] > span span:first-child + span span:first-child,
+.elc [data-gateway-option] .text-\[14px\] {
+    font-size: 18px;
+    color: inherit;
+}
+
+.elc-radio {
+    position: relative;
+    display: inline-grid;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    color: inherit;
+}
+
+.elc [data-gateway-radio] {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.elc-radio .ui-icon {
+    grid-area: 1 / 1;
+    transition: opacity var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+}
+
+.elc-radio-on {
+    opacity: 0;
+    transform: scale(0.7);
+}
+
+.elc-radio:has(:checked) .elc-radio-on {
+    opacity: 1;
+    transform: none;
+}
+
+.elc-radio:has(:checked) .elc-radio-off {
+    opacity: 0;
+}
+
+.elc-radio:has(:focus-visible) {
+    outline: 2px solid var(--nog-primary);
+    outline-offset: 2px;
+}
+
+.elc [data-gateway-option] > span > svg:first-child {
+    box-sizing: content-box;
+    width: 16px;
+    height: 16px;
+    padding: 3px 11px;
+    border: 0.2px solid #8f8f8f;
+    border-radius: 4px;
+    color: #555;
+}
+
+.elc [data-inline-card] {
+    margin-inline: 34px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.elc [data-stripe-element] {
+    min-height: 48px;
+    border-color: #d4d4d4;
+    border-radius: 10px;
+    padding: 14px 12px;
+}
+
+.elc [data-usd-charge] {
+    background: #f6f5f5;
+}
+
+/* Billing same as shipping (Figma: under the card fields). */
+.elc-billing {
+    display: grid;
+    gap: 12px;
+    order: 7;
+    color: #8f8f8f;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.elc-billing .sf-check {
+    width: 16px;
+    height: 16px;
+}
+
+@media (min-width: 1024px) {
+    .elc-billing {
+        padding-inline-start: 34px;
+        margin-top: -4px;
+    }
+}
+
+/* ---------- Summary ---------- */
+.elc-summary-region {
+    order: 4;
+    min-width: 0;
+}
+
+.elc-summary-region[aria-busy='true'] {
+    opacity: 0.6;
+    transition: opacity var(--motion-fast) ease-out;
+}
+
+.elc-sum {
+    display: grid;
+    gap: 16px;
+}
+
+.elc-total-label {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #8f8f8f;
+}
+
+.elc-total-value {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 35px;
+    color: var(--nog-primary);
+}
+
+.elc-total {
+    display: grid;
+    gap: 4px;
+}
+
+.elc-lines {
+    display: grid;
+    gap: 16px;
+}
+
+.elc-line {
+    position: relative;
+    overflow: hidden;
+}
+
+.elc-line[aria-busy='true'] {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.elc-line-in {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: transparent;
+}
+
+.elc-img {
+    display: grid;
+    width: 123px;
+    height: 116px;
+    flex-shrink: 0;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f5f5f5;
+}
+
+.elc-info {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+    align-content: space-between;
+    gap: 8px;
+    min-height: 116px;
+    padding-top: 8px;
+}
+
+.elc-name {
+    display: block;
+    overflow: hidden;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--nog-ink);
+}
+
+.elc-variant {
+    font-size: 12px;
+    color: #8f8f8f;
+}
+
+.elc-eta {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: var(--nog-primary);
+}
+
+.elc-issue {
+    font-size: 12px;
+    color: var(--sf-danger, #dc2626);
+}
+
+.elc-line-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.elc-prices {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.elc-price {
+    font-size: 16px;
+    color: var(--nog-ink);
+}
+
+.elc-was {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: #adadad;
+}
+
+.elc-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 24px;
+    background: #fff;
+}
+
+.elc-stepper button {
+    display: grid;
+    width: 20px;
+    height: 20px;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--nog-primary);
+    transition: background-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+}
+
+.elc-stepper button.hidden {
+    display: none;
+}
+
+.elc-stepper button:hover {
+    background: #fff5f0;
+}
+
+.elc-stepper button:active {
+    transform: scale(0.88);
+}
+
+.elc-stepper button:disabled {
+    color: #e0e0e0;
+    background: transparent;
+}
+
+.elc-stepper button:first-child {
+    color: #adadad;
+}
+
+.elc-stepper input {
+    width: 18px;
+    background: transparent;
+    color: var(--nog-primary);
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    appearance: textfield;
+    outline: none;
+    pointer-events: none;
+}
+
+.elc-stepper input::-webkit-inner-spin-button,
+.elc-stepper input::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+/* Desktop: the card is the plain totals block. */
+.elc-card {
+    display: grid;
+    gap: 12px;
+}
+
+.elc-card-title,
+.elc-note {
+    display: none;
+}
+
+.elc-rows {
+    display: grid;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.elc-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: Arial, sans-serif;
+}
+
+.elc-row-main {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--nog-ink);
+}
+
+.elc-row-ship {
+    font-size: 14px;
+    line-height: 20px;
+    color: #8f8f8f;
+}
+
+.elc-row-ship dt {
+    display: grid;
+}
+
+.elc-row-ship small {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.elc-row-ship dd {
+    color: #adadad;
+}
+
+.elc-due {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #c4c4c4;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    color: var(--nog-ink);
+}
+
+.elc-due p:first-child {
+    font-size: 16px;
+}
+
+.elc-due p:last-child {
+    font-size: 24px;
+    line-height: 32px;
+}
+
+.elc-coupon {
+    margin-top: 4px;
+}
+
+/* ---------- Pay button, powered by, trust ---------- */
+.elc-pay {
+    display: grid;
+    gap: 8px;
+    order: 8;
+}
+
+.elc-pay-btn {
+    display: flex;
+    width: 100%;
+    height: 68px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 32px;
+    border-radius: 32px;
+    background: var(--nog-primary);
+    color: #fff;
+    font-size: 32px;
+    font-weight: 500;
+    transition: background-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out, opacity var(--motion-fast) ease-out;
+}
+
+.elc-pay-btn:hover:not(:disabled) {
+    background: var(--nog-primary-hover, #e64500);
+}
+
+.elc-pay-btn:active:not(:disabled) {
+    transform: scale(0.99);
+}
+
+.elc-pay-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.elc-pay-reason {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--sf-danger, #dc2626);
+}
+
+.elc-pay-reason[hidden] {
+    display: none;
+}
+
+.elc-powered {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #8f8f8f;
+}
+
+.elc-powered strong {
+    color: #364153;
+}
+
+.elc-powered a {
+    text-decoration: underline;
+    text-decoration-thickness: 5.5%;
+    text-underline-position: from-font;
+}
+
+.elc-powered a:hover {
+    color: var(--nog-ink);
+}
+
+.elc .elc-trust-grid {
+    order: 5;
+    gap: 16px 24px;
+}
+
+.elc .elc-trust-grid .elo-trust {
+    padding: 8px 16px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fdfdfd;
+    box-shadow: none;
+    gap: 12px;
+}
+
+.elc .elc-trust-grid .elo-trust h3 {
+    font-size: 18px;
+}
+
+.elc .elc-trust-grid .elo-trust li {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: var(--nog-ink);
+}
+
+@media (min-width: 1024px) {
+    .elc-pay,
+    .elc-powered,
+    .elc .elc-trust-grid {
+        order: 0;
+    }
+
+    .elc-summary-region {
+        order: 0;
+    }
+}
+
+/* ---------- Phones (m 1:22186) ---------- */
+@media (max-width: 1023px) {
+    [data-sf-page='checkout'][data-theme-variant] :is(.elo-mobile-nav, .elo-mobile-bar) {
+        display: none;
+    }
+
+    [data-sf-page='checkout'][data-theme-variant] :is(.elo-mobile-nav, .elo-mobile-bar) + div[aria-hidden='true'] {
+        display: none;
+    }
+
+    [data-checkout-page] {
+        padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .elc-total {
+        display: none;
+    }
+
+    .elc-head h2 {
+        font-size: 18px;
+    }
+
+    .elc-sum {
+        display: contents;
+    }
+
+    .elc-lines {
+        gap: 8px;
+    }
+
+    .elc-img {
+        width: 94px;
+        height: 84px;
+    }
+
+    .elc-info {
+        min-height: 84px;
+        padding-top: 4px;
+        gap: 4px;
+    }
+
+    .elc-name {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .elc-eta {
+        font-size: 12px;
+    }
+
+    .elc-line-in {
+        gap: 12px;
+        padding: 0;
+    }
+
+    .elc-stepper {
+        gap: 6px;
+        padding: 0;
+        border: 0;
+    }
+
+    .elc-row-main dt::after {
+        content: ':';
+    }
+
+    .elc-card {
+        gap: 14px;
+        padding: 16px;
+        border: 1px solid #eee;
+        border-radius: 20px;
+        background: #fff;
+    }
+
+    .elc-card-title {
+        display: block;
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .elc-rows {
+        padding-top: 0;
+        border-top: 0;
+        gap: 8px;
+    }
+
+    .elc-row {
+        font-family: inherit;
+    }
+
+    .elc-row-main,
+    .elc-row-ship {
+        font-size: 14px;
+        color: var(--nog-ink);
+    }
+
+    .elc-row-ship small {
+        display: none;
+    }
+
+    .elc-row dd {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--nog-ink);
+    }
+
+    .elc-due {
+        border-top: 0;
+        padding-top: 0;
+        font-family: inherit;
+        font-weight: 500;
+    }
+
+    .elc-due p:first-child {
+        font-size: 18px;
+    }
+
+    .elc-due p:last-child {
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    .elc-note {
+        display: block;
+        font-size: 12px;
+        line-height: 1.4;
+        color: #8f8f8f;
+    }
+
+    .elc-summary-region {
+        display: grid;
+        gap: 16px;
+        order: 4;
+    }
+
+    .elc .elc-trust-grid { gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .elc-powered {
+        display: none;
+    }
+
+    .elc-pay {
+        position: fixed;
+        inset-inline: 0;
+        bottom: 0;
+        z-index: 40;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+        background: #fff;
+        box-shadow: 0 -4px 12px rgb(0 0 0 / 0.06);
+    }
+
+    .elc-pay-btn {
+        height: 52px;
+        font-size: 18px;
+        border-radius: 32px;
+    }
+}
+
+@media (max-width: 420px), (min-width: 1024px) and (max-width: 1279px) {
+    .elc .elc-trust-grid .elo-trust h3 {
+        font-size: 16px;
+    }
+
+    .elc .elc-trust-grid .elo-trust li {
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .elc-ship:not([data-collapsed]) .sf-address-card {
+        animation: none;
+    }
+}
+
+/* Payment logos in the trust card (Figma 1:18344: 25px high, contained). */
+.elc .elc-trust-grid .elo-pay-img img {
+    width: auto;
+    max-width: 56px;
+    height: 25px;
+    object-fit: contain;
+}

@@ -4,6 +4,7 @@ use App\Modules\AfterSales\Models\ReturnPolicy;
 use App\Modules\AfterSales\Models\ReturnRequest;
 use App\Modules\Commerce\Enums\OrderStatus;
 use App\Modules\Commerce\Models\Order;
+use App\Modules\Commerce\Models\OrderItem;
 use App\Modules\Engagement\Models\ProductReview;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -166,6 +167,26 @@ it('requests, replies to and withdraws a return from the pages', function (): vo
         ->assertSee('Here is more detail about it.')
         ->assertSee(__st('returns.closed_note'))
         ->assertDontSee('sf-withdraw-return', false);
+});
+
+it('says the subtotal includes fixed shipping only when a line carries it', function (): void {
+    $get = fn () => $this->actingAsCustomer($this->customer, $this->shop->tenant)->get(($this->url)('/orders/'.$this->order->uuid))->assertOk();
+
+    $get()->assertSee(__st('orders.items_subtotal'));
+
+    $this->shop->tenant->run(fn () => OrderItem::query()->where('order_id', $this->order->id)->update(['fixed_shipping' => 0]));
+
+    $get()->assertSee(__st('orders.items_subtotal_plain'))->assertDontSee(__st('orders.items_subtotal'));
+});
+
+it('says plainly that every return reason needs a video', function (): void {
+    ReturnPolicy::query()->update(['require_video' => true, 'window_days' => 14, 'non_returnable_category_ids' => null]);
+    ($this->markOrder)(OrderStatus::Delivered);
+
+    $this->actingAsCustomer($this->customer, $this->shop->tenant)
+        ->get(($this->url)('/orders/'.$this->order->uuid.'/return'))
+        ->assertOk()
+        ->assertSee(__st('returns.video_required_all'));
 });
 
 it('shows the empty returns state', function (): void {

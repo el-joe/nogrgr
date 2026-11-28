@@ -9,11 +9,12 @@
  *  - product: the phone quantity stepper mirrors the desktop select ([data-qty]);
  *    share button (Web Share API, clipboard fallback);
  *  - server fragments: data-* → CSS vars again after every swap (meters, bars);
- *  - order details: the "Tracking" tab opens the Elora tracking page;
+ *  - account pages: drag-scroll tab strips (elora/pages/account.js);
  *  - mini cart drawer (elora/pages/mini-cart.js).
  */
 import { applyDataVars } from '../catalog/ui';
 import { notify } from '../../core/notify';
+import { initEloraAccount } from './pages/account';
 import { initEloraListing } from './pages/listing';
 import { initEloraMiniCart } from './pages/mini-cart';
 
@@ -149,7 +150,7 @@ function bindShare() {
 
 /** Fragments swapped in by the cart / checkout scripts → re-apply data-* CSS variables. */
 function watchFragments(root) {
-    root.querySelectorAll('[data-cart-region], [data-cart-summary-region], [data-checkout-summary-region]').forEach((region) => {
+    root.querySelectorAll('[data-cart-region], [data-cart-summary-region], [data-checkout-summary-region], [data-cart-rails]').forEach((region) => {
         if (region.__eloWatch) {
             return;
         }
@@ -159,20 +160,43 @@ function watchFragments(root) {
     });
 }
 
-/** Order details: "Tracking" navigates to the Elora tracking page instead of switching in place. */
-function bindOrderTabs() {
-    if (document.__eloOrderTabs) {
-        return;
-    }
+/**
+ * Checkout address box: "Change Address" expands the saved addresses (radio cards + add), picking
+ * one (or the list re-rendering after an add / edit) folds it back to the selected-address box.
+ */
+function bindCheckoutAddresses(root) {
+    root.querySelectorAll('[data-elc-addresses]:not([data-ready])').forEach((group) => {
+        group.dataset.ready = '';
+        const toggle = group.querySelector('[data-elc-change]');
+        const step = group.closest('[data-elc-step]');
+        const fold = (collapsed) => {
+            group.toggleAttribute('data-collapsed', collapsed);
+            toggle?.setAttribute('aria-expanded', String(!collapsed));
+        };
+        const sync = () => {
+            const has = group.querySelector('[data-address-list] [data-address-card]') !== null;
 
-    document.__eloOrderTabs = true;
-    document.addEventListener('click', (event) => {
-        const tab = event.target.closest('[data-order-tab="tracking"]');
+            if (toggle) {
+                toggle.hidden = !has;
+            }
 
-        if (tab && !event.metaKey && !event.ctrlKey) {
-            event.stopPropagation();
-        }
-    }, true);
+            if (!has) {
+                fold(true);
+            }
+        };
+
+        toggle?.addEventListener('click', () => fold(!group.hasAttribute('data-collapsed')));
+        group.addEventListener('change', (event) => {
+            if (event.target.matches('[data-address-radio]')) {
+                fold(true);
+            }
+        });
+        step?.addEventListener('address-book:change', () => {
+            sync();
+            fold(true);
+        });
+        new MutationObserver(sync).observe(group.querySelector('[data-address-list]'), { childList: true });
+    });
 }
 
 export function initEloraPages(root = document) {
@@ -180,8 +204,9 @@ export function initEloraPages(root = document) {
     bindFacetSearch(root);
     initEloraListing(root);
     bindSteppers();
+    bindCheckoutAddresses(root);
     bindShare();
     watchFragments(root);
-    bindOrderTabs();
+    initEloraAccount(root);
     initEloraMiniCart();
 }

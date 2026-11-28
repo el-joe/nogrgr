@@ -2,7 +2,9 @@
 
 namespace App\Modules\Commerce\DataTables;
 
+use App\Modules\Commerce\Contracts\OrderRefundLedger;
 use App\Modules\Commerce\Enums\OrderStatus;
+use App\Modules\Commerce\Pricing\RefundCalculator;
 use App\Modules\Reporting\Models\OrderFact;
 use App\Modules\Reporting\Repositories\Contracts\OrderFactRepositoryContract;
 use App\Shared\DataTables\BaseDataTable;
@@ -21,7 +23,10 @@ final class AdminOrdersDataTable extends BaseDataTable
 {
     public const FILTERS = ['search', 'status', 'payment', 'gateway', 'tenant_id', 'country_id', 'from', 'to'];
 
-    public function __construct(private readonly OrderFactRepositoryContract $facts) {}
+    public function __construct(
+        private readonly OrderFactRepositoryContract $facts,
+        private readonly OrderRefundLedger $refunds,
+    ) {}
 
     protected function query(): Builder
     {
@@ -49,7 +54,10 @@ final class AdminOrdersDataTable extends BaseDataTable
             ->addColumn('vendor', fn (OrderFact $fact): string => view('commerce::admin.orders._vendor-cell', ['fact' => $fact])->render())
             ->addColumn('customer', fn (OrderFact $fact): string => '<span class="block font-medium text-ink">'.e((string) $fact->customer_name).'</span><span class="text-xs text-ink-secondary">'.e((string) $fact->customer_city).'</span>')
             ->addColumn('total', fn (OrderFact $fact): string => '<span class="font-semibold text-ink" dir="ltr">'.e(Money::ofMinor($fact->grand_total, $fact->currency)->format()).'</span>')
-            ->addColumn('payment', fn (OrderFact $fact): string => view('commerce::admin.orders._payment-cell', ['fact' => $fact])->render())
+            ->addColumn('payment', fn (OrderFact $fact): string => view('commerce::admin.orders._payment-cell', [
+                'fact' => $fact,
+                'partial' => RefundCalculator::isPartiallyRefunded(Money::ofMinor($fact->grand_total), $this->refunds->refunded($fact->tenant_id, $fact->order_uuid)),
+            ])->render())
             ->addColumn('status', fn (OrderFact $fact): string => view('commerce::partials.status-badge', ['value' => OrderStatus::tryFrom($fact->status) ?? $fact->status])->render())
             ->addColumn('actions', fn (OrderFact $fact): string => view('commerce::admin.orders._actions-cell', ['fact' => $fact])->render())
             ->rawColumns(['order', 'vendor', 'customer', 'total', 'payment', 'status', 'actions']);

@@ -686,12 +686,12 @@ Generated from `ThemeFixtures` (sample data run through the real presenters), so
 | `listing.pagination.pages[].current` | bool | `true` |
 | `listing.sort` | object |  |
 | `listing.sort.current` | string | `best_selling` |
-| `listing.sort.options` | list | `6 item(s)` |
+| `listing.sort.options` | list | `5 item(s)` |
 | `listing.sort.options[]` | object |  |
-| `listing.sort.options[].value` | string | `recommended` |
-| `listing.sort.options[].label` | string | `Recommended` |
-| `listing.sort.options[].url` | string | `https://your-store.com/?sort=recommended` |
-| `listing.sort.options[].current` | bool | `false` |
+| `listing.sort.options[].value` | string | `best_selling` |
+| `listing.sort.options[].label` | string | `Best Selling` |
+| `listing.sort.options[].url` | string | `https://your-store.com/?sort=best_selling` |
+| `listing.sort.options[].current` | bool | `true` |
 | `listing.filter_categories` | list | `1 item(s)` |
 | `listing.filter_categories[]` | object |  |
 | `listing.filter_categories[].id` | int | `1` |

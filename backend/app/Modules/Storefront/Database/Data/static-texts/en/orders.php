@@ -39,6 +39,7 @@ return [
     'items_count' => 'Items (:count)',
     'qty' => 'Qty :count',
     'items_subtotal' => 'Items subtotal (incl. fixed shipping)',
+    'items_subtotal_plain' => 'Items subtotal',
     'shipping' => 'Shipping',
     'discount' => 'Discount',
     'coupon' => 'Coupon :code',

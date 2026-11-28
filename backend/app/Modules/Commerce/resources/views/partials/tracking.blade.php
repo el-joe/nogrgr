@@ -1,16 +1,18 @@
-{{-- Shipping timeline: tracking events (newest first) and the order status history, one row per status and minute. --}}
+{{-- Shipping timeline: tracking events and the order status history, newest first, one row per status and minute. --}}
 @php
     $entries = collect();
     foreach ($order->trackingEvents as $event) {
-        $entries->push(['label' => $event->status->label().($event->location ? ' — '.$event->location : ''), 'meta' => $event->note, 'at' => $event->created_at, 'tone' => 'primary']);
+        $entries->push(['status' => $event->status->value, 'label' => $event->status->label().($event->location ? ' — '.$event->location : ''), 'meta' => $event->note, 'at' => $event->created_at, 'tone' => 'primary']);
     }
     foreach ($order->history as $row) {
-        $entries->push(['label' => $row->to_status->label(), 'meta' => $row->note, 'at' => $row->created_at, 'tone' => 'success']);
+        $entries->push(['status' => $row->to_status->value, 'label' => $row->to_status->label(), 'meta' => $row->note, 'at' => $row->created_at, 'tone' => 'success']);
     }
     // RQA-VEN-010: the order status ("Delivered") and the shipment status ("Delivered") are
-    // recorded at the same moment; list a status once per minute (the shown precision).
-    $entries = $entries->sortByDesc(fn ($entry) => $entry['at']?->getTimestamp() ?? 0)
-        ->unique(fn ($entry) => mb_strtolower($entry['label']).'|'.($entry['at']?->format('Y-m-d H:i') ?? ''))
+    // recorded at the same moment; list a status once per minute (the shown precision). Matched
+    // on the status value, not the label, which may be worded differently per language; the
+    // tracking event (pushed first, it carries location and note) is the one kept.
+    $entries = $entries->unique(fn ($entry) => $entry['status'].'|'.($entry['at']?->format('Y-m-d H:i') ?? ''))
+        ->sortByDesc(fn ($entry) => $entry['at']?->getTimestamp() ?? 0)
         ->values();
 @endphp
 @if ($entries->isEmpty())

@@ -62,7 +62,7 @@
                 </table>
             </div>
             <dl class="ms-auto grid w-full max-w-xs gap-2 text-sm">
-                <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('orders.items_subtotal') }}</dt><dd class="text-sf-ink">{{ $money($t['subtotal']) }}</dd></div>
+                <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st($d['has_fixed_shipping'] ? 'orders.items_subtotal' : 'orders.items_subtotal_plain') }}</dt><dd class="text-sf-ink">{{ $money($t['subtotal']) }}</dd></div>
                 <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('orders.shipping') }}</dt><dd class="text-sf-ink">{{ $money($t['shipping']) }}</dd></div>
                 @if ((int) $t['flash_discount']['amount'] > 0)<div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('orders.discount') }}</dt><dd class="text-sf-ink">− {{ $money($t['flash_discount']) }}</dd></div>@endif
                 @if ((int) $t['coupon_discount']['amount'] > 0)<div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('orders.coupon', ['code' => $d['coupon_code']]) }}</dt><dd class="text-sf-ink">− {{ $money($t['coupon_discount']) }}</dd></div>@endif

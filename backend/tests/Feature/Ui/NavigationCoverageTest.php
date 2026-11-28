@@ -70,12 +70,9 @@ it('renders each sidebar item only when its route is registered', function (stri
 })->with(['admin', 'affiliate', 'vendor']);
 
 it('shows a hidden item as soon as its route is registered', function (): void {
-    $leaf = collect(navigationLeaves(config('navigation.admin')))
-        ->first(fn (array $triple): bool => ! Route::has($triple[2]['route']));
-
-    expect($leaf)->not->toBeNull();
-
-    [$section, $parent, $item] = $leaf;
+    // Every real item is routed by now, so the probe is a real item pointed at a route that does not exist yet.
+    [$section, $parent, $item] = navigationLeaves(config('navigation.admin'))[0];
+    $item['route'] = 'qa-nav.probe';
     $config = isolatedNavigation($section, $parent, $item);
     $builder = app(NavigationBuilder::class);
 

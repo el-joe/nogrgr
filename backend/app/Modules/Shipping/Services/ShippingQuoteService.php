@@ -21,7 +21,9 @@ use App\Shared\Money\Money;
  *   no country                     → unavailable (country_required)
  *   no active rule for the country → unavailable (country_not_served)
  *   no zone for the destination    → unavailable (no_zone)
- *   first band (min ≤ w ≤ max, by min then max) → its price; no band → free
+ *   first band (min ≤ w ≤ max, by min then max) → its price; free only when that price is 0
+ *   no band matches the weight     → unavailable (no_band; decision #139, also a zone
+ *                                    without bands, a gap, or above the heaviest band)
  *   line fees: amount split by line weight (by qty when all weights are 0), each share
  *              rounded to cents, the last line takes the remainder (Σ fees = amount).
  *
@@ -43,7 +45,7 @@ class ShippingQuoteService
     /**
      * Free-shipping threshold of a destination in grams (cart progress bar, old
      * CalculatesFreeShipping): the lowest min weight of a band priced 0 in the resolved
-     * zone. Null = the destination has no free band.
+     * zone. 0 = free from the first gram; null = no band of the zone is priced 0.
      */
     public function freeShippingThreshold(?int $countryId, ?int $cityId = null): ?int
     {
@@ -88,7 +90,12 @@ class ShippingQuoteService
         }
 
         $band = $zone->bandFor($totalWeight);
-        $amount = $band->price ?? $zero;
+
+        if ($band === null) {
+            return $unavailable(ShippingUnavailableReason::NoBand, $rule->id);
+        }
+
+        $amount = $band->price;
 
         return new ShippingQuote(
             available: true,
@@ -99,8 +106,8 @@ class ShippingQuoteService
             ruleId: $rule->id,
             zoneId: $zone->id,
             zoneName: $zone->name,
-            bandId: $band?->id,
-            bandName: $band?->name,
+            bandId: $band->id,
+            bandName: $band->name,
         );
     }
 

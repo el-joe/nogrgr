@@ -2,7 +2,8 @@
  * Cart line behaviour shared by the cart page and the mini cart (x-sf::cart.line /
  * cart.mini-body): quantity selects, swipe / trash remove with undo (core/motion/
  * swipe-remove.js fires `swipe-remove:commit` after the undo window), select all /
- * selected chips, "Remove selected", and the coupon box. Every mutation goes to the
+ * selected chips, "Remove selected" (partial selections; any selection with
+ * data-cart-selection="any"), and the coupon box. Every mutation goes to the
  * Store API and then asks the owner to re-render its fragment (`refresh`).
  */
 import { cartApi } from './api';
@@ -20,7 +21,8 @@ function syncSelection(scope) {
     }
 
     scope.querySelectorAll('[data-cart-selected-count]').forEach((node) => (node.textContent = String(checked.length)));
-    scope.toggleAttribute('data-has-selection', checked.length > 0 && checked.length < boxes.length);
+    const any = scope.dataset.cartSelection === 'any';
+    scope.toggleAttribute('data-has-selection', checked.length > 0 && (any || checked.length < boxes.length));
 
     const filter = scope.querySelector('[data-cart-filter][aria-pressed="true"]')?.dataset.cartFilter ?? 'all';
     boxes.forEach((box) => {
@@ -78,9 +80,18 @@ export function bindCartLines(root, refresh) {
             const scope = removeSelected.closest('[data-cart-selection]');
             const rows = [...scope.querySelectorAll('[data-cart-select]:checked')].map((box) => box.closest('[data-cart-line]')).filter(Boolean);
 
-            if (rows.length && (await confirmAction({ title: removeSelected.textContent.trim() || removeSelected.getAttribute('aria-label'), danger: true }))) {
+            const { confirmTitle, confirmText, confirmButton } = removeSelected.dataset;
+            const question = {
+                title: confirmTitle || removeSelected.textContent.trim() || removeSelected.getAttribute('aria-label'),
+                ...(confirmText ? { text: confirmText } : {}),
+                ...(confirmButton ? { confirmText: confirmButton } : {}),
+                danger: true,
+            };
+
+            if (rows.length && (await confirmAction(question))) {
                 rows.forEach((row) => row.setAttribute('aria-busy', 'true'));
-                queue(() => Promise.all(rows.map((row) => cartApi.remove(row.dataset.cartLine).catch(() => {}))));
+                /* One at a time: each removal recalculates the same cart. */
+                queue(() => rows.reduce((chain, row) => chain.then(() => cartApi.remove(row.dataset.cartLine).catch(() => {})), Promise.resolve()));
             }
             return;
         }

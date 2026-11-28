@@ -335,7 +335,9 @@ class DemoStoreSeeder extends Seeder
         $rule->countries()->attach($missing);
         $zone = ShippingZone::query()->create(['shipping_rule_id' => $rule->id, 'name' => 'Demo all cities']);
         $zone->bands()->create(['name' => 'Up to 5 kg', 'min_weight_grams' => 0, 'max_weight_grams' => 5000, 'price' => Money::of(5)]);
-        $zone->bands()->create(['name' => 'Heavy', 'min_weight_grams' => 5001, 'max_weight_grams' => null, 'price' => Money::of(15)]);
+        $zone->bands()->create(['name' => 'Heavy', 'min_weight_grams' => 5001, 'max_weight_grams' => 12000, 'price' => Money::of(15)]);
+        // Only a price-0 band ships free (decision #139); it also feeds the cart's free-shipping box (Figma 1:17681).
+        $zone->bands()->create(['name' => 'Free', 'min_weight_grams' => 12001, 'max_weight_grams' => null, 'price' => Money::zero()]);
     }
 
     /**

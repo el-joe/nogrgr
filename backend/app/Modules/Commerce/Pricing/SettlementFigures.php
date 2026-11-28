@@ -23,4 +23,13 @@ final readonly class SettlementFigures
         public int $vendorPercent,
         public int $platformPercent,
     ) {}
+
+    /**
+     * The percentages describe the split made at checkout, so they are only shown while the
+     * share amounts still are that split (no refund, not void).
+     */
+    public function showsPercentages(): bool
+    {
+        return ! $this->void && ! $this->refunded->isPositive();
+    }
 }

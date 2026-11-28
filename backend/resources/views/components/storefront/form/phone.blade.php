@@ -9,7 +9,7 @@
     $id ??= 'sf-'.\App\Shared\Support\Ui::id($name);
     $error ??= \App\Shared\Support\Ui::error($errorKey, $errors ?? null);
     $current = $useOld ? \App\Shared\Support\Ui::old($errorKey, $value) : $value;
-    $countryValue = strtoupper((string) ($useOld ? \App\Shared\Support\Ui::old($countryField, $country) : $country) ?: \App\Shared\Support\Locale::visitorCountry());
+    $countryValue = strtoupper((string) ($useOld ? \App\Shared\Support\Ui::old($countryField, $country) : $country) ?: app(\App\Modules\Storefront\Services\StorefrontContext::class)->phoneCountry());
 @endphp
 <x-sf::form.field :label="$label" :for="$id" :required="$required" :helper="$helper" :error="$error" :error-key="$errorKey" {{ $attributes->only('class') }}>
     <div class="sf-control sf-phone px-0 pe-3" dir="ltr" data-phone-wrapper>

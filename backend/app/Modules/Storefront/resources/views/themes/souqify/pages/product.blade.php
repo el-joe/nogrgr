@@ -36,6 +36,8 @@
     ];
     $grams = $page->freeShippingGrams;
     $weight = $grams === null ? null : ($grams >= 1000 ? __st('cart.weight_kg', ['value' => rtrim(rtrim(number_format($grams / 1000, 2), '0'), '.')]) : __st('cart.weight_g', ['value' => $grams]));
+    // A threshold of 0 g is free shipping from the first gram, not "orders of 0 g".
+    $freeText = $grams === 0 ? __st('shell.free_shipping.title') : __st('souqify_pages.product.free_shipping_over', ['weight' => $weight]);
     $moreUrl = $page->category ? route('storefront.category', ['slug' => $page->category->slug]) : route('storefront.best-sellers');
     $lowStock = $page->inStock && $page->stock !== null && $page->stock <= 10;
     $specs = array_values(array_filter(array_map(fn ($attribute) => ['name' => $attribute['name'], 'values' => implode(', ', array_column($attribute['options'], 'name'))], $page->attributes), fn ($row) => $row['values'] !== ''));
@@ -184,7 +186,7 @@
 
                 @if ($weight)
                     <button type="button" class="sq-freebox text-start" data-sheet-open="sf-free-shipping-sq">
-                        <span class="flex items-center gap-2 text-sm font-bold text-sq-orange"><x-ui::icon name="truck" :size="16" />{{ __st('souqify_pages.product.free_shipping_over', ['weight' => $weight]) }}</span>
+                        <span class="flex items-center gap-2 text-sm font-bold text-sq-orange"><x-ui::icon name="truck" :size="16" />{{ $freeText }}</span>
                         <span class="text-xs text-[#8f8f8f]">{{ __st('souqify_pages.product.free_shipping_note') }}</span>
                     </button>
                 @endif
@@ -275,7 +277,7 @@
                         <div class="sq-guarantee-item">
                             <x-ui::icon name="truck" :size="22" class="text-sq-primary" />
                             <h3>{{ __st('souqify_pages.product.free_delivery') }}</h3>
-                            <p>{{ $weight ? __st('souqify_pages.product.free_shipping_over', ['weight' => $weight]) : __st('cart.trust.guarantee.credit') }}</p>
+                            <p>{{ $weight ? $freeText : __st('cart.trust.guarantee.credit') }}</p>
                         </div>
                         <div class="sq-guarantee-item">
                             <x-ui::icon name="shield" :size="22" class="text-sq-primary" />
@@ -376,7 +378,7 @@
     @if ($weight)
         <x-sf::modal id="sf-free-shipping-sq" :title="__st('shell.free_shipping.title')" size="sm">
             <ul class="grid gap-3 text-sm text-sq-ink" role="list">
-                <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-sq-green" />{{ __st('souqify_pages.product.free_shipping_over', ['weight' => $weight]) }}</li>
+                <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-sq-green" />{{ $freeText }}</li>
                 <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-sq-green" />{{ __st('shell.free_shipping.line_2') }}</li>
                 <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-sq-green" />{{ __st('shell.free_shipping.line_3') }}</li>
             </ul>

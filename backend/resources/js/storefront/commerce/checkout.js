@@ -9,7 +9,7 @@
  *    stays the same while the request body does) and starts the payment (payment.js),
  *    with the full-screen #checkout-overlay and the "Processing..." button meanwhile.
  */
-import { bindCartLines } from './lines';
+import { bindCartLines, enhanceLines } from './lines';
 import { fragmentLoader, readJson, storeApi } from './api';
 import { CardDeclined, initPaymentSection, paymentFailed, startPayment } from './payment';
 
@@ -94,6 +94,7 @@ export function initCheckout(page) {
             }
 
             page.querySelectorAll('[data-checkout-summary-region]').forEach((region) => (region.innerHTML = data.summary ?? region.innerHTML));
+            enhanceLines(page);
             block = data.block;
 
             if (pay && !pay.hasAttribute('aria-busy')) {
@@ -119,6 +120,7 @@ export function initCheckout(page) {
     };
 
     bindCartLines(page, refresh);
+    enhanceLines(page);
     applyExtraBlock();
 
     let timer = null;

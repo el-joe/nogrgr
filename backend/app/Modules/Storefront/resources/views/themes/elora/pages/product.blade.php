@@ -38,6 +38,8 @@
     ];
     $grams = $page->freeShippingGrams;
     $weight = $grams === null ? null : ($grams >= 1000 ? __st('cart.weight_kg', ['value' => rtrim(rtrim(number_format($grams / 1000, 2), '0'), '.')]) : __st('cart.weight_g', ['value' => $grams]));
+    // A threshold of 0 g is free shipping from the first gram, not "orders of 0 g".
+    $freeText = $grams === 0 ? __st('shell.free_shipping.title') : __st('elora_pages.product.free_shipping_over', ['weight' => $weight]);
     $moreUrl = $page->category ? route('storefront.category', ['slug' => $page->category->slug]) : route('storefront.best-sellers');
 @endphp
 <x-sf::layout :seo="$seo" page="product">
@@ -59,7 +61,7 @@
         </div>
 
         @if ($weight)
-            <button type="button" class="elo-freebar mb-6 hidden w-full lg:flex" data-sheet-open="sf-free-shipping-elo" data-reveal="fade">{{ __st('elora_pages.product.free_shipping_over', ['weight' => $weight]) }}</button>
+            <button type="button" class="elo-freebar mb-6 hidden w-full lg:flex" data-sheet-open="sf-free-shipping-elo" data-reveal="fade">{{ $freeText }}</button>
         @endif
 
         <nav aria-label="{{ __st('shell.breadcrumb') }}" class="mb-5 hidden lg:block">
@@ -243,7 +245,7 @@
                 @endunless
 
                 @if ($weight)
-                    <button type="button" class="-mx-4 flex items-center justify-center gap-3 bg-[#eaf7eb] px-4 py-4 text-sm text-elo-green lg:hidden" data-sheet-open="sf-free-shipping-elo"><x-ui::icon name="gift" :size="24" />{{ __st('elora_pages.product.free_shipping_over', ['weight' => $weight]) }}</button>
+                    <button type="button" class="-mx-4 flex items-center justify-center gap-3 bg-[#eaf7eb] px-4 py-4 text-sm text-elo-green lg:hidden" data-sheet-open="sf-free-shipping-elo"><x-ui::icon name="gift" :size="24" />{{ $freeText }}</button>
                 @endif
 
                 @unless ($compact)
@@ -280,7 +282,7 @@
     @if ($weight)
         <x-sf::modal id="sf-free-shipping-elo" :title="__st('shell.free_shipping.title')" size="sm">
             <ul class="grid gap-3 text-sm text-elo-ink" role="list">
-                <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-elo-green" />{{ __st('elora_pages.product.free_shipping_over', ['weight' => $weight]) }}</li>
+                <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-elo-green" />{{ $freeText }}</li>
                 <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-elo-green" />{{ __st('shell.free_shipping.line_2') }}</li>
                 <li class="flex gap-2"><x-ui::icon name="check" :size="16" class="mt-0.5 shrink-0 text-elo-green" />{{ __st('shell.free_shipping.line_3') }}</li>
             </ul>

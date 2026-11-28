@@ -24,7 +24,7 @@ final readonly class ZoneDefinition
     }
 
     /**
-     * First matching band in (min, max) order; null = no band = free shipping.
+     * First matching band in (min, max) order; null = no band covers the weight (shipping unavailable).
      */
     public function bandFor(int $grams): ?BandDefinition
     {

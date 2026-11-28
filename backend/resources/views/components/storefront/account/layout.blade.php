@@ -21,6 +21,10 @@
     $home = Route::has('storefront.home') ? route('storefront.home') : null;
     $accountHome = Route::has('storefront.account.profile') ? route('storefront.account.profile') : null;
 @endphp
+@if (\App\Modules\Storefront\Support\StorefrontTheme::family() === 'elora')
+{{-- Elora family: the client's own account design, same links and blocks (x-sf::elora.account.layout). --}}
+<x-sf::elora.account.layout :title="$title" :active="$active" :page="$page" :crumb="$crumb" :seo="$seo" :back="$back" :header="$header ?? null" :actions="$actions ?? null">{{ $slot }}</x-sf::elora.account.layout>
+@else
 <x-sf::layout :title="$title" :mobile-title="$title" :back="$back ?? $home" nav="account" :page="$page" :seo="$seo">
     <div class="mx-auto max-w-[1248px] px-4 pb-16 pt-4 sm:px-6 lg:pb-20 lg:pt-8" data-sf-account>
         <nav aria-label="{{ __st('shell.breadcrumb') }}" class="mb-6 hidden text-xs text-sf-muted lg:block">
@@ -85,3 +89,4 @@
         </div>
     </div>
 </x-sf::layout>
+@endif

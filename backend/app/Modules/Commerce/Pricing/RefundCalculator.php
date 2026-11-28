@@ -68,6 +68,14 @@ final class RefundCalculator
     }
 
     /**
+     * Part of the order has been paid back, part has not.
+     */
+    public static function isPartiallyRefunded(Money $grandTotal, Money $refunded): bool
+    {
+        return $refunded->isPositive() && $refunded->lessThan($grandTotal);
+    }
+
+    /**
      * Staff refund of a chosen amount: valid when 0 < amount ≤ remaining.
      */
     public static function manual(RefundableOrder $order, Money $amount): RefundBreakdown

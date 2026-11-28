@@ -556,9 +556,9 @@
 | SF-ELO-020c | ↳ Privacy & secure payment popup | modal | | — (Figma) | m 1:23152 | P7 | done |
 | SF-ELO-020d | ↳ Reviews modal | modal | | ProductPage | designed: Storefront additions 135:111928 · write 135:112064 · m 135:112101 | P7 | done |
 | SF-ELO-021 | Mini cart / item added | dropdown | | CartDropdown | designed: Storefront additions 137:112132 · m 137:112323 | P7 | done |
-| SF-ELO-022 | Cart | `store.cart` | | tenant.storefront.cart | 1:17541, m 1:22029 | P7 | done |
+| SF-ELO-022 | Cart | `store.cart` | | tenant.storefront.cart | 1:17541, m 1:22029 (pixel pass: free-shipping box 1:17681, lines, order summary, payment card, rails = product-page `pdp-rail`, phone bundle + sticky total bar above the floating tab bar via `--elo-nav-clear`) | P7 | done |
 | SF-ELO-022a | ↳ Cart empty | state | | CartPage | m 1:23315 | P7 | done |
-| SF-ELO-023 | Checkout | `store.checkout` | | tenant.storefront.checkout | 1:18245, m 1:22186 · Storefront additions: 98:100761 + states 98:101058, m 98:101146 + m states 98:101243 | P7 | done |
+| SF-ELO-023 | Checkout | `store.checkout` | | tenant.storefront.checkout | 1:18245, m 1:22186 · Storefront additions: 98:100761 + states 98:101058, m 98:101146 + m states 98:101243 | P7 | done — Figma pass 2026-11-28: `elora/inner/checkout/address-step` + `summary` + `elora-checkout.css` (shipping box + Change Address, summary with qty stepper / coupon, 68px pay button in the right column, trust cards, fixed pay bar on phones); same hooks as Ecommet (checkout.js, address-book.js) |
 | SF-ELO-023a | ↳ Step: shipping information | step | | CheckoutPage | 1:18002 | P7 | done |
 | SF-ELO-023b | ↳ Step: payment details (card) | step | | CheckoutPage | 1:17863 | P7 | done |
 | SF-ELO-023c | ↳ Add address modal | modal | | CheckoutPage | 1:20817, m 1:22912 · Storefront additions: canonical 97:101294, m sheets 97:102977–97:103768 | P7 | done |
@@ -569,19 +569,19 @@
 | SF-ELO-025a | ↳ Forgot password | `store.auth.password.request` | | — (new) | Storefront additions: 99:101813, m 99:102156 | P7 | done |
 | SF-ELO-025b | ↳ Reset password | `store.auth.password.reset` | | — (new) | Storefront additions: 99:101813, m 99:102156 | P7 | done |
 | SF-ELO-025c | ↳ Verify email | `store.auth.verify` | | — (new) | designed: Storefront additions 115:108883 / m 115:109067 | P7 | done |
-| SF-ELO-026 | Account / profile (info, addresses) | `store.account` | | tenant.storefront.profile | Storefront additions: profile 101:104351, m 101:104642; addresses 101:104772, m 101:105047 | P7 | done |
-| SF-ELO-027 | Favorites | `store.favorites` | | tenant.storefront.favorites | 1:18588, m 1:23220 | P7 | done |
-| SF-ELO-027a | ↳ Favorites empty | state | | FavoritesPage | m 1:23277 | P7 | done |
-| SF-ELO-028 | Orders | `store.orders.index` | track, reorder, review | ProfilePage orders | 1:18739, m 1:23374 · Storefront additions: 100:102812, m 100:103463 | P7 | done |
-| SF-ELO-028a | ↳ Orders empty | state | | ProfilePage | 1:19347, m 1:23542 | P7 | done |
-| SF-ELO-029 | Order details (download invoice) | `store.orders.show` | | tenant.storefront.order-status | 1:18987, m 1:23600 · Storefront additions: 100:103150, m 100:103617 | P7 | done |
+| SF-ELO-026 | Account / profile (info, addresses) | `store.account` | | tenant.storefront.profile | Storefront additions: profile 101:104351, m 101:104642; addresses 101:104772, m 101:105047 | P7 | done — Elora account pass 2026-11-28 (#137) |
+| SF-ELO-027 | Favorites | `store.favorites` | | tenant.storefront.favorites | 1:18588, m 1:23220 | P7 | done — Elora account pass 2026-11-28 (#137) |
+| SF-ELO-027a | ↳ Favorites empty | state | | FavoritesPage | m 1:23277 | P7 | done — Elora account pass 2026-11-28 (#137) |
+| SF-ELO-028 | Orders | `store.orders.index` | track, reorder, review | ProfilePage orders | 1:18739, m 1:23374 · Storefront additions: 100:102812, m 100:103463 | P7 | done — Elora account pass 2026-11-28 (#137) |
+| SF-ELO-028a | ↳ Orders empty | state | | ProfilePage | 1:19347, m 1:23542 | P7 | done — Elora account pass 2026-11-28 (#137) |
+| SF-ELO-029 | Order details (download invoice) | `store.orders.show` | | tenant.storefront.order-status | 1:18987, m 1:23600 · Storefront additions: 100:103150, m 100:103617 | P7 | done — Elora account pass 2026-11-28 (#137) |
 | SF-ELO-029a | ↳ Cancel order modal | modal | | ManagesOrderCancellation | Storefront additions: modals 103:108307, m sheets 103:108522 | P7 | done |
 | SF-ELO-029b | ↳ Write review modal | modal | | OrderStatusPage | Storefront additions: modals 103:108307, m sheets 103:108522 | P7 | done |
-| SF-ELO-030 | Order tracking | `store.orders.tracking` | | tenant.storefront.order-tracking | 1:19981, m 1:23708 | P7 | done |
+| SF-ELO-030 | Order tracking | `store.orders.tracking` | | tenant.storefront.order-tracking | 1:19981, m 1:23708 | P7 | done — Elora account pass 2026-11-28 (#137) |
 | SF-ELO-030a | ↳ Live tracking | state | | — (Figma) | m 1:20213 | P7 | done |
-| SF-ELO-031 | Request return | `store.returns.create` | | tenant.storefront.order-return | Storefront additions: 102:106680, m 102:106976 | P7 | done |
-| SF-ELO-032 | Returns list | `store.returns.index` | | ProfilePage returns | Storefront additions: 102:105879, m 102:106155 | P7 | done |
-| SF-ELO-033 | Return detail | `store.returns.show` | | tenant.storefront.return-detail | Storefront additions: 102:106266, m 102:106559 | P7 | done |
+| SF-ELO-031 | Request return | `store.returns.create` | | tenant.storefront.order-return | Storefront additions: 102:106680, m 102:106976 | P7 | done — Elora account pass 2026-11-28 (#137) |
+| SF-ELO-032 | Returns list | `store.returns.index` | | ProfilePage returns | Storefront additions: 102:105879, m 102:106155 | P7 | done — Elora account pass 2026-11-28 (#137) |
+| SF-ELO-033 | Return detail | `store.returns.show` | | tenant.storefront.return-detail | Storefront additions: 102:106266, m 102:106559 | P7 | done — Elora account pass 2026-11-28 (#137) |
 | SF-ELO-034 | CMS page | `store.page` | | tenant.storefront.page | designed: Storefront additions 115:109132 / m 115:109325 | P7 | done |
 | SF-ELO-035 | Support request form / newsletter signup | component | | SupportRequestForm | designed: Storefront additions 115:109381 / m 115:109628 (form + newsletter + success toast) | P7 | done |
 | SF-ELO-036 | 404 (themed) | `store.not-found` | | tenant.storefront.not-found | designed: Storefront additions 115:109756 / m 115:109946 | P7 | done |

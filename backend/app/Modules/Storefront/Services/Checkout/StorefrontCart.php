@@ -9,6 +9,7 @@ use App\Modules\Commerce\Services\Cart\CartService;
 use App\Modules\Commerce\Support\MoneyPresenter;
 use App\Modules\Identity\Models\Customer;
 use App\Modules\Storefront\Services\StorefrontContext;
+use App\Modules\Storefront\Support\StorefrontTheme;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -83,6 +84,11 @@ class StorefrontCart
 
         if ($money === null || $display === null || $display === ($money['currency'] ?? 'USD')) {
             return null;
+        }
+
+        // Elora: the sentence already names the currency, so only the figure is passed (no "US$ ... دولار أمريكي (USD)" repetition).
+        if (StorefrontTheme::family() === 'elora' && isset($money['amount'])) {
+            return __st('checkout.charged_usd_plain', ['amount' => number_format(((int) $money['amount']) / 100, 2, '.', '')]);
         }
 
         return __st('checkout.charged_usd', ['amount' => (string) ($money['formatted'] ?? '')]);

@@ -19,7 +19,7 @@
             :breadcrumbs="[__('navigation.sections.sales') => null, __('commerce::fulfilment.queue.title') => route('admin.shipping-queue.index'), '#'.$order->number => null]"
         >
             <x-slot:actions>
-                @include('commerce::partials.status-badge', ['value' => $order->fulfilment_status])
+                @include('commerce::partials.fulfilment-badge', ['order' => $order])
                 @if ($admin?->can('returns.manage') && in_array($order->status->value, ['shipped', 'delivered', 'completed'], true))
                     <x-ui::button variant="secondary" icon="return" data-remote-modal="shipping-modal" :data-url="route('admin.orders.returns.create', $fact->id)">{{ __('commerce::orders_admin.create_return') }}</x-ui::button>
                 @endif
@@ -40,7 +40,7 @@
                     <dl class="mb-5 grid gap-2 text-sm">
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.company') }}</dt><dd class="font-semibold text-ink">{{ $order->shipping_company_name ?? '—' }}</dd></div>
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.tracking') }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $order->tracking_number ?? '—' }}</dd></div>
-                        <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.estimate') }}</dt><dd class="font-semibold text-ink">{{ $order->delivery_min_date ? $order->delivery_min_date->translatedFormat('j M').' – '.$order->delivery_max_date?->translatedFormat('j M') : '—' }}</dd></div>
+                        <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.estimate') }}</dt><dd class="font-semibold text-ink">{{ $order->delivery_min_date && ! $order->isShipmentCancelled() ? $order->delivery_min_date->translatedFormat('j M').' – '.$order->delivery_max_date?->translatedFormat('j M') : '—' }}</dd></div>
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.branch') }}</dt><dd class="font-semibold text-ink">{{ $order->fulfilment_branch_id ? ($branches[$order->fulfilment_branch_id] ?? '—') : '—' }}</dd></div>
                     </dl>
                     @include('commerce::partials.tracking', ['order' => $order])

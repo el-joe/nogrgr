@@ -100,7 +100,7 @@ class HomeService
      * photo of one of its products), the in-stock "Fast delivery" tab, the "delivered by" date
      * of the shopping country and the free-shipping weight of the bottom strip.
      *
-     * @return array{tiles: list<array{category: Category, image: string|null}>, fast: list<ProductCardData>, deliveryBy: string|null, freeShippingWeight: string|null}
+     * @return array{tiles: list<array{category: Category, image: string|null}>, fast: list<ProductCardData>, deliveryBy: string|null, freeShippingWeight: string|null, freeShippingAlways: bool}
      */
     public function eloraBase(): array
     {
@@ -113,7 +113,35 @@ class HomeService
             'fast' => $this->cards->make(array_slice(array_values(array_filter($this->listing->rail(ListingKind::BestSelling, self::RAIL * 4), static fn (IndexEntry $entry): bool => $entry->inStock)), 0, self::RAIL)),
             'deliveryBy' => $date?->locale(app()->getLocale())->translatedFormat('j F'),
             'freeShippingWeight' => $threshold !== null && $threshold > 0 ? ProductCards::weight($threshold) : null,
+            'freeShippingAlways' => $threshold === 0,
         ];
+    }
+
+    /**
+     * Elora cart rails (Figma 1:17541 / m 1:22029): the "people buy with" pair plus three distinct
+     * product rails (best selling, top rated, newest) that skip what is already in the cart.
+     *
+     * @param  list<int>  $exclude
+     * @return array{together: list<ProductCardData>, similar: list<ProductCardData>, viewed: list<ProductCardData>, recommended: list<ProductCardData>}
+     */
+    public function cartRails(array $exclude = []): array
+    {
+        $rails = [];
+
+        foreach (['together' => [ListingKind::BestSelling, 2], 'similar' => [ListingKind::BestSelling, self::RAIL], 'viewed' => [ListingKind::TopRated, self::RAIL], 'recommended' => [ListingKind::NewIn, self::RAIL]] as $key => [$kind, $limit]) {
+            $entries = $this->listing->rail($kind, $limit, null, $exclude);
+
+            // Top rated can be thin on a young store: top up with the newest so the rail is never empty.
+            if (count($entries) < $limit && $kind !== ListingKind::NewIn) {
+                $taken = [...$exclude, ...array_map(static fn (IndexEntry $entry): int => $entry->id, $entries)];
+                $entries = [...$entries, ...$this->listing->rail(ListingKind::NewIn, $limit - count($entries), null, $taken)];
+            }
+
+            $exclude = [...$exclude, ...array_map(static fn (IndexEntry $entry): int => $entry->id, $entries)];
+            $rails[$key] = $this->cards->make($entries);
+        }
+
+        return $rails;
     }
 
     /**

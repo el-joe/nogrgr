@@ -64,6 +64,14 @@ it('lists a status once per minute in the shipping timeline', function (): void 
     expect(substr_count($html, '<p class="text-sm font-medium text-ink">'.FulfilmentStatus::Delivered->label().'</p>'))->toBe(1);
 });
 
+it('lists delivery once even when the two statuses are worded differently', function (): void {
+    app('translator')->addLines(['enums.order_status.delivered' => 'Handed over'], 'en', 'commerce');
+
+    $this->get(($this->url)())->assertOk()
+        ->assertDontSee('<p class="text-sm font-medium text-ink">Handed over</p>', false)
+        ->assertSee('<p class="text-sm font-medium text-ink">'.FulfilmentStatus::Delivered->label().'</p>', false);
+});
+
 it('keeps both months in the estimated delivery window', function (): void {
     $this->get(($this->url)())->assertOk()->assertSee('29 Nov–2 Dec')->assertDontSee('29–2 Dec');
 });

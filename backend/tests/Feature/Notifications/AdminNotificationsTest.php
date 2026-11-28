@@ -112,7 +112,7 @@ it('opens a notification, marking it read and following its link', function (): 
 
     $this->actingAs($admin, 'admin')
         ->get($this->centralUrl("/admin/notifications/{$id}/open"))
-        ->assertRedirect('https://example.test/admin/account');
+        ->assertRedirect($this->centralUrl('/admin/account')); // stored absolute panel URL, resolved on the reader's host (QA-FINAL-008)
 
     expect($admin->notifications()->whereKey($id)->value('read_at'))->not->toBeNull();
 });

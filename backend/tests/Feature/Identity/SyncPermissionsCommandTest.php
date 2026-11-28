@@ -33,7 +33,8 @@ it('gives store owners and super admins permissions added after provisioning, le
         ->expectsOutputToContain('Permissions synced for 1 store(s).')
         ->assertSuccessful();
 
-    $vendor = PermissionCatalog::tenant()['vendor'];
+    $vendor = PermissionCatalog::assignable('vendor'); // internal permissions excluded (#116)
+    expect($vendor)->not->toContain('ui-kit.view');
     $this->tenant->run(function () use ($vendor): void {
         expect(Role::findByName('owner', 'vendor')->permissions->pluck('name')->sort()->values()->all())->toBe(collect($vendor)->sort()->values()->all())
             ->and(Role::findByName('packer', 'vendor')->permissions->pluck('name')->all())->toBe(['orders.view']);

@@ -16,6 +16,10 @@
         'ip' => route('storefront.geo.ip'),
     ];
     $payTotal = StorefrontCart::price($cart['totals']['grand_total']);
+    $payBlocked = ($addresses === []) || ($shipping['state'] ?? 'ok') !== 'ok' || $gateways === [];
+    $storeName = \App\Modules\Storefront\Support\StorefrontTheme::storeName();
+    $termsUrl = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => \App\Modules\Storefront\Enums\SystemStorePage::Terms->value]) : null;
+    $privacyUrl = Route::has('storefront.pages.show') ? route('storefront.pages.show', ['slug' => \App\Modules\Storefront\Enums\SystemStorePage::Privacy->value]) : null;
     $config = [
         'fragment' => route('storefront.checkout.fragment'),
         'place' => route('store-api.v1.checkout.place'),
@@ -42,7 +46,7 @@
         ],
     ];
 @endphp
-<x-sf::layout :seo="$seo" :title="__st('checkout.title')" :mobile-title="__st('checkout.title')" :back="route('storefront.cart')" page="checkout">
+<x-sf::layout :seo="$seo" :title="__st('checkout.title')" :mobile-title="__st('elora_pages.cart.check_out')" :back="route('storefront.cart')" page="checkout">
     <div class="elo-narrow pb-16 pt-4 lg:pt-6" data-checkout-page>
         <script type="application/json" data-checkout-page-config>@json($config)</script>
         <nav aria-label="{{ __st('shell.breadcrumb') }}" class="mb-4 hidden lg:block">
@@ -52,31 +56,37 @@
                 <li><span aria-current="page">{{ __st('checkout.title') }}</span></li>
             </ol>
         </nav>
-        <h1 class="mb-6 hidden text-[26px] font-medium text-elo-ink lg:block">{{ __st('checkout.title') }}</h1>
+        <h1 class="sr-only">{{ __st('checkout.title') }}</h1>
 
-        <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px] xl:grid-cols-[minmax(0,740px)_420px] lg:justify-between lg:gap-10">
-            <form class="min-w-0" data-checkout-form novalidate>
-                <x-sf::checkout.address-step :addresses="$addresses" :countries="$countries" :phone-country="$phoneCountry" :urls="$urls"
-                    :shipping="$shipping" :gateway-available="$gateways !== []" :pay-label="__st('checkout.pay_total', ['total' => $payTotal])">
-                    <x-slot:payment>
-                        <div class="lg:hidden" data-checkout-summary-region>
-                            <x-sf::elora.inner.checkout.summary :cart="$cart" />
-                        </div>
-                        <x-sf::checkout.payment :gateways="$gateways" :charge="$cart['totals']['grand_total']" />
+        <form data-checkout-form novalidate>
+            <x-sf::elora.inner.checkout.address-step :addresses="$addresses" :countries="$countries" :phone-country="$phoneCountry" :urls="$urls"
+                :shipping="$shipping" :gateway-available="$gateways !== []">
+                <x-slot:payment>
+                    <div class="elc-payment">
+                        <x-sf::checkout.payment :gateways="$gateways" :charge="$cart['totals']['grand_total']" elora />
                         @if ($addresses === [])
                             <p class="text-center text-sm font-medium text-red-600" data-no-address-note>{{ __st('checkout.no_address') }}</p>
                         @endif
-                    </x-slot:payment>
-                </x-sf::checkout.address-step>
-            </form>
-
-            <aside class="hidden gap-5 lg:sticky lg:top-28 lg:grid" aria-label="{{ __st('checkout.summary') }}">
-                <div data-checkout-summary-region>
-                    <x-sf::elora.inner.checkout.summary :cart="$cart" />
-                </div>
-                <x-sf::elora.inner.product-trust />
-            </aside>
-        </div>
+                    </div>
+                </x-slot:payment>
+                <x-slot:aside>
+                    <div class="elc-summary-region" data-checkout-summary-region>
+                        <x-sf::elora.inner.checkout.summary :cart="$cart" />
+                    </div>
+                    <div class="elc-pay">
+                        <button type="submit" class="elc-pay-btn" data-pay-button aria-describedby="sf-checkout-address-pay-reason" @disabled($payBlocked)>{{ __st('checkout.pay_total', ['total' => $payTotal]) }}</button>
+                        <p id="sf-checkout-address-pay-reason" class="elc-pay-reason" data-pay-reason hidden><x-ui::icon name="info" :size="14" /><span></span></p>
+                    </div>
+                    <p class="elc-powered">
+                        <span>{{ __st('elora_pages.checkout.powered_by') }}</span> <strong>{{ $storeName }}</strong>
+                        <span aria-hidden="true">|</span>
+                        @if ($termsUrl)<a href="{{ $termsUrl }}">{{ __st('elora_pages.checkout.terms') }}</a>@endif
+                        @if ($privacyUrl)<a href="{{ $privacyUrl }}">{{ __st('elora_pages.checkout.privacy') }}</a>@endif
+                    </p>
+                    <x-sf::elora.inner.product-trust class="elc-trust-grid" images />
+                </x-slot:aside>
+            </x-sf::elora.inner.checkout.address-step>
+        </form>
 
         <div id="checkout-overlay" class="fixed inset-0 z-[80] grid cursor-wait place-items-center bg-white/70 backdrop-blur-[2px]" data-checkout-overlay hidden>
             <div class="grid justify-items-center gap-3 text-sm font-medium text-sf-ink" role="status">

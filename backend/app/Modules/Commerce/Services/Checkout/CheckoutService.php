@@ -127,7 +127,7 @@ class CheckoutService extends BaseService
         }
 
         if ($block !== null || ! $gateway instanceof GatewayOption) {
-            throw CommerceException::blocked($block ?? CheckoutBlock::GatewayUnavailable, $block === CheckoutBlock::ShippingUnavailable ? ['shipping' => $summary->composed->shipping->toArray()] : null);
+            throw CommerceException::blocked($block ?? CheckoutBlock::GatewayUnavailable, $block === CheckoutBlock::ShippingUnavailable ? ['shipping' => $summary->composed->shipping->toArray()] : null, $summary->composed->shipping);
         }
 
         $orders = $this->placement->place($summary, $addresses, $gateway);

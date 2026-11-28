@@ -89,7 +89,13 @@ export function initPaymentSection(root, messages = {}) {
                 return false;
             }
 
-            return isInline(radio) ? card.validate() : true;
+            if (isInline(radio) && !card.validate()) {
+                card.explain().then((message) => toast('error', messages.failed_title ?? '', message));
+
+                return false;
+            }
+
+            return true;
         },
     };
 }
@@ -129,6 +135,7 @@ export async function startPayment({ config, order, gateway, section = null }) {
         }
 
         section.pending = result.retry ? pending : null;
+        toast('error', config.messages?.failed_title ?? '', result.message ?? '');
         throw new CardDeclined(result.message ?? '');
     }
 

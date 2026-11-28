@@ -83,6 +83,15 @@ class StorefrontContext
         return $this->countries->findByIso2(Locale::visitorCountry())->id ?? $this->countryId();
     }
 
+    /**
+     * Pre-selected country of storefront phone fields (ISO2): the geo result, else the
+     * ship-to country the shopper sees (never a bare browser-language guess before it).
+     */
+    public function phoneCountry(): string
+    {
+        return strtoupper(Locale::geoCountry() ?? $this->country()->iso2 ?? Locale::visitorCountry());
+    }
+
     public function theme(): ResolvedThemeData
     {
         // Memo per request object (the scoped context can outlive one request in tests / workers).

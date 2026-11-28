@@ -1,8 +1,8 @@
 {{-- Settlement figures (ORDER_FORMULAS.md §2–3), identical in both panels: $figures (SettlementFigures), $order. --}}
 @php $f = $figures; @endphp
 <dl class="grid gap-2.5 text-sm">
-    <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::settlement.vendor_share', ['percent' => $f->vendorPercent]) }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $f->vendorShare->format() }}</dd></div>
-    <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::settlement.platform_share', ['percent' => $f->platformPercent]) }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $f->platformShare->format() }}</dd></div>
+    <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ $f->showsPercentages() ? __('commerce::settlement.vendor_share', ['percent' => $f->vendorPercent]) : __('commerce::settlement.vendor_share_plain') }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $f->vendorShare->format() }}</dd></div>
+    <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ $f->showsPercentages() ? __('commerce::settlement.platform_share', ['percent' => $f->platformPercent]) : __('commerce::settlement.platform_share_plain') }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $f->platformShare->format() }}</dd></div>
     @if ($order->coupon_discount > 0)
         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::settlement.coupon_funded') }}</dt><dd class="font-semibold text-ink">{{ $order->coupon_source?->label() ?? '—' }}</dd></div>
     @endif

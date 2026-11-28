@@ -12,6 +12,7 @@ use App\Modules\Identity\Services\CustomerAddressService;
 use App\Modules\Identity\Services\CustomerProfileService;
 use App\Modules\Localization\Http\Resources\CountryResource;
 use App\Modules\Localization\Services\StoreCountries;
+use App\Modules\Storefront\Services\StorefrontContext;
 use App\Shared\Http\Concerns\RespondsWithJsonOrRedirect;
 use App\Shared\Http\Controller;
 use App\Shared\Support\Locale;
@@ -31,6 +32,7 @@ class ProfileController extends Controller
         private readonly CustomerProfileService $profiles,
         private readonly CustomerAddressService $addresses,
         private readonly StoreCountries $countries,
+        private readonly StorefrontContext $context,
     ) {}
 
     public function show(Request $request): View
@@ -38,7 +40,7 @@ class ProfileController extends Controller
         return view('identity::storefront.account.profile', [
             'customer' => $this->customer($request),
             'locales' => Locale::enabled(),
-            'phoneCountry' => strtoupper($this->customer($request)->phone_country ?? Locale::visitorCountry()),
+            'phoneCountry' => strtoupper($this->customer($request)->phone_country ?? $this->context->phoneCountry()),
             'addresses' => CustomerAddressResource::collection($this->addresses->list($this->customer($request)))->resolve($request),
             'countries' => CountryResource::collection($this->countries->available())->resolve($request),
         ]);

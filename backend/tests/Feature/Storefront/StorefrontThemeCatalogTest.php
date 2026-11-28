@@ -3,10 +3,12 @@
 use App\Modules\Platform\Enums\StoreSettingKey;
 use App\Modules\Platform\Repositories\Contracts\StoreSettingRepositoryContract;
 use App\Modules\Storefront\Database\Seeders\ThemeCatalogSeeder;
+use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Enums\ThemePartType;
 use App\Modules\Storefront\Models\Theme;
 use App\Modules\Storefront\Models\ThemePart;
 use App\Modules\Storefront\Services\StoreThemeService;
+use App\Modules\Storefront\Support\ThemeSectionLibrary;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -117,7 +119,7 @@ it('renders the home in the admin section order and applies the default template
 
     $this->getJson(($this->url)('/store-api/v1/home'))->assertOk()
         ->assertJsonPath('data.layout.0', 'hero')
-        ->assertJsonMissingPath('data.layout.7');
+        ->assertJsonCount(count(ThemeSectionLibrary::keys(ThemeFamily::Ecommet, 1)) - 1, 'data.layout');
 
     // An inactive default part is not applied.
     ThemePart::query()->where('type', 'announcement')->where('is_default', true)->update(['is_active' => false]);

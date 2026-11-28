@@ -22,5 +22,6 @@ return [
         'country_required' => 'الدولة مطلوبة',
         'country_not_served' => 'الدولة غير مخدومة',
         'no_zone' => 'لا توجد منطقة',
+        'no_band' => 'لا توجد شريحة وزن',
     ],
 ];

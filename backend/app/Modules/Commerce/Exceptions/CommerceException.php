@@ -4,6 +4,7 @@ namespace App\Modules\Commerce\Exceptions;
 
 use App\Modules\Commerce\Enums\CartLineIssue;
 use App\Modules\Commerce\Enums\CheckoutBlock;
+use App\Modules\Shipping\DTOs\ShippingQuote;
 use App\Shared\Http\JsonResponder;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -30,9 +31,9 @@ final class CommerceException extends RuntimeException
     /**
      * @param  array<string, mixed>|null  $data
      */
-    public static function blocked(CheckoutBlock $block, ?array $data = null): self
+    public static function blocked(CheckoutBlock $block, ?array $data = null, ?ShippingQuote $shipping = null): self
     {
-        return new self($block->message(), $block === CheckoutBlock::SignInRequired ? 401 : 422, $block->value, $data);
+        return new self($block->message($shipping), $block === CheckoutBlock::SignInRequired ? 401 : 422, $block->value, $data);
     }
 
     public static function notFound(string $key): self

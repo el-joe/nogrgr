@@ -67,6 +67,7 @@ return [
     'add_photos' => 'Add photos',
     'add_video' => 'Add video',
     'video_required' => 'Video is required for “:reasons”. Photos ≤ 5 MB, video ≤ 50 MB.',
+    'video_required_all' => 'A video is required for every return reason. Photos ≤ 5 MB, video ≤ 50 MB.',
     'upload_limits' => 'Up to 5 photos ≤ 5 MB each, one video ≤ 50 MB.',
     'remove_file' => 'Remove :name',
     'file_too_large' => ':name is larger than :size MB.',

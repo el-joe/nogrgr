@@ -75,7 +75,7 @@ it('renders the Elora product page with delivery, privacy and reviews popups', f
     $response = $response->isRedirect() ? $this->withSession($this->sa)->get($response->headers->get('Location')) : $response;
 
     $response->assertOk()
-        ->assertViewIs('storefront::themes.elora.pages.product')
+        ->assertViewIs('storefront::themes.elora.pages.product-v1')
         ->assertSee('data-product-page', false)
         ->assertSee('data-add-to-cart', false)
         ->assertSee('data-gallery', false)
@@ -118,7 +118,14 @@ it('renders the Elora cart, empty and filled, with steppers and the summary', fu
         ->assertSee('data-elo-step="1"', false)
         ->assertSee('data-cart-qty', false)
         ->assertSee('data-coupon-apply', false)
-        ->assertSee('$63.80 to checkout');
+        ->assertSee('$63.80 to checkout')
+        ->assertSee('data-cart-selection="any"', false)
+        ->assertSee('data-confirm-title="'.__st('elora_pages.cart.remove_selected_title').'"', false);
+
+    expect($this->getJson(($this->url)('/cart/mini'))->assertOk()->json('data.html'))
+        ->toContain('data-cart-selection="any"')
+        ->toContain('data-cart-select-all')
+        ->toContain('data-cart-remove-selected');
 });
 
 it('renders the Elora checkout and the pay page of a placed order', function (): void {

@@ -39,6 +39,7 @@ return [
     'items_count' => 'المنتجات (:count)',
     'qty' => 'الكمية :count',
     'items_subtotal' => 'إجمالي المنتجات (يشمل الشحن الثابت)',
+    'items_subtotal_plain' => 'إجمالي المنتجات',
     'shipping' => 'الشحن',
     'discount' => 'الخصم',
     'coupon' => 'القسيمة :code',

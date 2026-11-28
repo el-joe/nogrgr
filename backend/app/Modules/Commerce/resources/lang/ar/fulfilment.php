@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'not_shipping' => 'لن يتم الشحن (ملغي)',
     'update_status' => 'تحديث الحالة',
     'updated' => 'تم تحديث حالة شحن :number.',
     'print_label' => 'طباعة الملصق',

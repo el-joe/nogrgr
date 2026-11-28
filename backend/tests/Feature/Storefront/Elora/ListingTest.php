@@ -80,7 +80,9 @@ it('keeps the family listing for Elora variants 2 to 6', function (string $theme
         ->assertViewIs('storefront::themes.elora.pages.listing')
         ->assertSee('elo-filters', false)
         ->assertSee('elo-fab', false)
-        ->assertDontSee('elp-', false);
+        // The base design's listing hooks and classes (the category slug itself starts with "elp-").
+        ->assertDontSee('data-elp-', false)
+        ->assertDontSee('class="elp-', false);
 
     $this->withSession($this->sa)->getJson(($this->url)('/category/elp-leaf?fragment=1'))
         ->assertOk()

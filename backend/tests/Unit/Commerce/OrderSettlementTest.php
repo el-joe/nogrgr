@@ -6,6 +6,7 @@ use App\Modules\Commerce\Enums\OrderStatus;
 use App\Modules\Commerce\Enums\PaymentSource;
 use App\Modules\Commerce\Enums\PaymentStatus;
 use App\Modules\Commerce\Pricing\OrderSettlement;
+use App\Modules\Commerce\Pricing\RefundCalculator;
 use App\Modules\Commerce\Pricing\SettlementFigures;
 use App\Shared\Money\Money;
 
@@ -74,4 +75,18 @@ it('walks the shipping steps and maps them to order statuses', function (): void
         ->and(FulfilmentStatus::InTransit->orderStatus())->toBe(OrderStatus::Shipped)
         ->and(FulfilmentStatus::Packed->orderStatus())->toBe(OrderStatus::Processing)
         ->and(FulfilmentStatus::valuesForTab('in_transit'))->toBe(['in_transit', 'out_for_delivery']);
+});
+
+it('shows the split percentages only while the amounts are still the checkout split', function (): void {
+    // QA ORD-10012: 6.04 paid, platform 5.93, store 0.11, 1.04 refunded and restocked.
+    $partial = OrderSettlement::figures(Money::of('6.04'), Money::of('5.93'), Money::of('0.11'), Money::of('1.04'), Money::zero(), CollectedBy::Vendor, false);
+
+    expect($partial->vendorShare->toDecimal())->toBe('-0.93')
+        ->and($partial->platformShare->toDecimal())->toBe('5.93')
+        ->and($partial->showsPercentages())->toBeFalse()
+        ->and(settlement()->showsPercentages())->toBeTrue()
+        ->and(settlement(void: true)->showsPercentages())->toBeFalse()
+        ->and(RefundCalculator::isPartiallyRefunded(Money::of('6.04'), Money::of('1.04')))->toBeTrue()
+        ->and(RefundCalculator::isPartiallyRefunded(Money::of('6.04'), Money::of('6.04')))->toBeFalse()
+        ->and(RefundCalculator::isPartiallyRefunded(Money::of('6.04'), Money::zero()))->toBeFalse();
 });

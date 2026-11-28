@@ -72,7 +72,7 @@ it('creates a rule with zones, cities and bands, lists it and quotes from it', f
     $quotes = app(ShippingQuoteService::class);
     expect($quotes->quote(new ShippingQuoteRequest($sa->id, [new QuoteLine('a', 600, 2)]))->amount->toDecimal())->toBe('7.50')
         ->and($quotes->quote(new ShippingQuoteRequest($sa->id, [new QuoteLine('a', 600)], $dammam->id))->amount->toDecimal())->toBe('4.50')
-        ->and($quotes->quote(new ShippingQuoteRequest($sa->id, [new QuoteLine('a', 9000)]))->isFree())->toBeTrue()
+        ->and($quotes->quote(new ShippingQuoteRequest($sa->id, [new QuoteLine('a', 9000)]))->reason)->toBe(ShippingUnavailableReason::NoBand)
         ->and($quotes->quote(new ShippingQuoteRequest(Country::factory()->create()->id, [new QuoteLine('a', 600)]))->reason)->toBe(ShippingUnavailableReason::CountryNotServed);
 
     $rule->update(['status' => 'draft']);

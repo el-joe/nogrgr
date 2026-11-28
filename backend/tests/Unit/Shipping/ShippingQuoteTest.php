@@ -3,6 +3,7 @@
 use App\Modules\Shipping\DTOs\QuoteLine;
 use App\Modules\Shipping\DTOs\ShippingQuoteRequest;
 use App\Modules\Shipping\Enums\ShippingUnavailableReason;
+use App\Modules\Shipping\Repositories\Contracts\ShippingRuleRepositoryContract;
 use App\Modules\Shipping\Services\ShippingQuoteService;
 use App\Modules\Shipping\Support\BandDefinition;
 use App\Modules\Shipping\Support\RuleDefinition;
@@ -61,11 +62,50 @@ it('treats band edges as inclusive', function (int $grams, string $band): void {
     expect(quote(ksaRule(), [new QuoteLine('a', $grams)], city: 102)->bandName)->toBe($band);
 })->with([[0, 'Light'], [1000, 'Light'], [1001, 'Medium'], [5000, 'Medium'], [5001, 'Heavy'], [30000, 'Heavy']]);
 
-it('ships free when no band matches the weight', function (): void {
-    $result = quote(ksaRule(), [new QuoteLine('a', 31000)], city: 101);
+it('ships free only when the matching band is priced 0 (decision #139)', function (): void {
+    $rule = new RuleDefinition('R', [new ZoneDefinition('Z', [], [new BandDefinition('Paid', 0, 1000, Money::of(5), 1), new BandDefinition('Free', 1001, null, Money::zero(), 2)])]);
 
-    expect($result->available)->toBeTrue()->and($result->isFree())->toBeTrue()->and($result->bandId)->toBeNull()
+    expect(quote($rule, [new QuoteLine('a', 1000)])->isFree())->toBeFalse()
+        ->and(quote($rule, [new QuoteLine('a', 1001)])->isFree())->toBeTrue()
+        ->and(quote($rule, [new QuoteLine('a', 90000)])->bandId)->toBe(2);
+});
+
+it('is unavailable, never free, when no band covers the weight', function (array $bands, int $grams): void {
+    $result = quote(new RuleDefinition('R', [new ZoneDefinition('Z', [], $bands)]), [new QuoteLine('a', $grams)]);
+
+    expect($result->available)->toBeFalse()
+        ->and($result->isFree())->toBeFalse()
+        ->and($result->reason)->toBe(ShippingUnavailableReason::NoBand)
         ->and($result->lineFees['a']->isZero())->toBeTrue();
+})->with([
+    'above the heaviest capped band' => [fn () => [new BandDefinition('A', 0, 12000, Money::of(5))], 12001],
+    'in a gap between bands' => [fn () => [new BandDefinition('A', 0, 1000, Money::of(5)), new BandDefinition('B', 2000, null, Money::zero())], 1500],
+    'below the lightest band' => [fn () => [new BandDefinition('A', 500, null, Money::of(5))], 100],
+    'zone without bands' => [fn () => [], 100],
+]);
+
+it('takes the free-shipping threshold from price-0 bands only', function (array $bands, ?int $threshold): void {
+    $rules = Mockery::mock(ShippingRuleRepositoryContract::class);
+    $rules->shouldReceive('definitionForCountry')->andReturn(new RuleDefinition('R', [new ZoneDefinition('Z', [], $bands)]));
+
+    expect((new ShippingQuoteService($rules))->freeShippingThreshold(1))->toBe($threshold);
+})->with([
+    'every band capped and paid' => [fn () => [new BandDefinition('A', 0, 12000, Money::of(5))], null],
+    'zone without bands' => [fn () => [], null],
+    'free from the first gram' => [fn () => [new BandDefinition('Free', 0, null, Money::zero())], 0],
+    'lowest of the free bands' => [fn () => [new BandDefinition('B', 20000, null, Money::zero()), new BandDefinition('A', 0, 5000, Money::of(5)), new BandDefinition('F', 12001, 19999, Money::zero())], 12001],
+]);
+
+it('has no free-shipping threshold without a country, a rule or a zone', function (): void {
+    $rules = Mockery::mock(ShippingRuleRepositoryContract::class);
+    $rules->shouldReceive('definitionForCountry')->with(1)->andReturnNull();
+    $rules->shouldReceive('definitionForCountry')->with(2)->andReturn(new RuleDefinition('Cities', [new ZoneDefinition('Riyadh', [101], [new BandDefinition('Free', 0, null, Money::zero())])]));
+    $service = new ShippingQuoteService($rules);
+
+    expect($service->freeShippingThreshold(null))->toBeNull()
+        ->and($service->freeShippingThreshold(1))->toBeNull()
+        ->and($service->freeShippingThreshold(2, 555))->toBeNull()
+        ->and($service->freeShippingThreshold(2, 101))->toBe(0);
 });
 
 it('uses the whole-country zone for unlisted cities and the first zone without a city', function (): void {

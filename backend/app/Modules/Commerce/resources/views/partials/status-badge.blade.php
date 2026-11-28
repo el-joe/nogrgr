@@ -4,7 +4,7 @@
     $text = $label ?? ($value instanceof \BackedEnum && method_exists($value, 'label') ? $value->label() : \Illuminate\Support\Str::headline($key));
     $tone = match ($key) {
         'paid', 'delivered', 'completed', 'approved', 'refunded_done', 'exchanged', 'closed_ok', 'ready', 'connected', 'accepted' => 'success',
-        'pending', 'pending_payment', 'processing', 'packed', 'awaiting_info', 'testing', 'needs_attention', 'to_ship', 'cod' => 'warning',
+        'pending', 'pending_payment', 'processing', 'packed', 'awaiting_info', 'testing', 'needs_attention', 'to_ship', 'cod', 'partially_refunded' => 'warning',
         'cancelled', 'failed', 'rejected', 'delayed', 'key_rejected', 'returned' => 'danger',
         'shipped', 'in_transit', 'out_for_delivery', 'item_received', 'inspected', 'exchange_shipped' => 'info',
         'refunded' => ($context ?? '') === 'refund' ? 'success' : 'danger',

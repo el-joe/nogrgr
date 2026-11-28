@@ -16,7 +16,7 @@
     <div class="grid gap-6">
         <x-ui::page-header
             :title="$title"
-            :subtitle="collect([$order->placed_at?->translatedFormat('j M Y, H:i'), $order->customer_name, collect([$address['city'] ?? null, $country])->filter()->implode(', '), $order->payment_status->label()])->filter()->implode(' · ')"
+            :subtitle="collect([$order->placed_at?->translatedFormat('j M Y, H:i'), $order->customer_name, collect([$address['city'] ?? null, $country])->filter()->implode(', '), \App\Modules\Commerce\Pricing\RefundCalculator::isPartiallyRefunded($order->money('grand_total'), $figures->refunded) ? __('commerce::orders_admin.partially_refunded') : $order->payment_status->label()])->filter()->implode(' · ')"
             :breadcrumbs="[__('navigation.vendor.orders') => vendor_route('sales.orders.index'), '#'.$order->number => null]"
         >
             <x-slot:actions>
@@ -50,9 +50,9 @@
                     </div>
                     <dl class="grid gap-2 text-sm">
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.company') }}</dt><dd class="font-semibold text-ink">{{ $order->shipping_company_name ?? '—' }}</dd></div>
-                        <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.status') }}</dt><dd>@include('commerce::partials.status-badge', ['value' => $order->fulfilment_status])</dd></div>
+                        <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.status') }}</dt><dd>@include('commerce::partials.fulfilment-badge', ['order' => $order])</dd></div>
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.tracking') }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $order->tracking_number ?? '—' }}</dd></div>
-                        <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.estimate') }}</dt><dd class="font-semibold text-ink">{{ $order->deliveryWindowLabel() ?? '—' }}</dd></div>
+                        <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::fulfilment.fields.estimate') }}</dt><dd class="font-semibold text-ink">{{ $order->isShipmentCancelled() ? '—' : ($order->deliveryWindowLabel() ?? '—') }}</dd></div>
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::vendor_orders.fulfilled_by') }}</dt><dd class="font-semibold text-ink">{{ $own ? tenant('name') : __('commerce::vendor_orders.platform_fulfilled') }}</dd></div>
                     </dl>
                     @unless ($own)

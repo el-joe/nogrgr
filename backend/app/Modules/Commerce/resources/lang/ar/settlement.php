@@ -5,6 +5,8 @@ return [
     'subtitle' => 'أثر هذا الطلب على رصيدك',
     'vendor_share' => 'حصة المتجر (:percent%)',
     'platform_share' => 'حصة المنصة (:percent%)',
+    'vendor_share_plain' => 'حصة المتجر',
+    'platform_share_plain' => 'حصة المنصة',
     'coupon_funded' => 'ممول الكوبون',
     'collected_by' => 'جهة تحصيل المبلغ',
     'refunded' => 'المسترد',

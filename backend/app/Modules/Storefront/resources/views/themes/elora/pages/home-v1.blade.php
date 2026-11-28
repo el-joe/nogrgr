@@ -79,7 +79,7 @@
                         @break
                     @case('promo-rail')
                         @php($promoCards = $rails['offers'] !== [] ? $rails['offers'] : $rails['topRated'])
-                        <x-sf::elora.v1.promo-rail :cards="$promoCards" :weight="$freeShippingWeight ?? null" :delivery="$delivery" class="max-lg:hidden" />
+                        <x-sf::elora.v1.promo-rail :cards="$promoCards" :weight="$freeShippingWeight ?? null" :always="$freeShippingAlways ?? false" :delivery="$delivery" class="max-lg:hidden" />
                         <x-sf::elora.v1.buy-together :cards="count($rails['offers']) >= 2 ? $rails['offers'] : $rails['best']" class="v1-m-together lg:hidden" />
                         @break
                 @endswitch

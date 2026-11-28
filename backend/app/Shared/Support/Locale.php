@@ -56,15 +56,23 @@ final class Locale
     }
 
     /**
+     * Geo result of the request (the CDN country header), null when there is none.
+     */
+    public static function geoCountry(): ?string
+    {
+        $country = request()->header('CF-IPCountry') ?? request()->header('X-Country-Code');
+
+        return is_string($country) && preg_match('/^[A-Za-z]{2}$/', $country) === 1 && strtoupper($country) !== 'XX' ? strtolower($country) : null;
+    }
+
+    /**
      * Visitor country (ISO-3166 alpha-2) for intl-tel-input pre-selection.
      * Trusts the CDN header when present, falls back to config('app.default_country').
      */
     public static function visitorCountry(): string
     {
-        $country = request()->header('CF-IPCountry') ?? request()->header('X-Country-Code');
-
-        if (is_string($country) && preg_match('/^[A-Za-z]{2}$/', $country) === 1 && strtoupper($country) !== 'XX') {
-            return strtolower($country);
+        if (($country = self::geoCountry()) !== null) {
+            return $country;
         }
 
         // Old storefront fallback: the region of Accept-Language ("en-EG" → EG).

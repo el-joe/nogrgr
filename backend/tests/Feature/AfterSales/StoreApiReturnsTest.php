@@ -17,6 +17,7 @@ use App\Modules\Commerce\Notifications\OrderCustomerNotification;
 use App\Modules\Identity\Repositories\Contracts\AdminRepositoryContract;
 use App\Modules\Inventory\Models\Branch;
 use App\Modules\Inventory\Models\BranchStock;
+use App\Modules\Localization\Models\Currency;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -287,4 +288,18 @@ it('withdraws a return under review only', function (): void {
         ->assertUnprocessable()
         ->assertJsonPath('data.reason', 'withdraw_not_allowed');
     expect($approved->refresh()->status)->toBe(ReturnStatus::Approved);
+});
+
+it('estimates the refund in the display currency too, keeping USD as the amount', function (): void {
+    ($this->deliver)();
+    Currency::query()->where('code', 'EGP')->delete();
+    Currency::factory()->code('EGP', '50.000000')->create();
+
+    $this->postJson(storeApi("orders/{$this->order->uuid}/returns/estimate"), [
+        'reason_code' => 'changed_mind',
+        'items' => [['order_item_id' => $this->item->id, 'quantity' => 1]],
+    ], $this->headers + ['X-Currency' => 'EGP'])
+        ->assertOk()
+        ->assertJsonPath('data.items.currency', 'USD')
+        ->assertJsonPath('data.total.display.currency', 'EGP');
 });

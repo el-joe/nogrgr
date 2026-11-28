@@ -17,15 +17,15 @@ final class Icon
      *
      * @var list<string>
      */
-    public const DIRECTIONAL = ['chevron-left', 'chevron-right', 'arrow-up', 'arrow-down', 'return', 'log-out', 'panel-left'];
+    public const DIRECTIONAL = ['chevron-left', 'chevron-right', 'arrow-up', 'arrow-down', 'return', 'log-out', 'panel-left', 'elo-arrow-right', 'elo-chevron-bar', 'elo-truck-speed', 'elo-truck-bar', 'elo-chevron-right', 'elo-delivery-truck', 'elo-delivery-return', 'elo-back', 'elo-back-chevron', 'elo-track-truck', 'elo-status-shipped'];
 
     /**
      * Name prefixes of one-screen art (ad-* Ad Studio) and panel chrome (tp-* tenant panel
-     * navigation): not offered in icon pickers (<x-ui::icon-picker>).
+     * navigation, elo-* Elora Figma icons): not offered in icon pickers (<x-ui::icon-picker>).
      *
      * @var list<string>
      */
-    public const INTERNAL_PREFIXES = ['ad-', 'tp-'];
+    public const INTERNAL_PREFIXES = ['ad-', 'tp-', 'elo-'];
 
     /**
      * @var array<string, string>

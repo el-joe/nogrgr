@@ -43,7 +43,7 @@ class CheckoutOptionsResource extends JsonResource
             'selected_payment_method' => null,
             'can_pay' => $options->block === null,
             'block' => $options->block?->value,
-            'block_message' => $options->block?->message(),
+            'block_message' => $options->block?->message($options->summary->composed->shipping),
         ];
     }
 }

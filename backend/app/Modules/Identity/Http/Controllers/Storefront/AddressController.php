@@ -9,10 +9,10 @@ use App\Modules\Identity\Models\Customer;
 use App\Modules\Identity\Services\CustomerAddressService;
 use App\Modules\Localization\Http\Resources\CountryResource;
 use App\Modules\Localization\Services\StoreCountries;
+use App\Modules\Storefront\Services\StorefrontContext;
 use App\Shared\Http\Concerns\RespondsWithJsonOrRedirect;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
-use App\Shared\Support\Locale;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -31,6 +31,7 @@ class AddressController extends Controller
     public function __construct(
         private readonly CustomerAddressService $addresses,
         private readonly StoreCountries $countries,
+        private readonly StorefrontContext $context,
     ) {}
 
     public function index(Request $request): View
@@ -38,7 +39,7 @@ class AddressController extends Controller
         return view('identity::storefront.account.addresses', [
             'addresses' => CustomerAddressResource::collection($this->addresses->list($this->customer($request)))->resolve($request),
             'countries' => CountryResource::collection($this->countries->available())->resolve($request),
-            'phoneCountry' => strtoupper(Locale::visitorCountry()),
+            'phoneCountry' => $this->context->phoneCountry(),
         ]);
     }
 

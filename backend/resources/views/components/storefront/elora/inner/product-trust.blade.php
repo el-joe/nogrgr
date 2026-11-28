@@ -24,23 +24,23 @@
         </section>
     @endif
     <button type="button" class="elo-trust elo-trust-privacy text-start transition-shadow hover:shadow-md" data-sheet-open="elo-privacy" data-reveal="fade-up">
-        <h3 class="w-full"><x-ui::icon name="shield" :size="20" />{{ __st('elora_pages.product.privacy_secure') }}<x-ui::icon name="chevron-right" :size="16" class="ms-auto text-elo-ink rtl:-scale-x-100" /></h3>
+        <h3 class="w-full"><x-ui::icon name="elo-secured" :size="24" />{{ __st('elora_pages.product.privacy_secure') }}<x-ui::icon name="elo-chevron-right" :size="20" class="ms-auto" /></h3>
         <ul class="grid gap-1.5" role="list">
-            <li><x-ui::icon name="check" :size="14" />{{ __st('elora_pages.product.secure_payment') }}</li>
-            <li><x-ui::icon name="check" :size="14" />{{ __st('elora_pages.product.privacy_protection') }}</li>
+            <li><x-ui::icon name="elo-check-sm" :size="14" />{{ __st('elora_pages.product.secure_payment') }}</li>
+            <li><x-ui::icon name="elo-check-sm" :size="14" />{{ __st('elora_pages.product.privacy_protection') }}</li>
         </ul>
     </button>
     <section class="elo-trust elo-trust-delivery" data-reveal="fade-up">
-        <h3><x-ui::icon name="truck" :size="20" />{{ __st('cart.trust.delivery') }}</h3>
+        <h3><x-ui::icon name="elo-delivery-truck" :size="24" />{{ __st('cart.trust.delivery') }}</h3>
         <ul class="grid gap-1.5" role="list">
-            <li><x-ui::icon name="check" :size="14" />{{ __st('cart.trust.guarantee.credit') }}</li>
-            <li><x-ui::icon name="check" :size="14" />{{ __st('cart.trust.guarantee.no_delivery') }}</li>
+            <li><x-ui::icon name="elo-check-sm" :size="14" />{{ __st('cart.trust.guarantee.credit') }}</li>
+            <li><x-ui::icon name="elo-check-sm" :size="14" />{{ __st('cart.trust.guarantee.no_delivery') }}</li>
         </ul>
     </section>
     <section class="elo-trust elo-trust-returns" data-reveal="fade-up">
-        <h3><x-ui::icon name="return" :size="20" class="rtl:-scale-x-100" />{{ __st('elora_pages.product.returns') }}</h3>
+        <h3><x-ui::icon name="elo-delivery-return" :size="24" />{{ __st('elora_pages.product.returns') }}</h3>
         <ul class="grid gap-1.5" role="list">
-            <li><x-ui::icon name="check" :size="14" />{{ __st('cart.trust.guarantee.damaged') }}</li>
+            <li><x-ui::icon name="elo-check-sm" :size="14" />{{ __st('cart.trust.guarantee.damaged') }}</li>
             @if ($returns)
                 <li><a href="{{ $returns }}" class="text-sf-muted underline hover:text-elo-ink">{{ __st('elora_pages.product.returns_policy') }}</a></li>
             @endif

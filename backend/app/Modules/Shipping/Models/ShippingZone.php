@@ -13,7 +13,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 /**
  * Zone of a shipping rule: the cities it covers (none = the whole country) and its
- * weight bands (first matching band wins, no band = free).
+ * weight bands (first matching band wins, no band = unavailable).
  *
  * @property int $id
  * @property int $shipping_rule_id

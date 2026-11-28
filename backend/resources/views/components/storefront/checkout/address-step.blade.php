@@ -41,6 +41,7 @@
             'no_country' => __st('checkout.shipping.no_country'),
             'unavailable' => __st('checkout.shipping.unavailable'),
             'not_sold' => __st('checkout.shipping.not_sold', ['products' => '__PRODUCTS__']),
+            'no_band' => __st('checkout.shipping.no_band'),
             'reason_address' => __st('checkout.reasons.no_address'),
             'reason_shipping' => __st('checkout.reasons.shipping'),
             'reason_gateway' => __st('checkout.reasons.no_gateway'),

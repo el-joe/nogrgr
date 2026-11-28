@@ -101,7 +101,7 @@
                     @endforeach
                 </ul>
                 <dl class="grid gap-3.5 text-sm leading-5">
-                    <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('orders.items_subtotal') }}</dt><dd class="font-medium text-sf-ink">{{ $money($t['subtotal']) }}</dd></div>
+                    <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st($d['has_fixed_shipping'] ? 'orders.items_subtotal' : 'orders.items_subtotal_plain') }}</dt><dd class="font-medium text-sf-ink">{{ $money($t['subtotal']) }}</dd></div>
                     <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('orders.shipping') }}@if ($d['shipping']['company']) · {{ $d['shipping']['company'] }}@endif</dt><dd class="font-medium text-sf-ink">{{ (int) $t['shipping']['amount'] === 0 ? __st('orders.free') : $money($t['shipping']) }}</dd></div>
                     @if ($discount > 0)
                         <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('orders.discount') }}</dt><dd class="font-medium text-sf-ink">− {{ $money($t['flash_discount']) }}</dd></div>

@@ -61,18 +61,20 @@
                 <x-ui::card>
                     <div class="mb-4 flex items-center justify-between gap-3">
                         <h2 class="font-semibold text-ink">{{ __('commerce::orders_admin.payment_summary') }}</h2>
-                        @include('commerce::partials.status-badge', ['value' => $order->payment_status])
+                        @include('commerce::partials.payment-badge', ['order' => $order, 'refunded' => $figures->refunded])
                     </div>
                     @include('commerce::partials.totals', ['order' => $order])
                     <div class="mt-4 rounded-control bg-subtle p-3">
                         <p class="mb-2 text-xs font-medium text-ink-secondary">{{ __('commerce::orders_admin.revenue_split') }}</p>
+                        @if ($figures->showsPercentages())
                         <div class="flex h-2 overflow-hidden rounded-full bg-line" role="img" aria-label="{{ __('commerce::orders_admin.revenue_split') }}">
                             <span class="vnd-split-vendor h-full bg-ink" data-width="{{ $vendorPct }}"></span>
                             <span class="vnd-split-platform h-full bg-primary" data-width="{{ $platformPct }}"></span>
                         </div>
+                        @endif
                         <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-secondary">
-                            <li><span class="me-1 inline-block size-2 rounded-full bg-ink"></span>{{ __('commerce::orders_admin.split_vendor', ['amount' => $figures->vendorShare->format(), 'percent' => $vendorPct]) }}</li>
-                            <li><span class="me-1 inline-block size-2 rounded-full bg-primary"></span>{{ __('commerce::orders_admin.split_platform', ['amount' => $figures->platformShare->format(), 'percent' => $platformPct]) }}</li>
+                            <li><span class="me-1 inline-block size-2 rounded-full bg-ink"></span>{{ __($figures->showsPercentages() ? 'commerce::orders_admin.split_vendor' : 'commerce::orders_admin.split_vendor_plain', ['amount' => $figures->vendorShare->format(), 'percent' => $vendorPct]) }}</li>
+                            <li><span class="me-1 inline-block size-2 rounded-full bg-primary"></span>{{ __($figures->showsPercentages() ? 'commerce::orders_admin.split_platform' : 'commerce::orders_admin.split_platform_plain', ['amount' => $figures->platformShare->format(), 'percent' => $platformPct]) }}</li>
                         </ul>
                     </div>
                 </x-ui::card>
@@ -87,7 +89,7 @@
                     <dl class="mb-5 grid gap-4 text-sm sm:grid-cols-3">
                         <div><dt class="text-xs text-ink-secondary">{{ __('commerce::fulfilment.fields.company') }}</dt><dd class="font-semibold text-ink">{{ $order->shipping_company_name ?? '—' }}</dd></div>
                         <div><dt class="text-xs text-ink-secondary">{{ __('commerce::fulfilment.fields.tracking') }}</dt><dd class="font-semibold text-ink" dir="ltr">{{ $order->tracking_number ?? '—' }}</dd></div>
-                        <div><dt class="text-xs text-ink-secondary">{{ __('commerce::fulfilment.fields.estimate') }}</dt><dd class="font-semibold text-ink">{{ $order->delivery_min_date ? $order->delivery_min_date->translatedFormat('j M').' – '.$order->delivery_max_date?->translatedFormat('j M') : '—' }}</dd></div>
+                        <div><dt class="text-xs text-ink-secondary">{{ __('commerce::fulfilment.fields.estimate') }}</dt><dd class="font-semibold text-ink">{{ $order->delivery_min_date && ! $order->isShipmentCancelled() ? $order->delivery_min_date->translatedFormat('j M').' – '.$order->delivery_max_date?->translatedFormat('j M') : '—' }}</dd></div>
                     </dl>
                     @include('commerce::partials.tracking', ['order' => $order])
                 </x-ui::card>
@@ -135,7 +137,7 @@
                 <x-ui::card>
                     <div class="mb-3 flex items-center justify-between gap-3">
                         <h2 class="font-semibold text-ink">{{ __('commerce::orders_admin.payment') }}</h2>
-                        @include('commerce::partials.status-badge', ['value' => $order->payment_status])
+                        @include('commerce::partials.payment-badge', ['order' => $order, 'refunded' => $figures->refunded])
                     </div>
                     <dl class="grid gap-2 text-sm">
                         <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('commerce::orders_admin.gateway') }}</dt><dd class="font-medium text-ink">{{ \App\Modules\Commerce\DataTables\VendorOrdersDataTable::gatewayLabel($order->payment_gateway) }}{{ $order->payment_source ? ' · '.$order->payment_source->label() : '' }}</dd></div>

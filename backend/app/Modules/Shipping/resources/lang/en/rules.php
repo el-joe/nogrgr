@@ -3,7 +3,7 @@
 return [
     'title' => 'Shipping rules',
     'breadcrumb' => 'Rules',
-    'subtitle' => 'Rule → country → zones with weight bands. First matching band wins; no band = free; no zone = unavailable.',
+    'subtitle' => 'Rule → country → zones with weight bands. First matching band wins and only a price of 0 ships free; a weight outside every band, or no zone, means shipping is unavailable.',
     'add' => 'New rule',
     'new' => 'New rule',
     'search' => 'Search rule',
@@ -43,7 +43,7 @@ return [
     'remove_zone' => 'Remove zone',
     'add_band' => 'Add band',
     'remove_band' => 'Remove band',
-    'no_bands' => 'No bands: shipping in this zone is free.',
+    'no_bands' => 'No bands: shipping in this zone is unavailable. Add a band (price 0 ships free).',
     'no_zones' => 'No zones: shipping to these countries is unavailable. Add a zone.',
     'band_overlap' => 'Band ":band" (:min g) overlaps ":other" (:range). Bands must not overlap.',
     'max_below_min' => 'Max weight must be greater than or equal to the min weight.',

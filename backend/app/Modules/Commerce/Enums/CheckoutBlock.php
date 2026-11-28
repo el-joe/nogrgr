@@ -2,6 +2,8 @@
 
 namespace App\Modules\Commerce\Enums;
 
+use App\Modules\Shipping\DTOs\ShippingQuote;
+use App\Modules\Shipping\Enums\ShippingUnavailableReason;
 use App\Shared\Enums\Concerns\HasEnumHelpers;
 
 /**
@@ -23,8 +25,15 @@ enum CheckoutBlock: string
     case CouponInvalid = 'coupon_invalid';
     case StockChanged = 'stock_changed';
 
-    public function message(): string
+    /**
+     * A weight no band covers says so, instead of blaming the destination country.
+     */
+    public function message(?ShippingQuote $shipping = null): string
     {
+        if ($this === self::ShippingUnavailable && $shipping?->reason === ShippingUnavailableReason::NoBand) {
+            return (string) $shipping->message();
+        }
+
         return (string) __('commerce::checkout.blocks.'.$this->value);
     }
 }

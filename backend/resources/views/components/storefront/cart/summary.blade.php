@@ -39,6 +39,8 @@
                         <dt>{{ __st('cart.shipping') }}</dt>
                         <dd>{{ $shipping['free'] ? __st('checkout.free') : StorefrontCart::price($totals['shipping']) }}</dd>
                     </div>
+                @elseif ($shipping['reason'] === 'no_band')
+                    <div class="text-sm text-sf-danger" data-shipping-unavailable>{{ $shipping['message'] }}</div>
                 @endif
             </dl>
             <x-sf::checkout.coupon :coupon="$coupon" variant="cart" />

@@ -81,6 +81,6 @@ it('does not copy into an inbox when the store has no owner account', function (
 
     event(new InvoiceIssued(Invoice::factory()->create(['tenant_id' => $tenant->id])));
 
-    Notification::assertNotSentTo(Owner::query()->get(), OwnerInboxNotification::class);
+    Notification::assertSentTimes(OwnerInboxNotification::class, 0);
     expect(Tenant::query()->whereKey($tenant->id)->value('owner_id'))->toBeNull();
 });

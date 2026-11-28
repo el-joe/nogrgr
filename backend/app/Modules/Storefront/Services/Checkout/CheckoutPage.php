@@ -11,7 +11,7 @@ use App\Modules\Identity\Services\CustomerAddressService;
 use App\Modules\Localization\Http\Resources\CountryResource;
 use App\Modules\Localization\Services\StoreCountries;
 use App\Modules\Shipping\Enums\ShippingUnavailableReason;
-use App\Shared\Support\Locale;
+use App\Modules\Storefront\Services\StorefrontContext;
 use Illuminate\Http\Request;
 
 /**
@@ -27,6 +27,7 @@ class CheckoutPage
         private readonly CheckoutService $checkout,
         private readonly CustomerAddressService $addresses,
         private readonly StoreCountries $countries,
+        private readonly StorefrontContext $context,
     ) {}
 
     /**
@@ -45,7 +46,7 @@ class CheckoutPage
             'gateways' => $payload['payment_methods'],
             'addresses' => CustomerAddressResource::collection($this->addresses->list($customer))->resolve($request),
             'countries' => CountryResource::collection($this->countries->available())->resolve($request),
-            'phoneCountry' => strtoupper(Locale::visitorCountry()),
+            'phoneCountry' => $this->context->phoneCountry(),
             'shipping' => $this->shippingState($payload['cart']),
             'block' => $payload['block'],
         ];
@@ -75,7 +76,11 @@ class CheckoutPage
         $shipping = $cart['shipping'];
 
         if (! $shipping['available']) {
-            $state = $shipping['reason'] === ShippingUnavailableReason::CountryRequired->value ? 'no_country' : 'unavailable';
+            $state = match ($shipping['reason']) {
+                ShippingUnavailableReason::CountryRequired->value => 'no_country',
+                ShippingUnavailableReason::NoBand->value => 'no_band',
+                default => 'unavailable',
+            };
 
             return ['state' => $cart['lines'] === [] ? 'ok' : $state, 'label' => null, 'products' => []];
         }

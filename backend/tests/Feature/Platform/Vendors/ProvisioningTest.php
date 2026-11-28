@@ -93,7 +93,8 @@ it('provisions the store database, languages, owner and trial plan', function ()
         expect($owner->is_owner)->toBeTrue()
             ->and($owner->hasRole('owner'))->toBeTrue()
             ->and($owner->getAllPermissions()->pluck('name')->sort()->values()->all())
-            ->toBe(collect(PermissionCatalog::tenant()['vendor'])->sort()->values()->all())
+            ->toBe(collect(PermissionCatalog::assignable('vendor'))->sort()->values()->all()) // internal permissions excluded (#116)
+            ->and($owner->getAllPermissions()->pluck('name'))->not->toContain('ui-kit.view')
             ->and(password_verify('secret-pass-123', (string) $owner->password))->toBeTrue()
             ->and(TenantLanguage::query()->where('is_enabled', true)->pluck('language_code')->sort()->values()->all())->toBe(['ar', 'en']);
     });

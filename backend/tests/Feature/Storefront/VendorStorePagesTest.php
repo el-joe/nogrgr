@@ -2,6 +2,7 @@
 
 use App\Modules\Identity\Models\VendorStaff;
 use App\Modules\Storefront\Enums\StorePageType;
+use App\Modules\Storefront\Enums\SystemStorePage;
 use App\Modules\Storefront\Models\StorePage;
 use App\Modules\Storefront\Services\Pages\StorePageService;
 use Illuminate\Support\Str;
@@ -68,7 +69,7 @@ it('lists the store pages with search, status and type filters', function (): vo
     $this->get(($this->url)())->assertOk()->assertSee(__('content::store_pages.add'))->assertSee('vendor-store-pages', false);
 
     $all = ($this->data)();
-    expect($all['recordsTotal'])->toBe(7)
+    expect($all['recordsTotal'])->toBe(count(SystemStorePage::cases()))
         ->and($all['data'][0]['page'])->toContain('/pages/about')->toContain(__('content::store_pages.system_badge'))
         ->and($all['data'][0]['status'])->toContain(__('content::store_pages.status.published'))->toContain('data-switch-url')
         // System pages cannot be deleted: no delete action, a locked hint instead.

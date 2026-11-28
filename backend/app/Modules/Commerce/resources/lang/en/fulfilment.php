@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'not_shipping' => 'Not shipping (cancelled)',
     'update_status' => 'Update status',
     'updated' => 'Shipping status of :number updated.',
     'print_label' => 'Print label',

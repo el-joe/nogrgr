@@ -36,15 +36,20 @@ final class PaymentMethodBadges
 
     /**
      * @param  iterable<string>  $methods
+     * @param  bool  $translate  Elora: labels come from the static texts (`checkout.methods.*`, ar/en); others stay English
      * @return list<array{key: string, label: string, icon: string}>
      */
-    public static function resolve(iterable $methods): array
+    public static function resolve(iterable $methods, bool $translate = false): array
     {
         $badges = [];
         $seen = [];
 
         foreach ($methods as $method) {
             $entry = self::MAP[$method] ?? ['label' => Str::ucfirst(str_replace('_', ' ', $method)), 'icon' => 'generic'];
+
+            if ($translate && isset(self::MAP[$method])) {
+                $entry['label'] = __st('checkout.methods.'.$method);
+            }
 
             if (isset($seen[$entry['label']])) {
                 continue;

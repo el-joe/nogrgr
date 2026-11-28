@@ -142,6 +142,8 @@ class AccountOrderPages
         }, $data['items'], array_keys($data['items']));
 
         $data['placed'] = $order->placed_at ?? $order->created_at;
+        /* The subtotal includes fixed shipping (ORDER_FORMULAS §1): the label says so only when a line has it. */
+        $data['has_fixed_shipping'] = (int) $lines->sum('fixed_shipping') > 0;
         $data['reviewable'] = collect($data['items'])->contains('reviewable', true);
         $data['trackable'] = in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true) || ($order->tracking_number !== null && $order->tracking_number !== '');
         $data['tone'] = self::tone($order->status);

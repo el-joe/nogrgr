@@ -12,6 +12,11 @@
     $o = $options;
     $left = collect($o['lines'])->where('returnable', true)->sum('available');
     $videoReasons = collect($o['reasons'])->where('requires_video', true)->pluck('name');
+    $videoText = match (true) {
+        $videoReasons->isEmpty() => __st('returns.upload_limits'),
+        $videoReasons->count() === count($o['reasons']) => __st('returns.video_required_all'),
+        default => __st('returns.video_required', ['reasons' => $videoReasons->implode('”, “')]),
+    };
     $orderUuid = $o['order']['uuid'];
     $picked = (int) request()->query('item');
     $methods = $o['return_methods'];
@@ -101,7 +106,7 @@
 
             <div class="flex items-start gap-2.5 rounded-lg bg-sf-warning-bg px-3 py-2.5 text-xs leading-4 text-sf-ink">
                 <x-ui::icon name="alert-triangle" :size="16" class="shrink-0 text-sf-warning" />
-                <p data-video-required-text>{{ $videoReasons->isNotEmpty() ? __st('returns.video_required', ['reasons' => $videoReasons->implode('”, “')]) : __st('returns.upload_limits') }}</p>
+                <p data-video-required-text>{{ $videoText }}</p>
             </div>
 
             <x-sf::form.field :label="__st('returns.customer_note')" for="sf-return-note" error-key="customer_note">

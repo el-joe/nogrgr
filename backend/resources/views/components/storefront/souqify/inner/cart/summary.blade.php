@@ -23,6 +23,8 @@
         @endif
         @if ($shipping['available'] && ! $empty)
             <div class="flex items-center justify-between gap-3"><dt>{{ __st('souqify_pages.cart.shipping_estimate') }}</dt><dd class="text-sq-ink">{{ $shipping['free'] ? __st('checkout.free') : StorefrontCart::price($totals['shipping']) }}</dd></div>
+        @elseif (! $empty && $shipping['reason'] === 'no_band')
+            <div class="text-sm text-sf-danger" data-shipping-unavailable>{{ $shipping['message'] }}</div>
         @endif
         @if ($coupon && $coupon['applied'] && StorefrontCart::positive($totals['coupon_discount']))
             <div class="flex items-center justify-between gap-3"><dt>{{ __st('cart.coupon_discount', ['code' => $coupon['code']]) }}</dt><dd class="text-sq-green">-{{ StorefrontCart::price($totals['coupon_discount']) }}</dd></div>

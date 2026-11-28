@@ -208,6 +208,16 @@ class Order extends Model
     /**
      * Money was taken for the order (gateway capture; COD is collected on delivery).
      */
+    /**
+     * Cancelled (or refunded) before it left: nothing will be shipped, whatever step the
+     * shipment had reached in the warehouse.
+     */
+    public function isShipmentCancelled(): bool
+    {
+        return in_array($this->status, [OrderStatus::Cancelled, OrderStatus::Refunded], true)
+            && in_array($this->fulfilment_status, [FulfilmentStatus::Pending, FulfilmentStatus::Packed], true);
+    }
+
     public function isPaidOnline(): bool
     {
         return $this->paid_at !== null && in_array($this->payment_status, [PaymentStatus::Paid, PaymentStatus::Refunded], true);

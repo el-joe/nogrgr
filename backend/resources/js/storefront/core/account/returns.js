@@ -9,7 +9,7 @@
  *   exchange          [data-return-replacement] shows the same-price options of a chosen line.
  *   estimate          [data-return-estimate='store-api url'] follows lines + reason.
  */
-import { http } from '../../../core/http';
+import { storeApi } from '../../commerce/api';
 
 const formatText = (template, values) => Object.entries(values).reduce((text, [key, value]) => text.replace(`:${key}`, value), template ?? '');
 
@@ -205,7 +205,7 @@ function bindEstimate(form) {
         }
 
         try {
-            const { data } = await http.post(box.dataset.returnEstimate, { reason_code: reason, items }, { toast: false, silent: true });
+            const { data } = await storeApi.post(box.dataset.returnEstimate, { reason_code: reason, items }, {}, { silent: true });
 
             if (current !== request) {
                 return;

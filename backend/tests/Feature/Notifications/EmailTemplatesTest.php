@@ -81,7 +81,7 @@ it('lists templates with audience tabs and filters', function (): void {
         ->assertJsonPath('data.0.event', 'vendor.welcome');
 
     $this->actingAs($admin, 'admin')
-        ->getJson($this->centralUrl('/admin/settings/email-templates/data?draw=1&start=0&length=10&search[value]=order.ship'))
+        ->getJson($this->centralUrl('/admin/settings/email-templates/data?draw=1&start=0&length=10&search[value]=order.shipped'))
         ->assertJsonPath('recordsFiltered', 1);
 });
 

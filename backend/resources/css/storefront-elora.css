@@ -13,4 +13,7 @@
 @import './storefront/elora-v1.css';
 @import './storefront/product-card-cover.css';
 @import './storefront/elora-pdp.css';
+@import './storefront/elora-cart.css';
 @import './storefront/elora-picker.css';
+@import './storefront/elora-checkout.css';
+@import './storefront/elora-account.css';

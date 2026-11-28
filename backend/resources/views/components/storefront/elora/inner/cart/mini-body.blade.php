@@ -1,6 +1,7 @@
 {{--
     Elora mini cart content (Storefront additions 137:112132 / m 137:112323): "Added to your
-    cart" note (shown when the drawer opens after an add), item rows (image, name, variant ·
+    cart" note (shown when the drawer opens after an add), select all + "Remove selected",
+    item rows (box, image, name, variant ·
     qty, total, swipe / trash to remove), free-shipping hint + meter, "Subtotal (n items)",
     Checkout and View cart. Rendered by `storefront.cart.mini`; empty → short empty state.
 --}}
@@ -21,31 +22,43 @@
         </div>
     @else
         <p class="elo-added hidden [[data-added]_&]:flex" role="status"><x-ui::icon name="check-circle" :size="18" />{{ __st('elora_pages.cart.added') }}</p>
-        <ul class="grid gap-3" role="list" data-cart-lines>
-            @foreach ($lines as $line)
-                <li class="relative overflow-hidden" data-swipe-remove data-remove-label="{{ $line['name'] }}" data-cart-line="{{ $line['id'] }}" data-quantity="{{ $line['quantity'] }}">
-                    <div class="mo-swipe-bg" aria-hidden="true"><x-ui::icon name="trash" :size="20" /></div>
-                    <div class="flex items-center gap-3 bg-white" data-swipe-content>
-                        <a href="{{ route('storefront.product', ['product' => $line['store_product_id']]) }}" class="grid size-[54px] shrink-0 place-items-center overflow-hidden rounded bg-elo-soft">
-                            @if ($line['image_url'])
-                                <img src="{{ $line['image_url'] }}" alt="" class="size-full object-contain bg-media" loading="lazy" decoding="async">
-                            @else
-                                <x-ui::icon name="image" :size="20" class="text-elo-line" />
-                            @endif
-                        </a>
-                        <div class="grid min-w-0 flex-1 gap-0.5">
-                            <p class="truncate text-sm text-elo-ink">{{ $line['name'] }}</p>
-                            <p class="truncate text-xs text-sf-muted">{{ collect([$line['variant'], __st('cart.qty', ['qty' => $line['quantity']])])->filter()->implode(' · ') }}</p>
-                            @if ($line['issue'] !== null)
-                                <p class="text-xs text-sf-danger">{{ $line['message'] }}</p>
-                            @endif
+        <div class="grid gap-3" data-cart-selection="any">
+            <div class="elo-mini-selhead">
+                <label class="inline-flex items-center gap-3">
+                    <x-sf::elora.check wrap="elo-mini-check" checked data-cart-select-all />
+                    <span>{{ __st('cart.select_all') }} ({{ count($lines) }})</span>
+                </label>
+                <button type="button" class="hidden items-center gap-1 text-xs text-sf-danger hover:underline [[data-has-selection]_&]:inline-flex" data-cart-remove-selected data-confirm-title="{{ __st('elora_pages.cart.remove_selected_title') }}" data-confirm-text="{{ __st('elora_pages.cart.remove_selected_body') }}" data-confirm-button="{{ __st('cart.remove_selected') }}">
+                    <x-ui::icon name="trash" :size="14" />{{ __st('cart.remove_selected') }}
+                </button>
+            </div>
+            <ul class="grid gap-3" role="list" data-cart-lines>
+                @foreach ($lines as $line)
+                    <li class="relative overflow-hidden" data-swipe-remove data-remove-label="{{ $line['name'] }}" data-cart-line="{{ $line['id'] }}" data-quantity="{{ $line['quantity'] }}">
+                        <div class="mo-swipe-bg" aria-hidden="true"><x-ui::icon name="trash" :size="20" /></div>
+                        <div class="flex items-center gap-3 bg-white" data-swipe-content>
+                            <x-sf::elora.check wrap="elo-mini-check" checked data-cart-select aria-label="{{ __st('cart.select_item', ['name' => $line['name']]) }}" />
+                            <a href="{{ route('storefront.product', ['product' => $line['store_product_id']]) }}" class="grid size-[54px] shrink-0 place-items-center overflow-hidden rounded bg-elo-soft">
+                                @if ($line['image_url'])
+                                    <img src="{{ $line['image_url'] }}" alt="" class="size-full object-contain bg-media" loading="lazy" decoding="async">
+                                @else
+                                    <x-ui::icon name="image" :size="20" class="text-elo-line" />
+                                @endif
+                            </a>
+                            <div class="grid min-w-0 flex-1 gap-0.5">
+                                <p class="truncate text-sm text-elo-ink">{{ $line['name'] }}</p>
+                                <p class="truncate text-xs text-sf-muted">{{ collect([$line['variant'], __st('cart.qty', ['qty' => $line['quantity']])])->filter()->implode(' · ') }}</p>
+                                @if ($line['issue'] !== null)
+                                    <p class="text-xs text-sf-danger">{{ $line['message'] }}</p>
+                                @endif
+                            </div>
+                            <p class="shrink-0 text-sm font-medium text-elo-ink">{{ StorefrontCart::price($line['total']) }}</p>
+                            <button type="button" class="mo-press shrink-0 p-1 text-sf-muted hover:text-sf-danger" data-swipe-remove-button aria-label="{{ __st('cart.remove_item', ['name' => $line['name']]) }}"><x-ui::icon name="trash" :size="16" /></button>
                         </div>
-                        <p class="shrink-0 text-sm font-medium text-elo-ink">{{ StorefrontCart::price($line['total']) }}</p>
-                        <button type="button" class="mo-press shrink-0 p-1 text-sf-muted hover:text-sf-danger" data-swipe-remove-button aria-label="{{ __st('cart.remove_item', ['name' => $line['name']]) }}"><x-ui::icon name="trash" :size="16" /></button>
-                    </div>
-                </li>
-            @endforeach
-        </ul>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
         @if ($free !== null && ! $free['reached'])
             @php($weight = $free['remaining_grams'] >= 1000 ? __st('cart.weight_kg', ['value' => rtrim(rtrim(number_format($free['remaining_grams'] / 1000, 2), '0'), '.')]) : __st('cart.weight_g', ['value' => (int) $free['remaining_grams']]))
             <div class="grid gap-2">

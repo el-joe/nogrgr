@@ -25,6 +25,11 @@ class OrderRepository extends BaseRepository implements OrderRepositoryContract
     /** Paid, not void orders (vendor "Collected" KPI). */
     private const COLLECTED_STATUSES = [OrderStatus::Paid->value, OrderStatus::Processing->value, OrderStatus::Shipped->value, OrderStatus::Delivered->value, OrderStatus::Completed->value];
 
+    private const NUMBER_SEQUENCE = 'order';
+
+    /** The first order of a store is ORD-10001. */
+    private const NUMBER_BASE = 10000;
+
     protected function model(): string
     {
         return Order::class;
@@ -75,11 +80,35 @@ class OrderRepository extends BaseRepository implements OrderRepositoryContract
         return $this->query()->where('created_at', '>=', $since)->count();
     }
 
+    /**
+     * The counter row of the store stays locked until the surrounding transaction ends, so
+     * concurrent checkouts queue up and a rolled back order gives its number back (decision
+     * #138). Numbers written by anything else (imports, seeders) are skipped over.
+     */
     public function nextNumber(): string
     {
-        $last = (int) $this->query()->max('id');
+        $connection = $this->query()->getModel()->getConnection();
 
-        return 'ORD-'.str_pad((string) (10001 + $last), 5, '0', STR_PAD_LEFT);
+        return $connection->transaction(function () use ($connection): string {
+            $counter = static fn () => $connection->table('order_sequences')->where('name', self::NUMBER_SEQUENCE);
+            $last = $counter()->lockForUpdate()->value('last_number');
+
+            // The migration writes the row; this only covers a store whose row was removed.
+            if ($last === null) {
+                $connection->table('order_sequences')->insertOrIgnore(['name' => self::NUMBER_SEQUENCE, 'last_number' => self::NUMBER_BASE]);
+                $last = $counter()->lockForUpdate()->value('last_number');
+            }
+
+            $next = (int) $last;
+
+            do {
+                $number = 'ORD-'.str_pad((string) ++$next, 5, '0', STR_PAD_LEFT);
+            } while ($this->query()->where('number', $number)->exists());
+
+            $counter()->update(['last_number' => $next]);
+
+            return $number;
+        });
     }
 
     public function expiredPendingGroups(int $limit = 100): array

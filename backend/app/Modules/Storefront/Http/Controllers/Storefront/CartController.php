@@ -30,9 +30,11 @@ class CartController extends Controller
     public function index(Request $request): View
     {
         $picks = $this->home->grid(ListingKind::BestSelling);
+        $cart = $this->cart->data($request);
 
         return StorefrontView::make('pages.cart', [
-            'cart' => $this->cart->data($request),
+            'cart' => $cart,
+            'rails' => $this->home->cartRails(array_map(static fn (array $line): int => (int) $line['store_product_id'], $cart['lines'])),
             'picks' => $picks,
             'picksMoreUrl' => $picks->hasMore() ? route('storefront.best-sellers', ['page' => 2, 'per' => HomeService::GRID]) : null,
             'seo' => $this->seo->page(__st('cart.title'), null, index: false),
@@ -43,12 +45,31 @@ class CartController extends Controller
     {
         $cart = $this->cart->data($request);
 
-        return JsonResponder::success(data: [
+        $data = [
             'html' => view(StorefrontView::component('cart.body'), ['cart' => $cart])->render(),
             'summary' => view(StorefrontView::component('cart.summary'), ['cart' => $cart])->render(),
             'items_count' => $cart['items_count'],
             'empty' => $cart['lines'] === [],
-        ]);
+        ];
+
+        // Themes whose cart rails skip the products already in the cart (Elora) get them again
+        // when those products changed; `rails` = the key the page holds, so a quantity change
+        // keeps the rails (and their swipe position) as they are.
+        $rails = StorefrontView::component('cart.rails');
+
+        if ($request->has('rails') && view()->exists($rails)) {
+            $ids = array_map(static fn (array $line): int => (int) $line['store_product_id'], $cart['lines']);
+            $unique = array_unique($ids);
+            sort($unique);
+            $key = implode(',', $unique);
+
+            if ($key !== $request->query('rails')) {
+                $data['rails'] = view($rails, ['rails' => $this->home->cartRails($ids)])->render();
+                $data['rails_key'] = $key;
+            }
+        }
+
+        return JsonResponder::success(data: $data);
     }
 
     public function mini(Request $request): JsonResponse

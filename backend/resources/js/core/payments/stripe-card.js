@@ -50,7 +50,7 @@ const STRIPE_LOCALES = ['ar', 'en'];
  * Card controller of one `[data-stripe-card]` panel.
  */
 export function createStripeCard(panel, { key = panel?.dataset.publishableKey, errorText = panel?.dataset.cardErrorText ?? '' } = {}) {
-    const state = { stripe: null, card: null, key: null, complete: false, mounting: null };
+    const state = { stripe: null, card: null, key: null, complete: false, mounting: null, lastError: '' };
     const box = panel.querySelector('[data-stripe-element]');
     const error = panel.querySelector('[data-stripe-error]');
 
@@ -86,7 +86,8 @@ export function createStripeCard(panel, { key = panel?.dataset.publishableKey, e
                 state.card.mount(box);
                 state.card.on('change', (event) => {
                     state.complete = event.complete;
-                    showError(event.error?.message ?? '');
+                    state.lastError = event.error?.message ?? '';
+                    showError(state.lastError);
                 });
                 state.key = publishableKey;
 
@@ -113,10 +114,29 @@ export function createStripeCard(panel, { key = panel?.dataset.publishableKey, e
                 return true;
             }
 
-            showError(errorText);
+            showError(state.lastError || errorText);
             state.card?.focus();
 
             return false;
+        },
+        /**
+         * Stripe's own (localised) reason why the card is not ready, shown inline. When no change
+         * event reported one (empty / half filled card) Stripe is asked to validate the element:
+         * an incomplete card never creates a payment method.
+         * @returns {Promise<string>}
+         */
+        async explain() {
+            let message = state.lastError;
+
+            if (!message && state.stripe && state.card && !state.complete) {
+                const result = await state.stripe.createPaymentMethod({ type: 'card', card: state.card }).catch(() => null);
+                message = result?.error?.message ?? '';
+            }
+
+            message ||= errorText;
+            showError(message);
+
+            return message;
         },
         /**
          * Confirms the PaymentIntent with the mounted card.

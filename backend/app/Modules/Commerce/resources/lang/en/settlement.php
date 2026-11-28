@@ -5,6 +5,8 @@ return [
     'subtitle' => 'How this order affects your balance',
     'vendor_share' => 'Store share (:percent%)',
     'platform_share' => 'Platform share (:percent%)',
+    'vendor_share_plain' => 'Store share',
+    'platform_share_plain' => 'Platform share',
     'coupon_funded' => 'Coupon funded by',
     'collected_by' => 'Money collected by',
     'refunded' => 'Refunded',

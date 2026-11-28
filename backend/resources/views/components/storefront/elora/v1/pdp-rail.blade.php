@@ -4,7 +4,7 @@
     1360 frame, a next arrow floats over it) and 132 wide on phones. Swiper "rail": touch swipe,
     mouse drag, trackpad, keys, momentum, RTL.
 --}}
-@props(['cards' => [], 'title', 'more' => null])
+@props(['cards' => [], 'title', 'more' => null, 'desktopTitle' => null])
 @php
     /* Cards per view: phones (<768) exactly 2, paged, dots, 12px gap (same setup as the home rails); then free-mode
        rails with 3 (tablet), 4 (small laptop) and 5.9 (1280+: 210px Figma cards, 6th clipped); never wider than ~250px. */
@@ -33,7 +33,7 @@
 @if ($cards !== [])
     <section class="epd-rail-sec" aria-label="{{ $title }}">
         <div class="epd-rail-head" data-reveal="fade-up">
-            <h2>{{ $title }}</h2>
+            <h2>@if ($desktopTitle)<span class="lg:hidden">{{ $title }}</span><span class="max-lg:hidden">{{ $desktopTitle }}</span>@else{{ $title }}@endif</h2>
             @if ($more)
                 <a href="{{ $more }}">{{ __st('elora_pages.product.see_all') }}</a>
             @endif

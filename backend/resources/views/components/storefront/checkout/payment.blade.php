@@ -9,7 +9,7 @@
     when the shopper sees another currency, "You will be charged $X USD." (USD is the only
     payment currency, decision #87; the checkout fragment keeps it current).
 --}}
-@props(['gateways' => [], 'charge' => null])
+@props(['gateways' => [], 'charge' => null, 'elora' => false])
 @php($usdCharge = \App\Modules\Storefront\Services\Checkout\StorefrontCart::usdCharge($charge))
 <section class="grid" data-payment-section aria-labelledby="sf-payment-title">
     <h2 id="sf-payment-title" class="mb-4 text-[20px] font-[500] text-[#242424]">{{ __st('checkout.payment.title') }}</h2>
@@ -17,13 +17,27 @@
     <div class="flex flex-col gap-2.5" role="radiogroup" aria-labelledby="sf-payment-title" aria-describedby="payment-method-error">
         @foreach ($gateways as $gateway)
             <label class="flex cursor-pointer items-center gap-3 rounded-[6px] border border-[#dcdcdc] bg-white px-4 py-3 transition hover:border-[#242424] has-[:checked]:border-[#242424]" data-gateway-option>
+                @if ($elora)
+                    <span class="elc-radio">
+                        {{-- Figma akar-icons radio / radio-fill (1:18431 / 1:18392): real input kept, icons follow its state. --}}
+                        <input type="radio" name="payment_choice" value="{{ $gateway['code'] }}" data-gateway-radio
+                            data-inline="{{ ($gateway['inline'] ?? false) ? '1' : '0' }}" @if ($gateway['publishable_key'] ?? null) data-publishable-key="{{ $gateway['publishable_key'] }}" @endif data-mode="{{ $gateway['mode'] }}">
+                        <x-ui::icon name="elo-radio" :size="24" class="elc-radio-off" />
+                        <x-ui::icon name="elo-radio-fill" :size="24" class="elc-radio-on" />
+                    </span>
+                @else
                 <input type="radio" name="payment_choice" value="{{ $gateway['code'] }}" class="accent-black" data-gateway-radio
                     data-inline="{{ ($gateway['inline'] ?? false) ? '1' : '0' }}" @if ($gateway['publishable_key'] ?? null) data-publishable-key="{{ $gateway['publishable_key'] }}" @endif data-mode="{{ $gateway['mode'] }}">
+                @endif
                 <span class="flex flex-1 items-center gap-2.5">
+                    @if ($elora)
+                        <x-ui::icon name="elo-payment" :size="16" class="elc-method-ico" />
+                    @else
                     <svg class="size-4 shrink-0 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                    @endif
                     <span class="flex flex-col gap-1">
                         <span class="text-[14px] font-medium text-[#242424]">{{ $gateway['name'] }}</span>
-                        <x-sf::checkout.method-badges :methods="$gateway['payment_methods']" size="xs" />
+                        <x-sf::checkout.method-badges :methods="$gateway['payment_methods']" size="xs" :translate="$elora" />
                     </span>
                     @if ($gateway['logo_url'])
                         <img src="{{ $gateway['logo_url'] }}" alt="{{ $gateway['name'] }}" class="ms-auto h-6 object-contain" loading="lazy">

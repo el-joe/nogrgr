@@ -63,7 +63,8 @@ class CartResource extends JsonResource
                 'weight_grams' => $weight,
             ],
             'delivery' => $summary->delivery?->toArray(),
-            'free_shipping' => $threshold === null ? null : [
+            // Past a free band into a paid or uncovered weight there is nothing to promise: no meter.
+            'free_shipping' => $threshold === null || ($weight >= $threshold && ! $shipping->isFree()) ? null : [
                 'threshold_grams' => $threshold,
                 'weight_grams' => $weight,
                 'remaining_grams' => max(0, $threshold - $weight),
@@ -108,6 +109,7 @@ class CartResource extends JsonResource
             'sku' => $line->sku,
             'image_url' => $line->imageUrl,
             'quantity' => $line->item->quantity,
+            'weight_grams' => $line->input?->weightGrams,
             'available' => $line->available,
             'unit_price' => $line->unitDisplayPrice !== null ? $money->present($line->unitDisplayPrice) : null,
             'subtotal' => $priced !== null ? $money->present($priced->displaySubtotal()) : null,

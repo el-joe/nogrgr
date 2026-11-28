@@ -1,0 +1,605 @@
+/*
+ * Elora cart page (Figma desktop 1:17541, phone 1:22029). Only the cart views use the .elo-cart-*,
+ * .ecl-* and .elo-freeship-cart classes, so the other themes are untouched. Unlayered on purpose:
+ * it must win over the generic cart rules of elora-pages.css. The product rails reuse the product
+ * page rail (x-sf::elora.v1.pdp-rail inside .epd-rails.v1-home), so card sizes, gaps and the
+ * cards-per-view steps are exactly the home / product page ones.
+ */
+[data-theme-variant='1'] {
+    /* Floating phone tab bar: pill + "My Cart" circle (elora-v1.css). */
+    --elo-nav-h: 74px;
+    --elo-nav-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    --elo-nav-clear: calc(var(--elo-nav-bottom) + var(--elo-nav-h) + 12px);
+    --elo-bar-h: 64px;
+}
+
+@media (max-width: 767px) {
+    [data-theme-variant='1'] { --elo-nav-h: 80px; }
+}
+
+.elo-cart-wrap {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: 12px 16px 24px;
+    color: #121212;
+}
+
+.elo-cart-title {
+    margin-bottom: 12px;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 25px;
+}
+
+.elo-cart-body,
+.elo-cart-region { display: grid; gap: 16px; min-width: 0; }
+
+.elo-cart-region { display: block; }
+
+.elo-cart-aside { display: grid; gap: 32px; }
+
+/* Free-shipping box: phone = grey card, bar 18 high with the truck on it. */
+.elo-freeship-cart {
+    gap: 4px;
+    padding: 8px;
+    border: 0;
+    border-radius: 12px;
+    background: #f7f7f7;
+    color: #242424;
+}
+
+.elo-freeship-text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    line-height: 21px;
+}
+
+.elo-freeship-text b { color: #ff4d00; font-size: 14px; font-weight: 600; }
+.elo-freeship-end,
+.elo-freeship-lead { color: #ff522c; font-weight: 500; }
+
+.elo-freeship-lead.elo-freeship-reached { color: #2aaf2f; }
+
+.elo-track { position: relative; }
+
+.elo-freeship-cart .elo-meter { height: 18px; border-radius: 24px; background: #d9d9d9; overflow: hidden; }
+.elo-freeship-cart .elo-meter > span { border-radius: 24px; background: #ff4d00; }
+
+.elo-track:not([data-width='0']) .elo-meter > span { min-width: 12px; }
+
+.elo-freeship-cart .elo-meter > span { animation: elo-fill 0.9s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both; }
+
+@keyframes elo-fill {
+    from { width: 0; }
+    to { width: var(--w, 0%); }
+}
+
+@keyframes elo-ride {
+    from { inset-inline-start: 0; }
+}
+
+.elo-truck {
+    position: absolute;
+    top: 3px;
+    inset-inline-start: max(0px, calc(var(--w, 0%) - 30px));
+    max-width: none;
+    animation: elo-ride 0.9s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+    width: 27px;
+    height: 11px;
+    color: #fdfdfd;
+    pointer-events: none;
+}
+
+.elo-cart-login { display: none; }
+
+.elo-cart-sel { display: grid; gap: 0; }
+.elo-cart-selhead { display: none; }
+
+.elo-cart-lines { display: grid; gap: 16px; }
+
+/* Phone line = the Figma "Mobile Card" row: 164 x 143 photo + details. */
+.ecl {
+    display: flex;
+    gap: 8px;
+    border-radius: 8px;
+    background: #fdfdfd;
+}
+
+.ecl-check { display: none; }
+
+/* Figma outlined 26px check box (1:17576): real input, SVG box + tick follow its state. */
+.elo-check {
+    position: relative;
+    display: inline-grid;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    color: #000;
+}
+
+.elo-check > input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.elo-check > .ui-icon {
+    grid-area: 1 / 1;
+}
+
+.elo-check-mark {
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity var(--motion-fast, 150ms) ease-out, transform var(--motion-fast, 150ms) cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+.elo-check > input:checked ~ .elo-check-mark {
+    opacity: 1;
+    transform: none;
+}
+
+.elo-check > input:indeterminate ~ .elo-check-mark {
+    opacity: 0.5;
+    transform: none;
+}
+
+.elo-check:has(> input:focus-visible) {
+    outline: 2px solid var(--nog-primary, #ff824c);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+.elo-check:has(> input:disabled) {
+    opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .elo-check-mark { transition: none; }
+}
+
+.ecl-img {
+    position: relative;
+    display: grid;
+    flex: 0 0 min(164px, 47%);
+    height: 143px;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f4f4f4;
+}
+
+.ecl-tag {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    padding: 2px 6px;
+    border-end-start-radius: 4px;
+    background: #ffd428;
+    color: #242424;
+    font-size: 8px;
+    letter-spacing: 0.3px;
+    line-height: 11px;
+}
+
+.ecl-main {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4px 8px;
+}
+
+.ecl-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.ecl-info { display: grid; min-width: 0; flex: 1; gap: 4px; }
+.ecl-title { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; letter-spacing: 0.3px; }
+.ecl-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.ecl-name:hover { text-decoration: underline; }
+.ecl-weight { flex-shrink: 0; color: #ff4d00; font-size: 12px; }
+.ecl-variant { overflow: hidden; color: #adadad; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.ecl-eta { display: none; }
+.ecl-trash { display: none; }
+
+.ecl-bottom { display: grid; gap: 8px; }
+.ecl-prices { display: flex; align-items: flex-end; gap: 5px; }
+.ecl-price { font-size: 14px; font-weight: 500; }
+.ecl-was { color: #adadad; font-size: 10px; font-weight: 300; }
+
+.ecl .elo-stepper {
+    height: 32px;
+    justify-self: end;
+    gap: 12px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.ecl .elo-stepper button,
+.ecl .elo-stepper .ecl-step-trash {
+    width: 32px;
+    height: 32px;
+    border: 1.19px solid #d4d4d4;
+    background: #fff;
+    color: #121212;
+}
+
+.ecl .elo-stepper .ecl-step-trash { border-color: #f3a5a0; color: #de1709; }
+.ecl .elo-stepper button:disabled { color: #d4d4d4; background: #fff; }
+
+.ecl .elo-stepper input {
+    width: 13px;
+    height: 32px;
+    border-radius: 0;
+    background: transparent;
+    color: #242424;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+/* Sticky total + "Check out" (m 1:22181): above the floating tab bar, never touching it. */
+.elo-checkout-bar {
+    bottom: var(--elo-nav-clear);
+    z-index: 30;
+    background: #fdfdfd;
+    box-shadow: 0 -4px 12px rgb(0 0 0 / 0.04);
+}
+
+.elo-bar-save {
+    position: absolute;
+    bottom: 100%;
+    inset-inline-start: 0;
+    padding: 4px 8px 4px 16px;
+    border-start-end-radius: 16px;
+    background: #ffb00a;
+    color: #121212;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+[dir='rtl'] .elo-bar-save { padding: 4px 16px 4px 8px; }
+
+.elo-bar-row { display: flex; align-items: center; gap: 16px; padding: 8px 16px; }
+
+.elo-bar-total { display: grid; width: 100px; gap: 4px; color: #8f8f8f; font-size: 14px; letter-spacing: 0.5px; line-height: normal; }
+.elo-bar-total span { color: #121212; font-size: 18px; font-weight: 500; letter-spacing: 0; }
+
+.elo-bar-btn {
+    height: 48px;
+    min-width: 0;
+    flex: 1;
+    gap: 8px;
+    border-radius: 32px;
+    background: #ff4d00;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Phone: clear the fixed bar (+ its "you save" tab) above the floating tab bar. */
+@media (max-width: 1023px) {
+    .sf-page:has([data-checkout-bar]) .elo-mobile-nav + div[aria-hidden='true'] {
+        height: calc(var(--elo-nav-clear) + var(--elo-bar-h) + 28px);
+    }
+
+    .elo-cart-wrap { padding-bottom: 8px; }
+
+    .epd-rails-cart { padding-bottom: 8px; }
+}
+
+/* Rails: the product page ones. */
+.epd-rails-cart { margin-top: 24px; padding-bottom: 0; }
+
+.elo-cart-bundle {
+    display: grid;
+    gap: 12px;
+    padding: 8px 16px;
+    border: 1px solid #c94f1a;
+    border-radius: 12px;
+    background: linear-gradient(89.5deg, rgb(201 79 26 / 0.24) 0%, rgb(245 99 35 / 0.24) 57.6%, rgb(186 56 0 / 0.24) 100%);
+}
+
+.elo-cart-bundle h2 { font-size: 14px; font-weight: 500; letter-spacing: 0.5px; }
+
+.elo-cart-bundle-row { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; gap: 12px; }
+
+.elo-cart-bundle-row .v1-ico-plus { width: 24px; height: 24px; justify-self: center; }
+
+/* ---------- Tablet (768 - 1023) ---------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .elo-cart-wrap { padding-inline: 40px; }
+
+    .elo-cart-lines { gap: 20px; }
+
+    .ecl-img { flex-basis: 200px; height: 175px; }
+
+    .elo-cart-bundle-row { max-width: 640px; margin-inline: auto; }
+}
+
+/* ---------- Summary + coupon + payment-methods cards (tablet and desktop) ---------- */
+@media (min-width: 768px) {
+    /* Order summary card (1:17642) */
+    [data-cart-summary].elo-summary {
+        gap: 16px;
+        padding: 16px;
+        border: 1px solid #e8e8e8;
+        border-radius: 16px;
+    }
+
+    .elo-sum-title { font-size: 20px; font-weight: 500; line-height: normal; }
+    .elo-sum-rows { display: grid; gap: 16px; font-size: 16px; }
+    .elo-sum-rows > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .elo-sum-total { display: grid; gap: 12px; margin-top: 8px; margin-bottom: 8px; }
+    .elo-sum-total > p:first-child { display: flex; justify-content: space-between; gap: 12px; font-size: 16px; font-weight: 500; }
+    .elo-sum-note { color: #707070; font-size: 16px; line-height: normal; }
+
+    [data-cart-summary] [data-coupon] { margin-top: 8px; }
+
+    [data-cart-summary] .elo-coupon { height: 48px; border: 1px solid #cacaca; border-radius: 8px; }
+    [data-cart-summary] .elo-coupon input { padding-inline: 11px; font-size: 16px; }
+    [data-cart-summary] .elo-coupon input::placeholder { color: #adadad; }
+    [data-cart-summary] .elo-coupon button { width: 92px; background: #eb7441; font-size: 20px; }
+    [data-cart-summary] .elo-coupon button:hover { background: #ff4d00; }
+
+    .elo-sum-btn { width: 100%; height: 50px; padding-inline: 32px; border-radius: 32px; background: #121212; color: #fff; font-size: 16px; font-weight: 500; }
+
+    .elo-cart-pay {
+        display: grid;
+        gap: 16px;
+        padding: 16px;
+        border: 1px solid #d4d4d4;
+        border-radius: 16px;
+        background: #fff;
+    }
+
+    .elo-cart-pay h2 { color: #242424; font-size: 20px; font-weight: 500; line-height: normal; }
+    .elo-cart-pay ul { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; padding: 8px; }
+    .elo-cart-pay li { display: grid; width: 56px; height: 37px; place-items: center; overflow: hidden; color: #121212; font-size: 10px; text-align: center; }
+    .elo-cart-pay img { width: 56px; height: 37px; object-fit: contain; }
+}
+
+/* Tablet: the summary card and the payment-methods card sit below the lines, side by side. */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .elo-cart-aside {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+        gap: 24px;
+        margin-top: 32px;
+    }
+
+    .elo-cart-pay { align-self: start; }
+}
+
+/* ---------- Desktop (1024+) ---------- */
+@media (min-width: 1024px) {
+    .elo-cart-wrap {
+        padding: 30px clamp(32px, 7.2vw, 104px) 56px clamp(32px, 7.2vw, 104px);
+        padding-inline-end: clamp(32px, 4.45vw, 64px);
+    }
+
+    .elo-cart-crumbs { margin-bottom: 32px; }
+    .elo-cart-crumbs .elo-crumbs { gap: 4px; font-size: 16px; line-height: 25px; color: #707070; }
+    .elo-cart-crumbs .elo-crumbs [aria-current] { color: #121212; }
+    .elo-cart-crumbs .elo-crumbs li { display: inline-flex; align-items: center; gap: 4px; }
+
+    .elo-cart-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 795fr) minmax(300px, 405fr);
+        grid-template-rows: auto auto 1fr;
+        column-gap: clamp(24px, 5vw, 72px);
+        align-items: start;
+    }
+
+    .elo-cart-region,
+    .elo-cart-body { display: contents; }
+
+    .elo-cart-free { grid-column: 1 / -1; grid-row: 1; margin-bottom: 32px; }
+
+    .elo-cart-login { grid-column: 1; grid-row: 2; }
+    .elo-cart-sel { grid-column: 1; grid-row: 3; }
+    .elo-cart-empty { grid-column: 1 / -1; grid-row: 1; }
+
+    .elo-cart-aside { grid-column: 2; grid-row: 2 / span 2; position: sticky; top: 112px; }
+
+    .elo-freeship-cart {
+        gap: 0;
+        padding: 12px 18px;
+        border: 1px solid #ff4d00;
+        border-radius: 8px;
+        background: rgb(255 77 0 / 0.04);
+        color: #242424;
+    }
+
+    /* One baseline-aligned sentence (Figma 1:17681): 20px heading + figures, 16px words, all medium. */
+    .elo-freeship-text { display: block; font-size: 16px; font-weight: 500; line-height: 25px; letter-spacing: 0; color: #242424; }
+    .elo-freeship-text b { font-size: 20px; font-weight: 500; color: #242424; }
+    .elo-freeship-lead { margin-inline-end: 2px; font-size: 20px; color: #ff522c; }
+
+    .elo-freeship-cart .elo-meter { height: 8px; }
+
+    /* The truck rides on its own 28px band above the bar end (it never touches the sentence): 89px box (1:17681). */
+    .elo-track { margin-top: 28px; }
+
+    .elo-truck {
+        top: -28px;
+        inset-inline-start: min(calc(100% - 28px), max(0px, calc(var(--w, 0%) - 21px)));
+        width: 28px;
+        height: 28px;
+        color: #ff4d00;
+    }
+
+    .elo-cart-login {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 24px;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: #fffbfb;
+        color: #121212;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        transition: border-color var(--motion-fast, 0.15s) ease-out;
+    }
+
+    .elo-cart-login:hover { border-color: #121212; }
+
+    .elo-cart-selhead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #c0c0c0;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .elo-cart-lines { gap: 24px; margin-top: 24px; }
+
+    .ecl { align-items: center; gap: 16px; border-radius: 0; background: transparent; }
+
+    .ecl-check { display: inline-grid; flex-shrink: 0; }
+
+    .ecl-img { flex: 0 0 171px; height: 162px; align-self: flex-start; background: #f4f4f4; }
+    .ecl-tag { display: none; }
+
+    .ecl-main {
+        height: 176px;
+        padding: 8px 0 24px;
+        border-bottom: 1px solid #c4c4c4;
+    }
+
+    .ecl-top { gap: 12px; }
+    .ecl-info { flex: 0 1 463px; gap: 8px; }
+    .ecl-title { letter-spacing: 0; }
+    .ecl-name { font-size: 16px; }
+    .ecl-weight { font-size: 16px; }
+    .ecl-variant { color: #121212; font-size: 14px; letter-spacing: 0.5px; }
+    .ecl-eta { display: block; color: #ff4d00; font-size: 14px; letter-spacing: 0.5px; }
+
+    .ecl-trash {
+        display: grid;
+        margin-inline-start: auto;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        place-items: center;
+        color: #8f8f8f;
+        transition: color var(--motion-fast, 0.15s) ease-out;
+    }
+
+    .ecl-trash:hover { color: #de1709; }
+
+    .ecl-bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+    .ecl-prices { align-items: center; gap: 8px; }
+    .ecl-price { font-size: 16px; font-weight: 400; }
+    .ecl-was { color: #adadad; font-size: 14px; font-weight: 400; letter-spacing: 0.5px; }
+
+    .ecl .elo-stepper {
+        height: 34px;
+        justify-self: auto;
+        gap: 16px;
+        padding: 8px;
+        border: 1px solid #e0e0e0;
+        border-radius: 24px;
+        background: #fff;
+    }
+
+    .ecl .elo-stepper button { width: 18px; height: 18px; border: 0; background: transparent; color: #ff4d00; }
+    .ecl .elo-stepper button:hover { background: #fff1eb; }
+    .ecl .elo-stepper button:disabled { color: #ffc9b3; }
+
+    .ecl .elo-stepper input {
+        width: 18px;
+        height: 18px;
+        border-radius: 16px;
+        background: #ffd3c0;
+        color: #ff4d00;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+
+    /* Same container, heading inset and card widths as the product page rails. */
+    .epd-rails-cart { margin-top: 0; padding-bottom: 32px; }
+    .elo-cart-rail-similar { display: none; }
+    .elo-cart-rail-recommended { order: -1; }
+    .elo-cart-bundle { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .elo-freeship-cart .elo-meter > span,
+    .elo-truck { animation: none; transition: none; }
+}
+
+/* Elora Figma icons: directional ones mirror in RTL; colours come from the context (currentColor). */
+[dir='rtl'] .ui-icon[data-icon^='elo-'][data-flip] { transform: scaleX(-1); }
+
+.ecl-trash { color: #adadad; }
+.ecl .elo-stepper button > .ui-icon[data-icon='elo-minus'] { color: #c9c5c5; }
+.ecl .elo-stepper button > .ui-icon[data-icon='elo-plus'] { color: #ff4d00; }
+.elo-cart-login .ui-icon { color: #121212; }
+.elo-cart-crumbs .ui-icon { color: #808080; }
+
+/* Empty cart: nothing to total or pay for, so the empty state stands alone. */
+.elo-cart-grid:has(.elo-cart-body[data-items-count='0']) .elo-cart-aside { display: none; }
+
+/* Selection with "Remove selected" (asked for by the client's shoppers; the phone and mini cart frames draw neither). */
+.elo-cart-selhead [data-cart-remove-selected],
+.elo-mini-selhead [data-cart-remove-selected] { min-height: 32px; }
+
+.elo-mini-selhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #121212;
+    font-size: 13px;
+}
+
+.elo-check.elo-mini-check,
+.elo-check.elo-mini-check > .ui-icon { width: 22px; height: 22px; min-height: 0; }
+
+@media (max-width: 1023px) {
+    .elo-cart-selhead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        font-size: 13px;
+    }
+
+    .elo-cart-selhead .elo-check,
+    .elo-cart-selhead .elo-check > .ui-icon { width: 22px; height: 22px; min-height: 0; }
+
+    /* The box sits on the photo, so the phone card keeps its drawn layout. */
+    .ecl { position: relative; }
+
+    .elo-check.ecl-check {
+        position: absolute;
+        top: 8px;
+        inset-inline-start: 8px;
+        z-index: 2;
+        width: 22px;
+        height: 22px;
+        min-height: 0;
+        border-radius: 6px;
+        background: #fdfdfd;
+    }
+
+    .elo-check.ecl-check > .ui-icon { width: 22px; height: 22px; }
+}

@@ -78,7 +78,7 @@ export function initCheckoutStep(root) {
         if (!shippingValue || !billingValue) {
             why = messages.reason_address;
         } else if ((shipping.state ?? 'ok') !== 'ok') {
-            why = messages.reason_shipping;
+            why = shipping.state === 'no_band' ? messages.no_band : messages.reason_shipping;
         } else if (!gateway) {
             why = messages.reason_gateway;
         }

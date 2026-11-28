@@ -110,6 +110,7 @@ it('keeps the return method and note and estimates what create refunds', functio
     ($this->page)('/account/returns')->assertOk()->assertSee('data-return-order', false);
     ($this->page)('/orders/'.$this->order->uuid)->assertSee('data-item-return', false);
     ($this->page)('/orders/'.$this->order->uuid.'/return')->assertOk()->assertSee('name="return_method"', false)->assertSee('name="customer_note"', false)->assertSee('data-return-estimate', false);
+    tenancy()->end(); // the storefront requests leave the store initialised; admin roles are central
     $this->actingAs(commerceAdmin(), 'admin')->get($this->centralUrl('/admin/returns/'.$return->id))->assertOk()->assertSee('After 5pm please.');
 });
 

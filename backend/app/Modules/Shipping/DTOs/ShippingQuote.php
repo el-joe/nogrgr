@@ -8,7 +8,7 @@ use App\Shared\Money\Money;
 /**
  * Result of ShippingQuoteService (order.shipping_charge and its split over the lines).
  * Unavailable quotes carry a reason and a zero amount; an available quote without a
- * band is free.
+ * band is a cart with nothing to ship.
  */
 final readonly class ShippingQuote
 {

@@ -6,6 +6,8 @@
  */
 import { bindCartLines, enhanceLines } from './lines';
 import { fragmentLoader, setCartCount } from './api';
+import { initReveal } from '../../core/reveal';
+import { initMotion } from '../core/motion';
 
 export function initCartPage(page) {
     if (page.__cartPage) {
@@ -16,16 +18,25 @@ export function initCartPage(page) {
     const region = page.querySelector('[data-cart-region]');
     const summary = page.querySelector('[data-cart-summary-region]');
     const load = fragmentLoader(page.dataset.fragmentUrl);
+    /* Optional (Elora): rails that follow the cart contents; they sit next to the page element. */
+    const rails = document.querySelector('[data-cart-rails]');
 
     const refresh = async () => {
         region.setAttribute('aria-busy', 'true');
 
         try {
-            const data = await load();
+            const data = await load(rails ? { rails: rails.dataset.railsKey || '-' } : {});
             region.innerHTML = data.html ?? region.innerHTML;
 
             if (summary && data.summary) {
                 summary.innerHTML = data.summary;
+            }
+
+            if (rails && typeof data.rails === 'string') {
+                rails.innerHTML = data.rails;
+                rails.dataset.railsKey = data.rails_key ?? '';
+                initReveal(rails);
+                initMotion(rails);
             }
 
             setCartCount(data.items_count);
@@ -40,5 +51,7 @@ export function initCartPage(page) {
     };
 
     bindCartLines(page, refresh);
+    /* Added from outside the cart lines (a rail card, its variant picker, the mini cart popup). */
+    document.addEventListener('sf:cart-updated', refresh);
     enhanceLines(page);
 }

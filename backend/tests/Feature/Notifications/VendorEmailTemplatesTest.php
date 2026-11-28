@@ -20,7 +20,7 @@ beforeEach(function (): void {
     $this->tenant = $this->createTenant('etp-'.Str::lower(Str::random(6)), ['name' => 'Megz']);
     $this->owner = $this->createVendorOwner($this->tenant);
     $this->url = fn (string $path = '') => $this->tenantUrl($this->tenant, 'admin/settings/email-templates'.$path);
-    $this->data = fn (string $query = ''): array => $this->getJson(($this->url)('/data?draw=1&start=0&length=25'.$query))->assertOk()->json();
+    $this->data = fn (string $query = ''): array => $this->getJson(($this->url)('/data?draw=1&start=0&length=100'.$query))->assertOk()->json();
     $this->platform = EmailTemplate::factory()->event(EmailTemplateEvent::OrderConfirmation)->create([
         'subject' => ['en' => 'Order {{ order.number }} confirmed', 'ar' => 'تم تأكيد طلبك {{ order.number }}'],
         'body' => ['en' => '<p>Thanks {{ customer.first_name }}!</p>', 'ar' => '<p>شكرًا {{ customer.first_name }}!</p>'],

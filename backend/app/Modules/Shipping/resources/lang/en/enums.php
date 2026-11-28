@@ -22,5 +22,6 @@ return [
         'country_required' => 'Country required',
         'country_not_served' => 'Country not served',
         'no_zone' => 'No zone',
+        'no_band' => 'No weight band',
     ],
 ];

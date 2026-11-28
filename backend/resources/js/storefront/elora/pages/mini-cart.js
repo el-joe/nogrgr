@@ -171,7 +171,8 @@ export function initEloraMiniCart() {
     });
 
     document.addEventListener('keydown', (event) => {
-        if (drawer.hidden) {
+        /* While the "Remove selected" confirmation is open, Escape and Tab belong to it. */
+        if (drawer.hidden || document.querySelector('.swal2-container')) {
             return;
         }
 

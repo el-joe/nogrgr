@@ -25,7 +25,7 @@ return [
     'checkout_attempt_status' => ['processing' => 'قيد المعالجة', 'completed' => 'مكتمل', 'failed' => 'فشل'],
     'checkout_block' => ['store_order_limit' => 'تم بلوغ حد الطلبات', 'empty_cart' => 'السلة فارغة', 'sign_in_required' => 'تسجيل الدخول مطلوب', 'no_address' => 'لا يوجد عنوان', 'unavailable_items' => 'منتجات غير متاحة', 'shipping_unavailable' => 'الشحن غير متاح', 'no_gateway' => 'لا توجد طريقة دفع', 'gateway_unavailable' => 'طريقة الدفع غير متاحة', 'coupon_invalid' => 'قسيمة غير صالحة', 'stock_changed' => 'تغير المخزون'],
     'actor_type' => ['customer' => 'العميل', 'vendor' => 'المتجر', 'admin' => 'المسؤول', 'system' => 'النظام', 'gateway' => 'بوابة الدفع'],
-    'fulfilment_status' => ['pending' => 'للشحن', 'packed' => 'تم التغليف', 'in_transit' => 'قيد التوصيل', 'out_for_delivery' => 'خرج للتوصيل', 'delayed' => 'متأخر', 'delivered' => 'تم التسليم'],
+    'fulfilment_status' => ['pending' => 'للشحن', 'packed' => 'تم التغليف', 'in_transit' => 'قيد التوصيل', 'out_for_delivery' => 'خرج للتوصيل', 'delayed' => 'متأخر', 'delivered' => 'تم التوصيل'],
     'cancellation_reason' => [
         'changed_mind' => 'غيّرت رأيي', 'ordered_by_mistake' => 'طلبت بالخطأ', 'found_better_price' => 'وجدت سعرًا أفضل', 'delivery_too_long' => 'التوصيل يستغرق وقتًا طويلًا',
         'wrong_address_or_details' => 'عنوان أو بيانات خاطئة', 'payment_issue' => 'مشكلة في الدفع', 'duplicate_order' => 'طلب مكرر', 'out_of_stock' => 'نفد المخزون',
