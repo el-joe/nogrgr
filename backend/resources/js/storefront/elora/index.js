@@ -9,6 +9,7 @@ import { initImageSearch } from '../catalog/image-search';
 import { initListing } from '../catalog/listing';
 import { initUi } from '../catalog/ui';
 import { initCommerce } from '../commerce/index.js';
+import { initVariantPicker } from '../catalog/variant-picker';
 import { initEloraHome } from './home.js';
 import { initEloraPages } from './pages.js';
 
@@ -20,6 +21,7 @@ export function initElora() {
     initListing(document);
     initUi(document);
     initCommerce(document);
+    initVariantPicker();
     initEloraHome(document);
     initEloraPages(document);
 

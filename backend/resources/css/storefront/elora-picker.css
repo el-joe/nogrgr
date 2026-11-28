@@ -1,0 +1,209 @@
+/*
+ * Elora variant picker (x-sf::variant-picker theme="elora", #sf-variant-modal) and the
+ * disabled card cart button. Shares catalog/variant-picker.js with Ecommet; the class
+ * names come from the modal's data-variant-skin. Tokens: --nog-primary / --sf-* (Elora
+ * family), radii 12-16 like the Elora card, bottom sheet on phones (x-sf::modal).
+ */
+@layer components {
+    #sf-variant-modal .mo-sheet-panel {
+        border-start-start-radius: 20px;
+        border-start-end-radius: 20px;
+        background: var(--sf-surface);
+        color: var(--sf-ink);
+    }
+
+    .v1-vp-skeleton {
+        border-radius: 12px;
+        background: linear-gradient(90deg, #f1f1f1 25%, #e6e6e6 37%, #f1f1f1 63%);
+        background-size: 400% 100%;
+        animation: v1-vp-shimmer 1.4s ease infinite;
+    }
+
+    @keyframes v1-vp-shimmer {
+        from { background-position: 100% 0; }
+        to { background-position: 0 0; }
+    }
+
+    .v1-vp-err-icon { color: var(--sf-danger); }
+    .v1-vp-muted { color: var(--sf-muted); font-size: 14px; }
+
+    .v1-vp-media {
+        display: grid;
+        aspect-ratio: 1;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 12px;
+        background: var(--nog-media);
+        padding: 8px;
+    }
+
+    .v1-vp-name {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--sf-ink);
+    }
+
+    .v1-vp-name:hover { text-decoration: underline; }
+    .v1-vp-price { font-size: 20px; font-weight: 600; color: var(--nog-primary); }
+    .v1-vp-compare { font-size: 14px; color: var(--sf-muted); text-decoration: line-through; }
+
+    .v1-vp-discount {
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--sf-accent-subtle);
+        color: var(--nog-primary);
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .v1-vp-stock { font-size: 13px; }
+    .v1-vp-stock-red { color: var(--sf-danger); }
+    .v1-vp-stock-green { color: var(--sf-success); }
+    .v1-vp-stock-gray { color: var(--sf-muted); }
+
+    .v1-vp-legend { margin-bottom: 8px; font-size: 14px; font-weight: 500; color: var(--sf-ink); }
+    .v1-vp-label { font-size: 14px; color: var(--sf-ink); }
+
+    .v1-vp-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        border-top: 1px solid var(--sf-border);
+        padding-top: 16px;
+    }
+
+    .v1-vp-select {
+        height: 40px;
+        width: 76px;
+        border: 1px solid var(--sf-border);
+        border-radius: 12px;
+        background: var(--sf-surface);
+        color: var(--sf-ink);
+        padding-inline: 10px;
+        font-size: 16px;
+    }
+
+    .v1-vp-select:focus-visible,
+    .v1-vp-option:focus-visible,
+    .v1-vp-swatch:focus-visible,
+    .v1-vp-tile:focus-visible { outline: 2px solid var(--nog-primary); outline-offset: 2px; }
+
+    .v1-vp-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;
+        padding-inline: 24px;
+        border-radius: 16px;
+        background: var(--nog-primary);
+        color: #fff;
+        font-size: 16px;
+        transition: background-color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
+    }
+
+    .v1-vp-cta:hover:not(:disabled) { background: var(--nog-primary-hover); }
+    .v1-vp-cta:active:not(:disabled) { transform: scale(var(--motion-press, 0.97)); }
+    .v1-vp-add { min-width: 180px; flex: 1; font-weight: 500; }
+    .v1-vp-cta:disabled { cursor: not-allowed; background: #d4d4d4; color: #fff; }
+
+    .v1-vp-outline {
+        display: inline-flex;
+        align-items: center;
+        height: 40px;
+        padding-inline: 20px;
+        border: 1px solid var(--sf-ink);
+        border-radius: 16px;
+        font-size: 14px;
+        color: var(--sf-ink);
+    }
+
+    .v1-vp-more { justify-self: center; font-size: 14px; color: var(--sf-ink); text-underline-offset: 4px; }
+    .v1-vp-more:hover { text-decoration: underline; }
+
+    .v1-vp-option {
+        min-height: 38px;
+        padding-inline: 16px;
+        border: 1px solid var(--sf-border);
+        border-radius: 12px;
+        font-size: 14px;
+        color: var(--sf-ink);
+        transition: border-color var(--motion-fast) var(--ease-out), background-color var(--motion-fast) var(--ease-out);
+    }
+
+    .v1-vp-option:hover { border-color: var(--nog-primary); }
+    .v1-vp-option[aria-checked='true'] { border-color: var(--nog-primary); background: var(--sf-accent-subtle); color: var(--nog-primary); box-shadow: inset 0 0 0 1px var(--nog-primary); }
+    .v1-vp-option[data-unavailable] { color: var(--sf-muted); text-decoration: line-through; }
+
+    .v1-vp-swatch {
+        position: relative;
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: var(--swatch);
+        border: 1px solid var(--sf-border);
+        transition: transform var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out);
+    }
+
+    .v1-vp-swatch:hover { transform: scale(1.08); }
+    .v1-vp-swatch[aria-checked='true'] { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--nog-primary); }
+    .v1-vp-swatch[data-unavailable] { opacity: 0.35; }
+
+    .v1-vp-tiles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        max-height: 168px;
+        overflow-y: auto;
+        padding: 2px;
+    }
+
+    .v1-vp-tile {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 64px;
+        overflow: hidden;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        background: var(--nog-media);
+        transition: border-color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
+    }
+
+    .v1-vp-tile img { width: 100%; height: 100%; object-fit: contain; }
+    .v1-vp-tile:hover { transform: translateY(-2px); }
+    .v1-vp-tile[aria-checked='true'] { border-color: var(--nog-primary); }
+    .v1-vp-tile[data-unavailable],
+    .v1-vp-tile:disabled { opacity: 0.45; cursor: not-allowed; }
+    .v1-vp-tile[data-unavailable]::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top right, transparent calc(50% - 1px), rgb(36 36 36 / 0.7) 50%, transparent calc(50% + 1px));
+    }
+    .v1-vp-tile-text { padding: 4px; font-size: 10px; line-height: 1.2; text-align: center; }
+
+    /* Out-of-stock card cart button: visible but inert (same state as the Ecommet card). */
+    .v1-card-cart:disabled,
+    .elo-card-cart:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .v1-card-cart:disabled:hover,
+    .elo-card-cart:disabled:hover {
+        background: #fdfdfd;
+        color: #242424;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .v1-vp-skeleton { animation: none; }
+        .v1-vp-tile:hover,
+        .v1-vp-swatch:hover { transform: none; }
+    }
+}

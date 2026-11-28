@@ -81,3 +81,28 @@ Global: 375 wide, 16px side padding, 24px between sections, min tap target 44px,
 - To resize inner parts, all component instances inside the clone were detached (clone only). The "Mobile Card" is therefore not linked to the master in this frame.
 - Pagination dots and the 44px "+" connector are new elements; the white active dot on the orange band uses white, other dots use the brand orange from the discount text and light grey (#D9D9D9).
 - Social icon hit area 44px is a spec note (the glyph is 28px); the Figma row is 44px high.
+
+## Product rail breakpoints (home + product page, final)
+
+Home rails (`elora/v1/rail.blade.php`) and PDP rails (`pdp-rail.blade.php`) use the same Swiper steps; every step carries gap, offsets and free mode (Swiper breakpoints do not stack).
+
+| Width | slidesPerView | gap | Mode |
+|---|---|---|---|
+| <520 | 2 (group 2) | 12 | paged, dots, large mobile card |
+| 520-639 | 2.5 | 16 | free mode, dots |
+| 640-767 | 3.2 | 16 | free mode, dots |
+| 768-839 | 3 | 16 | free mode, normal Elora card |
+| 840-919 | 3.4 | 16 | free mode |
+| 920-999 | 3.8 | 16 | free mode |
+| 1000-1023 | 4 | 16 | free mode |
+| 1024-1149 | 4 | 24 | free mode |
+| 1150-1279 | 4.5 | 24 | free mode |
+| >=1280 | 5.9 (6th clipped, ~210px card at 1440) | 24 | free mode |
+
+The large mobile card scale (165px image, 17px price) applies only below 768px; 768-1023 restores the Figma desktop card for `.v1-home .v1-rail`. Edge offsets per rail kind (tabs 16/38, flash 12/40, others 16/0 below/above 1024) are part of each step; below 768 the offsets are 0 and the rail has 16px side padding.
+
+## Tablet (768-1023) adaptations of the home sections
+
+- **Recommended For You grid** (hidden from 1024, the desktop shows the rail): <768 = 2 columns (unchanged); 768-839 = 3 equal columns, 840-1023 = 4 equal columns (`repeat(N, minmax(0, 1fr))`, 16px gap), Figma desktop card style; no card passes ~250px (230px at 768, ~201px at 900). Card photos stay `object-fit: cover` per the client decision in `product-card-cover.css`.
+- **Buy together**: the stacked layout (two 112px-high cards, 96px image, 44px "+", marks in the top corners) now applies below 1024px; the row is centred at max 600px; 1024+ keeps the desktop layout.
+- **Categories**: one Swiper serves phones and tablets (<1024): one row, 80px round icon, 14px label, 12px gap, 20px title, 44px "see all", dots; tile 100px wide below 768, 110px from 768 (6 fit, the 7th peeks). 1024+ keeps the desktop design (81px icons, not tiny); the old hidden tablet copy of the tiles was removed.

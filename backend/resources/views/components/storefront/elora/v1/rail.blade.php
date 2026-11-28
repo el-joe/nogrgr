@@ -5,14 +5,16 @@
 --}}
 @props(['cards' => [], 'kind' => 'section', 'delivery' => null, 'label' => null])
 @php
-    $swiper = match ($kind) {
-        'tabs' => ['spaceBetween' => 16, 'slidesOffsetBefore' => 16, 'slidesOffsetAfter' => 16, 'breakpoints' => ['1024' => ['slidesOffsetBefore' => 38, 'slidesOffsetAfter' => 38]]],
-        'flash' => ['spaceBetween' => 16, 'slidesOffsetBefore' => 12, 'slidesOffsetAfter' => 12, 'breakpoints' => ['1024' => ['slidesOffsetBefore' => 40, 'slidesOffsetAfter' => 40]]],
-        default => ['spaceBetween' => 16, 'slidesOffsetBefore' => 16, 'slidesOffsetAfter' => 16, 'breakpoints' => ['1024' => ['spaceBetween' => 24, 'slidesOffsetBefore' => 0, 'slidesOffsetAfter' => 0]]],
+    /* Cards per view (same steps as the product page rail): phones (<520) exactly 2, paged, dots, 12px gap;
+       520+ free-mode rails with 2.5 / 3.2, tablet 3 -> 3.8, laptop 4 -> 4.5, 1280+ 5.9 (210px Figma cards, 6th clipped).
+       Swiper breakpoints do not stack, so every step carries the full set (gap, offsets, free mode). */
+    $free = ['enabled' => true, 'sticky' => false, 'momentumRatio' => 0.6, 'momentumBounceRatio' => 0.4];
+    [$smallEdge, $wideEdge] = match ($kind) {
+        'tabs' => [16, 38],
+        'flash' => [12, 40],
+        default => [16, 0],
     };
-    /* Phones (<768): exactly two cards per view, paged, with dots; from 768 the design's own free-mode rail. */
-    $desktop = $swiper;
-    $tablet = array_diff_key($desktop, ['breakpoints' => 1]) + ['slidesPerView' => 'auto', 'slidesPerGroup' => 1, 'freeMode' => ['enabled' => true, 'sticky' => true, 'momentumRatio' => 0.6, 'momentumBounceRatio' => 0.4]];
+    $step = static fn (float $view, int $gap, int $edge) => ['slidesPerView' => $view, 'slidesPerGroup' => 1, 'spaceBetween' => $gap, 'slidesOffsetBefore' => $edge, 'slidesOffsetAfter' => $edge, 'freeMode' => $free];
     $swiper = [
         'slidesPerView' => 2,
         'slidesPerGroup' => 2,
@@ -21,7 +23,17 @@
         'slidesOffsetAfter' => 0,
         'freeMode' => ['enabled' => false],
         'paginationType' => 'bullets',
-        'breakpoints' => ['768' => $tablet] + ($desktop['breakpoints'] ?? []),
+        'breakpoints' => [
+            '520' => $step(2.5, 16, 0),
+            '640' => $step(3.2, 16, 0),
+            '768' => $step(3, 16, $smallEdge),
+            '840' => $step(3.4, 16, $smallEdge),
+            '920' => $step(3.8, 16, $smallEdge),
+            '1000' => $step(4, 16, $smallEdge),
+            '1024' => $step(4, 24, $wideEdge),
+            '1150' => $step(4.5, 24, $wideEdge),
+            '1280' => $step(5.9, 24, $wideEdge),
+        ],
     ];
 @endphp
 <div {{ $attributes->class(['v1-rail', 'v1-rail-'.$kind]) }}>

@@ -1,5 +1,5 @@
 /**
- * Ecommet variant picker (x-sf::variant-picker, #eco-variant-modal): a card cart button
+ * Shared variant picker (x-sf::variant-picker; #eco-variant-modal for Ecommet, #sf-variant-modal for Elora): a card cart button
  * with [data-variant-picker] loads the product from the Store API (routes.product,
  * products.show) and lets the shopper pick the options. Each pick re-matches the variant
  * (variant.options = {attributeId: optionId}), greys out options that cannot complete
@@ -10,11 +10,12 @@
  * with retry and a product-page link.
  */
 import { http } from '../../core/http';
-import { context } from '../catalog/context';
+import { context } from './context';
 import { closeSheet, openSheet } from '../core/motion/sheet';
 
 const MAX_QTY = 10;
 const cache = new Map();
+let skin = {};
 let modal = null;
 let texts = {};
 let current = null;
@@ -78,12 +79,12 @@ function renderGroups() {
             button.dataset.option = String(option.id);
 
             if (attribute.swatch && option.swatch) {
-                button.className = 'eco-swatch bg-[var(--swatch)]';
+                button.className = skin.swatch;
                 button.style.setProperty('--swatch', option.swatch);
                 button.setAttribute('aria-label', option.name);
                 button.title = option.name;
             } else {
-                button.className = 'eco-option';
+                button.className = skin.option;
                 button.textContent = option.name;
             }
 
@@ -127,7 +128,7 @@ function renderTiles(holder) {
     }
 
     const track = document.createElement('div');
-    track.className = 'flex max-h-[168px] flex-wrap gap-2 overflow-y-auto p-0.5';
+    track.className = skin.tiles;
     track.setAttribute('role', 'radiogroup');
     track.dataset.variantTiles = '';
 
@@ -136,7 +137,7 @@ function renderTiles(holder) {
         const tile = document.createElement('button');
         tile.type = 'button';
         tile.setAttribute('role', 'radio');
-        tile.className = 'eco-variant-tile';
+        tile.className = skin.tile;
         tile.dataset.variantTile = String(variant.id);
         tile.title = label;
         tile.setAttribute('aria-label', variant.in_stock ? label : label + ' - ' + texts.out);
@@ -152,7 +153,7 @@ function renderTiles(holder) {
             tile.appendChild(img);
         } else {
             const text = document.createElement('span');
-            text.className = 'eco-variant-tile-text';
+            text.className = skin.tileText;
             text.textContent = label;
             tile.appendChild(text);
         }
@@ -225,9 +226,9 @@ function update() {
     discountNode.textContent = discount ? `-${discount}%` : '';
 
     const stockNode = $('[data-variant-stock]');
-    stockNode.classList.toggle('text-eco-red', Boolean(variant) && (!inStock || (stock !== null && stock <= 5)));
-    stockNode.classList.toggle('text-eco-green', Boolean(variant) && inStock && !(stock !== null && stock <= 5));
-    stockNode.classList.toggle('text-eco-gray', !variant);
+    stockNode.classList.toggle(skin.red, Boolean(variant) && (!inStock || (stock !== null && stock <= 5)));
+    stockNode.classList.toggle(skin.green, Boolean(variant) && inStock && !(stock !== null && stock <= 5));
+    stockNode.classList.toggle(skin.gray, !variant);
     stockNode.textContent = !variant
         ? texts.choose
         : !inStock
@@ -305,13 +306,24 @@ async function load(id, fallbackUrl) {
 let bound = false;
 
 export function initVariantPicker() {
-    modal = document.getElementById('eco-variant-modal');
+    modal = document.querySelector('[data-variant-modal]');
 
     if (!modal || bound) {
         return;
     }
 
     bound = true;
+    skin = {
+        swatch: 'eco-swatch bg-[var(--swatch)]',
+        option: 'eco-option',
+        tiles: 'flex max-h-[168px] flex-wrap gap-2 overflow-y-auto p-0.5',
+        tile: 'eco-variant-tile',
+        tileText: 'eco-variant-tile-text',
+        red: 'text-eco-red',
+        green: 'text-eco-green',
+        gray: 'text-eco-gray',
+        ...JSON.parse(modal.dataset.variantSkin || '{}'),
+    };
 
     try {
         texts = JSON.parse(modal.querySelector('[data-variant-texts]')?.textContent || '{}');

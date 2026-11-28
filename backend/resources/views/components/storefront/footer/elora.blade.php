@@ -43,3 +43,5 @@
     </div>
 </footer>
 @endif
+{{-- One variant picker per Elora page, shared by every card's cart button (catalog/variant-picker.js). --}}
+<x-sf::variant-picker theme="elora" />

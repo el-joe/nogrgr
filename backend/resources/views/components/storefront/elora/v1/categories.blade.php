@@ -16,7 +16,7 @@
             @endforeach
         </ul>
         {{-- Phones (<768): one-row Swiper, next tile peeking, dots. --}}
-        <div class="v1-cats-m md:hidden">
+        <div class="v1-cats-m lg:hidden">
             <div class="swiper" data-rail='{"slidesPerView":"auto","slidesPerGroup":3,"spaceBetween":12,"freeMode":{"enabled":false},"slidesOffsetBefore":16,"slidesOffsetAfter":16,"paginationType":"bullets"}'>
                 <div class="swiper-wrapper">
                     @foreach ($tiles as $tile)
@@ -25,19 +25,6 @@
                 </div>
             </div>
             <div class="v1-dots" data-motion-pagination></div>
-        </div>
-        <div class="max-md:hidden lg:hidden">
-        <div class="swiper" data-rail='{"spaceBetween":4,"slidesOffsetBefore":16,"slidesOffsetAfter":16}'>
-            <div class="swiper-wrapper">
-                @foreach (array_chunk($tiles, 2) as $column)
-                    <div class="swiper-slide v1-cats-column">
-                        @foreach ($column as $tile)
-                            <x-sf::elora.v1.circle :tile="$tile" />
-                        @endforeach
-                    </div>
-                @endforeach
-            </div>
-        </div>
         </div>
     </section>
 @endif

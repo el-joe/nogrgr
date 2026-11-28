@@ -42,8 +42,11 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path class="mo-heart-fill" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12.6 20.3a1.3 1.3 0 0 1-1.2 0C8.7 18.9 3 15.3 3 9.6A4.9 4.9 0 0 1 7.9 4.7c1.7 0 3.2.8 4.1 2.1a4.9 4.9 0 0 1 4.1-2.1A4.9 4.9 0 0 1 21 9.6c0 5.7-5.7 9.3-8.4 10.7Z"/></svg>
             </button>
         @endif
-        @if ($card->hasVariants || ! $card->inStock)
-            <a href="{{ $card->url }}" class="elo-card-cart mo-press" aria-label="{{ $card->inStock ? __st('catalog.card.choose_options', ['name' => $card->name]) : __st('catalog.card.view', ['name' => $card->name]) }}"><x-ui::icon name="cart-add" :size="24" /></a>
+        @if ($card->hasVariants && $card->inStock)
+            {{-- Variant products open the option picker (x-sf::variant-picker theme="elora", catalog/variant-picker.js); the link is the no-JS fallback. --}}
+            <a href="{{ $card->url }}" class="elo-card-cart mo-press" data-variant-picker data-product-id="{{ $card->id }}" role="button" aria-haspopup="dialog" aria-label="{{ __st('catalog.card.choose_options', ['name' => $card->name]) }}"><x-ui::icon name="cart-add" :size="24" /></a>
+        @elseif (! $card->inStock)
+            <button type="button" class="elo-card-cart" disabled aria-disabled="true" title="{{ __st('catalog.card.out_of_stock') }}" aria-label="{{ __st('catalog.card.out_of_stock') }}: {{ $card->name }}"><x-ui::icon name="cart-add" :size="24" /></button>
         @else
             <button type="button" class="elo-card-cart mo-press" data-add-to-cart data-product-id="{{ $card->id }}" data-state="idle" aria-label="{{ __st('catalog.card.add_to_cart', ['name' => $card->name]) }}">
                 <span class="mo-state mo-state-idle"><x-ui::icon name="cart-add" :size="24" /></span>

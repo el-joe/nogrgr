@@ -9,7 +9,7 @@ import { initImageSearch } from '../catalog/image-search';
 import { initListing } from '../catalog/listing';
 import { initUi } from '../catalog/ui';
 import { initCommerce } from '../commerce/index.js';
-import { initVariantPicker } from './variant-picker';
+import { initVariantPicker } from '../catalog/variant-picker';
 
 export function initEcommet() {
     initCart();
