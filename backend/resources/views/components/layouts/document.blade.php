@@ -16,7 +16,8 @@
     dir="{{ \App\Shared\Support\Locale::direction() }}"
     data-surface="{{ $surface }}"
     data-country="{{ \App\Shared\Support\Locale::visitorCountry() }}"
-    @class(['dark' => request()->cookie('theme') === 'dark'])
+    {{-- Storefront themes are light-only designs: the panels' dark cookie must not reach them. --}}
+    @class(['dark' => $surface !== 'storefront' && request()->cookie('theme') === 'dark'])
 >
 <head>
     <meta charset="utf-8">

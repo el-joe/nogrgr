@@ -108,3 +108,14 @@ it('shows the arabic cart right to left', function (): void {
         ->assertSee('dir="rtl"', false)
         ->assertSee('سلة التسوق فارغة');
 });
+
+it('keeps the storefront light even when the panel theme cookie is dark', function (): void {
+    $shop = shopSetup();
+
+    $this->withSession(['storefront.country_id' => $shop->sa->id])
+        ->withUnencryptedCookie('theme', 'dark')
+        ->get($this->tenantUrl($shop->tenant, '/cart'))
+        ->assertOk()
+        ->assertSee('data-surface="storefront"', false)
+        ->assertDontSee('class="dark"', false);
+});
