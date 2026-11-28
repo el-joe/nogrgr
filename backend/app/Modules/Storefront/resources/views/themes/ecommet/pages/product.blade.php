@@ -263,17 +263,7 @@
             @php($relatedUrl = route('storefront.product', ['product' => $page->view->id(), 'slug' => $page->slug]))
             <section class="mt-6 grid gap-4 lg:mt-16 lg:gap-6" aria-labelledby="sf-related-title" data-home-tabs>
                 <h2 id="sf-related-title" class="text-center text-2xl font-medium text-eco-black max-lg:sr-only" data-reveal="fade-up">{{ __st('product.related') }}</h2>
-                @if (count($categoryTabs ?? []) > 1)
-                    <div class="swiper -mx-4 w-[calc(100%+32px)] lg:!hidden" data-rail='{"spaceBetween":13,"slidesOffsetBefore":16,"slidesOffsetAfter":16}'>
-                        <div class="swiper-wrapper" role="tablist" aria-label="{{ __st('shell.nav.categories') }}">
-                            @foreach ($categoryTabs as $index => $tab)
-                                <div class="swiper-slide !w-auto">
-                                    <button type="button" role="tab" class="eco-tab eco-tab-dark eco-tab-short text-xs font-medium tracking-[0.5px]" aria-selected="{{ $index === 0 ? 'true' : 'false' }}" aria-controls="sf-related-grid" data-tab-url="{{ $index === 0 ? $relatedUrl.'?related_page=1' : route('storefront.home.tab', ['tab' => $tab['key']]) }}">{{ $tab['label'] }}</button>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
+                <x-sf::section.category-tabs :tabs="$categoryTabs ?? []" :recommended-url="$relatedUrl.'?related_page=1'" controls="sf-related-grid" />
                 <div id="sf-related-grid" role="tabpanel" aria-live="polite" class="eco-card-grid" data-tabs-grid data-reveal-stagger>
                     @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $page->related])
                 </div>

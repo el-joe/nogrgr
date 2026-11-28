@@ -18,4 +18,4 @@
     </ul>
 </nav>
 {{-- Keeps the footer end clear of the floating bar, in the footer colour. --}}
-<div class="h-[76px] bg-[#242424] lg:hidden" aria-hidden="true"></div>
+<div class="h-[68px] bg-[#242424] lg:hidden" aria-hidden="true"></div>

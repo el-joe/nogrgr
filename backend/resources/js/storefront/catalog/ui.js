@@ -49,14 +49,33 @@ function bindMega(root) {
     const panel = root.querySelector('[data-mega-panel]');
     let timer = null;
 
+    let hovered = false;
     const set = (open) => {
         clearTimeout(timer);
         panel.toggleAttribute('data-open', open);
         toggle.setAttribute('aria-expanded', String(open));
+
+        if (!open) {
+            hovered = false;
+        }
     };
 
-    toggle.addEventListener('click', () => set(toggle.getAttribute('aria-expanded') !== 'true'));
-    root.addEventListener('mouseenter', () => window.matchMedia('(hover: hover)').matches && set(true));
+    /* With a mouse the menu is already open from hover when the click lands: keep it open. */
+    toggle.addEventListener('click', () => {
+        if (hovered) {
+            hovered = false;
+            set(true);
+            return;
+        }
+
+        set(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    root.addEventListener('mouseenter', () => {
+        if (window.matchMedia('(hover: hover)').matches && toggle.getAttribute('aria-expanded') !== 'true') {
+            set(true);
+            hovered = true;
+        }
+    });
     root.addEventListener('mouseleave', () => (timer = setTimeout(() => set(false), 180)));
     root.addEventListener('keydown', (event) => event.key === 'Escape' && (set(false), toggle.focus()));
     document.addEventListener('click', (event) => !root.contains(event.target) && set(false));

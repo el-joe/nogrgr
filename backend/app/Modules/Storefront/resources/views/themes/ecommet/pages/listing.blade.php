@@ -113,7 +113,8 @@
                     <x-ui::icon name="filter" :size="18" />{{ __st('catalog.filters.title') }}@if ($filtersActive)<span class="grid size-5 place-items-center rounded-full bg-eco-black text-[11px] text-white">{{ $filtersActive }}</span>@endif
                 </button>
                 @if ($categoryOptions !== [] && ! $isCategory)
-                    <label class="hidden text-base text-eco-gray sm:inline" for="sf-cat-filter">{{ __st('catalog.filters.by_category') }}</label>
+                    {{-- The period pills leave no room for the label on one row (1:1191) below 2xl. --}}
+                    <label @class(['text-base text-eco-gray', 'hidden sm:inline' => $kind !== ListingKind::BestSelling, 'sr-only 2xl:not-sr-only' => $kind === ListingKind::BestSelling]) for="sf-cat-filter">{{ __st('catalog.filters.by_category') }}</label>
                     <select id="sf-cat-filter" class="eco-select" data-auto-filter="cat[]">
                         <option value="">{{ __st('catalog.filters.all_categories') }}</option>
                         @foreach ($categoryOptions as $option)

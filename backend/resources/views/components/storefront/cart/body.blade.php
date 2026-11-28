@@ -20,8 +20,10 @@
                 <x-ui::icon name="cart" :size="72" class="text-eco-gray" />
                 <p class="text-start text-sm font-medium tracking-[0.5px] text-eco-black">{{ __st('cart.empty_title') }}<br>{{ __st('cart.empty_body') }}</p>
             </div>
-            <a href="{{ route('storefront.best-sellers') }}" class="eco-pill-dark mo-press h-10 min-w-[240px] text-sm">{{ __st('cart.see_trending') }}</a>
+            {{-- Outlined on phones (m 1:3329), dark on desktop (1:1240). --}}
+            <a href="{{ route('storefront.best-sellers') }}" class="eco-pill-dark mo-press h-10 min-w-[240px] text-sm max-lg:!border max-lg:!border-eco-black max-lg:!bg-white max-lg:!text-eco-black">{{ __st('cart.see_trending') }}</a>
         </div>
+        <div class="lg:hidden"><x-sf::cart.trust compact /></div>
     @else
         <x-sf::cart.progress :free="$cart['free_shipping']" />
 

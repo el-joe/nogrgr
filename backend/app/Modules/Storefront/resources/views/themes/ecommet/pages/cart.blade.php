@@ -32,11 +32,14 @@
         </div>
     </div>
         @unless ($picks->isEmpty())
-            <section class="eco-wide mt-10 grid gap-4 lg:mt-12" aria-labelledby="sf-cart-picks-title">
-                <h2 id="sf-cart-picks-title" class="text-lg font-medium text-eco-black" data-reveal="fade-up">{{ __st('cart.picks', ['store' => $store]) }}</h2>
-                <div id="sf-cart-picks" class="eco-card-grid lg:px-7" data-reveal-stagger>
+            @php($categoryTabs = app(\App\Modules\Storefront\Services\Catalog\HomeService::class)->tabs())
+            <section class="eco-wide mt-10 grid gap-4 lg:mt-12" aria-labelledby="sf-cart-picks-title" data-home-tabs>
+                <h2 id="sf-cart-picks-title" @class(['text-lg font-medium text-eco-black', 'max-lg:sr-only' => count($categoryTabs) > 1]) data-reveal="fade-up">{{ __st('cart.picks', ['store' => $store]) }}</h2>
+                <x-sf::section.category-tabs :tabs="$categoryTabs" :recommended-url="route('storefront.best-sellers', ['page' => 1, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::GRID])" controls="sf-cart-picks" />
+                <div id="sf-cart-picks" class="eco-card-grid lg:px-7" data-tabs-grid data-reveal-stagger>
                     @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $picks->cards, 'variant' => 'grid'])
                 </div>
+                <p class="py-10 text-center text-sm text-eco-gray" data-interests-empty hidden>{{ __st('catalog.home.interests_empty') }}</p>
                 <x-sf::section.load-more :url="$picksMoreUrl" target="#sf-cart-picks" class="mt-4" />
             </section>
         @endunless
