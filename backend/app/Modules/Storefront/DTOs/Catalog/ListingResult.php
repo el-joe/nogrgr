@@ -9,7 +9,7 @@ final readonly class ListingResult
 {
     /**
      * @param  list<ProductCardData>  $cards
-     * @param  array{price: list<array{value: string, label: string, count: int}>, rating: list<array{value: int, count: int}>, options: list<array{id: int, name: string, values: list<array{value: string, count: int}>}>, categories: list<array{id: int, name: string, count: int}>, in_stock: int}  $facets
+     * @param  array{price: list<array{value: string, label: string, count: int}>, rating: list<array{value: int, count: int}>, options: list<array{id: int, name: string, values: list<array{value: string, count: int}>}>, categories: list<array{id: int, name: string, count: int}>, in_stock: int, out_of_stock: int, stars: array<int, int>, promo: array{sale: int, flash: int, featured: int}}  $facets
      */
     public function __construct(
         public array $cards,

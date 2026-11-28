@@ -5,6 +5,7 @@ namespace App\Modules\Storefront\DTOs\Catalog;
 use App\Modules\Storefront\Enums\ListingKind;
 use App\Modules\Storefront\Enums\ListingSort;
 use App\Modules\Storefront\Enums\SalesPeriod;
+use App\Modules\Storefront\Services\StorefrontContext;
 use Illuminate\Http\Request;
 
 /**
@@ -41,6 +42,11 @@ final readonly class ListingQuery
         public ?int $addedWithinDays = null,
         public bool $flashOnly = false,
         public ?int $minDiscount = null,
+        public bool $onSale = false,
+        public bool $featuredOnly = false,
+        public bool $outOfStockOnly = false,
+        public ?string $minInput = null,
+        public ?string $maxInput = null,
     ) {}
 
     public static function fromRequest(Request $request, ListingKind $kind, int $perPage = self::PER_PAGE): self
@@ -48,6 +54,20 @@ final readonly class ListingQuery
         $sort = ListingSort::tryFrom((string) $request->query('sort'));
         $sort = $sort !== null && in_array($sort, $kind->sorts(), true) ? $sort : $kind->defaultSort();
         [$min, $max] = self::range($request->query('price'));
+        /* Min / Max price fields are typed in the display currency; filtering compares USD minor units. */
+        $minInput = self::amount($request->query('min'));
+        $maxInput = self::amount($request->query('max'));
+
+        if ($minInput !== null || $maxInput !== null) {
+            if ($minInput !== null && $maxInput !== null && (float) $minInput > (float) $maxInput) {
+                [$minInput, $maxInput] = [$maxInput, $minInput];
+            }
+
+            $rate = (float) (app(StorefrontContext::class)->currency()->rate ?? 1);
+            $rate = $rate > 0 ? $rate : 1.0;
+            $min = $minInput !== null ? (int) floor((float) $minInput / $rate * 100) : null;
+            $max = $maxInput !== null ? (int) ceil((float) $maxInput / $rate * 100) : null;
+        }
         $options = [];
 
         foreach ((array) $request->query('opt', []) as $attribute => $values) {
@@ -78,6 +98,11 @@ final readonly class ListingQuery
             addedWithinDays: in_array($added, [7, 30], true) ? $added : null,
             flashOnly: $request->boolean('flash'),
             minDiscount: in_array($discount, [10, 20, 30, 50], true) ? $discount : null,
+            onSale: $request->boolean('sale'),
+            featuredOnly: $request->boolean('featured'),
+            outOfStockOnly: ! $request->boolean('in_stock') && $request->boolean('out_of_stock'),
+            minInput: $minInput,
+            maxInput: $maxInput,
         );
     }
 
@@ -95,7 +120,13 @@ final readonly class ListingQuery
     {
         return count($this->categoryIds) + ($this->priceMin !== null || $this->priceMax !== null ? 1 : 0)
             + ($this->minRating !== null ? 1 : 0) + ($this->inStockOnly ? 1 : 0) + count($this->options)
-            + ($this->addedWithinDays !== null ? 1 : 0) + ($this->flashOnly ? 1 : 0) + ($this->minDiscount !== null ? 1 : 0);
+            + ($this->addedWithinDays !== null ? 1 : 0) + ($this->flashOnly ? 1 : 0) + ($this->minDiscount !== null ? 1 : 0)
+            + ($this->onSale ? 1 : 0) + ($this->featuredOnly ? 1 : 0) + ($this->outOfStockOnly ? 1 : 0);
+    }
+
+    private static function amount(mixed $value): ?string
+    {
+        return is_string($value) && preg_match('/^\d{1,7}(\.\d{1,2})?$/', $value) === 1 ? $value : null;
     }
 
     /**

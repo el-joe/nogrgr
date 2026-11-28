@@ -177,6 +177,10 @@ class ProductListing
             return false;
         }
 
+        if (($query->onSale && $entry->discount() === null) || ($query->featuredOnly && ! $entry->featured) || ($query->outOfStockOnly && $entry->inStock)) {
+            return false;
+        }
+
         return $query->minDiscount === null || ($entry->discount() ?? 0) >= $query->minDiscount;
     }
 
@@ -286,7 +290,7 @@ class ProductListing
      * Facets of the scoped (unfiltered) result.
      *
      * @param  list<IndexEntry>  $entries
-     * @return array{price: list<array{value: string, label: string, count: int}>, rating: list<array{value: int, count: int}>, options: list<array{id: int, name: string, values: list<array{value: string, count: int}>}>, categories: list<array{id: int, name: string, count: int}>, in_stock: int}
+     * @return array{price: list<array{value: string, label: string, count: int}>, rating: list<array{value: int, count: int}>, options: list<array{id: int, name: string, values: list<array{value: string, count: int}>}>, categories: list<array{id: int, name: string, count: int}>, in_stock: int, out_of_stock: int, stars: array<int, int>, promo: array{sale: int, flash: int, featured: int}}
      */
     private function facets(array $entries, ?Category $category): array
     {
@@ -294,9 +298,18 @@ class ProductListing
         $options = [];
         $categoryCounts = [];
         $inStock = 0;
+        $starCounts = [4 => 0, 3 => 0, 2 => 0, 1 => 0];
+        $promo = ['sale' => 0, 'flash' => 0, 'featured' => 0];
 
         foreach ($entries as $entry) {
             $inStock += $entry->inStock ? 1 : 0;
+            $promo['sale'] += $entry->discount() !== null ? 1 : 0;
+            $promo['flash'] += $entry->flash !== null ? 1 : 0;
+            $promo['featured'] += $entry->featured ? 1 : 0;
+
+            foreach ($starCounts as $floor => $count) {
+                $starCounts[$floor] += $entry->reviewCount > 0 && $entry->rating >= $floor ? 1 : 0;
+            }
 
             foreach ($entry->options as $attribute => $values) {
                 foreach ($values as $value) {
@@ -351,6 +364,9 @@ class ProductListing
             'options' => $optionFacet,
             'categories' => $categoryFacet,
             'in_stock' => $inStock,
+            'out_of_stock' => count($entries) - $inStock,
+            'stars' => $starCounts,
+            'promo' => $promo,
         ];
     }
 
