@@ -17,4 +17,5 @@
         @endforeach
     </ul>
 </nav>
-<div class="h-[76px] lg:hidden" aria-hidden="true"></div>
+{{-- Keeps the footer end clear of the floating bar, in the footer colour. --}}
+<div class="h-[76px] bg-[#242424] lg:hidden" aria-hidden="true"></div>

@@ -1,12 +1,12 @@
 {{--
     Phone home product tabs (m 1:2656 / alt 1:2710, tab states board 1:4261): Best-Selling
     Items · 5-Star Rated · New In, swipeable between tabs (tabs-swipe), 2-column grids,
-    "See More" per tab. Tabs without products are left out.
-    $tabs: list of [key, label, icon, result, more, ribbon, tag]
+    "See More" per tab. All tabs of the design stay; an empty one shows its message and the
+    section is only left out when every tab is empty.
+    $tabs: list of [key, label, icon, result, more, ribbon, tag, empty]
 --}}
 @props(['tabs' => []])
-@php($tabs = array_values(array_filter($tabs, fn ($tab) => ! $tab['result']->isEmpty())))
-@if ($tabs !== [])
+@if (array_filter($tabs, fn ($tab) => ! $tab['result']->isEmpty()) !== [])
     <section {{ $attributes->class(['grid gap-3']) }} data-tabs-swipe aria-label="{{ __st('catalog.home.products_label') }}">
         <div class="flex justify-between gap-4 overflow-x-auto px-4 [scrollbar-width:none]" role="tablist">
             @foreach ($tabs as $index => $tab)
@@ -22,6 +22,9 @@
                         <div id="sf-mtab-grid-{{ $tab['key'] }}" class="eco-card-grid gap-y-4">
                             @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $tab['result']->cards, 'ribbon' => $tab['ribbon'] ?? false, 'tag' => $tab['tag'] ?? null])
                         </div>
+                        @if ($tab['result']->isEmpty())
+                            <p class="py-10 text-center text-sm text-eco-gray">{{ $tab['empty'] }}</p>
+                        @endif
                         <x-sf::section.load-more :url="$tab['result']->hasMore() ? $tab['more'] : null" :target="'#sf-mtab-grid-'.$tab['key']" />
                     </div>
                 @endforeach

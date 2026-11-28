@@ -832,7 +832,7 @@
 
     .eco-deals-title {
         font-size: 18px;
-        font-weight: 600;
+        font-weight: 900;
         text-transform: uppercase;
         color: var(--eco-red);
     }
@@ -974,6 +974,24 @@
         font-size: 14px;
         letter-spacing: 0.5px;
         text-align: center;
+    }
+
+    /* Phones (m 1:2656): dark charcoal, 12px grey copyright under a hairline rule. */
+    @media (max-width: 1023px) {
+        .eco-footer {
+            background: #242424;
+        }
+
+        .eco-footer .eco-footer-bottom {
+            min-height: 0;
+            margin-inline: 16px;
+            padding: 16px 0;
+            border-top: 0.7px solid #c4c4c4;
+            background: transparent;
+            color: var(--eco-gray, #808080);
+            font-size: 12px;
+            letter-spacing: 0;
+        }
     }
 
     .eco-footer a {
@@ -1285,7 +1303,8 @@
         transition: border-color var(--motion-fast) ease-out;
     }
 
-    .eco-thumb.is-active,
+    /* Swiper's thumbs module marks the slide of the current image. */
+    .swiper-slide.is-active .eco-thumb,
     .eco-thumb:hover {
         border-color: var(--eco-black);
     }

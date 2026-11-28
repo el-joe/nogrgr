@@ -18,6 +18,7 @@ use App\Modules\Storefront\DTOs\Catalog\IndexEntry;
 use App\Modules\Storefront\DTOs\Catalog\ProductCardData;
 use App\Modules\Storefront\DTOs\Catalog\ProductPageData;
 use App\Modules\Storefront\Enums\ListingKind;
+use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Repositories\Contracts\StorefrontCatalogRepositoryContract;
 use App\Modules\Storefront\Services\StorefrontContext;
 use Carbon\CarbonImmutable;
@@ -30,6 +31,11 @@ use Illuminate\Support\Str;
  */
 class ProductPageService
 {
+    /** "You might also like" page size: Ecommet shows 3 rows of 5 + See More (1:3380), the other families one rail. */
+    public const RELATED_ECOMMET = 15;
+
+    public const RELATED = 10;
+
     public function __construct(
         private readonly StorefrontCatalogRepositoryContract $repository,
         private readonly StoreCatalogReader $reader,
@@ -44,7 +50,7 @@ class ProductPageService
         private readonly ShippingSettingsService $settings,
     ) {}
 
-    public function find(int $id, ?int $variantId = null): ?ProductPageData
+    public function find(int $id, ?int $variantId = null, int $relatedPages = 1): ?ProductPageData
     {
         $countryId = $this->context->countryId();
         $product = $countryId !== null ? $this->repository->findActive($id) : null;
@@ -80,6 +86,8 @@ class ProductPageService
         }
 
         $stock = $selected !== null ? ($priced['variants'][$selected['id']]['stock'] ?? null) : null;
+        $perPage = $this->relatedPerPage();
+        $related = $this->related($view->id(), $category, 0, $perPage * max(1, $relatedPages));
 
         return new ProductPageData(
             view: $view,
@@ -107,11 +115,12 @@ class ProductPageService
             deliveryDays: $this->settings->get()->showDeliveryPopup ? $this->popup->forStorefront($countryId) : [],
             freeShippingGrams: $this->shipping->freeShippingThreshold($countryId),
             reviews: $this->reviews($view->id()),
-            related: $this->related($view->id(), $category),
+            related: $related['cards'],
             favorited: false,
             metaTitle: $view->product->meta_title ?: ($view->overrideText('meta_title') ?? $view->central->meta_title ?? null),
             metaDescription: $view->product->meta_description ?: ($view->overrideText('meta_description') ?? $view->central->meta_description ?? $view->summary),
             media: $media,
+            relatedMore: $related['more'],
         );
     }
 
@@ -263,18 +272,46 @@ class ProductPageService
         return app(ReviewSummaryReader::class)->summary($id);
     }
 
-    /**
-     * @return list<ProductCardData>
-     */
-    private function related(int $id, ?Category $category): array
+    public function relatedPerPage(): int
     {
-        $entries = $category !== null ? $this->listing->rail(ListingKind::Category, 10, $category, [$id]) : [];
+        return $this->context->theme()->family === ThemeFamily::Ecommet ? self::RELATED_ECOMMET : self::RELATED;
+    }
 
-        if (count($entries) < 10) {
-            $taken = [$id, ...array_map(static fn (IndexEntry $entry): int => $entry->id, $entries)];
-            $entries = [...$entries, ...$this->listing->rail(ListingKind::NewIn, 10 - count($entries), null, $taken)];
+    /**
+     * One page of "You might also like" (See More / the product page's Recommended tab); null
+     * when the product is not sold in the shopping country.
+     *
+     * @return array{cards: list<ProductCardData>, more: bool, per_page: int}|null
+     */
+    public function relatedPage(int $id, int $page): ?array
+    {
+        $product = $this->context->countryId() !== null ? $this->repository->findActive($id) : null;
+
+        if ($product === null) {
+            return null;
         }
 
-        return $this->cards->make($entries);
+        $perPage = $this->relatedPerPage();
+        $category = $this->categories->primaryFor($this->reader->view($product)->categoryIds);
+
+        return [...$this->related($id, $category, ($page - 1) * $perPage, $perPage), 'per_page' => $perPage];
+    }
+
+    /**
+     * Same-category products first, then the newest others.
+     *
+     * @return array{cards: list<ProductCardData>, more: bool}
+     */
+    private function related(int $id, ?Category $category, int $offset, int $limit): array
+    {
+        $wanted = $offset + $limit + 1;
+        $entries = $category !== null ? $this->listing->rail(ListingKind::Category, $wanted, $category, [$id]) : [];
+
+        if (count($entries) < $wanted) {
+            $taken = [$id, ...array_map(static fn (IndexEntry $entry): int => $entry->id, $entries)];
+            $entries = [...$entries, ...$this->listing->rail(ListingKind::NewIn, $wanted - count($entries), null, $taken)];
+        }
+
+        return ['cards' => $this->cards->make(array_slice($entries, $offset, $limit)), 'more' => count($entries) > $offset + $limit];
     }
 }

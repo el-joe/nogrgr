@@ -141,6 +141,20 @@ export function initMiniCart() {
     bindCartLines(body, refresh);
     bindDrag(drawer);
 
+    /* Back / forward from the browser cache restores the page as it was left: close the overlays,
+       so no scroll lock or outdated totals stay on screen. */
+    window.addEventListener('pageshow', (event) => {
+        if (!event.persisted) {
+            return;
+        }
+
+        [drawer, added].filter(Boolean).forEach((dialog) => {
+            delete dialog.dataset.open;
+            dialog.hidden = true;
+        });
+        document.documentElement.style.overflow = '';
+    });
+
     document.addEventListener('click', (event) => {
         const opener = event.target.closest('[data-mini-cart-open]');
 

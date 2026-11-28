@@ -3,11 +3,13 @@
 namespace App\Modules\Storefront\Http\Controllers\Storefront;
 
 use App\Modules\Storefront\Events\ProductViewed;
+use App\Modules\Storefront\Services\Catalog\HomeService;
 use App\Modules\Storefront\Services\Catalog\ProductPageService;
 use App\Modules\Storefront\Services\Seo\StorefrontSeo;
 use App\Modules\Storefront\Support\StorefrontView;
 use App\Shared\Http\Controller;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -23,9 +25,15 @@ class ProductController extends Controller
         private readonly StorefrontSeo $seo,
     ) {}
 
-    public function __invoke(Request $request, int $product, ?string $slug = null): View|RedirectResponse
+    public function __invoke(Request $request, int $product, ?string $slug = null): View|RedirectResponse|JsonResponse
     {
-        $page = $this->pages->find($product, $request->integer('variant') ?: null);
+        $relatedPage = max(1, min(20, $request->integer('related_page', 1)));
+
+        if ($request->boolean('fragment') && $request->has('related_page')) {
+            return $this->related($product, $relatedPage);
+        }
+
+        $page = $this->pages->find($product, $request->integer('variant') ?: null, $relatedPage);
         abort_if($page === null, 404);
 
         if ($slug !== $page->slug) {
@@ -38,7 +46,22 @@ class ProductController extends Controller
 
         return StorefrontView::make('pages.product', [
             'page' => $page,
+            'categoryTabs' => app(HomeService::class)->tabs(),
             'seo' => $this->seo->product($page),
+        ]);
+    }
+
+    /**
+     * "You might also like" fragment: JSON {html, next_url}; not a product view.
+     */
+    private function related(int $product, int $page): JsonResponse
+    {
+        $result = $this->pages->relatedPage($product, $page);
+        abort_if($result === null, 404);
+
+        return new JsonResponse([
+            'html' => view(StorefrontView::resolve('partials.card-grid-items'), ['cards' => $result['cards'], 'offset' => ($page - 1) * $result['per_page']])->render(),
+            'next_url' => $result['more'] ? route('storefront.product', ['product' => $product, 'related_page' => $page + 1]) : null,
         ]);
     }
 

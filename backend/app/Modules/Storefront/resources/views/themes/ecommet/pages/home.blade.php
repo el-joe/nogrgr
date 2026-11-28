@@ -66,9 +66,9 @@
                 @break
             @case('mobile-tabs')
                 <x-sf::section.mobile-tabs class="mb-6 mt-6 lg:hidden" :tabs="[
-                    ['key' => 'best', 'label' => __st('shell.nav.best_sellers'), 'icon' => 'award', 'result' => $best, 'more' => $bestMore, 'ribbon' => true],
-                    ['key' => 'rated', 'label' => __st('shell.nav.top_rated'), 'icon' => 'star', 'result' => $rated, 'more' => route('storefront.top-rated', ['page' => 2, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::ECOMMET_PAGE])],
-                    ['key' => 'new', 'label' => __st('shell.nav.new_in'), 'icon' => 'sparkles', 'result' => $newest, 'more' => route('storefront.new-in', ['page' => 2, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::ECOMMET_PAGE]), 'tag' => 'new'],
+                    ['key' => 'best', 'label' => __st('shell.nav.best_sellers'), 'icon' => 'award', 'result' => $best, 'more' => $bestMore, 'ribbon' => true, 'empty' => __st('catalog.home.best_empty')],
+                    ['key' => 'rated', 'label' => __st('shell.nav.top_rated'), 'icon' => 'star', 'result' => $rated, 'more' => route('storefront.top-rated', ['page' => 2, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::ECOMMET_PAGE]), 'empty' => __st('catalog.home.rated_empty')],
+                    ['key' => 'new', 'label' => __st('shell.nav.new_in'), 'icon' => 'sparkles', 'result' => $newest, 'more' => route('storefront.new-in', ['page' => 2, 'per' => \App\Modules\Storefront\Services\Catalog\HomeService::ECOMMET_PAGE]), 'tag' => 'new', 'empty' => __st('catalog.home.new_empty')],
                 ]" />
                 @break
         @endswitch

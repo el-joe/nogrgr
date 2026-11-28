@@ -83,7 +83,7 @@ function bindLoadMore(link) {
             if (next) {
                 link.href = next;
             } else {
-                link.closest('div')?.remove();
+                link.closest('div').hidden = true;
             }
         } catch {
             if (label) {
@@ -100,7 +100,7 @@ function bindLoadMore(link) {
 }
 
 function bindHomeTabs(section) {
-    const grid = section.querySelector('#sf-interests-grid');
+    const grid = section.querySelector('[data-tabs-grid]');
     const tabs = [...section.querySelectorAll('[role="tab"][data-tab-url]')];
     let more = section.querySelector('[data-load-more]');
 

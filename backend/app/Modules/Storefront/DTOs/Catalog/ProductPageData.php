@@ -53,6 +53,7 @@ final readonly class ProductPageData
         public ?string $metaTitle,
         public ?string $metaDescription,
         public array $media = [],
+        public bool $relatedMore = false,
     ) {}
 
     /**

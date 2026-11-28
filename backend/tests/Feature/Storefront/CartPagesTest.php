@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Commerce\Models\Cart;
+use App\Modules\Commerce\Models\CartItem;
 
 require_once __DIR__.'/../Commerce/StoreApiHelpers.php';
 
@@ -58,6 +59,32 @@ it('answers the cart and mini cart fragments as JSON html', function (): void {
         ->assertOk()
         ->assertJsonPath('data.items_count', 1)
         ->assertJson(fn ($json) => $json->where('data.html', fn ($html) => str_contains($html, 'Go to cart'))->etc());
+});
+
+it('keeps the drawer buttons working and totals equal to the cart page, also for a blocked cart', function (): void {
+    $shop = shopSetup();
+    $this->withSession(['storefront.country_id' => $shop->sa->id]);
+    cartShopAdd($shop, $shop->catalog->id, 2);
+    /* A cart that has not chosen a country yet must already be quoted with shipping on the first drawer render. */
+    $shop->tenant->run(fn () => Cart::query()->update(['country_id' => null]));
+
+    $mini = fn (): string => $this->getJson($this->tenantUrl($shop->tenant, '/cart/mini'))->assertOk()->json('data.html');
+    $first = $mini();
+
+    expect($first)->toContain('$63.80 to checkout')
+        ->toContain('href="'.$this->tenantUrl($shop->tenant, '/checkout').'"')
+        ->toContain('href="'.$this->tenantUrl($shop->tenant, '/cart').'"')
+        ->not->toContain('pointer-events-none opacity-50')
+        ->not->toContain('data-cart-blocked');
+    $this->get($this->tenantUrl($shop->tenant, '/cart'))->assertSee('$63.80 to checkout');
+
+    /* A line that can no longer be bought: no dead button, a reason and a way to the cart. */
+    $shop->tenant->run(fn () => CartItem::query()->update(['quantity' => 999]));
+
+    expect($mini())->toContain('data-cart-blocked')
+        ->toContain('role="alert"')
+        ->not->toContain('pointer-events-none opacity-50')
+        ->not->toContain('href="'.$this->tenantUrl($shop->tenant, '/checkout').'"');
 });
 
 it('gives a cart without a country the storefront context country before pricing', function (): void {

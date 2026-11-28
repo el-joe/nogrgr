@@ -113,6 +113,22 @@ function bindBackToTop(button) {
     });
 }
 
+/** Phone product title (m 1:3073): the chevron expands the two-line clamp; only offered when text is cut. */
+function bindTitle(toggle) {
+    const title = document.getElementById(toggle.getAttribute('aria-controls'));
+
+    if (!title || title.scrollHeight <= title.clientHeight + 1) {
+        return;
+    }
+
+    toggle.hidden = false;
+    toggle.addEventListener('click', () => {
+        const open = title.classList.toggle('max-lg:line-clamp-2') === false;
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.querySelector('svg')?.classList.toggle('rotate-180', open);
+    });
+}
+
 function bindClamp(toggle) {
     const body = document.getElementById(toggle.getAttribute('aria-controls'));
 
@@ -172,6 +188,11 @@ export function initUi(root = document) {
         button.dataset.ready = '';
         bindBackToTop(button);
     });
+    root.querySelectorAll('[data-title-toggle]:not([data-ready])').forEach((toggle) => {
+        toggle.dataset.ready = '';
+        bindTitle(toggle);
+    });
+
     root.querySelectorAll('[data-clamp-toggle]:not([data-ready])').forEach((toggle) => {
         toggle.dataset.ready = '';
         bindClamp(toggle);

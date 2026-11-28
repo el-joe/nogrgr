@@ -46,7 +46,7 @@ it('renders no cash on delivery badge in the storefront footer', function (): vo
 
     $this->get($this->tenantUrl($shop->tenant, '/?lang=en'))
         ->assertOk()
-        ->assertSee('VISA', false)
+        ->assertSee('title="Visa"', false)
         ->assertDontSee('title="Cash on delivery"', false);
 });
 

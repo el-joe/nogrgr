@@ -33,6 +33,7 @@ return [
     'details' => 'Product details',
     'details_more' => 'See all details and dimensions',
     'details_less' => 'Show less',
+    'title_more' => 'Show the full title',
     'related' => 'You might also like',
     'reviews' => [
         'title' => 'Customer reviews',

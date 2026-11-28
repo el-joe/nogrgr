@@ -50,6 +50,8 @@ return [
         'interests_kicker' => 'New Year Sale',
         'interests_empty' => 'No new products available yet.',
         'best_empty' => 'No best-selling products available yet.',
+        'rated_empty' => 'No 5-star rated products yet.',
+        'new_empty' => 'No new products yet.',
         'promo_label' => 'Promotions',
         'promo_cta' => 'Shop now',
         'security_reminder' => 'Security reminder: Please be wary of scam messages and links. :store won\'t ask for extra fees via SMS or email.',

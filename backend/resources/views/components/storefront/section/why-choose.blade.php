@@ -25,7 +25,7 @@
         <ul class="flex flex-wrap items-center gap-[18px] text-sm leading-[25px] tracking-[0.5px]" role="list">
             <li class="inline-flex items-center gap-1.5 border-e border-eco-semi px-2"><x-ui::icon name="lock" :size="20" />{{ __st('catalog.home.why_privacy') }}</li>
             <li class="inline-flex items-center gap-1.5 border-e border-eco-semi pe-2"><x-ui::icon name="credit-card-2" :size="20" />{{ __st('catalog.home.why_payments') }}</li>
-            <li>
+            <li class="inline-flex">
                 @if ($deliveryUrl)
                     <a href="{{ $deliveryUrl }}" class="group inline-flex items-center gap-1.5 hover:underline"><x-ui::icon name="truck-tick" :size="20" />{{ __st('catalog.home.why_delivery') }}<x-ui::icon name="chevron-right" :size="16" class="transition-transform group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" /></a>
                 @else

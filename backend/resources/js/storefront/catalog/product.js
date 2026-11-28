@@ -170,9 +170,18 @@ function bindGalleryCounter(page) {
     }
 
     const total = gallery.querySelectorAll('[data-gallery-main] .swiper-slide').length;
-    gallery.addEventListener('gallery:ready', (event) => {
-        event.detail.swiper.on('slideChange', (swiper) => (counter.textContent = `${swiper.realIndex + 1}/${total}`));
-    });
+    const follow = (swiper) => {
+        const update = () => (counter.textContent = `${swiper.realIndex + 1}/${total}`);
+        swiper.on('slideChange', update);
+        update();
+    };
+
+    /* The gallery is usually ready before this lazy module: follow it either way. */
+    if (gallery.swiper) {
+        follow(gallery.swiper);
+    } else {
+        gallery.addEventListener('gallery:ready', (event) => follow(event.detail.swiper), { once: true });
+    }
 }
 
 /* ---------- Reviews ---------- */

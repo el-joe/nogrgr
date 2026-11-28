@@ -58,7 +58,7 @@
                             <div class="swiper-wrapper">
                                 @foreach ($gallery as $index => $item)
                                     <div class="swiper-slide !h-[81px] cursor-pointer">
-                                        @if ($item['type'] === 'video')<span @class(['eco-thumb', 'is-active' => $index === 0])><x-sf::gallery.video-thumb :item="$item" :width="81" :height="81" /></span>@else<span @class(['eco-thumb', 'is-active' => $index === 0])><img src="{{ $item['url'] }}" alt="" width="81" height="81" loading="lazy" decoding="async"></span>@endif
+                                        @if ($item['type'] === 'video')<span class="eco-thumb"><x-sf::gallery.video-thumb :item="$item" :width="81" :height="81" /></span>@else<span class="eco-thumb"><img src="{{ $item['url'] }}" alt="" width="81" height="81" loading="lazy" decoding="async"></span>@endif
                                     </div>
                                 @endforeach
                             </div>
@@ -135,7 +135,10 @@
 
             {{-- Buy box --}}
             <div class="grid content-start gap-4 max-lg:order-2 lg:max-w-[480px]">
-                <h1 class="text-base leading-[23px] tracking-[0.5px] text-eco-black max-lg:line-clamp-2 max-lg:text-sm" data-title>{{ $page->name }}</h1>
+                <div class="flex items-end gap-1">
+                    <h1 id="sf-title" class="min-w-0 flex-1 text-base leading-[23px] tracking-[0.5px] text-eco-black max-lg:line-clamp-2 max-lg:text-sm" data-title>{{ $page->name }}</h1>
+                    <button type="button" class="grid size-5 shrink-0 place-items-center text-eco-black lg:!hidden" aria-expanded="false" aria-controls="sf-title" aria-label="{{ __st('product.title_more') }}" data-title-toggle hidden><x-ui::icon name="chevron-down" :size="16" class="transition-transform" /></button>
+                </div>
                 <div class="flex flex-wrap items-center gap-2 text-xs tracking-[0.5px] text-eco-gray">
                     @if ($page->soldCount > 0)<span>{{ $soldLabel }}</span><span class="h-3 w-px bg-eco-semi" aria-hidden="true"></span>@endif
                     <span class="inline-flex items-center gap-1">{{ __st('product.sold_by') }}
@@ -211,7 +214,7 @@
                     </select>
                     <span class="text-base text-eco-black" data-added-label hidden>{{ __st('product.added') }}</span>
                 </div>
-                <div class="flex items-center gap-2 max-lg:fixed max-lg:inset-x-0 max-lg:bottom-[76px] max-lg:z-30 max-lg:bg-white/95 max-lg:px-6 max-lg:py-2 max-lg:backdrop-blur lg:mt-6">
+                <div class="flex items-center gap-2 max-lg:fixed max-lg:inset-x-0 max-lg:bottom-[64px] max-lg:z-30 max-lg:bg-white/95 max-lg:px-6 max-lg:py-2 max-lg:backdrop-blur lg:mt-6">
                     <button type="button" class="eco-pill-dark relative h-[38px] flex-1 font-medium disabled:cursor-not-allowed disabled:bg-eco-semi lg:max-w-[372px]" data-add-to-cart data-product-id="{{ $page->view->id() }}" data-variant-id="{{ $page->selectedVariantId }}" data-state="idle" @disabled(! $page->inStock)>
                         <span data-cart-label>{{ $page->inStock ? __st('product.add_to_cart') : __st('product.out_of_stock') }}</span>
                     </button>
@@ -254,13 +257,28 @@
             </div>
         </div>
 
-        {{-- You might also like --}}
+        {{-- You might also like: 3 rows of 5 + See More (1:3380). Phones show the tabbed block of
+             m 1:3073 instead of the heading: Recommended (this list) + store categories. --}}
         @if ($page->related !== [])
-            <section class="mt-12 grid gap-6 lg:mt-16" aria-labelledby="sf-related-title">
-                <h2 id="sf-related-title" class="text-center text-xl font-medium text-eco-black lg:text-2xl" data-reveal="fade-up">{{ __st('product.related') }}</h2>
-                <div class="eco-card-grid" data-reveal-stagger>
+            @php($relatedUrl = route('storefront.product', ['product' => $page->view->id(), 'slug' => $page->slug]))
+            <section class="mt-6 grid gap-4 lg:mt-16 lg:gap-6" aria-labelledby="sf-related-title" data-home-tabs>
+                <h2 id="sf-related-title" class="text-center text-2xl font-medium text-eco-black max-lg:sr-only" data-reveal="fade-up">{{ __st('product.related') }}</h2>
+                @if (count($categoryTabs ?? []) > 1)
+                    <div class="swiper -mx-4 w-[calc(100%+32px)] lg:!hidden" data-rail='{"spaceBetween":13,"slidesOffsetBefore":16,"slidesOffsetAfter":16}'>
+                        <div class="swiper-wrapper" role="tablist" aria-label="{{ __st('shell.nav.categories') }}">
+                            @foreach ($categoryTabs as $index => $tab)
+                                <div class="swiper-slide !w-auto">
+                                    <button type="button" role="tab" class="eco-tab eco-tab-dark eco-tab-short text-xs font-medium tracking-[0.5px]" aria-selected="{{ $index === 0 ? 'true' : 'false' }}" aria-controls="sf-related-grid" data-tab-url="{{ $index === 0 ? $relatedUrl.'?related_page=1' : route('storefront.home.tab', ['tab' => $tab['key']]) }}">{{ $tab['label'] }}</button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+                <div id="sf-related-grid" role="tabpanel" aria-live="polite" class="eco-card-grid" data-tabs-grid data-reveal-stagger>
                     @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $page->related])
                 </div>
+                <p class="py-10 text-center text-sm text-eco-gray" data-interests-empty hidden>{{ __st('catalog.home.interests_empty') }}</p>
+                <x-sf::section.load-more :url="$page->relatedMore ? $relatedUrl.'?related_page=2' : null" target="#sf-related-grid" />
             </section>
         @endif
     </div>

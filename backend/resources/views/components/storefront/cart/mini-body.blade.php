@@ -8,6 +8,7 @@
 @php
     $lines = $cart['lines'];
     $free = $cart['free_shipping'];
+    $blocked = StorefrontCart::blocked($cart);
 @endphp
 <div class="grid gap-4" data-cart-body data-items-count="{{ $cart['items_count'] }}">
     @if ($lines === [])
@@ -28,7 +29,11 @@
                 <p class="flex w-full items-center gap-2 rounded-lg bg-[#ffebeb] p-2 text-sm tracking-[0.5px] text-eco-black"><x-ui::icon name="truck" :size="16" class="shrink-0" />{{ __st('cart.mini_free_more', ['progress' => $free['progress']]) }}</p>
             @endif
             <div class="grid w-full gap-3">
-                <a href="{{ route('storefront.checkout') }}" @class(['eco-pill-dark mo-press h-11 w-full rounded-[32px] px-3 text-base font-medium', 'pointer-events-none opacity-50' => StorefrontCart::blocked($cart)]) data-cart-checkout>{{ __st('cart.to_checkout', ['total' => StorefrontCart::price($cart['totals']['grand_total'])]) }}</a>
+                {{-- A blocked cart keeps a working button: it says why and opens the cart, where each line shows its problem. --}}
+                @if ($blocked)
+                    <p id="sf-mini-blocked" class="text-center text-xs text-eco-red" role="alert">{{ __st('cart.cannot_checkout') }}</p>
+                @endif
+                <a href="{{ $blocked ? route('storefront.cart') : route('storefront.checkout') }}" @class(['eco-pill-dark mo-press h-11 w-full rounded-[32px] px-3 text-base font-medium', 'opacity-50' => $blocked]) @if ($blocked) aria-describedby="sf-mini-blocked" data-cart-blocked @endif data-cart-checkout>{{ __st('cart.to_checkout', ['total' => StorefrontCart::price($cart['totals']['grand_total'])]) }}</a>
                 <a href="{{ route('storefront.cart') }}" class="mo-press grid h-11 w-full place-items-center rounded-[32px] border border-eco-gray text-base font-medium text-eco-gray hover:border-eco-black hover:text-eco-black">{{ __st('cart.go_to_cart') }}</a>
             </div>
         </div>
