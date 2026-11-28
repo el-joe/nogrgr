@@ -29,6 +29,9 @@ class HomeController extends Controller
     {
         $theme = app(StorefrontContext::class)->theme();
         $extra = in_array($theme->family, [ThemeFamily::Elora, ThemeFamily::Souqify], true) ? $this->home->elora() + ['variant' => $theme->variant] : [];
+        if ($theme->family === ThemeFamily::Elora && $theme->variant === 1) {
+            $extra += $this->home->eloraBase();
+        }
         /* Ecommet keeps the old Ecommet home's counts: 10 cards per grid page / "See More",
            5 lightning deals per live flash sale, newest products under "Explore your interests". */
         $sections = $theme->family === ThemeFamily::Ecommet

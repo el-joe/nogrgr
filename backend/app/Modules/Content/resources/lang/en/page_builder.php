@@ -73,6 +73,7 @@ return [
     'fields' => [
         'title' => 'Title',
         'subtitle' => 'Subtitle',
+        'code' => 'Coupon code shown on the flash sale',
         'body' => 'Text',
         'source' => 'Products from',
         'category' => 'Category',

@@ -5,6 +5,9 @@
     logo, two-column links. The store's about line and social icons (Appearance, VEN-034e/f) sit under the logo.
 --}}
 @props(['columns' => [], 'legal' => [], 'name', 'copyright' => null])
+@if (app(\App\Modules\Storefront\Services\StorefrontContext::class)->theme()->variant === 1)
+    <x-sf::footer.elora-v1 :name="$name" :copyright="$copyright" />
+@else
 <footer class="elo-footer mt-auto text-white" aria-label="{{ __st('shell.footer.label') }}">
     <div class="mx-auto grid max-w-[1440px] gap-10 px-6 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:px-[152px]">
         <div class="grid content-start gap-6 max-lg:justify-items-center">
@@ -39,3 +42,4 @@
         <p>{{ $copyright ?? __st('shell.footer.copyright', ['year' => now()->year, 'name' => $name]) }}</p>
     </div>
 </footer>
+@endif

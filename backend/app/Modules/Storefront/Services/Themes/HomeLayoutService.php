@@ -106,6 +106,7 @@ class HomeLayoutService extends BaseService
         $library = [];
 
         foreach (ThemeSectionLibrary::sections($family, $variant) as $section) {
+            // A library section may be off by default (`enabled` => false) until switched on.
             $library[$section['key']] = $section + ['enabled' => true, 'settings' => [], 'countries' => []];
         }
 
@@ -116,7 +117,7 @@ class HomeLayoutService extends BaseService
 
             if (is_string($key) && isset($library[$key]) && ! isset($ordered[$key])) {
                 $ordered[$key] = [
-                    'enabled' => (bool) ($item['enabled'] ?? true),
+                    'enabled' => (bool) ($item['enabled'] ?? $library[$key]['enabled']),
                     'settings' => is_array($item['settings'] ?? null) ? $item['settings'] : [],
                     'countries' => is_array($item['countries'] ?? null) ? array_values(array_map('intval', $item['countries'])) : [],
                 ] + $library[$key];

@@ -1,0 +1,8 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Ticket">
+<path id="Vector" d="M2 9.42188C2.79565 9.42188 3.55871 9.6935 4.12132 10.177C4.68393 10.6605 5 11.3162 5 12C5 12.6838 4.68393 13.3395 4.12132 13.823C3.55871 14.3065 2.79565 14.5781 2 14.5781V16.2969C2 16.7527 2.21071 17.1899 2.58579 17.5122C2.96086 17.8345 3.46957 18.0156 4 18.0156H20C20.5304 18.0156 21.0391 17.8345 21.4142 17.5122C21.7893 17.1899 22 16.7527 22 16.2969V14.5781C21.2044 14.5781 20.4413 14.3065 19.8787 13.823C19.3161 13.3395 19 12.6838 19 12C19 11.3162 19.3161 10.6605 19.8787 10.177C20.4413 9.6935 21.2044 9.42188 22 9.42188V7.70313C22 7.24728 21.7893 6.81011 21.4142 6.48779C21.0391 6.16546 20.5304 5.98438 20 5.98438H4C3.46957 5.98438 2.96086 6.16546 2.58579 6.48779C2.21071 6.81011 2 7.24728 2 7.70313V9.42188Z" stroke-width="1.14583" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+<path id="Vector_2" d="M13 5.98438V7.70312" stroke-width="1.14583" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+<path id="Vector_3" d="M13 16.2969V18.0156" stroke-width="1.14583" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+<path id="Vector_4" d="M13 11.1406V12.8594" stroke-width="1.14583" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+</g>
+</svg>

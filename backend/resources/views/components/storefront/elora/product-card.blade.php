@@ -10,6 +10,10 @@
     hover image cross-fade (mo-card / data-hover-image).
 --}}
 @props(['card', 'variant' => 'card', 'eager' => false, 'rank' => null])
+@if ($variant !== 'wide' && app(\App\Modules\Storefront\Services\StorefrontContext::class)->theme()->variant === 1)
+    {{-- Elora base: one product card everywhere (Figma 1:20600), same data and JS hooks. --}}
+    <x-sf::elora.v1.card :card="$card" size="grid" :eager="$eager" {{ $attributes }} />
+@else
 @php
     /** @var \App\Modules\Storefront\DTOs\Catalog\ProductCardData $card */
     $wide = $variant === 'wide';
@@ -31,7 +35,7 @@
         @if ($wide && $sold !== null)
             <span class="elo-card-sold">{{ __st('elora.card.sold_percent', ['percent' => $sold]) }}</span>
         @elseif ($tag)
-            <span class="elo-card-tag">{{ $tag }}</span>
+            <span class="elo-card-tag" data-badge="{{ $card->badgeType }}" dir="auto" title="{{ $tag }}">{{ $tag }}</span>
         @endif
         @if ($favoriteUrl)
             <button type="button" class="elo-card-heart" data-favorite data-favorite-url="{{ $favoriteUrl }}" data-product-id="{{ $card->id }}" aria-pressed="{{ $card->favorited ? 'true' : 'false' }}" aria-label="{{ __st('elora.card.favorite', ['name' => $card->name]) }}">
@@ -82,3 +86,4 @@
         @endif
     </div>
 </article>
+@endif

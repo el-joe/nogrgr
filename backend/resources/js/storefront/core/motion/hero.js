@@ -26,6 +26,8 @@ export function initHero(element) {
         loop: true,
         slidesPerView: 1,
         autoplay: reduce ? false : { delay: settings.delay, disableOnInteraction: false, pauseOnMouseEnter: false },
+        /* Per-section extras, e.g. slidesPerView "auto" for a peeking next slide. */
+        ...(settings.swiper ?? {}),
         on: {
             autoplayTimeLeft(instance, time, ratio) {
                 progress?.style.setProperty('--progress', String(1 - ratio));

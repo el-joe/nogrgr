@@ -32,7 +32,7 @@
     <ul class="elo-mobile-nav-pill" role="list">
         @foreach ($tabs as $key => $item)
             <li class="flex-1">
-                <a href="{{ route($item['route']) }}" @class(['mo-press flex h-full flex-col items-center justify-center gap-1 text-xs', 'text-elo-primary' => $active === $key, 'text-[#8f8f8f]' => $active !== $key]) @if ($active === $key) aria-current="page" @endif>
+                <a href="{{ route($item['route']) }}" data-nav="{{ $key }}" @class(['mo-press flex h-full flex-col items-center justify-center gap-1 text-xs', 'text-elo-primary' => $active === $key, 'text-[#8f8f8f]' => $active !== $key]) @if ($active === $key) aria-current="page" @endif>
                     <x-ui::icon :name="$item['icon']" :size="24" />{{ __st($item['label']) }}
                 </a>
             </li>

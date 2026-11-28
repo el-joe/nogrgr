@@ -7,6 +7,8 @@
  *    End move between tabs, mirrored in RTL); a shown rail re-measures its Swiper.
  */
 import { isRtl } from '../core/motion/utils';
+import { toast } from '../../core/notify';
+import { t } from '../../core/i18n';
 
 function initMegaMenu(root) {
     const bar = root.querySelector('[data-elo-menu]');
@@ -22,7 +24,10 @@ function initMegaMenu(root) {
         mega.hidden = !open;
         toggle.setAttribute('aria-expanded', String(open));
         toggle.setAttribute('aria-label', open ? toggle.dataset.labelClose : toggle.dataset.labelOpen);
-        label?.setAttribute('aria-hidden', 'true');
+        if (label) {
+            label.setAttribute('aria-hidden', 'true');
+            label.textContent = (open ? toggle.dataset.textClose : toggle.dataset.textMenu) ?? label.textContent;
+        }
     };
 
     toggle.addEventListener('click', () => set(mega.hidden));
@@ -97,7 +102,38 @@ function initTabs(root) {
     });
 }
 
+/* v1 flash sale "Use Code: …" chip: copies the code (execCommand where the Clipboard API is not offered, e.g. plain http). */
+async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+    }
+
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.className = 'sr-only';
+    document.body.append(field);
+    field.select();
+    const copied = document.execCommand('copy');
+    field.remove();
+
+    if (!copied) {
+        throw new Error('copy failed');
+    }
+}
+
+function initCopyCode(root) {
+    root.querySelectorAll('[data-copy-code]').forEach((button) => {
+        button.addEventListener('click', () => {
+            copyText(button.dataset.copyCode)
+                .then(() => toast('success', t('ui.copied')))
+                .catch(() => toast('info', t('ui.copy_failed')));
+        });
+    });
+}
+
 export function initEloraHome(root = document) {
+    initCopyCode(root);
     initMegaMenu(root);
     initTabs(root);
 }

@@ -48,7 +48,7 @@ class HomeSectionHydrator
 
         $locale = app()->getLocale();
 
-        foreach (['title' => 'title_text', 'subtitle' => 'subtitle_text'] as $field => $target) {
+        foreach (['title' => 'title_text', 'subtitle' => 'subtitle_text', 'code' => 'code_text'] as $field => $target) {
             if (is_string($settings[$field][$locale] ?? null) && $settings[$field][$locale] !== '') {
                 $section[$target] = $settings[$field][$locale];
             }

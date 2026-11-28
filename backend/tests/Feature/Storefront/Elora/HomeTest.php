@@ -34,15 +34,15 @@ it('renders every Elora home variant from the variant config', function (int $va
 
     $this->withSession($this->sa)->get(($this->url)('/'))
         ->assertOk()
-        ->assertViewIs('storefront::themes.elora.pages.home')
+        ->assertViewIs($variant === 1 ? 'storefront::themes.elora.pages.home-v1' : 'storefront::themes.elora.pages.home')
         ->assertViewHas('variant', $variant)
         ->assertSee('data-theme-variant="'.$variant.'"', false)
-        ->assertSee('elo-card', false)
+        ->assertSee($variant === 1 ? 'v1-card' : 'elo-card', false)
         ->assertSee('Desk Lamp')
         ->assertSee('data-rail', false)
         ->assertSee($variant === 1 ? 'data-elo-tabs' : 'data-marquee', false)
         ->assertSee('data-elo-menu-toggle', false)
-        ->assertSee('elo-footer', false)
+        ->assertSee($variant === 1 ? 'v1-footer' : 'elo-footer', false)
         ->assertSee($variant === 1 ? 'elo-mobile-nav' : 'elo-mobile-bar', false);
 })->with(range(1, EloraVariants::COUNT));
 
@@ -62,4 +62,19 @@ it('gives every variant a section list that starts with the hero', function (): 
     }
 
     expect(EloraVariants::sections(99))->toBe(EloraVariants::sections(1));
+});
+
+it('renders the Elora base home as designed: no Show More, badge shelves off by default', function (): void {
+    $this->shop->tenant->run(fn () => app(StoreThemeService::class)->activate('elora-1'));
+    tenancy()->end();
+
+    $this->withSession($this->sa)->get(($this->url)('/'))
+        ->assertOk()
+        ->assertViewIs('storefront::themes.elora.pages.home-v1')
+        ->assertSee('v1-tablist', false)
+        ->assertSee('v1-cats', false)
+        ->assertDontSee(__st('elora.home.show_more'));
+
+    $badges = collect(EloraVariants::sections(1))->firstWhere('type', 'badges');
+    expect($badges['enabled'])->toBeFalse();
 });

@@ -47,7 +47,7 @@ return [
         'subtitle' => 'Subtitle',
         'cta_label' => 'Button text',
         'image' => 'Image',
-        'image_help' => '1440 × 280 px recommended (JPG, PNG, WebP or AVIF, max 4 MB).',
+        'image_help' => 'Home hero of the Elora base theme: 2408 × 774 px (3.11:1), other themes: 1440 × 280 px. A different ratio is shown whole, with side bars (JPG, PNG, WebP or AVIF, max 4 MB).',
         'mobile_image' => 'Mobile image',
         'mobile_image_help' => 'Optional, 720 × 360 px. The main image is used when empty.',
         'link' => 'Link URL',

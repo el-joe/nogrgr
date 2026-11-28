@@ -98,6 +98,11 @@ final class ThemeSectionLibrary
             $fields[] = ['name' => 'limit', 'type' => 'number', 'min' => self::LIMIT_MIN, 'max' => self::LIMIT_MAX, 'default' => self::LIMIT_DEFAULT];
         }
 
+        if ($family === ThemeFamily::Elora && $type === 'flash' && ($section['style'] ?? null) === 'band') {
+            // "Use Code: …" chip of the v1 flash sale (Figma 1:15595); hidden while empty.
+            $fields[] = ['name' => 'code', 'type' => 'text', 'i18n' => true, 'max' => 40];
+        }
+
         if (isset(self::BANNER_TYPES[$type])) {
             $fields[] = ['name' => 'banners', 'type' => 'banners', 'placement' => self::BANNER_TYPES[$type]];
         }

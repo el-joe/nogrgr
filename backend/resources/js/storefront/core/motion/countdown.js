@@ -46,7 +46,9 @@ export function initCountdowns(root = document) {
 
         const render = () => {
             const left = parts(end - Date.now());
-            Object.entries(left).forEach(([unit, value]) => {
+            /* Designs without a days box: the hours carry the whole time left. */
+            const clock = element.querySelector('[data-unit="days"]') ? left : { ...left, days: 0, hours: left.days * 24 + left.hours };
+            Object.entries(clock).forEach(([unit, value]) => {
                 const node = element.querySelector(`[data-unit="${unit}"]`);
 
                 if (node) {

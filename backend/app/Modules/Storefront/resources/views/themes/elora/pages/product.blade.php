@@ -78,8 +78,8 @@
             'lg:grid-cols-[minmax(0,400px)_minmax(0,1fr)_216px]' => $compact,
         ])>
             {{-- Gallery + details + reviews --}}
-            <div class="grid content-start gap-5 max-lg:contents">
-                <div class="grid gap-3 max-lg:order-1" data-gallery @if ($pipVideo) data-video-pip="{{ json_encode(['family' => 'elora', 'src' => $pipVideo['url'], 'poster' => $pipVideo['poster'], 'close' => __st('product.close_video'), 'open' => __st('product.open_video')], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}" @endif>
+            <div class="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-5 max-lg:contents">
+                <div class="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3 max-lg:order-1" data-gallery @if ($pipVideo) data-video-pip="{{ json_encode(['family' => 'elora', 'src' => $pipVideo['url'], 'poster' => $pipVideo['poster'], 'close' => __st('product.close_video'), 'open' => __st('product.open_video')], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}" @endif>
                     <div class="relative">
                         <div class="swiper elo-gallery-main aspect-[492/280] max-lg:aspect-[343/215]" data-gallery-main>
                             <div class="swiper-wrapper">

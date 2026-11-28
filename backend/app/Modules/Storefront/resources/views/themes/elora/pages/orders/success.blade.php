@@ -18,7 +18,7 @@
 @endphp
 <x-sf::layout :title="__st('orders.details')" nav="account" page="order-success" :seo="$seo">
     <div class="mx-auto w-full max-w-[560px] px-4 py-8 lg:py-16">
-        <section class="grid justify-items-center gap-5 rounded-2xl bg-white px-5 py-10 text-center shadow-[0_8px_28px_rgb(0_0_0/0.08)] sm:px-10" aria-labelledby="elo-success-title" data-order-success>
+        <section class="grid justify-items-center gap-5 rounded-2xl bg-white px-5 py-10 text-center shadow-[0_8px_28px_rgb(0_0_0/0.08)] sm:px-10" data-flat aria-labelledby="elo-success-title" data-order-success>
             <span @class(['elo-status-art', '!bg-sf-warning-bg !text-sf-warning' => $pending]) aria-hidden="true">
                 <x-ui::icon :name="$pending ? 'clock' : 'check-circle'" :size="56" />
             </span>

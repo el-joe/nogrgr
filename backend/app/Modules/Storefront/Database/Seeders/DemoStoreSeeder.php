@@ -26,10 +26,12 @@ use App\Modules\Platform\Models\Tenant;
 use App\Modules\Shipping\Models\ShippingRule;
 use App\Modules\Shipping\Models\ShippingZone;
 use App\Modules\Storefront\Enums\BannerPlacement;
+use App\Modules\Storefront\Enums\ThemeFamily;
 use App\Modules\Storefront\Models\Banner;
 use App\Modules\Storefront\Models\StoreBanner;
 use App\Modules\Storefront\Services\Banners\BannerImageStore;
 use App\Modules\Storefront\Services\Pages\StorePageService;
+use App\Modules\Storefront\Services\StoreThemeService;
 use App\Shared\Money\Money;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -112,7 +114,19 @@ class DemoStoreSeeder extends Seeder
             $this->customersWithReviews($products);
         });
 
+        // Stores on the Elora base theme also get that home's own demo artwork (Figma 1:15432).
+        if ($tenant->run(fn (): bool => $this->usesEloraBase())) {
+            (new EloraHomeDemoSeeder)->setContainer($this->container)->forTenant($tenant)->run();
+        }
+
         $this->command?->info("Demo data ready in store {$tenant->slug}: ".count($products).' products.');
+    }
+
+    private function usesEloraBase(): bool
+    {
+        $theme = app(StoreThemeService::class)->resolveTheme(null);
+
+        return $theme !== null && $theme->family === ThemeFamily::Elora && (int) $theme->variant === 1;
     }
 
     private function defaultTenant(): Tenant

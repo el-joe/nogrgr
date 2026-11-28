@@ -5,7 +5,10 @@ namespace App\Modules\Storefront\Services\Catalog;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Commerce\DTOs\Promotions\PromotionFlashSale;
 use App\Modules\Commerce\Services\Promotions\FlashSaleCatalog;
+use App\Modules\Shipping\Services\DeliveryEstimateService;
+use App\Modules\Shipping\Services\ShippingQuoteService;
 use App\Modules\Storefront\DTOs\BannerData;
+use App\Modules\Storefront\DTOs\Catalog\IndexEntry;
 use App\Modules\Storefront\DTOs\Catalog\ListingQuery;
 use App\Modules\Storefront\DTOs\Catalog\ListingResult;
 use App\Modules\Storefront\DTOs\Catalog\ProductCardData;
@@ -45,6 +48,7 @@ class HomeService
         private readonly FlashSaleCatalog $flashSales,
         private readonly StorefrontContext $context,
         private readonly BadgeShelves $badges,
+        private readonly ProductIndex $index,
     ) {}
 
     /**
@@ -88,6 +92,74 @@ class HomeService
             'recommended' => array_values(array_filter(array_chunk($recommended->cards, self::RAIL))),
             'badges' => $this->badges->shelves(self::RAIL),
         ];
+    }
+
+    /**
+     * Extra data of the Elora v1 home (Figma 1:15432 / m 1:21125): the category circles (the
+     * top-level categories first, then their sub-categories, each with its own image or else a
+     * photo of one of its products), the in-stock "Fast delivery" tab, the "delivered by" date
+     * of the shopping country and the free-shipping weight of the bottom strip.
+     *
+     * @return array{tiles: list<array{category: Category, image: string|null}>, fast: list<ProductCardData>, deliveryBy: string|null, freeShippingWeight: string|null}
+     */
+    public function eloraBase(): array
+    {
+        $countryId = $this->context->countryId();
+        $threshold = $countryId !== null ? rescue(fn (): ?int => app(ShippingQuoteService::class)->freeShippingThreshold($countryId), null, false) : null;
+        $date = $countryId !== null ? rescue(fn () => app(DeliveryEstimateService::class)->estimateFor($countryId)->maxDate, null, false) : null;
+
+        return [
+            'tiles' => $this->categoryTiles(),
+            'fast' => $this->cards->make(array_slice(array_values(array_filter($this->listing->rail(ListingKind::BestSelling, self::RAIL * 4), static fn (IndexEntry $entry): bool => $entry->inStock)), 0, self::RAIL)),
+            'deliveryBy' => $date?->locale(app()->getLocale())->translatedFormat('j F'),
+            'freeShippingWeight' => $threshold !== null && $threshold > 0 ? ProductCards::weight($threshold) : null,
+        ];
+    }
+
+    /**
+     * @return list<array{category: Category, image: string|null}>
+     */
+    private function categoryTiles(): array
+    {
+        $queue = array_map(static fn (array $node): Category => $node['category'], $this->categories->tree());
+        $categories = [];
+
+        for ($index = 0; $index < count($queue) && count($categories) < self::CATEGORIES; $index++) {
+            $categories[] = $queue[$index];
+            array_push($queue, ...$this->categories->children($queue[$index]));
+        }
+
+        $entries = $this->index->entries();
+        $used = [];
+        $tiles = [];
+
+        foreach ($categories as $category) {
+            $image = $category->thumbnailUrl();
+
+            if ($image === null) {
+                $ids = [$category->id => true];
+                $walk = [$category];
+
+                while ($walk !== []) {
+                    foreach ($this->categories->children(array_pop($walk)) as $child) {
+                        $ids[$child->id] = true;
+                        $walk[] = $child;
+                    }
+                }
+
+                foreach ($entries as $entry) {
+                    if ($entry->image !== null && ! isset($used[$entry->image]) && array_intersect_key($ids, array_flip($entry->categoryIds)) !== []) {
+                        $image = $entry->image;
+                        $used[$image] = true;
+                        break;
+                    }
+                }
+            }
+
+            $tiles[] = ['category' => $category, 'image' => $image];
+        }
+
+        return $tiles;
     }
 
     /**

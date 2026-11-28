@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Truck">
+<path id="Vector" d="M14 17.1504V6.84961C14 6.39429 13.7893 5.95761 13.4142 5.63565C13.0391 5.31369 12.5304 5.13281 12 5.13281H4C3.46957 5.13281 2.96086 5.31369 2.58579 5.63565C2.21071 5.95761 2 6.39429 2 6.84961V16.292C2 16.5197 2.10536 16.738 2.29289 16.899C2.48043 17.06 2.73478 17.1504 3 17.1504H5" stroke-width="1.14453" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+<path id="Vector_2" d="M15 17.1504H9" stroke-width="1.14453" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+<path id="Vector_3" d="M19 17.1504H21C21.2652 17.1504 21.5196 17.06 21.7071 16.899C21.8946 16.738 22 16.5197 22 16.292V13.1588C21.9996 12.964 21.922 12.7751 21.78 12.6232L18.3 8.88916C18.2065 8.78863 18.0878 8.70742 17.9528 8.65156C17.8178 8.59569 17.6699 8.56659 17.52 8.56641H14" stroke-width="1.14453" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+<path id="Vector_4" d="M19 17.1504C19 18.0986 18.1046 18.8672 17 18.8672C15.8954 18.8672 15 18.0986 15 17.1504C15 16.2022 15.8954 15.4336 17 15.4336C18.1046 15.4336 19 16.2022 19 17.1504Z" stroke-width="1.14453" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+<path id="Vector_5" d="M9 17.1504C9 18.0986 8.10457 18.8672 7 18.8672C5.89543 18.8672 5 18.0986 5 17.1504C5 16.2022 5.89543 15.4336 7 15.4336C8.10457 15.4336 9 16.2022 9 17.1504Z" stroke-width="1.14453" stroke-linecap="round" stroke-linejoin="round" stroke="#FF4D00"/>
+</g>
+</svg>

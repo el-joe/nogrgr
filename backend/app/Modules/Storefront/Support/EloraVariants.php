@@ -39,7 +39,8 @@ final class EloraVariants
                 ['type' => 'rail', 'data' => 'newRail', 'title' => 'elora.home.new_arrivals', 'heading' => 'split', 'icon' => 'falling-star', 'more' => 'storefront.new-in'],
                 ['type' => 'shop-categories', 'style' => 'cards'],
                 ['type' => 'rail', 'data' => 'recommended', 'title' => 'elora.home.recommended', 'heading' => 'center-plain', 'icon' => 'thumbs-up', 'more' => 'storefront.new-in'],
-                ['type' => 'badges'],
+                // Not drawn in Figma 1:15432: off by default, the vendor may switch it on.
+                ['type' => 'badges', 'enabled' => false],
                 ['type' => 'promo-rail'],
             ];
         }
