@@ -134,7 +134,8 @@ class ExternalProductImporter
 
         $this->products->update($product, ['external_source' => $driver->value, 'external_id' => $item->externalId]);
         $this->linkRecords($driver, $product, $item, $variants, $mediaBefore, array_column($downloads, 'external_id'));
-        $this->imports->saveLink($driver, ImportLinkType::Product, $item->externalId, $product->id, $item->checksum());
+        // Stock that could not be placed on a branch leaves no checksum, so the next sync retries it instead of "unchanged".
+        $this->imports->saveLink($driver, ImportLinkType::Product, $item->externalId, $product->id, $stock === [] && ! $item->unlimitedStock ? null : $item->checksum());
 
         $summary = trans_choice('catalog::imports.messages.summary', count($variants), ['variants' => count($variants), 'images' => $images]);
         $videos = count($item->videos);

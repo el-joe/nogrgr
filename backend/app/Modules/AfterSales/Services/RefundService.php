@@ -370,7 +370,8 @@ class RefundService extends BaseService
                 return;
             }
 
-            if ($refund->restock && $order->fulfilment_branch_id !== null) {
+            // Units that never left are released with the order status; only shipped units are restocked here.
+            if ($refund->restock && in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true)) {
                 foreach ($order->items as $item) {
                     $this->stock->restockLine($order, $item, $item->quantity);
                 }

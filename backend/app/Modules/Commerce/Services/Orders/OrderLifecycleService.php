@@ -84,6 +84,10 @@ class OrderLifecycleService extends BaseService
 
             if ($to === OrderStatus::Cancelled) {
                 $order->forceFill(['cancel_reason' => $note, 'reservation_expires_at' => null])->save();
+            }
+
+            // Cancelled, or fully refunded before it ever shipped: its units are sellable again.
+            if ($to === OrderStatus::Cancelled || ($to === OrderStatus::Refunded && in_array($from, [OrderStatus::PendingPayment, OrderStatus::Paid, OrderStatus::Processing], true))) {
                 $this->stock->release($order->checkout_group, $order->uuid);
             }
 

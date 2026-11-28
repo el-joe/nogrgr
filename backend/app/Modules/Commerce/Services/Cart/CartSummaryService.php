@@ -36,10 +36,10 @@ class CartSummaryService
     /**
      * @param  array<string, int>  $quantityOverrides
      */
-    public function summarize(?Cart $cart, ?int $countryId, ?int $customerId, ?string $couponCode = null, array $quantityOverrides = [], ?int $cityId = null): CartSummary
+    public function summarize(?Cart $cart, ?int $countryId, ?int $customerId, ?string $couponCode = null, array $quantityOverrides = [], ?int $cityId = null, ?int $priceCountryId = null): CartSummary
     {
         $cart?->loadMissing('items.storeProduct');
-        $lines = $cart !== null ? $this->lines->resolve($cart->items, $countryId, $quantityOverrides) : [];
+        $lines = $cart !== null ? $this->lines->resolve($cart->items, $countryId, $quantityOverrides, $priceCountryId) : [];
         $inputs = array_values(array_filter(array_map(static fn (CartLine $line): ?OrderLineInput => $line->isPurchasable() ? $line->input : null, $lines)));
         $composed = $this->composer->compose($inputs, $countryId, null, $cityId);
         $couponCode ??= $cart?->coupon_code;
@@ -61,7 +61,7 @@ class CartSummaryService
             $decision = new CouponDecision(null);
         }
 
-        $ships = $composed->shipping->available && array_filter($inputs, static fn (OrderLineInput $input): bool => ! $input->own) !== [];
+        $ships = $composed->shipping->available && array_filter($inputs, static fn (OrderLineInput $input): bool => ! $input->own && $input->shippable) !== [];
 
         return new CartSummary(
             $cart,

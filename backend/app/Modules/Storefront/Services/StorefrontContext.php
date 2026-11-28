@@ -3,8 +3,6 @@
 namespace App\Modules\Storefront\Services;
 
 use App\Modules\Commerce\Support\MoneyPresenter;
-use App\Modules\Identity\Models\Customer;
-use App\Modules\Identity\Repositories\Contracts\CustomerAddressRepositoryContract;
 use App\Modules\Localization\Models\Country;
 use App\Modules\Localization\Models\Currency;
 use App\Modules\Localization\Repositories\Contracts\CurrencyRepositoryContract;
@@ -20,15 +18,15 @@ use App\Modules\Storefront\Services\Themes\ThemePreviewService;
 use App\Shared\Money\Money;
 use App\Shared\Support\Locale;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Per-request storefront context (scoped singleton): the shopping country, display
  * currency and resolved theme. Every storefront page / partial reads these from here.
  *
- * Country (drives sellable products and prices, decision #65 / #68): the switcher choice
- * in the session → the customer's default address → the visitor country (CDN header) →
- * the store default → the first selling country. Currency is display-only: the session
+ * Country (drives sellable products and prices, as the old storefront): the switcher
+ * choice in the session → the visitor country (CDN header / Accept-Language region) → the
+ * store default → the first selling country. A saved address only picks the shipping
+ * zone (Commerce CartService). Currency is display-only: the session
  * choice, else the country's currency when active, else the base (USD).
  */
 class StorefrontContext
@@ -54,7 +52,6 @@ class StorefrontContext
         private readonly StoreCountries $countries,
         private readonly StoreThemeService $themes,
         private readonly CurrencyRepositoryContract $currencies,
-        private readonly CustomerAddressRepositoryContract $addresses,
         private readonly MoneyPresenter $money,
         private readonly ThemePreviewService $previews,
         private readonly StoreCurrencyService $storeCurrencies,
@@ -75,6 +72,15 @@ class StorefrontContext
     public function countryId(): ?int
     {
         return $this->country()?->id;
+    }
+
+    /**
+     * "Sold in countries" visibility uses the detected country, never a manual pick
+     * (ORDER_FORMULAS.md §1).
+     */
+    public function visibilityCountryId(): ?int
+    {
+        return $this->countries->findByIso2(Locale::visitorCountry())->id ?? $this->countryId();
     }
 
     public function theme(): ResolvedThemeData
@@ -191,7 +197,7 @@ class StorefrontContext
      * JSON API request (Store API catalog, mobile app): shopping country from `X-Country` /
      * `X-Country-Code` (ISO2, only a country the store sells in) and display currency from
      * `X-Currency` (only one the store offers). Missing / unknown values fall back to the
-     * normal resolution (customer default address → visitor → store default).
+     * normal resolution (visitor → store default).
      */
     public function useApiPreferences(?string $countryIso2, ?string $currencyCode): void
     {
@@ -238,13 +244,6 @@ class StorefrontContext
         $session = request()->hasSession() ? request()->session()->get(self::COUNTRY_SESSION_KEY) : null;
 
         if (is_numeric($session) && ($country = $this->countries->find((int) $session)) !== null) {
-            return $country;
-        }
-
-        $customer = Auth::guard('customer')->user();
-        $address = $customer instanceof Customer ? $this->addresses->defaultFor($customer->id) : null;
-
-        if ($address !== null && ($country = $this->countries->find((int) $address->country_id)) !== null) {
             return $country;
         }
 

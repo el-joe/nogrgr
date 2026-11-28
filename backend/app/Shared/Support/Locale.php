@@ -67,6 +67,11 @@ final class Locale
             return strtolower($country);
         }
 
+        // Old storefront fallback: the region of Accept-Language ("en-EG" → EG).
+        if (preg_match('/[a-z]{2,3}-([A-Z]{2})/', (string) request()->header('Accept-Language'), $match) === 1) {
+            return strtolower($match[1]);
+        }
+
         return strtolower((string) config('app.default_country', 'sa'));
     }
 }

@@ -11,6 +11,7 @@ use App\Modules\Commerce\Http\Requests\StoreApi\SwitchCountryRequest;
 use App\Modules\Commerce\Http\Requests\StoreApi\UpdateCartItemRequest;
 use App\Modules\Commerce\Http\Resources\StoreApi\CartResource;
 use App\Modules\Commerce\Services\Cart\CartService;
+use App\Modules\Storefront\Services\StorefrontContext;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
 use Illuminate\Http\JsonResponse;
@@ -65,6 +66,11 @@ class CartController extends Controller
     {
         $cityId = $request->validated('city_id');
         $summary = $this->carts->switchCountry($this->cartContext($request), (int) $request->validated('country_id'), $cityId !== null ? (int) $cityId : null);
+
+        // A theme session switching country keeps browsing in it.
+        if ($request->hasSession() && ! $request->hasHeader('X-Tenant')) {
+            app(StorefrontContext::class)->remember((int) $request->validated('country_id'), null);
+        }
 
         return $this->respond($request, $summary, __('commerce::cart.messages.country_changed'));
     }

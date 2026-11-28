@@ -19,6 +19,18 @@
     $messages = collect($r['timeline'])->filter(fn ($event) => filled($event['message']) || $event['status_label']);
     $photos = collect($r['media'])->where('kind', 'photo');
     $videos = collect($r['media'])->where('kind', 'video');
+    $stepDates = [$r['created_at'], null, $r['dates']['approved_at'], $r['dates']['received_at'], $r['type'] === 'exchange' ? $r['dates']['exchange_shipped_at'] : $r['dates']['refunded_at']];
+    $date = fn (?string $value) => $value ? Carbon::parse($value)->translatedFormat('M j') : null;
+    $refundRows = collect($r['refunds'])->map(fn (array $refund) => [
+        'reference' => $refund['reference'],
+        'amount' => $refund['amount'],
+        'status' => $refund['status_label'],
+        'tone' => match ($refund['status']) { 'completed' => 'success', 'rejected' => 'danger', default => 'warning' },
+        'method' => $refund['method_label'],
+        'requested_at' => Carbon::parse($refund['requested_at']),
+        'processed_at' => $refund['processed_at'] ? Carbon::parse($refund['processed_at']) : null,
+        'rejection_reason' => null,
+    ])->all();
 @endphp
 <x-sf::account.layout :title="$r['reference']" :crumb="__st('returns.title')" active="returns" page="return" :seo="$seo" :back="route('storefront.returns.index')">
     <x-slot:header>
@@ -27,10 +39,11 @@
                 <h1 class="text-lg font-semibold leading-[26px] text-sf-ink lg:text-[22px] lg:leading-[30px]" dir="ltr">{{ $r['reference'] }}</h1>
                 <x-sf::order.badge :tone="$r['tone']">{{ $r['status_label'] }}</x-sf::order.badge>
             </div>
+            <p class="text-xs leading-4 text-sf-muted">{{ __st('returns.requested_on', ['date' => Carbon::parse($r['created_at'])->translatedFormat('M j, Y')]) }} · <a href="{{ route('storefront.orders.show', $r['order_uuid']) }}" class="text-sf-accent hover:underline" dir="ltr">{{ $r['order_number'] }}</a></p>
             <ol class="flex flex-wrap items-center gap-x-1.5 gap-y-2" aria-label="{{ __st('orders.status') }}">
                 @foreach ($steps as $index => $step)
                     <li class="flex items-center gap-1.5" @if ($index + 1 === $reached) aria-current="step" @endif>
-                        <x-sf::order.badge :tone="$index < $reached ? 'danger' : 'info'">{{ __st('returns.steps.'.$step) }}</x-sf::order.badge>
+                        <x-sf::order.badge :tone="$index < $reached ? 'danger' : 'info'">{{ __st('returns.steps.'.$step) }}@if ($index + 1 <= $reached && ($at = $date($stepDates[$index] ?? null))) · {{ $at }}@endif</x-sf::order.badge>
                         @unless ($loop->last)<x-ui::icon name="chevron-right" :size="12" class="text-sf-muted rtl:-scale-x-100" />@endunless
                     </li>
                 @endforeach
@@ -40,6 +53,18 @@
 
     <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-5">
         <div class="grid min-w-0 gap-4">
+            @if ($r['status'] === 'awaiting_info')
+                <p class="rounded-lg bg-sf-warning-bg px-4 py-3 text-sm text-sf-ink" role="status" data-return-awaiting>{{ __st('returns.awaiting_info') }}</p>
+            @endif
+            @if ($r['inspection_label'])
+                <p @class(['rounded-lg px-4 py-3 text-sm font-medium', 'bg-sf-success-bg text-sf-success' => $r['inspection_result'] === 'accepted', 'bg-sf-danger-bg text-sf-danger' => $r['inspection_result'] !== 'accepted']) role="status" data-return-inspection>{{ $r['inspection_label'] }}</p>
+            @endif
+            @if ($refundRows !== [])
+                <section class="sf-card grid gap-3 p-4" aria-labelledby="return-refunds" data-return-refunds>
+                    <h2 id="return-refunds" class="text-lg font-semibold leading-[26px] text-sf-ink">{{ __st('returns.refunds') }}</h2>
+                    <x-sf::order.refunds :refunds="$refundRows" />
+                </section>
+            @endif
             <section class="sf-card grid gap-3 p-4" aria-labelledby="return-thread">
                 <h2 id="return-thread" class="text-lg font-semibold leading-[26px] text-sf-ink">{{ __st('returns.conversation') }}</h2>
                 <div class="grid gap-1 rounded-lg bg-sf-accent-subtle p-3" data-reveal="fade-up">
@@ -94,8 +119,18 @@
                     <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('returns.item') }}</dt><dd class="text-end font-medium text-sf-ink">{{ $r['product_name'] }} × {{ $r['quantity'] }}</dd></div>
                     <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('returns.reason') }}</dt><dd class="text-end font-medium text-sf-ink">{{ $r['reason']['name'] }}</dd></div>
                     <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('returns.resolution') }}</dt><dd class="font-medium text-sf-ink">{{ $r['type_label'] }}</dd></div>
+                    @if ($r['return_method_label'])
+                        <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('returns.return_method') }}</dt><dd class="text-end font-medium text-sf-ink">{{ $r['return_method_label'] }}</dd></div>
+                    @endif
+                    @if ($r['replacement_label'])
+                        <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('returns.replacement') }}</dt><dd class="text-end font-medium text-sf-ink">{{ $r['replacement_label'] }} × {{ $r['quantity'] }}</dd></div>
+                    @endif
+                    @if ($r['customer_note'])
+                        <div class="grid gap-0.5"><dt class="text-sf-muted">{{ __st('returns.customer_note') }}</dt><dd class="whitespace-pre-line break-words text-sf-ink">{{ $r['customer_note'] }}</dd></div>
+                    @endif
                     @if ($r['exchange_tracking_number'])
                         <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('returns.exchange_tracking') }}</dt><dd class="font-medium text-sf-ink" dir="ltr">{{ $r['exchange_tracking_number'] }}</dd></div>
+                        @if ($r['dates']['exchange_shipped_at'])<div class="text-sf-muted">{{ __st('returns.exchange_shipped_on', ['date' => Carbon::parse($r['dates']['exchange_shipped_at'])->translatedFormat('M j, Y')]) }}</div>@endif
                     @endif
                     <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('returns.refund_amount') }}</dt><dd class="font-medium text-sf-ink">{{ $money($r['refund_amount']) }}</dd></div>
                 </dl>

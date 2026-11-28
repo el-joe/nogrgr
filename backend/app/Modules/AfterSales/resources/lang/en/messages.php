@@ -30,6 +30,7 @@ return [
         'nothing_returnable' => 'No item of this order can be returned.',
         'category_not_returnable' => 'This item belongs to a category that cannot be returned.',
         'video_required' => 'Please attach a video of the item for this return.',
+        'replacement_unavailable' => 'That replacement option is no longer available.',
         'withdraw_not_allowed' => 'A return can only be withdrawn while it is under review (now ":status").',
         'reply_not_allowed' => 'This return is ":status"; replies are closed.',
     ],

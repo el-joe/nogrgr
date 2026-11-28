@@ -2,6 +2,8 @@
 
 namespace App\Modules\Commerce\Services\Checkout;
 
+use App\Modules\Billing\Enums\PlanLimit;
+use App\Modules\Billing\Services\EffectivePlanLimits;
 use App\Modules\Commerce\DTOs\Cart\CartContextData;
 use App\Modules\Commerce\DTOs\Cart\CartSummary;
 use App\Modules\Commerce\DTOs\Checkout\CheckoutOptions;
@@ -10,13 +12,16 @@ use App\Modules\Commerce\DTOs\Checkout\PlaceOrderData;
 use App\Modules\Commerce\DTOs\Payments\GatewayOption;
 use App\Modules\Commerce\Enums\CheckoutAttemptStatus;
 use App\Modules\Commerce\Enums\CheckoutBlock;
+use App\Modules\Commerce\Enums\CouponRejection;
 use App\Modules\Commerce\Exceptions\CommerceException;
 use App\Modules\Commerce\Models\Cart;
 use App\Modules\Commerce\Models\CheckoutAttempt;
 use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Repositories\Contracts\CheckoutAttemptRepositoryContract;
+use App\Modules\Commerce\Repositories\Contracts\OrderRepositoryContract;
 use App\Modules\Commerce\Services\Cart\CartService;
 use App\Modules\Commerce\Services\Payments\StorefrontGatewayService;
+use App\Modules\Commerce\Services\Promotions\StoreContext;
 use App\Modules\Identity\DTOs\CheckoutAddressSelectionData;
 use App\Modules\Identity\Models\Customer;
 use App\Modules\Identity\Services\CustomerAddressService;
@@ -42,6 +47,8 @@ class CheckoutService extends BaseService
         private readonly StorefrontGatewayService $gateways,
         private readonly OrderPlacementService $placement,
         private readonly CheckoutAttemptRepositoryContract $attempts,
+        private readonly EffectivePlanLimits $limits,
+        private readonly OrderRepositoryContract $orders,
     ) {}
 
     public function options(CartContextData $context, CheckoutSelectionData $selection): CheckoutOptions
@@ -49,10 +56,10 @@ class CheckoutService extends BaseService
         $customer = $this->customer($context);
         $addresses = $this->addresses->forCheckout($customer, $selection->shippingAddressId, $selection->billingAddressId, $selection->billingSameAsShipping);
         $cart = $this->carts->current($context);
-        $summary = $this->summary($cart, $customer, $addresses);
+        $summary = $this->summary($cart, $context, $addresses);
         $gateways = $this->gateways->options();
 
-        return new CheckoutOptions($addresses, $summary, $gateways, $this->block($summary, $addresses, $gateways !== []));
+        return new CheckoutOptions($addresses, $summary, $gateways, $this->orderLimitReached() ? CheckoutBlock::StoreOrderLimit : $this->block($summary, $addresses, $gateways !== []));
     }
 
     /**
@@ -100,6 +107,10 @@ class CheckoutService extends BaseService
      */
     private function placeOrders(CartContextData $context, Customer $customer, PlaceOrderData $data): array
     {
+        if ($this->orderLimitReached()) {
+            throw CommerceException::blocked(CheckoutBlock::StoreOrderLimit);
+        }
+
         $cart = $this->carts->current($context);
 
         if ($cart === null || $cart->items()->doesntExist()) {
@@ -107,7 +118,7 @@ class CheckoutService extends BaseService
         }
 
         $addresses = $this->addresses->forCheckout($customer, $data->shippingAddressId, $data->billingAddressId, $data->billingSameAsShipping);
-        $summary = $this->summary($cart, $customer, $addresses);
+        $summary = $this->summary($cart, $context, $addresses);
         $gateway = $this->gateways->find($data->gateway);
         $block = $this->block($summary, $addresses, $gateway !== null);
 
@@ -136,21 +147,30 @@ class CheckoutService extends BaseService
             ! $addresses->hasAddress() => CheckoutBlock::NoAddress,
             $summary->hasIssues() => CheckoutBlock::UnavailableItems,
             ! $summary->composed->canCheckout() => CheckoutBlock::ShippingUnavailable,
-            $summary->couponRejected() => CheckoutBlock::CouponInvalid,
+            // An unmet minimum spend just removed the coupon (old behaviour): the totals no longer include it.
+            $summary->couponRejected() && $summary->coupon?->rejection !== CouponRejection::MinimumSpend => CheckoutBlock::CouponInvalid,
             ! $hasGateway => CheckoutBlock::NoGateway,
             default => null,
         };
     }
 
-    private function summary(?Cart $cart, Customer $customer, CheckoutAddressSelectionData $addresses): CartSummary
+    private function summary(?Cart $cart, CartContextData $context, CheckoutAddressSelectionData $addresses): CartSummary
     {
-        $countryId = $addresses->shipping?->country_id;
-
         if ($cart === null) {
-            return $this->carts->summary(new CartContextData(customer: $customer));
+            return $this->carts->summary($context);
         }
 
-        return $this->carts->summaryOf($cart, $customer, $countryId);
+        return $this->carts->summaryOf($cart, $context, $addresses->shipping?->country_id);
+    }
+
+    /**
+     * The plan's "orders per month" quota of the store (old PlanLimitService guard).
+     */
+    private function orderLimitReached(): bool
+    {
+        $limit = $this->limits->for(PlanLimit::OrdersPerMonth, (int) StoreContext::tenant()->getTenantKey());
+
+        return $limit !== null && $this->orders->countSince(now()->startOfMonth()) >= $limit;
     }
 
     /**

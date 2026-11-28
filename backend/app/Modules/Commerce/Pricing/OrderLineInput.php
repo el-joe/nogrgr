@@ -31,6 +31,7 @@ final readonly class OrderLineInput
         ?Money $tax = null,
         public bool $own = false,
         public int $weightGrams = 0,
+        public bool $shippable = true,
     ) {
         if ($cost->currency !== Money::BASE_CURRENCY || $profitAmount->currency !== Money::BASE_CURRENCY || $fixedShipping->currency !== Money::BASE_CURRENCY) {
             throw new InvalidArgumentException('Order lines are priced in the base currency (USD).');
@@ -44,9 +45,9 @@ final readonly class OrderLineInput
     /**
      * A catalog (central product) line from its UnitPrice for the order's country.
      */
-    public static function catalog(string $key, UnitPrice $unit, int $quantity, int $weightGrams = 0, float $flashSalePercentage = 0.0, ?DiscountSource $flashSaleSource = null): self
+    public static function catalog(string $key, UnitPrice $unit, int $quantity, int $weightGrams = 0, float $flashSalePercentage = 0.0, ?DiscountSource $flashSaleSource = null, bool $shippable = true): self
     {
-        return new self($key, $unit->cost, $unit->profitAmount, $quantity, $unit->fixedShipping, $flashSalePercentage, $flashSaleSource, null, false, $weightGrams);
+        return new self($key, $unit->cost, $unit->profitAmount, $quantity, $unit->fixedShipping, $flashSalePercentage, $flashSaleSource, null, false, $weightGrams, $shippable);
     }
 
     /**
@@ -56,6 +57,6 @@ final readonly class OrderLineInput
     {
         $unit = UnitPricing::ownProduct($sellPrice);
 
-        return new self($key, $unit->cost, $unit->profitAmount, $quantity, $unit->fixedShipping, $flashSalePercentage, $flashSaleSource, null, true, 0);
+        return new self($key, $unit->cost, $unit->profitAmount, $quantity, $unit->fixedShipping, $flashSalePercentage, $flashSaleSource, null, true, 0, false);
     }
 }

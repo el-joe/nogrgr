@@ -23,7 +23,7 @@ return [
     'payment_source' => ['tenant' => 'حساب المتجر', 'central' => 'حساب المنصة'],
     'gateway_connection' => ['connected' => 'متصل', 'not_connected' => 'غير متصل'],
     'checkout_attempt_status' => ['processing' => 'قيد المعالجة', 'completed' => 'مكتمل', 'failed' => 'فشل'],
-    'checkout_block' => ['empty_cart' => 'السلة فارغة', 'sign_in_required' => 'تسجيل الدخول مطلوب', 'no_address' => 'لا يوجد عنوان', 'unavailable_items' => 'منتجات غير متاحة', 'shipping_unavailable' => 'الشحن غير متاح', 'no_gateway' => 'لا توجد طريقة دفع', 'gateway_unavailable' => 'طريقة الدفع غير متاحة', 'coupon_invalid' => 'قسيمة غير صالحة', 'stock_changed' => 'تغير المخزون'],
+    'checkout_block' => ['store_order_limit' => 'تم بلوغ حد الطلبات', 'empty_cart' => 'السلة فارغة', 'sign_in_required' => 'تسجيل الدخول مطلوب', 'no_address' => 'لا يوجد عنوان', 'unavailable_items' => 'منتجات غير متاحة', 'shipping_unavailable' => 'الشحن غير متاح', 'no_gateway' => 'لا توجد طريقة دفع', 'gateway_unavailable' => 'طريقة الدفع غير متاحة', 'coupon_invalid' => 'قسيمة غير صالحة', 'stock_changed' => 'تغير المخزون'],
     'actor_type' => ['customer' => 'العميل', 'vendor' => 'المتجر', 'admin' => 'المسؤول', 'system' => 'النظام', 'gateway' => 'بوابة الدفع'],
     'fulfilment_status' => ['pending' => 'للشحن', 'packed' => 'تم التغليف', 'in_transit' => 'قيد التوصيل', 'out_for_delivery' => 'خرج للتوصيل', 'delayed' => 'متأخر', 'delivered' => 'تم التسليم'],
     'cancellation_reason' => [

@@ -24,6 +24,11 @@
         @endforeach
     </nav>
 
+    <p class="flex items-center gap-2.5 rounded-lg bg-sf-warning-bg px-4 py-3 text-sm text-sf-ink" data-orders-info>
+        <x-ui::icon name="info" :size="18" class="shrink-0 text-sf-warning" />
+        <span>{{ __st('orders.info_banner') }}</span>
+    </p>
+
     @forelse ($rows as $order)
         @php
             $first = $order['items'][0] ?? null;
@@ -34,7 +39,7 @@
             <header class="flex items-center gap-3 border-b border-sf-border px-4 py-3">
                 <div class="grid min-w-0 flex-1 gap-0.5">
                     <h2 class="truncate text-sm font-medium leading-5 text-sf-ink" dir="ltr">{{ $order['number'] }}</h2>
-                    <p class="text-xs leading-4 text-sf-muted">{{ $order['placed']?->translatedFormat('M j, Y') }}</p>
+                    <p class="text-xs leading-4 text-sf-muted">{{ __st('orders.item_count', ['count' => $order['items_count']]) }} · {{ $order['placed']?->translatedFormat('M j, Y') }}</p>
                 </div>
                 <x-sf::order.badge :tone="$order['tone']" data-order-status>{{ $order['status_label'] }}</x-sf::order.badge>
             </header>

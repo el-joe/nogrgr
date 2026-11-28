@@ -87,15 +87,16 @@ it('keeps the drawer buttons working and totals equal to the cart page, also for
         ->not->toContain('href="'.$this->tenantUrl($shop->tenant, '/checkout').'"');
 });
 
-it('gives a cart without a country the storefront context country before pricing', function (): void {
+it('quotes the cart for the storefront context country without writing it onto the cart', function (): void {
     $shop = shopSetup();
     $this->withSession(['storefront.country_id' => $shop->ae->id]);
-    cartShopAdd($shop, $shop->own->id);
+    cartShopAdd($shop, $shop->catalog->id);
     $shop->tenant->run(fn () => Cart::query()->update(['country_id' => null]));
 
-    $this->getJson($this->tenantUrl($shop->tenant, '/cart/fragment'))->assertOk();
+    // AE has no shipping rule and no fixed shipping: 28.80, not the SA 30.00.
+    $this->getJson($this->tenantUrl($shop->tenant, '/cart/fragment'))->assertOk()->assertSee('28.80', false)->assertDontSee('30.00', false);
 
-    expect($shop->tenant->run(fn () => Cart::query()->value('country_id')))->toBe($shop->ae->id);
+    expect($shop->tenant->run(fn () => Cart::query()->value('country_id')))->toBeNull();
 });
 
 it('shows the arabic cart right to left', function (): void {

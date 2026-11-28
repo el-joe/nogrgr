@@ -1,7 +1,7 @@
 {{--
     Account › Profile (Figma Storefront additions §6): personal details view ⇄ edit,
     change password, delete account (confirm modal with password). Inputs: $customer,
-    $locales (code => [name, native, dir]), $phoneCountry (ISO2). All three forms post as
+    $locales (code => [name, native, dir]), $phoneCountry (ISO2), $addresses + $countries (saved addresses block). All three forms post as
     JSON; the delete-account password error is rendered from its own 422 response, so it
     never shows on the change-password form that shares the `password` key.
 --}}
@@ -45,6 +45,14 @@
                 <x-sf::form.button type="submit">{{ __('identity::account.save') }}</x-sf::form.button>
             </div>
         </form>
+    </section>
+
+    <section class="grid gap-3" aria-labelledby="profile-addresses" data-profile-addresses>
+        <div class="flex items-center justify-between gap-3">
+            <h2 id="profile-addresses" class="text-lg font-semibold text-sf-ink">{{ __st('account.saved_addresses') }}</h2>
+            <x-sf::form.button icon="plus" size="sm" class="hidden lg:inline-flex" data-address-add>{{ __st('account.add_address') }}</x-sf::form.button>
+        </div>
+        <x-sf::account.address-book :addresses="$addresses" :countries="$countries" :phone-country="$phoneCountry" />
     </section>
 
     <section class="sf-card grid gap-4 p-5" aria-labelledby="profile-password">

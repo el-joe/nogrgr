@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(ReturnController::class)->group(function (): void {
     Route::prefix('orders/{order}')->whereUuid('order')->name('orders.returns.')->group(function (): void {
         Route::get('returns/options', 'options')->name('options');
+        Route::post('returns/estimate', 'estimate')->name('estimate');
         Route::get('returns', 'forOrder')->name('index');
         Route::post('returns', 'store')->name('store');
     });

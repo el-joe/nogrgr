@@ -47,11 +47,12 @@ return [
     'notes' => ['inspection_failed' => 'Inspection failed.'],
     'steps' => ['requested' => 'Requested', 'approved' => 'Approved', 'received' => 'Item received', 'inspection' => 'Inspection', 'refund' => 'Refund', 'exchange' => 'Exchange', 'closed' => 'Closed'],
     'fields' => [
-        'item' => 'Item', 'quantity' => 'Quantity', 'reason' => 'Reason', 'description' => 'Description', 'description_min' => 'Reason (min 10 characters)',
+        'return_method' => 'Return method', 'customer_note' => 'Additional notes', 'replacement' => 'Replacement option', 'item' => 'Item', 'quantity' => 'Quantity', 'reason' => 'Reason', 'description' => 'Description', 'description_min' => 'Reason (min 10 characters)',
         'type' => 'Type', 'note' => 'Note', 'message' => 'Message to the customer', 'result' => 'Result', 'condition' => 'Condition',
         'branch' => 'Restock to', 'restock' => 'Restock', 'refund_now' => 'Refund now', 'tracking' => 'Tracking no.', 'photos' => 'Photos',
         'inspector_notes' => 'Inspector notes', 'video' => 'Video', 'reply' => 'Reply',
     ],
+    'inspection_customer' => ['accepted' => 'Your item passed inspection', 'failed' => 'Your item did not pass inspection'],
     'actions_help' => [
         'approve' => 'The customer is told to send the item back.',
         'reject' => 'The customer is told why the return was rejected.',

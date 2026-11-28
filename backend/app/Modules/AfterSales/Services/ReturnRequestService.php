@@ -13,12 +13,14 @@ use App\Modules\AfterSales\Enums\ReturnStatus;
 use App\Modules\AfterSales\Enums\ReturnType;
 use App\Modules\AfterSales\Events\ReturnStatusChanged;
 use App\Modules\AfterSales\Exceptions\AfterSalesException;
+use App\Modules\AfterSales\Models\ReturnReason;
 use App\Modules\AfterSales\Models\ReturnRequest;
 use App\Modules\AfterSales\Models\ReturnRequestMedia;
 use App\Modules\AfterSales\Repositories\Contracts\ReturnRequestRepositoryContract;
 use App\Modules\Commerce\Enums\OrderStatus;
 use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Models\OrderItem;
+use App\Modules\Commerce\Pricing\RefundBreakdown;
 use App\Modules\Commerce\Pricing\RefundCalculator;
 use App\Modules\Commerce\Services\Orders\OrderFinanceService;
 use App\Modules\Commerce\Services\Stock\FulfilmentStockService;
@@ -113,16 +115,7 @@ class ReturnRequestService extends BaseService
         }
 
         $item = $line['item'];
-        $held = $order->items->sum(fn (OrderItem $other): int => $this->returns->heldQuantity($tenantId, $order->uuid, $other->id));
-        $breakdown = RefundCalculator::forReturn(
-            order: $this->tenants->run($tenantId, fn () => $this->finance->refundable($order, $tenantId)),
-            lineGrandTotal: Money::ofMinor($item->grand_total),
-            lineQuantity: $item->quantity,
-            quantity: $data->quantity,
-            sellerFault: $reason->seller_fault,
-            restockingFeeBps: $policy->restocking_fee_bps,
-            wholeOrder: $held + $data->quantity >= $order->items->sum('quantity'),
-        );
+        $breakdown = $this->breakdown($tenantId, $order, $item, $data->quantity, $reason, $this->heldUnits($tenantId, $order));
 
         /** @var ReturnRequest $return */
         $return = $this->transaction(function () use ($tenantId, $order, $data, $actor, $item, $reason, $breakdown): ReturnRequest {
@@ -141,6 +134,10 @@ class ReturnRequestService extends BaseService
                 'reason_code' => $reason->code,
                 'seller_fault' => $reason->seller_fault,
                 'description' => $data->description,
+                'return_method' => $data->returnMethod,
+                'customer_note' => $data->customerNote,
+                'replacement_variant_id' => $data->type === ReturnType::Exchange ? $data->replacementVariantId : null,
+                'replacement_label' => $data->type === ReturnType::Exchange ? $data->replacementLabel : null,
                 'status' => ReturnStatus::Pending,
                 'customer_id' => $order->customer_id,
                 'customer_name' => $order->customer_name,
@@ -157,9 +154,35 @@ class ReturnRequestService extends BaseService
             return $return;
         }, $this->connection());
 
-        ReturnStatusChanged::dispatch($return, null, ReturnStatus::Pending);
+        // After commit: the customer return form opens its lines and evidence in one outer transaction.
+        $this->dispatchAfterCommit(new ReturnStatusChanged($return, null, ReturnStatus::Pending));
 
         return $return;
+    }
+
+    /**
+     * Units of the order already held by open / finished returns.
+     */
+    public function heldUnits(int $tenantId, Order $order): int
+    {
+        return (int) $order->items->sum(fn (OrderItem $item): int => $this->returns->heldQuantity($tenantId, $order->uuid, $item->id));
+    }
+
+    /**
+     * The refundable value of returning units of one line (RefundCalculator::forReturn);
+     * $held = units of the order already being returned.
+     */
+    public function breakdown(int $tenantId, Order $order, OrderItem $item, int $quantity, ReturnReason $reason, int $held): RefundBreakdown
+    {
+        return RefundCalculator::forReturn(
+            order: $this->tenants->run($tenantId, fn () => $this->finance->refundable($order, $tenantId)),
+            lineGrandTotal: Money::ofMinor($item->grand_total),
+            lineQuantity: $item->quantity,
+            quantity: $quantity,
+            sellerFault: $reason->seller_fault,
+            restockingFeeBps: $this->policy->policy()->restocking_fee_bps,
+            wholeOrder: $held + $quantity >= $order->items->sum('quantity'),
+        );
     }
 
     public function act(ReturnRequest $return, ReturnActionData $data, Actor $actor): ReturnRequest

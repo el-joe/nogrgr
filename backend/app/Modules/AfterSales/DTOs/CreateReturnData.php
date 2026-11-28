@@ -2,6 +2,7 @@
 
 namespace App\Modules\AfterSales\DTOs;
 
+use App\Modules\AfterSales\Enums\ReturnMethod;
 use App\Modules\AfterSales\Enums\ReturnType;
 use App\Shared\DTOs\BaseDTO;
 
@@ -16,5 +17,9 @@ final class CreateReturnData extends BaseDTO
         public readonly string $reasonCode,
         public readonly string $description,
         public readonly ReturnType $type = ReturnType::Return,
+        public readonly ?ReturnMethod $returnMethod = null,
+        public readonly ?string $customerNote = null,
+        public readonly ?int $replacementVariantId = null,
+        public readonly ?string $replacementLabel = null,
     ) {}
 }

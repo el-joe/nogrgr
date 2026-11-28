@@ -73,6 +73,7 @@ return [
         'no_address' => 'Add a shipping address to continue.',
         'shipping' => 'Shipping is not available to your selected country.',
         'unavailable_items' => 'Some items in your cart are unavailable.',
+        'store_order_limit' => 'This store cannot accept new orders at this time. Please try again next month.',
         'coupon_invalid' => 'The coupon can’t be used for this order. Remove it to continue.',
         'empty_cart' => 'Your cart is empty.',
         'no_gateway' => 'No payment method is available for this store.',

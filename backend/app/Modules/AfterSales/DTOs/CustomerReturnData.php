@@ -2,6 +2,7 @@
 
 namespace App\Modules\AfterSales\DTOs;
 
+use App\Modules\AfterSales\Enums\ReturnMethod;
 use App\Modules\AfterSales\Enums\ReturnType;
 use App\Shared\DTOs\BaseDTO;
 use Illuminate\Http\UploadedFile;
@@ -23,5 +24,7 @@ final class CustomerReturnData extends BaseDTO
         public readonly array $lines,
         public readonly array $photos = [],
         public readonly ?UploadedFile $video = null,
+        public readonly ?ReturnMethod $returnMethod = null,
+        public readonly ?string $customerNote = null,
     ) {}
 }

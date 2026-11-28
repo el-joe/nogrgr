@@ -5,6 +5,7 @@ return [
     'return_action' => ['approve' => 'موافقة', 'reject' => 'رفض', 'request_info' => 'طلب معلومات', 'resume' => 'إعادة للمراجعة', 'mark_received' => 'تعيين كمستلم', 'inspect' => 'إكمال الفحص', 'refund' => 'استرداد', 'ship_exchange' => 'شحن الاستبدال', 'complete_exchange' => 'إكمال الاستبدال', 'close' => 'إغلاق'],
     'return_type' => ['return' => 'إرجاع', 'exchange' => 'استبدال'],
     'inspection_result' => ['accepted' => 'مقبول', 'failed' => 'مرفوض'],
+    'return_method' => ['courier_pickup' => 'استلام بواسطة المندوب', 'drop_off' => 'تسليم في المتجر', 'ship_back' => 'أشحنه بنفسي'],
     'return_event_type' => ['status' => 'حالة', 'note' => 'ملاحظة', 'message' => 'رسالة'],
     'return_block' => ['order_not_returnable' => 'لم يُشحن بعد', 'return_window_expired' => 'انتهت مدة الإرجاع', 'nothing_returnable' => 'لا يوجد ما يمكن إرجاعه'],
     'return_media_kind' => ['photo' => 'صورة', 'video' => 'فيديو', 'inspection' => 'فحص'],

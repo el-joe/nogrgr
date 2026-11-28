@@ -15,9 +15,8 @@ use Illuminate\Support\Facades\Auth;
 /**
  * Server-side first paint of the theme cart (cart page, mini cart, checkout): the same
  * Store API cart (CartService + CartResource, never re-priced here), the theme session
- * cart token, the signed-in customer and the StorefrontContext display currency. A cart
- * without a country gets the storefront context country first (like PUT cart/country),
- * so totals are always quoted for the country the visitor shops in.
+ * cart token, the signed-in customer, and the StorefrontContext display currency and
+ * country (lines priced for it; shipping per CartService::shippingCountry).
  */
 class StorefrontCart
 {
@@ -38,6 +37,7 @@ class StorefrontCart
             token: is_string($token) && $token !== '' ? $token : null,
             customer: $customer instanceof Customer ? $customer : null,
             displayCurrency: $currency,
+            countryId: $this->context->countryId(),
         );
     }
 
@@ -48,15 +48,7 @@ class StorefrontCart
      */
     public function data(Request $request): array
     {
-        $context = $this->context($request);
-        $cart = $this->carts->current($context);
-        $countryId = $this->context->countryId();
-
-        if ($cart !== null && $cart->country_id === null && $countryId !== null) {
-            $summary = $this->carts->switchCountry($context, $countryId);
-        } else {
-            $summary = $this->carts->summary($context);
-        }
+        $summary = $this->carts->summary($this->context($request));
 
         if ($request->hasSession() && $summary->cart?->token !== null) {
             $request->session()->put(StoreApiCart::CART_TOKEN_SESSION_KEY, $summary->cart->token);

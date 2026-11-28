@@ -18,6 +18,7 @@ use App\Modules\Catalog\Services\Imports\CatalogImportService;
 use App\Modules\Integrations\Repositories\Contracts\SettingsRepositoryContract;
 use App\Modules\Inventory\Models\Branch;
 use App\Modules\Inventory\Models\BranchStock;
+use App\Modules\Localization\Models\Country;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\UploadedFile;
@@ -320,6 +321,25 @@ it('is idempotent: re-running skips unchanged items and updates changed ones wit
 
     $noUpdates = runImport(['update_existing' => false]);
     expect($noUpdates->skipped_count)->toBe(2)->and($counts())->toBe($before);
+});
+
+it('retries on the next sync a product whose stock had no branch to go to', function (): void {
+    configureNeozena();
+    mapNeozenaCategory();
+    Country::query()->update(['is_active' => false]);
+    fakeNeozena([[neozenaProduct(1)]]);
+    $this->actingAs(catalogAdmin(), 'admin');
+
+    runImport();
+    $product = Product::query()->where('external_id', 1)->firstOrFail();
+    expect($product->stock)->toBe(0)->and(Branch::query()->count())->toBe(0);
+
+    $branch = Branch::factory()->create();
+    $second = runImport();
+
+    expect($second->only(['updated_count', 'skipped_count']))->toBe(['updated_count' => 1, 'skipped_count' => 0])
+        ->and($product->refresh()->stock)->toBe(10)
+        ->and(BranchStock::query()->where('branch_id', $branch->id)->sum('on_hand'))->toEqual(10);
 });
 
 it('adopts an existing product with the same SKU instead of duplicating it', function (): void {

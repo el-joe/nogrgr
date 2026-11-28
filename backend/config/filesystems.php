@@ -46,6 +46,11 @@ return [
         'central' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
+            // Group-writable: the web server and CLI queue workers / artisan run as different users of one group.
+            'permissions' => [
+                'file' => ['public' => 0664, 'private' => 0660],
+                'dir' => ['public' => 0775, 'private' => 0770],
+            ],
             'serve' => false,
             'throw' => false,
             'report' => false,

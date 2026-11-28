@@ -2,6 +2,7 @@
 
 return [
     'blocks' => [
+        'store_order_limit' => 'This store cannot accept new orders at this time. Please try again next month.',
         'empty_cart' => 'Your cart is empty.',
         'sign_in_required' => 'Please sign in to continue.',
         'no_address' => 'Please add a shipping address before placing your order.',

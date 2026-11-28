@@ -13,6 +13,8 @@
     $left = collect($o['lines'])->where('returnable', true)->sum('available');
     $videoReasons = collect($o['reasons'])->where('requires_video', true)->pluck('name');
     $orderUuid = $o['order']['uuid'];
+    $picked = (int) request()->query('item');
+    $methods = $o['return_methods'];
 @endphp
 <x-sf::account.layout :title="__st('returns.request_title')" :crumb="__st('returns.title')" active="returns" page="return-create" :seo="$seo" :back="route('storefront.orders.show', $orderUuid)">
     <p class="-mt-2 text-xs leading-4 text-sf-muted">{{ __st('returns.order_line', ['number' => $o['order']['number'], 'count' => $left]) }}</p>
@@ -25,7 +27,7 @@
                 <legend class="sr-only">{{ __st('returns.item') }}</legend>
                 @foreach ($o['lines'] as $index => $line)
                     <div @class(['flex items-center gap-3', 'opacity-50' => ! $line['returnable']]) data-return-line>
-                        <input type="checkbox" class="sf-check" id="sf-return-line-{{ $index }}" @checked($line['returnable'] && count($o['lines']) === 1) @disabled(! $line['returnable']) data-return-line-toggle aria-label="{{ __st('returns.select_item', ['name' => $line['name']]) }}">
+                        <input type="checkbox" class="sf-check" id="sf-return-line-{{ $index }}" @checked($line['returnable'] && (count($o['lines']) === 1 || $picked === $line['order_item_id'])) @disabled(! $line['returnable']) data-return-line-toggle aria-label="{{ __st('returns.select_item', ['name' => $line['name']]) }}">
                         <input type="hidden" name="items[{{ $index }}][order_item_id]" value="{{ $line['order_item_id'] }}" disabled data-return-line-field>
                         <x-sf::order.thumb :src="$line['image_url']" :size="40" />
                         <label for="sf-return-line-{{ $index }}" class="grid min-w-0 flex-1 cursor-pointer gap-0.5">
@@ -43,9 +45,31 @@
                             </div>
                         @endif
                     </div>
+                    @if ($line['returnable'] && $line['exchange_options'] !== [])
+                        <div class="grid gap-1 ps-8" data-return-replacement="{{ $index }}" hidden>
+                            <label class="text-xs font-medium text-sf-ink" for="sf-return-replacement-{{ $index }}">{{ __st('returns.replacement') }}</label>
+                            <div class="sf-control text-sm min-h-9">
+                                <select id="sf-return-replacement-{{ $index }}" name="items[{{ $index }}][replacement_variant_id]" class="!h-8" disabled data-return-replacement-field>
+                                    <option value="">{{ __st('returns.same_option') }}</option>
+                                    @foreach ($line['exchange_options'] as $option)
+                                        <option value="{{ $option['id'] }}">{{ $option['label'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <p class="text-xs text-sf-muted">{{ __st('returns.same_price_hint') }}</p>
+                        </div>
+                    @endif
                 @endforeach
                 <p class="sf-error" data-error-for="items" hidden></p>
                 <p class="sf-error" data-return-need-item hidden>{{ __st('returns.need_item') }}</p>
+            </fieldset>
+
+            <fieldset class="grid gap-2" data-return-methods>
+                <legend class="sf-label mb-1.5">{{ __st('returns.return_method') }}<span class="sf-required" aria-hidden="true">*</span></legend>
+                @foreach ($methods as $method)
+                    <label class="flex cursor-pointer items-center gap-2 text-sm text-sf-ink"><input type="radio" name="return_method" value="{{ $method['value'] }}" class="sf-radio" required @checked($loop->first)>{{ $method['label'] }}</label>
+                @endforeach
+                <p class="sf-error" data-error-for="return_method" hidden></p>
             </fieldset>
 
             <x-sf::form.field :label="__st('returns.reason')" for="sf-return-reason" required error-key="reason_code">
@@ -78,6 +102,24 @@
             <div class="flex items-start gap-2.5 rounded-lg bg-sf-warning-bg px-3 py-2.5 text-xs leading-4 text-sf-ink">
                 <x-ui::icon name="alert-triangle" :size="16" class="shrink-0 text-sf-warning" />
                 <p data-video-required-text>{{ $videoReasons->isNotEmpty() ? __st('returns.video_required', ['reasons' => $videoReasons->implode('”, “')]) : __st('returns.upload_limits') }}</p>
+            </div>
+
+            <x-sf::form.field :label="__st('returns.customer_note')" for="sf-return-note" error-key="customer_note">
+                <textarea id="sf-return-note" name="customer_note" class="sf-control text-sm min-h-[60px] py-2.5" maxlength="1000" placeholder="{{ __st('returns.customer_note_hint') }}"></textarea>
+            </x-sf::form.field>
+
+            <div class="grid gap-2 rounded-lg border border-sf-border p-3 text-sm" aria-live="polite" data-return-estimate="{{ route('store-api.v1.orders.returns.estimate', $orderUuid) }}">
+                <p class="font-medium text-sf-ink">{{ __st('returns.estimate') }}</p>
+                <p class="text-xs text-sf-muted" data-estimate-hint>{{ __st('returns.estimate_choose') }}</p>
+                <p class="text-xs text-sf-muted" data-estimate-unpaid hidden>{{ __st('returns.estimate_unpaid') }}</p>
+                <dl class="grid gap-1.5" data-estimate-rows hidden>
+                    <div class="flex gap-3"><dt class="flex-1 text-sf-muted">{{ __st('returns.estimate_items') }}</dt><dd class="text-sf-ink" data-estimate="items"></dd></div>
+                    <div class="flex gap-3" data-estimate-row="shipping"><dt class="flex-1 text-sf-muted">{{ __st('returns.estimate_shipping') }}</dt><dd class="text-sf-ink" data-estimate="shipping"></dd></div>
+                    <div class="flex gap-3" data-estimate-row="return_fee"><dt class="flex-1 text-sf-muted">{{ __st('returns.estimate_fee') }}</dt><dd class="text-sf-ink">− <span data-estimate="return_fee"></span></dd></div>
+                    <div class="flex gap-3 border-t border-sf-border pt-1.5 font-semibold"><dt class="flex-1 text-sf-ink">{{ __st('returns.estimate_total') }}</dt><dd class="text-sf-ink" data-estimate="total"></dd></div>
+                    <p class="text-xs text-sf-success" data-estimate-waived hidden>{{ __st('returns.estimate_waived') }}</p>
+                    <p class="text-xs text-sf-muted">{{ __st('returns.estimate_hint') }}</p>
+                </dl>
             </div>
 
             @if ($o['policy']['deadline'] || $o['policy']['return_shipping_payer_label'])

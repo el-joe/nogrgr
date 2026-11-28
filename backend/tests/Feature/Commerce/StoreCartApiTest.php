@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Commerce\DTOs\Cart\CartContextData;
 use App\Modules\Commerce\Models\Cart;
 use App\Modules\Commerce\Models\StoreCoupon;
 use App\Modules\Commerce\Models\StoreFlashSale;
@@ -201,7 +202,7 @@ it('matches the OrderComposer golden result end to end', function (): void {
     $expected = $this->shop->tenant->run(function () use ($data) {
         $cart = Cart::query()->where('token', $data['token'])->firstOrFail();
 
-        return app(CartService::class)->summaryOf($cart, null)->composed;
+        return app(CartService::class)->summaryOf($cart, new CartContextData)->composed;
     });
 
     expect($expected->primary?->platformProfit->minor)->toBe(5420)

@@ -11,6 +11,7 @@ use App\Modules\Commerce\Models\OrderStatusHistory;
 use App\Modules\Commerce\Models\OrderTrackingEvent;
 use App\Modules\Commerce\Repositories\Contracts\OrderRepositoryContract;
 use App\Shared\Repositories\BaseRepository;
+use DateTimeInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -67,6 +68,11 @@ class OrderRepository extends BaseRepository implements OrderRepositoryContract
     public function countForCustomer(int $customerId): int
     {
         return $this->query()->where('customer_id', $customerId)->count();
+    }
+
+    public function countSince(DateTimeInterface $since): int
+    {
+        return $this->query()->where('created_at', '>=', $since)->count();
     }
 
     public function nextNumber(): string

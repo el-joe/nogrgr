@@ -30,6 +30,7 @@ return [
         'nothing_returnable' => 'لا يوجد منتج قابل للإرجاع في هذا الطلب.',
         'category_not_returnable' => 'هذا المنتج ضمن فئة غير قابلة للإرجاع.',
         'video_required' => 'يرجى إرفاق فيديو للمنتج لهذا الإرجاع.',
+        'replacement_unavailable' => 'خيار الاستبدال لم يعد متاحاً.',
         'withdraw_not_allowed' => 'يمكن سحب طلب الإرجاع فقط أثناء المراجعة (الحالة الآن ":status").',
         'reply_not_allowed' => 'حالة هذا المرتجع ":status"؛ لم يعد الرد متاحًا.',
     ],

@@ -12,5 +12,6 @@ final class ReturnLineData extends BaseDTO
     public function __construct(
         public readonly int $orderItemId,
         public readonly int $quantity,
+        public readonly ?int $replacementVariantId = null,
     ) {}
 }

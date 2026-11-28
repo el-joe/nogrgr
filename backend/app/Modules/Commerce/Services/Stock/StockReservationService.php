@@ -7,6 +7,7 @@ use App\Modules\Commerce\DTOs\Cart\StockRequirement;
 use App\Modules\Commerce\Enums\CheckoutBlock;
 use App\Modules\Commerce\Enums\StockReservationStatus;
 use App\Modules\Commerce\Exceptions\CommerceException;
+use App\Modules\Commerce\Models\StockReservation;
 use App\Modules\Commerce\Repositories\Contracts\StockReservationRepositoryContract;
 use App\Modules\Inventory\Events\StoreStockChanged;
 use App\Shared\Services\BaseService;
@@ -78,16 +79,8 @@ class StockReservationService extends BaseService
     {
         foreach ($this->reservations->forGroup($checkoutGroup, StockReservationStatus::Reserved) as $reservation) {
             if ($reservation->product_source === StoreProductSource::Own) {
-                $previous = $this->reservations->ownStock($reservation->product_id);
-                $this->reservations->decrementOwnStock($reservation->product_id, $reservation->variant_key, $reservation->quantity);
+                $this->moveOwnStock($reservation, -$reservation->quantity);
                 $this->reservations->setStatus($reservation, StockReservationStatus::Deducted);
-                $current = $this->reservations->ownStock($reservation->product_id);
-                $tenant = tenant();
-
-                // Stock alerts of the store (low / out of stock, decision #124).
-                if ($previous !== null && $current !== null && $current !== $previous && $tenant !== null) {
-                    $this->dispatchAfterCommit(new StoreStockChanged((int) $tenant->getTenantKey(), $reservation->product_id, $previous, $current));
-                }
 
                 continue;
             }
@@ -102,11 +95,36 @@ class StockReservationService extends BaseService
     public function release(string $checkoutGroup, ?string $orderUuid = null): void
     {
         foreach ($this->reservations->forGroup($checkoutGroup) as $reservation) {
-            $live = in_array($reservation->status, [StockReservationStatus::Reserved, StockReservationStatus::Committed], true);
+            if ($orderUuid !== null && $reservation->order_uuid !== $orderUuid) {
+                continue;
+            }
 
-            if ($live && ($orderUuid === null || $reservation->order_uuid === $orderUuid)) {
+            if (in_array($reservation->status, [StockReservationStatus::Reserved, StockReservationStatus::Committed], true)) {
+                $this->reservations->setStatus($reservation, StockReservationStatus::Released);
+            } elseif ($reservation->status === StockReservationStatus::Deducted && $reservation->product_source === StoreProductSource::Own) {
+                // Own stock left the shelf on payment: an order that never shipped puts it back.
+                $this->moveOwnStock($reservation, $reservation->quantity);
                 $this->reservations->setStatus($reservation, StockReservationStatus::Released);
             }
+        }
+    }
+
+    private function moveOwnStock(StockReservation $reservation, int $delta): void
+    {
+        $previous = $this->reservations->ownStock($reservation->product_id);
+
+        if ($delta < 0) {
+            $this->reservations->decrementOwnStock($reservation->product_id, $reservation->variant_key, -$delta);
+        } else {
+            $this->reservations->incrementOwnStock($reservation->product_id, $reservation->variant_key, $delta);
+        }
+
+        $current = $this->reservations->ownStock($reservation->product_id);
+        $tenant = tenant();
+
+        // Stock alerts of the store (low / out of stock, decision #124).
+        if ($previous !== null && $current !== null && $current !== $previous && $tenant !== null) {
+            $this->dispatchAfterCommit(new StoreStockChanged((int) $tenant->getTenantKey(), $reservation->product_id, $previous, $current));
         }
     }
 

@@ -3,6 +3,7 @@
 namespace App\Modules\AfterSales\Models;
 
 use App\Modules\AfterSales\Enums\InspectionResult;
+use App\Modules\AfterSales\Enums\ReturnMethod;
 use App\Modules\AfterSales\Enums\ReturnStatus;
 use App\Modules\AfterSales\Enums\ReturnType;
 use App\Modules\Commerce\Enums\ActorType;
@@ -32,6 +33,10 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property string $reason_code
  * @property bool $seller_fault
  * @property string $description
+ * @property ReturnMethod|null $return_method
+ * @property string|null $customer_note
+ * @property int|null $replacement_variant_id
+ * @property string|null $replacement_label
  * @property ReturnStatus $status
  * @property int|null $customer_id
  * @property string|null $customer_name
@@ -72,7 +77,7 @@ class ReturnRequest extends Model
      */
     protected $fillable = [
         'reference', 'tenant_id', 'order_uuid', 'order_number', 'order_item_id', 'store_product_id', 'product_name', 'variant_label',
-        'quantity', 'type', 'reason_code', 'seller_fault', 'description', 'status', 'customer_id', 'customer_name', 'items_amount',
+        'quantity', 'type', 'reason_code', 'seller_fault', 'description', 'return_method', 'customer_note', 'replacement_variant_id', 'replacement_label', 'status', 'customer_id', 'customer_name', 'items_amount',
         'shipping_amount', 'return_fee', 'refund_amount', 'inspection_result', 'inspection_condition', 'inspection_notes', 'restocked',
         'restock_branch_id', 'exchange_tracking_number', 'created_by_type', 'created_by_id', 'approved_at', 'received_at', 'inspected_at',
         'restocked_at', 'refunded_at', 'exchange_shipped_at', 'exchanged_at', 'cancelled_at', 'closed_at',
@@ -90,6 +95,8 @@ class ReturnRequest extends Model
             'quantity' => 'integer',
             'type' => ReturnType::class,
             'seller_fault' => 'boolean',
+            'return_method' => ReturnMethod::class,
+            'replacement_variant_id' => 'integer',
             'status' => ReturnStatus::class,
             'customer_id' => 'integer',
             'items_amount' => 'integer',

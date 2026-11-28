@@ -60,15 +60,21 @@ function bindCancel() {
         form.querySelector('[data-cancel-note]').value = '';
     });
 
-    modal.querySelector('[data-cancel-next]')?.addEventListener('click', () => {
-        const reason = stepOne.querySelector('input[name="cancel_reason"]:checked')?.value;
+    const noteField = () => form.querySelector('[data-cancel-note]');
+    const noteError = () => form.querySelector('[data-cancel-note-required]');
+    let needsNote = false;
 
-        if (!reason) {
+    modal.querySelector('[data-cancel-next]')?.addEventListener('click', () => {
+        const choice = stepOne.querySelector('input[name="cancel_reason"]:checked');
+
+        if (!choice) {
             modal.querySelector('[data-cancel-reason-error]').hidden = false;
             return;
         }
 
-        form.querySelector('input[name="reason"]').value = reason;
+        needsNote = choice.dataset.requiresNote === '1';
+        form.querySelector('input[name="reason_code"]').value = choice.value;
+        noteError().hidden = true;
         form.querySelector('[data-cancel-summary]').textContent = text('summary').replace(':number', current?.number ?? '');
         const refund = form.querySelector('[data-cancel-refund]');
         refund.hidden = !current?.paid;
@@ -78,11 +84,17 @@ function bindCancel() {
         form.querySelector('[type="submit"]')?.focus({ preventScroll: true });
     });
 
-    /* The note travels inside `reason` (Store API: one free-text reason). */
-    form.addEventListener('submit', () => {
-        const note = form.querySelector('[data-cancel-note]').value.trim();
-        const reason = form.querySelector('input[name="reason"]');
-        reason.value = [reason.value.split(' — ')[0], note].filter(Boolean).join(' — ').slice(0, 500);
+    /* Store API: `reason_code` of the customer list + the free note as `reason`. Capture: runs before ajax-forms. */
+    form.addEventListener('submit', (event) => {
+        const note = noteField().value.trim();
+        form.querySelector('input[name="reason"]').value = note;
+
+        if (needsNote && !note) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            noteError().hidden = false;
+            noteField().focus();
+        }
     }, true);
 
     form.addEventListener('ajax:success', () => {

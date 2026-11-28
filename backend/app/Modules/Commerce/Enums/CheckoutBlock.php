@@ -6,12 +6,13 @@ use App\Shared\Enums\Concerns\HasEnumHelpers;
 
 /**
  * Why the pay button is disabled / place order is refused (spec 06 §2, spec 08 §3 guard
- * order): empty cart → address → lines → shipping → gateway.
+ * order): plan order limit → empty cart → address → lines → shipping → gateway.
  */
 enum CheckoutBlock: string
 {
     use HasEnumHelpers;
 
+    case StoreOrderLimit = 'store_order_limit';
     case EmptyCart = 'empty_cart';
     case SignInRequired = 'sign_in_required';
     case NoAddress = 'no_address';

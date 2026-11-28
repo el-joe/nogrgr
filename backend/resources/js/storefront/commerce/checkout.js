@@ -13,7 +13,7 @@ import { bindCartLines } from './lines';
 import { fragmentLoader, readJson, storeApi } from './api';
 import { CardDeclined, initPaymentSection, paymentFailed, startPayment } from './payment';
 
-const EXTRA_BLOCKS = ['unavailable_items', 'coupon_invalid', 'empty_cart'];
+const EXTRA_BLOCKS = ['unavailable_items', 'coupon_invalid', 'empty_cart', 'store_order_limit'];
 
 const newKey = () => (window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`).replace(/[^A-Za-z0-9_\-:.]/g, '');
 
@@ -124,6 +124,8 @@ export function initCheckout(page) {
     let timer = null;
     page.addEventListener('checkout:address-change', (event) => {
         selection = { ...selection, ...(event.detail ?? {}) };
+        /* Rendered when the page loads without an address; the first saved one resolves it. */
+        page.querySelectorAll('[data-no-address-note]').forEach((note) => (note.hidden = Boolean(selection.shipping)));
         clearTimeout(timer);
         timer = setTimeout(refresh, 150);
     });

@@ -8,6 +8,8 @@ use App\Modules\Commerce\Enums\CheckoutBlock;
 use App\Modules\Commerce\Exceptions\CommerceException;
 use App\Modules\Commerce\Support\MoneyPresenter;
 use App\Modules\Identity\Models\Customer;
+use App\Modules\Localization\Services\StoreCountries;
+use App\Modules\Storefront\Services\StorefrontContext;
 use Illuminate\Http\Request;
 
 /**
@@ -35,7 +37,26 @@ trait ResolvesStoreApiContext
             token: is_string($token) && $token !== '' ? $token : null,
             customer: StoreApiCustomer::resolve($request),
             displayCurrency: is_string($currency) ? $currency : null,
+            countryId: $this->shopperCountryId($request),
         );
+    }
+
+    /**
+     * The country the shopper browses in: `X-Country` (ISO2, apps); theme calls on the
+     * store session use the storefront context, so the Store API quotes exactly what the
+     * server-rendered pages show. Null lets the cart fall back to its own chain.
+     */
+    private function shopperCountryId(Request $request): ?int
+    {
+        $iso2 = $request->header('X-Country');
+
+        if (is_string($iso2) && preg_match('/^[A-Za-z]{2}$/', $iso2) === 1) {
+            return app(StoreCountries::class)->findByIso2(strtoupper($iso2))?->id;
+        }
+
+        return $request->hasSession() && ! $request->hasHeader('X-Tenant') && $request->bearerToken() === null
+            ? app(StorefrontContext::class)->countryId()
+            : null;
     }
 
     protected function requireCustomer(Request $request): Customer

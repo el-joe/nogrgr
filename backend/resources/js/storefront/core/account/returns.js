@@ -6,7 +6,11 @@
  *   request return    form[data-return-form]: a line's checkbox enables its hidden id +
  *                     quantity fields, so only chosen lines are sent; at least one line.
  * The forms themselves submit as multipart through data-ajax (core/ajax-forms).
+ *   exchange          [data-return-replacement] shows the same-price options of a chosen line.
+ *   estimate          [data-return-estimate='store-api url'] follows lines + reason.
  */
+import { http } from '../../../core/http';
+
 const formatText = (template, values) => Object.entries(values).reduce((text, [key, value]) => text.replace(`:${key}`, value), template ?? '');
 
 function keep(input, files) {
@@ -106,18 +110,30 @@ function bindEvidence(box) {
 
 function bindReturnForm(form) {
     const sync = () => {
+        const exchange = form.querySelector('input[name="type"]:checked')?.value === 'exchange';
+
         form.querySelectorAll('[data-return-line]').forEach((line) => {
             const on = Boolean(line.querySelector('[data-return-line-toggle]')?.checked);
             line.querySelectorAll('[data-return-line-field]').forEach((field) => {
                 field.disabled = !on;
             });
+            const box = line.nextElementSibling?.matches('[data-return-replacement]') ? line.nextElementSibling : null;
+            if (box) {
+                box.hidden = !(on && exchange);
+                box.querySelector('[data-return-replacement-field]').disabled = box.hidden;
+            }
         });
     };
+    const estimate = bindEstimate(form);
 
     form.addEventListener('change', (event) => {
-        if (event.target.matches('[data-return-line-toggle]')) {
+        if (event.target.matches('[data-return-line-toggle], input[name="type"]')) {
             sync();
             form.querySelector('[data-return-need-item]').hidden = true;
+        }
+
+        if (event.target.matches('[data-return-line-toggle], [data-return-line-field], [data-return-reason], input[name="type"]')) {
+            estimate();
         }
     });
 
@@ -154,6 +170,63 @@ function bindReturnForm(form) {
     }, true);
 
     sync();
+    estimate();
+}
+
+/* Estimated refund of the chosen lines (Store API; amounts only ever come from the server). */
+function bindEstimate(form) {
+    const box = form.querySelector('[data-return-estimate]');
+    let request = 0;
+
+    if (!box) {
+        return () => {};
+    }
+
+    const part = (name) => box.querySelector(`[data-estimate-${name}]`);
+
+    return async () => {
+        const reason = form.querySelector('[data-return-reason]')?.value;
+        const exchange = form.querySelector('input[name="type"]:checked')?.value === 'exchange';
+        const items = [...form.querySelectorAll('[data-return-line]')]
+            .filter((line) => line.querySelector('[data-return-line-toggle]')?.checked)
+            .map((line) => ({
+                order_item_id: Number(line.querySelector('input[type="hidden"]').value),
+                quantity: Number(line.querySelector('select')?.value || 1),
+            }));
+        const current = ++request;
+
+        box.hidden = exchange;
+
+        if (exchange || !reason || !items.length) {
+            part('rows').hidden = true;
+            part('unpaid').hidden = true;
+            part('hint').hidden = false;
+            return;
+        }
+
+        try {
+            const { data } = await http.post(box.dataset.returnEstimate, { reason_code: reason, items }, { toast: false, silent: true });
+
+            if (current !== request) {
+                return;
+            }
+
+            part('hint').hidden = true;
+            part('unpaid').hidden = data.paid;
+            part('rows').hidden = false;
+            ['items', 'shipping', 'return_fee', 'total'].forEach((key) => {
+                box.querySelector(`[data-estimate="${key}"]`).textContent = data[key].display?.formatted ?? data[key].formatted;
+                const row = box.querySelector(`[data-estimate-row="${key}"]`);
+                if (row) {
+                    row.hidden = Number(data[key].amount) === 0;
+                }
+            });
+            part('waived').hidden = !data.fee_waived;
+        } catch {
+            part('rows').hidden = true;
+            part('hint').hidden = false;
+        }
+    };
 }
 
 export function initReturns(root = document) {

@@ -23,7 +23,7 @@ return [
     'payment_source' => ['tenant' => 'Store account', 'central' => 'Platform account'],
     'gateway_connection' => ['connected' => 'Connected', 'not_connected' => 'Not connected'],
     'checkout_attempt_status' => ['processing' => 'Processing', 'completed' => 'Completed', 'failed' => 'Failed'],
-    'checkout_block' => ['empty_cart' => 'Empty cart', 'sign_in_required' => 'Sign-in required', 'no_address' => 'No address', 'unavailable_items' => 'Unavailable items', 'shipping_unavailable' => 'Shipping unavailable', 'no_gateway' => 'No payment method', 'gateway_unavailable' => 'Payment method unavailable', 'coupon_invalid' => 'Coupon invalid', 'stock_changed' => 'Stock changed'],
+    'checkout_block' => ['store_order_limit' => 'Order limit reached', 'empty_cart' => 'Empty cart', 'sign_in_required' => 'Sign-in required', 'no_address' => 'No address', 'unavailable_items' => 'Unavailable items', 'shipping_unavailable' => 'Shipping unavailable', 'no_gateway' => 'No payment method', 'gateway_unavailable' => 'Payment method unavailable', 'coupon_invalid' => 'Coupon invalid', 'stock_changed' => 'Stock changed'],
     'actor_type' => ['customer' => 'Customer', 'vendor' => 'Store', 'admin' => 'Admin', 'system' => 'System', 'gateway' => 'Payment gateway'],
     'fulfilment_status' => ['pending' => 'To ship', 'packed' => 'Packed', 'in_transit' => 'In transit', 'out_for_delivery' => 'Out for delivery', 'delayed' => 'Delayed', 'delivered' => 'Delivered'],
     'cancellation_reason' => [

@@ -5,6 +5,7 @@ return [
     'return_action' => ['approve' => 'Approve', 'reject' => 'Reject', 'request_info' => 'Request more info', 'resume' => 'Back to review', 'mark_received' => 'Mark received', 'inspect' => 'Complete inspection', 'refund' => 'Refund', 'ship_exchange' => 'Ship exchange', 'complete_exchange' => 'Complete exchange', 'close' => 'Close'],
     'return_type' => ['return' => 'Return', 'exchange' => 'Exchange'],
     'inspection_result' => ['accepted' => 'Accepted', 'failed' => 'Failed'],
+    'return_method' => ['courier_pickup' => 'Courier pickup', 'drop_off' => 'Drop off at the store', 'ship_back' => 'Ship it back myself'],
     'return_event_type' => ['status' => 'Status', 'note' => 'Note', 'message' => 'Message'],
     'return_block' => ['order_not_returnable' => 'Not shipped yet', 'return_window_expired' => 'Return window ended', 'nothing_returnable' => 'Nothing left to return'],
     'return_media_kind' => ['photo' => 'Photo', 'video' => 'Video', 'inspection' => 'Inspection'],

@@ -2,6 +2,7 @@
 
 namespace App\Modules\AfterSales\Http\Resources\StoreApi;
 
+use App\Modules\AfterSales\Enums\RefundStatus;
 use App\Modules\AfterSales\Enums\ReturnEventType;
 use App\Modules\AfterSales\Models\Refund;
 use App\Modules\AfterSales\Models\ReturnReason;
@@ -95,6 +96,12 @@ class ReturnResource extends JsonResource
 
         return $data + [
             'description' => $return->description,
+            'return_method' => $return->return_method?->value,
+            'return_method_label' => $return->return_method?->label(),
+            'customer_note' => $return->customer_note,
+            'replacement_label' => $return->replacement_label,
+            'inspection_result' => $return->inspection_result?->value,
+            'inspection_label' => $return->inspection_result === null ? null : __('after-sales::returns.inspection_customer.'.$return->inspection_result->value),
             'amounts' => [
                 'items' => $money->present($return->items_amount),
                 'shipping' => $money->present($return->shipping_amount),
@@ -137,7 +144,10 @@ class ReturnResource extends JsonResource
                 'status' => $refund->status->value,
                 'status_label' => $refund->status->label(),
                 'amount' => $money->present($refund->amount),
-                'processed_at' => $refund->processed_at?->toIso8601String(),
+                'method_label' => $refund->method->label(),
+                'requested_at' => $refund->requested_at->toIso8601String(),
+                // processed_at is also stamped for failed / rejected attempts: customers only see a completion date.
+                'processed_at' => $refund->status === RefundStatus::Completed ? $refund->processed_at?->toIso8601String() : null,
             ])->all(),
         ];
     }

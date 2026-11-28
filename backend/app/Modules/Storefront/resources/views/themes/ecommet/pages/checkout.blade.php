@@ -36,6 +36,7 @@
             'card_error' => __st('checkout.card.error'),
             'unavailable_items' => __st('checkout.reasons.unavailable_items'),
             'coupon_invalid' => __st('checkout.reasons.coupon_invalid'),
+            'store_order_limit' => __st('checkout.reasons.store_order_limit'),
             'empty_cart' => __st('checkout.reasons.empty_cart'),
             'gateway_blocked_title' => __st('checkout.toasts.gateway_blocked_title'),
             'gateway_blocked' => __st('checkout.toasts.gateway_blocked'),

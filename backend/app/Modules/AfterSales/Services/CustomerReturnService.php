@@ -5,10 +5,12 @@ namespace App\Modules\AfterSales\Services;
 use App\Modules\AfterSales\DTOs\Actor;
 use App\Modules\AfterSales\DTOs\CreateReturnData;
 use App\Modules\AfterSales\DTOs\CustomerReturnData;
+use App\Modules\AfterSales\DTOs\ReturnLineData;
 use App\Modules\AfterSales\DTOs\ReturnMessageData;
 use App\Modules\AfterSales\Enums\ReturnBlock;
 use App\Modules\AfterSales\Enums\ReturnEventType;
 use App\Modules\AfterSales\Enums\ReturnMediaKind;
+use App\Modules\AfterSales\Enums\ReturnType;
 use App\Modules\AfterSales\Events\ReturnCustomerMessaged;
 use App\Modules\AfterSales\Exceptions\AfterSalesException;
 use App\Modules\AfterSales\Models\ReturnPolicy;
@@ -26,6 +28,7 @@ use App\Modules\Commerce\Models\Order;
 use App\Modules\Commerce\Models\OrderItem;
 use App\Modules\Commerce\Models\OrderStatusHistory;
 use App\Modules\Identity\Models\Customer;
+use App\Shared\Money\Money;
 use App\Shared\Services\BaseService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
@@ -47,13 +50,14 @@ class CustomerReturnService extends BaseService
         private readonly CategoryRepositoryContract $categories,
         private readonly ProductRepositoryContract $products,
         private readonly StoreProductRepositoryContract $storeProducts,
+        private readonly ExchangeOptionService $exchanges,
     ) {}
 
     /**
      * What the "request return" form needs: returnable lines, reasons, policy, deadline
      * and why the order cannot be returned (if so).
      *
-     * @return array{policy: ReturnPolicy, reasons: list<ReturnReason>, deadline: Carbon|null, block: ReturnBlock|null, lines: list<array{item: OrderItem, available: int, returnable: bool}>}
+     * @return array{policy: ReturnPolicy, reasons: list<ReturnReason>, deadline: Carbon|null, block: ReturnBlock|null, lines: list<array{item: OrderItem, available: int, returnable: bool, exchange_options: array<int, string>}>}
      */
     public function options(int $tenantId, Order $order): array
     {
@@ -64,7 +68,13 @@ class CustomerReturnService extends BaseService
 
         foreach ($order->items as $item) {
             $left = $available[$item->id]['available'] ?? 0;
-            $lines[] = ['item' => $item, 'available' => $left, 'returnable' => $left > 0 && ! in_array($item->id, $blocked, true)];
+            $returnable = $left > 0 && ! in_array($item->id, $blocked, true);
+            $lines[] = [
+                'item' => $item,
+                'available' => $left,
+                'returnable' => $returnable,
+                'exchange_options' => $returnable && $policy->allow_exchanges ? $this->exchanges->forItem($order, $item) : [],
+            ];
         }
 
         $block = $this->block($order, $policy);
@@ -108,6 +118,7 @@ class CustomerReturnService extends BaseService
 
         $available = $this->returns->returnableLines($tenantId, $order);
         $blocked = $this->blockedItemIds($order);
+        $replacements = [];
 
         foreach ($data->lines as $line) {
             if (in_array($line->orderItemId, $blocked, true)) {
@@ -123,25 +134,77 @@ class CustomerReturnService extends BaseService
             if ($line->quantity > $left) {
                 throw AfterSalesException::rule('quantity_exceeds', 422, ['max' => $left]);
             }
+
+            if ($data->type === ReturnType::Exchange && $line->replacementVariantId !== null) {
+                $item = $order->items->firstWhere('id', $line->orderItemId);
+                $label = $item instanceof OrderItem ? ($this->exchanges->forItem($order, $item)[$line->replacementVariantId] ?? null) : null;
+
+                if ($label === null) {
+                    throw AfterSalesException::rule('replacement_unavailable');
+                }
+
+                $replacements[$line->orderItemId] = $label;
+            }
         }
 
         $actor = $this->actor($customer);
-        $created = [];
 
-        foreach ($data->lines as $line) {
-            $return = $this->returns->create($tenantId, $order, new CreateReturnData(
-                orderItemId: $line->orderItemId,
-                quantity: $line->quantity,
-                reasonCode: $reason->code,
-                description: $data->description,
-                type: $data->type,
-            ), $actor);
+        // All lines with their evidence, or nothing: a failed upload never leaves a return behind.
+        return $this->transaction(function () use ($tenantId, $order, $data, $reason, $replacements, $actor): array {
+            $created = [];
 
-            $this->attach($return, $data->photos, $data->video, $actor);
-            $created[] = $return;
+            foreach ($data->lines as $line) {
+                $return = $this->returns->create($tenantId, $order, new CreateReturnData(
+                    orderItemId: $line->orderItemId,
+                    quantity: $line->quantity,
+                    reasonCode: $reason->code,
+                    description: $data->description,
+                    type: $data->type,
+                    returnMethod: $data->returnMethod,
+                    customerNote: $data->customerNote,
+                    replacementVariantId: $data->type === ReturnType::Exchange ? $line->replacementVariantId : null,
+                    replacementLabel: $replacements[$line->orderItemId] ?? null,
+                ), $actor);
+
+                $this->attach($return, $data->photos, $data->video, $actor);
+                $created[] = $return;
+            }
+
+            return $created;
+        }, (new ReturnRequest)->getConnectionName());
+    }
+
+    /**
+     * What the form's lines would refund if sent now (same calculator and order as create).
+     *
+     * @param  list<ReturnLineData>  $lines
+     * @return array{items: Money, shipping: Money, fee: Money, total: Money, fee_waived: bool, paid: bool}
+     */
+    public function estimate(int $tenantId, Order $order, string $reasonCode, array $lines): array
+    {
+        $reason = $this->policies->reasonByCode($reasonCode) ?? throw AfterSalesException::rule('reason_invalid');
+        $available = $this->returns->returnableLines($tenantId, $order);
+        $held = $this->returns->heldUnits($tenantId, $order);
+        $totals = ['items' => Money::zero(), 'shipping' => Money::zero(), 'fee' => Money::zero(), 'total' => Money::zero()];
+
+        foreach ($lines as $line) {
+            $row = $available[$line->orderItemId] ?? null;
+
+            if ($row === null || $line->quantity > $row['available']) {
+                continue;
+            }
+
+            $breakdown = $this->returns->breakdown($tenantId, $order, $row['item'], $line->quantity, $reason, $held);
+            $held += $line->quantity;
+            $totals = [
+                'items' => $totals['items']->add($breakdown->itemsAmount),
+                'shipping' => $totals['shipping']->add($breakdown->shippingAmount),
+                'fee' => $totals['fee']->add($breakdown->returnFee),
+                'total' => $totals['total']->add($breakdown->amount),
+            ];
         }
 
-        return $created;
+        return $totals + ['fee_waived' => $reason->seller_fault && $this->policies->policy()->restocking_fee_bps > 0, 'paid' => $order->isPaidOnline()];
     }
 
     /**
@@ -177,9 +240,9 @@ class CustomerReturnService extends BaseService
                 'actor_id' => $actor->id,
                 'actor_name' => $actor->name,
             ]);
+            $this->attach($return, $data->photos, $data->video, $actor);
         }, $return->getConnectionName());
 
-        $this->attach($return, $data->photos, $data->video, $actor);
         ReturnCustomerMessaged::dispatch($return, $data->message);
 
         return $this->find($tenantId, $customer, $id);

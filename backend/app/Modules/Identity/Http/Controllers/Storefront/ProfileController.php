@@ -6,8 +6,12 @@ use App\Modules\Identity\DTOs\UpdateCustomerProfileData;
 use App\Modules\Identity\Http\Requests\Storefront\DeleteCustomerAccountRequest;
 use App\Modules\Identity\Http\Requests\Storefront\UpdateCustomerPasswordRequest;
 use App\Modules\Identity\Http\Requests\Storefront\UpdateCustomerProfileRequest;
+use App\Modules\Identity\Http\Resources\CustomerAddressResource;
 use App\Modules\Identity\Models\Customer;
+use App\Modules\Identity\Services\CustomerAddressService;
 use App\Modules\Identity\Services\CustomerProfileService;
+use App\Modules\Localization\Http\Resources\CountryResource;
+use App\Modules\Localization\Services\StoreCountries;
 use App\Shared\Http\Concerns\RespondsWithJsonOrRedirect;
 use App\Shared\Http\Controller;
 use App\Shared\Support\Locale;
@@ -17,13 +21,17 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 /**
- * Account › Profile ({store}/account/profile): details, language, password, delete account.
+ * Account › Profile ({store}/account/profile): details, saved addresses, language, password, sign out, delete account.
  */
 class ProfileController extends Controller
 {
     use RespondsWithJsonOrRedirect;
 
-    public function __construct(private readonly CustomerProfileService $profiles) {}
+    public function __construct(
+        private readonly CustomerProfileService $profiles,
+        private readonly CustomerAddressService $addresses,
+        private readonly StoreCountries $countries,
+    ) {}
 
     public function show(Request $request): View
     {
@@ -31,6 +39,8 @@ class ProfileController extends Controller
             'customer' => $this->customer($request),
             'locales' => Locale::enabled(),
             'phoneCountry' => strtoupper($this->customer($request)->phone_country ?? Locale::visitorCountry()),
+            'addresses' => CustomerAddressResource::collection($this->addresses->list($this->customer($request)))->resolve($request),
+            'countries' => CountryResource::collection($this->countries->available())->resolve($request),
         ]);
     }
 

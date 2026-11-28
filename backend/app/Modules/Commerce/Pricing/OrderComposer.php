@@ -79,14 +79,14 @@ class OrderComposer
     }
 
     /**
-     * Shipping quote lines: unit weight × qty, own products not shippable.
+     * Shipping quote lines: unit weight × qty, own and digital products not shippable.
      *
      * @param  list<OrderLineInput>  $lines
      * @return list<QuoteLine>
      */
     public static function quoteLines(array $lines): array
     {
-        return array_map(static fn (OrderLineInput $line): QuoteLine => new QuoteLine($line->key, $line->own ? 0 : $line->weightGrams, $line->quantity, ! $line->own), $lines);
+        return array_map(static fn (OrderLineInput $line): QuoteLine => new QuoteLine($line->key, $line->own ? 0 : $line->weightGrams, $line->quantity, ! $line->own && $line->shippable), $lines);
     }
 
     /**

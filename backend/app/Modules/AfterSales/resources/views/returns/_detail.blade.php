@@ -59,9 +59,12 @@
                     <div><dt class="text-xs text-ink-secondary">{{ __('after-sales::returns.fields.item') }}</dt><dd class="font-medium text-ink">{{ $return->product_name }}{{ $return->variant_label ? ' · '.$return->variant_label : '' }} × {{ $return->quantity }}</dd></div>
                     <div><dt class="text-xs text-ink-secondary">{{ __('after-sales::returns.fields.type') }}</dt><dd class="font-medium text-ink">{{ $return->type->label() }}</dd></div>
                     <div><dt class="text-xs text-ink-secondary">{{ __('after-sales::returns.fields.reason') }}</dt><dd class="font-medium text-ink">{{ $reasonLabel }}@if ($return->seller_fault) <x-ui::badge tone="warning" class="ms-1">{{ __('after-sales::returns.seller_fault') }}</x-ui::badge>@endif</dd></div>
+                    @if ($return->return_method)<div><dt class="text-xs text-ink-secondary">{{ __('after-sales::returns.fields.return_method') }}</dt><dd class="font-medium text-ink">{{ $return->return_method->label() }}</dd></div>@endif
+                    @if ($return->replacement_label)<div><dt class="text-xs text-ink-secondary">{{ __('after-sales::returns.fields.replacement') }}</dt><dd class="font-medium text-ink">{{ $return->replacement_label }}</dd></div>@endif
                     <div><dt class="text-xs text-ink-secondary">{{ __('after-sales::returns.value') }}</dt><dd class="font-medium text-ink" dir="ltr">{{ $return->money('refund_amount')->format() }}</dd></div>
                 </dl>
                 <p class="mt-4 whitespace-pre-line rounded-control bg-subtle px-3 py-2 text-sm text-ink">{{ $return->description }}</p>
+                @if ($return->customer_note)<p class="mt-3 whitespace-pre-line text-sm text-ink"><span class="text-xs text-ink-secondary">{{ __('after-sales::returns.fields.customer_note') }}:</span> {{ $return->customer_note }}</p>@endif
                 <dl class="mt-4 grid gap-1.5 text-sm">
                     <div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('after-sales::refunds.fields.items') }}</dt><dd class="text-ink" dir="ltr">{{ $return->money('items_amount')->format() }}</dd></div>
                     @if ($return->shipping_amount > 0)<div class="flex justify-between gap-4"><dt class="text-ink-secondary">{{ __('after-sales::refunds.fields.shipping') }}</dt><dd class="text-ink" dir="ltr">{{ $return->money('shipping_amount')->format() }}</dd></div>@endif

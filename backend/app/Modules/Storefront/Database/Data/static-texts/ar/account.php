@@ -59,4 +59,5 @@ return [
         'returns' => 'المرتجعات',
         'wishlist' => 'المفضلة',
     ],
+    'saved_addresses' => 'العناوين المحفوظة',
 ];

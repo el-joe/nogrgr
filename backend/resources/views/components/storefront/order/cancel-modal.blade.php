@@ -9,10 +9,10 @@
         <p class="text-xs text-sf-muted">{{ __st('orders.cancel_step_one') }}</p>
         <fieldset class="grid gap-3">
             <legend class="sr-only">{{ __st('orders.cancel_step_one') }}</legend>
-            @foreach (['ordered_by_mistake', 'found_better_price', 'delivery_too_long', 'changed_mind', 'other'] as $reason)
+            @foreach (\App\Modules\Commerce\Enums\CancellationReason::customerOptions() as $code => $label)
                 <label class="flex cursor-pointer items-center gap-2.5 text-sm text-sf-ink">
-                    <input type="radio" name="cancel_reason" value="{{ __st('orders.reasons.'.$reason) }}" class="sf-radio" @checked($loop->first)>
-                    {{ __st('orders.reasons.'.$reason) }}
+                    <input type="radio" name="cancel_reason" value="{{ $code }}" class="sf-radio" data-label="{{ $label }}" data-requires-note="{{ $code === 'other' ? '1' : '0' }}" @checked($loop->first)>
+                    {{ $label }}
                 </label>
             @endforeach
         </fieldset>
@@ -21,6 +21,7 @@
     </div>
 
     <form method="POST" class="grid gap-4" data-ajax data-cancel-form data-cancel-step="2" hidden novalidate>
+        <input type="hidden" name="reason_code" value="">
         <input type="hidden" name="reason" value="">
         <p class="text-xs text-sf-muted">{{ __st('orders.cancel_step_two') }}</p>
         <div class="flex items-start gap-2.5 rounded-lg bg-sf-warning-bg p-3 text-sm text-sf-ink">
@@ -30,6 +31,7 @@
         <x-sf::form.field :label="__st('orders.note_label')" for="sf-cancel-note">
             <textarea id="sf-cancel-note" class="sf-control text-sm min-h-20 py-2.5" maxlength="400" placeholder="{{ __st('orders.note_placeholder') }}" data-cancel-note></textarea>
         </x-sf::form.field>
+        <p class="sf-error" data-cancel-note-required hidden>{{ __st('orders.note_required') }}</p>
         <p class="sf-error" data-error-for="reason" hidden></p>
         <div class="grid grid-cols-2 gap-3">
             <button type="button" class="sf-btn sf-btn-outline" data-sheet-close>{{ __st('orders.keep_order') }}</button>

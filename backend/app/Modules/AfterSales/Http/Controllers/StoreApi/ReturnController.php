@@ -3,6 +3,7 @@
 namespace App\Modules\AfterSales\Http\Controllers\StoreApi;
 
 use App\Modules\AfterSales\Http\Requests\StoreApi\CreateCustomerReturnRequest;
+use App\Modules\AfterSales\Http\Requests\StoreApi\ReturnEstimateRequest;
 use App\Modules\AfterSales\Http\Requests\StoreApi\ReturnIndexRequest;
 use App\Modules\AfterSales\Http\Requests\StoreApi\ReturnReplyRequest;
 use App\Modules\AfterSales\Http\Requests\StoreApi\WithdrawReturnRequest;
@@ -14,6 +15,7 @@ use App\Modules\AfterSales\Services\CustomerReturnService;
 use App\Modules\AfterSales\Services\ReturnPolicyService;
 use App\Modules\Commerce\Http\Concerns\ResolvesStoreApiContext;
 use App\Modules\Commerce\Services\Orders\CustomerOrderService;
+use App\Modules\Commerce\Support\MoneyPresenter;
 use App\Shared\Http\Controller;
 use App\Shared\Http\JsonResponder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -43,6 +45,22 @@ class ReturnController extends Controller
         $model = $this->orders->find($this->requireCustomer($request), $order);
 
         return JsonResponder::success('', (new ReturnOptionsResource($this->returns->options($this->tenantId(), $model), $model))->toArray($request));
+    }
+
+    public function estimate(ReturnEstimateRequest $request, string $order, MoneyPresenter $money): JsonResponse
+    {
+        $this->cartContext($request);
+        $model = $this->orders->find($this->requireCustomer($request), $order);
+        $estimate = $this->returns->estimate($this->tenantId(), $model, $request->reasonCode(), $request->lines());
+
+        return JsonResponder::success('', [
+            'items' => $money->present($estimate['items']->minor),
+            'shipping' => $money->present($estimate['shipping']->minor),
+            'return_fee' => $money->present($estimate['fee']->minor),
+            'total' => $money->present($estimate['total']->minor),
+            'fee_waived' => $estimate['fee_waived'],
+            'paid' => $estimate['paid'],
+        ]);
     }
 
     public function store(CreateCustomerReturnRequest $request, string $order): JsonResponse

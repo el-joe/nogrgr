@@ -59,4 +59,5 @@ return [
         'returns' => 'Returns',
         'wishlist' => 'Wishlist',
     ],
+    'saved_addresses' => 'Saved addresses',
 ];

@@ -31,7 +31,10 @@
                     <p class="min-w-0 flex-1 text-xs leading-4 text-sf-muted">@if ($return['last_message']){{ __st('returns.last_note', ['note' => \Illuminate\Support\Str::limit($return['last_message'], 120)]) }}@endif</p>
                     <p class="text-sm font-semibold leading-5 text-sf-ink">{{ __st('returns.refund', ['amount' => $money($return['refund_amount'])]) }}</p>
                 </div>
-                <div><a href="{{ route('storefront.returns.show', $return['id']) }}" class="sf-btn sf-btn-outline min-h-8 px-4 text-xs">{{ __st('returns.view') }}<x-ui::icon name="chevron-right" :size="16" class="rtl:-scale-x-100" /></a></div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="{{ route('storefront.returns.show', $return['id']) }}" class="sf-btn sf-btn-outline min-h-8 px-4 text-xs">{{ __st('returns.view') }}<x-ui::icon name="chevron-right" :size="16" class="rtl:-scale-x-100" /></a>
+                    <a href="{{ route('storefront.orders.show', $return['order_uuid']) }}" class="text-xs font-medium text-sf-accent hover:underline" data-return-order>{{ __st('returns.view_order') }}</a>
+                </div>
             </article>
         @empty
             <x-sf::order.empty icon="return" :title="__st('returns.empty_title')" :text="__st('returns.empty_text')" :action="__st('returns.view_orders')" :href="route('storefront.orders.index', ['status' => 'delivered'])" data-reveal="fade-up" />

@@ -239,7 +239,8 @@ class ProductIndex
         if ($view->isOwn()) {
             $allowed = $view->product->country_ids;
 
-            if ($allowed !== null && $allowed !== [] && ! in_array($countryId, array_map('intval', $allowed), true)) {
+            // Visibility follows the detected country, not a manual pick (ORDER_FORMULAS.md §1).
+            if ($allowed !== null && $allowed !== [] && ! in_array($this->context->visibilityCountryId() ?? $countryId, array_map('intval', $allowed), true)) {
                 return null;
             }
 
@@ -407,6 +408,6 @@ class ProductIndex
     {
         $tenant = tenancy()->initialized ? (string) tenant()?->getTenantKey() : 'central';
 
-        return 'sf:index:v2:'.self::version($tenant).':'.$tenant.':'.($this->context->countryId() ?? 0).':'.app()->getLocale();
+        return 'sf:index:v2:'.self::version($tenant).':'.$tenant.':'.($this->context->countryId() ?? 0).':'.($this->context->visibilityCountryId() ?? 0).':'.app()->getLocale();
     }
 }

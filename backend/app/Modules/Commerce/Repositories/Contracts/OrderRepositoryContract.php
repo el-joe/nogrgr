@@ -7,6 +7,7 @@ use App\Modules\Commerce\Enums\FulfilmentStatus;
 use App\Modules\Commerce\Enums\OrderStatus;
 use App\Modules\Commerce\Models\Order;
 use App\Shared\Repositories\Contracts\RepositoryContract;
+use DateTimeInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -37,6 +38,11 @@ interface OrderRepositoryContract extends RepositoryContract
     public function forCustomer(int $customerId, array $filters, int $perPage = 15): LengthAwarePaginator;
 
     public function countForCustomer(int $customerId): int;
+
+    /**
+     * Orders of the current store created at or after $since (plan "orders per month").
+     */
+    public function countSince(DateTimeInterface $since): int;
 
     public function nextNumber(): string;
 

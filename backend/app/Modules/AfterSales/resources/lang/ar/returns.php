@@ -47,11 +47,12 @@ return [
     'notes' => ['inspection_failed' => 'فشل الفحص.'],
     'steps' => ['requested' => 'تم الطلب', 'approved' => 'تمت الموافقة', 'received' => 'تم الاستلام', 'inspection' => 'الفحص', 'refund' => 'الاسترداد', 'exchange' => 'الاستبدال', 'closed' => 'مغلق'],
     'fields' => [
-        'item' => 'المنتج', 'quantity' => 'الكمية', 'reason' => 'السبب', 'description' => 'الوصف', 'description_min' => 'السبب (10 أحرف على الأقل)',
+        'return_method' => 'طريقة الإرجاع', 'customer_note' => 'ملاحظات إضافية', 'replacement' => 'الخيار البديل', 'item' => 'المنتج', 'quantity' => 'الكمية', 'reason' => 'السبب', 'description' => 'الوصف', 'description_min' => 'السبب (10 أحرف على الأقل)',
         'type' => 'النوع', 'note' => 'ملاحظة', 'message' => 'رسالة للعميل', 'result' => 'النتيجة', 'condition' => 'الحالة',
         'branch' => 'الإعادة إلى', 'restock' => 'إعادة للمخزون', 'refund_now' => 'استرداد الآن', 'tracking' => 'رقم التتبع', 'photos' => 'الصور',
         'inspector_notes' => 'ملاحظات الفاحص', 'video' => 'الفيديو', 'reply' => 'الرد',
     ],
+    'inspection_customer' => ['accepted' => 'اجتاز منتجك الفحص', 'failed' => 'لم يجتز منتجك الفحص'],
     'actions_help' => [
         'approve' => 'يُطلب من العميل إعادة المنتج.',
         'reject' => 'يُبلّغ العميل بسبب رفض الإرجاع.',

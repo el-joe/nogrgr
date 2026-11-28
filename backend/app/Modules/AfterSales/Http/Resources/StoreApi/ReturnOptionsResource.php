@@ -3,6 +3,7 @@
 namespace App\Modules\AfterSales\Http\Resources\StoreApi;
 
 use App\Modules\AfterSales\Enums\ReturnBlock;
+use App\Modules\AfterSales\Enums\ReturnMethod;
 use App\Modules\AfterSales\Models\ReturnPolicy;
 use App\Modules\AfterSales\Models\ReturnReason;
 use App\Modules\AfterSales\Services\ReturnPolicyService;
@@ -52,7 +53,9 @@ class ReturnOptionsResource extends JsonResource
                 'available' => $line['available'],
                 'returnable' => $line['returnable'],
                 'total' => $money->present($line['item']->grand_total),
+                'exchange_options' => collect($line['exchange_options'] ?? [])->map(static fn (string $label, int $id): array => ['id' => $id, 'label' => $label])->values()->all(),
             ], $options['lines']),
+            'return_methods' => array_map(static fn (ReturnMethod $method): array => ['value' => $method->value, 'label' => $method->label()], ReturnMethod::cases()),
             'reasons' => array_map(static fn (ReturnReason $reason): array => [
                 'code' => $reason->code,
                 'name' => $reason->name,
