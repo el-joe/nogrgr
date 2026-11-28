@@ -3,7 +3,8 @@
  * else (cart API, fragments, reviews, variants, sheets, rails, gallery, swipe-remove)
  * comes from the shared catalog / commerce / core modules through their data-* hooks.
  *  - listing: the desktop filter sidebar applies on change ([data-elo-autosubmit]);
- *    the rest of the listing behaviour is in elora/pages/listing.js;
+ *    long facet lists filter as you type ([data-elo-facet-search]); the v1 listing
+ *    (.elp-*) has its own module, elora/pages/listing.js;
  *  - cart lines: − / + steppers ([data-elo-step]) drive the shared quantity input;
  *  - product: the phone quantity stepper mirrors the desktop select ([data-qty]);
  *    share button (Web Share API, clipboard fallback);
@@ -22,7 +23,7 @@ function bindAutosubmit(root) {
         let timer = null;
 
         form.addEventListener('change', (event) => {
-            if (event.target.matches('[data-elp-search]')) {
+            if (event.target.matches('[data-elo-facet-search], [data-elp-search]')) {
                 return;
             }
 
@@ -30,9 +31,36 @@ function bindAutosubmit(root) {
             timer = setTimeout(() => {
                 form.setAttribute('aria-busy', 'true');
                 document.getElementById('elo-listing-grid')?.setAttribute('aria-busy', 'true');
-                document.querySelector('.elp-main')?.setAttribute('data-busy', '');
                 form.requestSubmit();
             }, 250);
+        });
+    });
+}
+
+function bindFacetSearch(root) {
+    root.querySelectorAll('[data-elo-facet-search]:not([data-ready])').forEach((input) => {
+        input.dataset.ready = '';
+        const facet = input.closest('[data-elo-facet]');
+        const empty = facet?.querySelector('[data-elo-facet-empty]');
+
+        input.addEventListener('input', () => {
+            const term = input.value.trim().toLowerCase();
+            let shown = 0;
+
+            facet.querySelectorAll('[data-elo-facet-value]').forEach((row) => {
+                const match = !term || row.dataset.eloFacetValue.includes(term);
+                row.hidden = !match;
+                shown += match ? 1 : 0;
+            });
+
+            if (empty) {
+                empty.hidden = shown > 0;
+            }
+        });
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
         });
     });
 }
@@ -149,6 +177,7 @@ function bindOrderTabs() {
 
 export function initEloraPages(root = document) {
     bindAutosubmit(root);
+    bindFacetSearch(root);
     initEloraListing(root);
     bindSteppers();
     bindShare();

@@ -28,19 +28,21 @@ trait RendersListings
     protected function listingResponse(Request $request, string $view, ListingQuery $query, ListingResult $result, array $data): View|JsonResponse
     {
         $next = $result->hasMore() ? $request->fullUrlWithQuery(['page' => $query->page + 1, 'fragment' => null]) : null;
-        $elora = app(StorefrontContext::class)->theme()->family->value === 'elora';
-        $deliveryBy = $elora ? $this->deliveryBy() : null;
+        /* Only Elora v1 (base) has its own listing; variants 2–6 keep the family page and cards. */
+        $theme = app(StorefrontContext::class)->theme();
+        $eloraBase = $theme->family->value === 'elora' && $theme->variant === 1;
+        $deliveryBy = $eloraBase ? $this->deliveryBy() : null;
 
         if ($request->boolean('fragment') || $request->ajax()) {
             return new JsonResponse([
-                'html' => view($elora ? 'storefront::themes.elora.partials.listing-cards' : StorefrontView::resolve('partials.card-grid-items'), ['cards' => $result->cards, 'variant' => $data['cardVariant'] ?? 'grid', 'tag' => $request->boolean('ribbon') ? null : ($data['cardTag'] ?? null), 'ribbon' => $request->boolean('ribbon'), 'offset' => ($query->page - 1) * $query->perPage, 'deliveryBy' => $deliveryBy])->render(),
+                'html' => view($eloraBase ? 'storefront::themes.elora.partials.listing-cards' : StorefrontView::resolve('partials.card-grid-items'), ['cards' => $result->cards, 'variant' => $data['cardVariant'] ?? 'grid', 'tag' => $request->boolean('ribbon') ? null : ($data['cardTag'] ?? null), 'ribbon' => $request->boolean('ribbon'), 'offset' => ($query->page - 1) * $query->perPage, 'deliveryBy' => $deliveryBy])->render(),
                 'next_url' => $next,
                 'total' => $result->total,
                 'page' => $result->page,
             ]);
         }
 
-        if ($elora) {
+        if ($eloraBase) {
             /* Category circles: the page's sub-categories, else the store's top-level ones. */
             $circles = ($data['kind'] ?? null) === ListingKind::Category
                 ? ($data['subcategories'] ?? [])

@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 */
 
 beforeEach(function (): void {
-    $currency = fn (string $code, string $rate): Currency => tap(Currency::query()->where('code', $code)->first() ?? Currency::factory()->code($code, $rate)->create(), fn (Currency $c) => $c->forceFill(['rate' => $rate, 'is_active' => true, 'is_base' => $code === 'USD'])->save());
+    $currency = fn (string $code, string $rate): Currency => tap(Currency::query()->where('code', $code)->first() ?? Currency::factory()->code($code, $rate)->create(), fn (Currency $c) => $c->forceFill(['rate' => $rate, 'rate_synced_at' => now(), 'is_active' => true, 'is_base' => $code === 'USD'])->save());
     $this->usd = $currency('USD', '1.000000');
     $this->sar = $currency('SAR', '3.750000');
     $this->aed = $currency('AED', '3.672500');
@@ -58,6 +58,20 @@ it('lists USD and the selling countries currencies, all on by default', function
         ->and(collect($rows)->every(fn (array $row): bool => $row['active']))->toBeTrue()
         ->and($rows[1]['default'])->toBeTrue()
         ->and($rows[2]['default'])->toBeFalse();
+});
+
+it('also lists platform currencies of countries the store does not sell to, never shown by default', function (): void {
+    Currency::factory()->code('EUR', '0.920000')->create(['is_active' => true, 'rate_synced_at' => now()]);
+
+    $this->tenant->run(function (): void {
+        $service = app(StoreCurrencyService::class);
+        $row = collect($service->rows())->first(fn (array $row): bool => $row['currency']->code === 'EUR');
+
+        expect($row['active'])->toBeTrue()
+            ->and($row['default'])->toBeFalse()
+            ->and($row['countries'])->toBe([])
+            ->and($service->switcherCurrencies()->pluck('code')->all())->toContain('EUR');
+    });
 });
 
 it('validates and saves active / default switches as exceptions', function (): void {

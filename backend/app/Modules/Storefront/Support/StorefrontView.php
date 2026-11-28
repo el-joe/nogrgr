@@ -10,7 +10,7 @@ use Illuminate\Contracts\View\View;
 /**
  * Theme-family view resolution: `storefront::themes.{family}.{name}`, falling back to
  * the Ecommet family while a family's inner pages are not built yet. Home pages differ
- * per variant (`pages.home` resolves `pages.home-v{n}` first).
+ * per variant (`pages.home` and `pages.listing` resolve `…-v{n}` first).
  *
  *   return StorefrontView::make('pages.product', ['product' => $page]);
  */
@@ -50,8 +50,9 @@ final class StorefrontView
         $theme = app(StorefrontContext::class)->theme();
         $candidates = [];
 
-        if ($name === 'pages.home') {
-            $candidates[] = 'storefront::themes.'.$theme->family->value.'.pages.home-v'.$theme->variant;
+        /* Pages a variant may draw its own way: `pages.{name}-v{n}` wins over the family page. */
+        if ($name === 'pages.home' || $name === 'pages.listing') {
+            $candidates[] = 'storefront::themes.'.$theme->family->value.'.'.$name.'-v'.$theme->variant;
         }
 
         $candidates[] = 'storefront::themes.'.$theme->family->value.'.'.$name;

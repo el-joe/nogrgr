@@ -1,179 +1,128 @@
 {{--
-    Elora filter form (Figma 1:17172 sidebar · m 1:22799 sheet): Category (desktop), then
-    the groups in the design's order (Support/Listing/FilterGroups). Long lists show the
-    eight most used values with a search box and "Show more"; nothing scrolls inside a
-    group. A GET form on the listing URL (works without JS): the sidebar applies each change
-    at once (data-elo-autosubmit), the sheet keeps "show ( n result )" + "reset".
-    Inputs: $query, $result, $mode (sidebar|sheet), $category, $title, $kind, $parentCategory.
+    Elora filter form (Figma 1:17172 sidebar · m 1:22799 sheet): accordion per facet with a
+    value search on long lists. A GET form on the listing URL (works without JS). The desktop
+    sidebar ($mode = 'sidebar') applies each change at once (data-elo-autosubmit); the phone
+    sheet ($mode = 'sheet') keeps "show (n result)" + "reset".
+    Inputs: $query, $result, $mode.
 --}}
-@use('App\Modules\Storefront\Enums\ListingKind')
-@use('App\Modules\Storefront\Support\Listing\FilterGroups')
 @php
     /** @var \App\Modules\Storefront\DTOs\Catalog\ListingQuery $query */
     $facets = $result->facets;
+    $kind = $query->kind;
     $sheet = ($mode ?? 'sidebar') === 'sheet';
-    $id = $sheet ? 'elp-fs' : 'elp-fb';
-    $category ??= null;
-    $parentCategory ??= null;
-    $context = app(\App\Modules\Storefront\Services\StorefrontContext::class);
-    $rate = (float) ($context->currency()->rate ?? 1);
-    $asInput = static fn (?int $minor): ?string => $minor === null ? null : (string) round($minor / 100 * ($rate > 0 ? $rate : 1), 2);
-    $priceMin = $query->minInput ?? $asInput($query->priceMin);
-    $priceMax = $query->maxInput ?? $asInput($query->priceMax);
-    $keep = array_filter([
-        'q' => $query->term,
-        'sort' => $query->sort !== $kind->defaultSort() ? $query->sort->value : null,
-        'period' => $kind === ListingKind::BestSelling && $query->period?->value !== 30 ? $query->period?->value : null,
-    ]);
+    $id = $sheet ? 'elo-fs' : 'elo-fb';
+    $price = $query->priceMin !== null || $query->priceMax !== null ? ($query->priceMin ?? '').'-'.($query->priceMax ?? '') : '';
+    $keep = array_filter(['q' => $query->term, 'sort' => $query->sort !== $kind->defaultSort() ? $query->sort->value : null, 'period' => $kind === \App\Modules\Storefront\Enums\ListingKind::BestSelling && $query->period?->value !== 30 ? $query->period?->value : null]);
     $resetUrl = url()->current().($keep ? '?'.http_build_query($keep) : '');
-    /* "New in" (quick pill) has no sidebar control outside the New In page: carry it along. */
-    $hidden = $keep + array_filter(['added' => $kind !== ListingKind::NewIn ? $query->addedWithinDays : null, 'discount' => $kind !== ListingKind::Offers ? $query->minDiscount : null]);
-    $groups = FilterGroups::order($facets['options']);
-    $firstOptions = collect($groups)->firstWhere('type', 'options')['attribute']['id'] ?? null;
 @endphp
-<form method="GET" action="{{ url()->current() }}" class="elp-form" data-filter-form @if ($sheet) data-elp-sheet-form @else data-elo-autosubmit @endif>
-    @foreach ($hidden as $name => $value)
+<form method="GET" action="{{ url()->current() }}" @class(['grid', 'gap-1 px-4 pb-24' => $sheet, 'gap-2' => ! $sheet]) data-filter-form @unless ($sheet) data-elo-autosubmit @endunless>
+    @foreach ($keep as $name => $value)
         <input type="hidden" name="{{ $name }}" value="{{ $value }}">
     @endforeach
 
-    @if ($sheet)
-        {{-- The sheet draws no category block (m 1:22799): keep a desktop choice when applying. --}}
-        @foreach ($query->categoryIds as $categoryId)
-            <input type="hidden" name="cat[]" value="{{ $categoryId }}">
-        @endforeach
-    @elseif ($category !== null || $facets['categories'] !== [])
-        <details class="elp-group elp-group-category" data-elp-group="category" open>
-            <summary><span>{{ __st('catalog.filters.category') }}</span><span class="elp-ico elp-ico-chevron" aria-hidden="true"></span></summary>
-            <div class="elp-group-body">
-                @if ($category !== null)
-                    {{-- The open category, ticked as drawn; unticking goes one level up. --}}
-                    <a href="{{ $upUrl }}" class="elp-check elp-check-current" aria-current="page"><span class="elp-box" aria-hidden="true"></span><span class="elp-check-name">{{ $title }}</span></a>
-                @endif
-                @foreach ($facets['categories'] as $index => $option)
-                    <label class="elp-check" @if ($index >= FilterGroups::VISIBLE && ! in_array($option['id'], $query->categoryIds, true)) data-more @endif><input type="checkbox" name="cat[]" value="{{ $option['id'] }}" @checked(in_array($option['id'], $query->categoryIds, true))><span class="elp-check-name" title="{{ $option['name'] }}">{{ $option['name'] }}</span><span class="elp-count">{{ $option['count'] }}</span></label>
+    @if ($facets['categories'] !== [])
+        <details class="elo-acc" @if ($query->categoryIds || ! $sheet) open @endif>
+            <summary>{{ __st('catalog.filters.category') }}<x-ui::icon name="chevron-down" :size="18" /></summary>
+            <div class="grid pb-2">
+                @foreach ($facets['categories'] as $option)
+                    <label class="elo-check"><input type="checkbox" name="cat[]" value="{{ $option['id'] }}" @checked(in_array($option['id'], $query->categoryIds, true))><span class="flex-1">{{ $option['name'] }}</span><span class="text-xs text-sf-muted">{{ $option['count'] }}</span></label>
                 @endforeach
-                @if (count($facets['categories']) > FilterGroups::VISIBLE)
-                    <div class="elp-toggles"><button type="button" class="elp-toggle" data-elp-more>{{ __st('elora_pages.listing.show_more') }}</button><button type="button" class="elp-toggle" data-elp-less hidden>{{ __st('elora_pages.listing.show_less') }}</button></div>
-                @endif
             </div>
         </details>
     @endif
 
-    <div class="elp-groups">
-        @foreach ($groups as $group)
-            @switch($group['type'])
-                @case('options')
-                    @php
-                        $attribute = $group['attribute'];
-                        $selected = $query->options[$attribute['id']] ?? [];
-                        $rows = FilterGroups::rows($attribute['values'], $selected);
-                        $long = count($rows) > FilterGroups::VISIBLE;
-                        $name = $attribute['name'];
-                    @endphp
-                    <details class="elp-group" data-elp-group="{{ $group['key'] }}" data-elp-facet @if ($selected !== [] || $attribute['id'] === $firstOptions) open @endif>
-                        <summary><span>{{ $name }}</span><span class="elp-ico elp-ico-chevron" aria-hidden="true"></span></summary>
-                        <div class="elp-group-body">
-                            @if ($long)
-                                <label class="sr-only" for="{{ $id }}-s-{{ $attribute['id'] }}">{{ __st('elora_pages.listing.facet_search', ['name' => $name]) }}</label>
-                                <input id="{{ $id }}-s-{{ $attribute['id'] }}" type="search" class="elp-field" placeholder="{{ __st('elora_pages.listing.facet_search', ['name' => $name]) }}" data-elp-search autocomplete="off">
-                                <p class="elp-popular" data-elp-popular>{{ __st($group['key'] === 'brand' ? 'elora_pages.listing.popular_brands' : 'elora_pages.listing.popular') }}</p>
-                            @endif
-                            @foreach ($rows as $row)
-                                @php($dot = FilterGroups::dot($group['key'], $row['value']))
-                                <label class="elp-check" data-elp-value="{{ mb_strtolower($row['value']) }}" @if ($row['more']) data-more @endif>
-                                    <input type="checkbox" name="opt[{{ $attribute['id'] }}][]" value="{{ $row['value'] }}" @checked($row['checked'])>
-                                    @if ($dot)<span class="elp-dot" data-swatch="{{ $dot }}" aria-hidden="true"></span>@endif
-                                    <span class="elp-check-name" title="{{ $row['value'] }}" dir="auto">{{ $row['value'] }}</span>
-                                    <span class="elp-count">{{ $row['count'] }}</span>
-                                </label>
-                            @endforeach
-                            @if ($long)
-                                <p class="elp-none" data-elp-none hidden>{{ __st('elora_pages.listing.facet_none') }}</p>
-                                <div class="elp-toggles"><button type="button" class="elp-toggle" data-elp-more>{{ __st('elora_pages.listing.show_more') }}</button><button type="button" class="elp-toggle" data-elp-less hidden>{{ __st('elora_pages.listing.show_less') }}</button></div>
-                            @endif
-                        </div>
-                    </details>
-                    @break
+    @foreach ($facets['options'] as $attribute)
+        @php($many = count($attribute['values']) > 8)
+        <details class="elo-acc" @if (isset($query->options[$attribute['id']]) || ($loop->first && ! $sheet)) open @endif data-elo-facet>
+            <summary>{{ $attribute['name'] }}<x-ui::icon name="chevron-down" :size="18" /></summary>
+            <div class="grid gap-2 pb-2">
+                @if ($many)
+                    <label class="sr-only" for="{{ $id }}-s-{{ $attribute['id'] }}">{{ __st('elora_pages.listing.facet_search', ['name' => $attribute['name']]) }}</label>
+                    <input id="{{ $id }}-s-{{ $attribute['id'] }}" type="search" class="elo-facet-search" placeholder="{{ __st('elora_pages.listing.facet_search', ['name' => $attribute['name']]) }}" data-elo-facet-search autocomplete="off">
+                @endif
+                <div class="grid max-h-64 overflow-y-auto">
+                    @foreach ($attribute['values'] as $option)
+                        <label class="elo-check" data-elo-facet-value="{{ \Illuminate\Support\Str::lower($option['value']) }}"><input type="checkbox" name="opt[{{ $attribute['id'] }}][]" value="{{ $option['value'] }}" @checked(in_array($option['value'], $query->options[$attribute['id']] ?? [], true))><span class="flex-1">{{ $option['value'] }}</span><span class="text-xs text-sf-muted">{{ $option['count'] }}</span></label>
+                    @endforeach
+                </div>
+                @if ($many)
+                    <p class="text-xs text-sf-muted" data-elo-facet-empty hidden>{{ __st('elora_pages.listing.facet_none') }}</p>
+                @endif
+            </div>
+        </details>
+    @endforeach
 
-                @case('promo')
-                    <details class="elp-group" data-elp-group="promo" @if ($query->onSale || $query->flashOnly || $query->featuredOnly || ($kind === ListingKind::Offers && $query->minDiscount)) open @endif>
-                        <summary><span>{{ __st('elora_pages.listing.promo') }}</span><span class="elp-ico elp-ico-chevron" aria-hidden="true"></span></summary>
-                        <div class="elp-group-body">
-                            @foreach ([['sale', 'on_sale', $query->onSale], ['flash', 'flash_sale', $query->flashOnly], ['featured', 'featured', $query->featuredOnly]] as [$param, $text, $checked])
-                                <label class="elp-check"><input type="checkbox" name="{{ $param }}" value="1" @checked($checked)><span class="elp-check-name">{{ __st('elora_pages.listing.'.$text) }}</span><span class="elp-count">{{ $facets['promo'][$param] }}</span></label>
-                            @endforeach
-                            @if ($kind === ListingKind::Offers)
-                                @foreach ([10, 20, 30, 50] as $value)
-                                    <label class="elp-check"><input type="radio" name="discount" value="{{ $value }}" @checked($query->minDiscount === $value)><span class="elp-check-name">{{ __st('catalog.filters.discount_min', ['percent' => $value]) }}</span></label>
-                                @endforeach
-                            @endif
-                        </div>
-                    </details>
-                    @break
+    @if ($facets['price'] !== [])
+        <details class="elo-acc" @if ($price !== '') open @endif>
+            <summary>{{ __st('catalog.filters.price') }}<x-ui::icon name="chevron-down" :size="18" /></summary>
+            <div class="grid pb-2">
+                <label class="elo-check"><input type="radio" name="price" value="" @checked($price === '')><span class="flex-1">{{ __st('catalog.filters.any') }}</span></label>
+                @foreach ($facets['price'] as $option)
+                    <label class="elo-check"><input type="radio" name="price" value="{{ $option['value'] }}" @checked($price === $option['value'])><span class="flex-1">{{ $option['label'] }}</span><span class="text-xs text-sf-muted">{{ $option['count'] }}</span></label>
+                @endforeach
+            </div>
+        </details>
+    @endif
 
-                @case('price')
-                    <details class="elp-group" data-elp-group="price" @if ($priceMin !== null || $priceMax !== null) open @endif>
-                        <summary><span>{{ __st('elora_pages.listing.price') }}</span><span class="elp-ico elp-ico-chevron" aria-hidden="true"></span></summary>
-                        <div class="elp-group-body">
-                            <div class="elp-price">
-                                <label class="sr-only" for="{{ $id }}-min">{{ __st('elora_pages.listing.price_min', ['currency' => $context->currencyCode()]) }}</label>
-                                <input id="{{ $id }}-min" type="number" name="min" min="0" step="0.01" inputmode="decimal" class="elp-field" placeholder="{{ __st('elora_pages.listing.min') }}" value="{{ $priceMin }}">
-                                <label class="sr-only" for="{{ $id }}-max">{{ __st('elora_pages.listing.price_max', ['currency' => $context->currencyCode()]) }}</label>
-                                <input id="{{ $id }}-max" type="number" name="max" min="0" step="0.01" inputmode="decimal" class="elp-field" placeholder="{{ __st('elora_pages.listing.max') }}" value="{{ $priceMax }}">
-                            </div>
-                        </div>
-                    </details>
-                    @break
+    @if ($kind === \App\Modules\Storefront\Enums\ListingKind::TopRated)
+        <details class="elo-acc" open>
+            <summary>{{ __st('elora_pages.listing.rating') }}<x-ui::icon name="chevron-down" :size="18" /></summary>
+            <div class="grid pb-2">
+                <label class="elo-check"><input type="radio" name="rating" value="" @checked(! $query->minRating)><x-sf::stars :rating="4" :size="14" /><span>{{ __st('catalog.filters.and_up') }}</span></label>
+                <label class="elo-check"><input type="radio" name="rating" value="5" @checked($query->minRating === 5)><x-sf::stars :rating="5" :size="14" /><span>{{ __st('catalog.filters.five_only') }}</span></label>
+            </div>
+        </details>
+    @elseif ($facets['rating'] !== [])
+        <details class="elo-acc" @if ($query->minRating) open @endif>
+            <summary>{{ __st('elora_pages.listing.rating') }}<x-ui::icon name="chevron-down" :size="18" /></summary>
+            <div class="grid pb-2">
+                <label class="elo-check"><input type="radio" name="rating" value="" @checked(! $query->minRating)><span>{{ __st('catalog.filters.any') }}</span></label>
+                @foreach ($facets['rating'] as $option)
+                    <label class="elo-check"><input type="radio" name="rating" value="{{ $option['value'] }}" @checked($query->minRating === $option['value'])><x-sf::stars :rating="$option['value']" :size="14" /><span class="flex-1">{{ __st('catalog.filters.and_up') }}</span><span class="text-xs text-sf-muted">{{ $option['count'] }}</span></label>
+                @endforeach
+            </div>
+        </details>
+    @endif
 
-                @case('rating')
-                    <details class="elp-group" data-elp-group="rating" @if ($query->minRating) open @endif>
-                        <summary><span>{{ __st('elora_pages.listing.rating') }}</span><span class="elp-ico elp-ico-chevron" aria-hidden="true"></span></summary>
-                        <div class="elp-group-body">
-                            @if ($query->minRating)
-                                <label class="elp-check"><input type="radio" name="rating" value=""><span class="elp-check-name">{{ __st('catalog.filters.any') }}</span></label>
-                            @endif
-                            @if ($kind === ListingKind::TopRated || $query->minRating === 5)
-                                <label class="elp-check"><input type="radio" name="rating" value="5" @checked($query->minRating === 5)><x-sf::stars :rating="5" :size="12" /><span class="elp-check-name">{{ __st('catalog.filters.five_only') }}</span></label>
-                            @endif
-                            @foreach ($facets['stars'] as $stars => $count)
-                                <label class="elp-check"><input type="radio" name="rating" value="{{ $stars }}" @checked($query->minRating === $stars)><x-sf::stars :rating="$stars" :size="12" /><span class="elp-check-name">{{ __st('catalog.filters.and_up') }}</span><span class="elp-count">{{ $count }}</span></label>
-                            @endforeach
-                        </div>
-                    </details>
-                    @break
+    @if ($kind === \App\Modules\Storefront\Enums\ListingKind::NewIn)
+        <details class="elo-acc" @if ($query->addedWithinDays) open @endif>
+            <summary>{{ __st('catalog.filters.added') }}<x-ui::icon name="chevron-down" :size="18" /></summary>
+            <div class="grid pb-2">
+                @foreach (['' => 'catalog.filters.any', '7' => 'catalog.filters.added_7', '30' => 'catalog.filters.added_30'] as $value => $label)
+                    <label class="elo-check"><input type="radio" name="added" value="{{ $value }}" @checked((string) $query->addedWithinDays === (string) $value)><span>{{ __st($label) }}</span></label>
+                @endforeach
+            </div>
+        </details>
+    @endif
 
-                @case('availability')
-                    @if ($kind === ListingKind::NewIn)
-                        <details class="elp-group" data-elp-group="added" @if ($query->addedWithinDays) open @endif>
-                            <summary><span>{{ __st('catalog.filters.added') }}</span><span class="elp-ico elp-ico-chevron" aria-hidden="true"></span></summary>
-                            <div class="elp-group-body">
-                                @foreach (['' => 'catalog.filters.any', '7' => 'catalog.filters.added_7', '30' => 'catalog.filters.added_30'] as $value => $label)
-                                    <label class="elp-check"><input type="radio" name="added" value="{{ $value }}" @checked((string) $query->addedWithinDays === (string) $value)><span class="elp-check-name">{{ __st($label) }}</span></label>
-                                @endforeach
-                            </div>
-                        </details>
-                    @endif
-                    <details class="elp-group" data-elp-group="availability" @if ($query->inStockOnly || $query->outOfStockOnly) open @endif>
-                        <summary><span>{{ __st('catalog.filters.availability') }}</span><span class="elp-ico elp-ico-chevron" aria-hidden="true"></span></summary>
-                        <div class="elp-group-body">
-                            <label class="elp-check"><input type="checkbox" name="in_stock" value="1" data-elp-exclusive="availability" @checked($query->inStockOnly)><span class="elp-check-name">{{ __st('catalog.filters.in_stock') }}</span><span class="elp-count">{{ $facets['in_stock'] }}</span></label>
-                            <label class="elp-check"><input type="checkbox" name="out_of_stock" value="1" data-elp-exclusive="availability" @checked($query->outOfStockOnly)><span class="elp-check-name">{{ __st('catalog.card.out_of_stock') }}</span><span class="elp-count">{{ $facets['out_of_stock'] }}</span></label>
-                        </div>
-                    </details>
-                    @break
-            @endswitch
-        @endforeach
-    </div>
+    @if ($kind === \App\Modules\Storefront\Enums\ListingKind::Offers)
+        <details class="elo-acc" @if ($query->minDiscount || $query->flashOnly) open @endif>
+            <summary>{{ __st('catalog.filters.discount') }}<x-ui::icon name="chevron-down" :size="18" /></summary>
+            <div class="grid pb-2">
+                <label class="elo-check"><input type="checkbox" name="flash" value="1" @checked($query->flashOnly)><span>{{ __st('catalog.filters.flash_only') }}</span></label>
+                @foreach ([10, 20, 30, 50] as $value)
+                    <label class="elo-check"><input type="radio" name="discount" value="{{ $value }}" @checked($query->minDiscount === $value)><span>{{ __st('catalog.filters.discount_min', ['percent' => $value]) }}</span></label>
+                @endforeach
+            </div>
+        </details>
+    @endif
+
+    <details class="elo-acc" @if ($query->inStockOnly) open @endif>
+        <summary>{{ __st('catalog.filters.availability') }}<x-ui::icon name="chevron-down" :size="18" /></summary>
+        <div class="grid pb-2">
+            <label class="elo-check"><input type="checkbox" name="in_stock" value="1" @checked($query->inStockOnly)><span class="flex-1">{{ __st('catalog.filters.in_stock') }}</span><span class="text-xs text-sf-muted">{{ $facets['in_stock'] }}</span></label>
+        </div>
+    </details>
 
     @if ($sheet)
-        <div class="elp-sheet-foot">
-            <button type="submit" class="elp-show"><strong>{{ __st('elora_pages.listing.show') }}</strong> <span data-elp-count data-template="{{ __st('elora_pages.listing.result_count', ['count' => '__n__']) }}" aria-live="polite">{{ __st('elora_pages.listing.result_count', ['count' => $result->total]) }}</span></button>
-            <a href="{{ $resetUrl }}" class="elp-reset" data-filter-reset>{{ __st('elora_pages.listing.reset') }}</a>
+        <div class="fixed inset-x-0 bottom-0 z-10 grid grid-cols-[1fr_auto] gap-3 bg-white px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-3 shadow-[0_-4px_12px_rgb(0_0_0/0.06)]">
+            <button type="submit" class="elo-btn elo-btn-primary h-12 rounded-none text-base">{{ __st('elora_pages.listing.show_results', ['count' => $result->total]) }}</button>
+            <a href="{{ $resetUrl }}" class="elo-btn h-12 rounded-none border-elo-primary px-10 text-base text-elo-primary" data-filter-reset>{{ __st('elora_pages.listing.reset') }}</a>
         </div>
     @else
         <noscript><button type="submit" class="elo-btn elo-btn-primary mt-2 w-full">{{ __st('elora_pages.listing.apply') }}</button></noscript>
         @if ($query->activeFilters())
-            <a href="{{ $resetUrl }}" class="elp-clear" data-filter-reset data-elp-nav><x-ui::icon name="x" :size="14" />{{ __st('elora_pages.listing.clear_all') }}</a>
+            <a href="{{ $resetUrl }}" class="mt-2 inline-flex w-fit items-center gap-1 text-sm text-elo-primary hover:underline" data-filter-reset><x-ui::icon name="x" :size="14" />{{ __st('elora_pages.listing.clear_all') }}</a>
         @endif
     @endif
 </form>

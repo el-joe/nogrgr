@@ -1,5 +1,5 @@
 /**
- * Elora product listing (Figma 1:17172 / m 1:21453 / filter sheet m 1:22799).
+ * Elora v1 product listing (Figma 1:17172 / m 1:21453 / filter sheet m 1:22799).
  *  - long filter groups: "Show more" / "Show less" ([data-elp-more]) and a search box that
  *    also finds the hidden values ([data-elp-search]);
  *  - "In stock" / "Out of stock" exclude each other ([data-elp-exclusive]);
@@ -187,6 +187,12 @@ function bindAutoLoad(link) {
 let restored = false;
 
 export function initEloraListing(root = document) {
+    const sort = root.querySelector('select[data-elp-sort]');
+
+    if (sort) {
+        import('./listing-sort.js').then(({ initListingSort }) => initListingSort(sort));
+    }
+
     root.querySelectorAll('.elp-form:not([data-ready-listing])').forEach((form) => {
         form.dataset.readyListing = '';
         bindForm(form);

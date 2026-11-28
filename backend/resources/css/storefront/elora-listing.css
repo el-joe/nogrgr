@@ -1,6 +1,6 @@
 /*
- * Elora product listing (Figma 1:17172 desktop, m 1:21453, filter sheet m 1:22799).
- * Everything is scoped to .elp-* (and the listing pages' data-sf-page). No box shadows or
+ * Elora v1 (base) product listing (Figma 1:17172 desktop, m 1:21453, filter sheet m 1:22799).
+ * Everything is scoped to .elp-* or [data-theme-variant='1'], so variants 2–6 are untouched. No box shadows or
  * edge fades on page sections (client); nothing inside a filter group scrolls.
  * Icons are the Figma exports (resources/images/elora/listing).
  */
@@ -179,6 +179,7 @@
         }
 
         .elp-sort {
+            position: relative;
             display: flex;
             flex-shrink: 0;
             align-items: center;
@@ -194,7 +195,7 @@
             border-color: var(--nog-primary);
         }
 
-        .elp-sort select {
+        .elp-sort > select:not(.select2-hidden-accessible) {
             min-width: 0;
             flex: 1;
             height: 100%;
@@ -788,16 +789,22 @@
         color: #ff4d00;
     }
 
+    /* Categories browser of the same store: no hover shadow on the round tiles (client). */
+    [data-theme-variant='1'] .elo-cat:hover img,
+    [data-theme-variant='1'] .elo-cat:hover .eco-cat-ph {
+        box-shadow: none;
+    }
+
     /* ---------- Listing page chrome on phones (m 1:21453) ---------- */
     /* The phone frame draws the search pill instead of the logo bar, and no tab bar. */
     @media (max-width: 1023px) {
-        .sf-page[data-sf-page^='listing-'] {
+        .sf-page[data-theme-variant='1'][data-sf-page^='listing-'] {
             padding-bottom: 67px;
         }
 
-        .sf-page[data-sf-page^='listing-'] .elo-header > .lg\:hidden,
-        .sf-page[data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar),
-        .sf-page[data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar) + [aria-hidden='true'] {
+        .sf-page[data-theme-variant='1'][data-sf-page^='listing-'] .elo-header > .lg\:hidden,
+        .sf-page[data-theme-variant='1'][data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar),
+        .sf-page[data-theme-variant='1'][data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar) + [aria-hidden='true'] {
             display: none !important;
         }
     }
@@ -829,4 +836,68 @@
     .elp-spinner {
         animation: none;
     }
+}
+
+/* Select2 of the sort pill. Unlayered: select2.css is unlayered and loads after the theme. */
+.elp-sort .select2-container {
+    min-width: 0;
+    flex: 1;
+}
+
+.elp-sort .select2-container--default .select2-selection--single {
+    display: flex;
+    align-items: center;
+    height: 33px;
+    border: 0;
+    border-radius: 16px;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+}
+
+.elp-sort .select2-container--default .select2-selection--single .select2-selection__rendered {
+    overflow: hidden;
+    padding-inline: 16px 8px;
+    color: #4d4d4d;
+    font-size: 14px;
+    line-height: 33px;
+    letter-spacing: 0.5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The design draws the up / down arrows instead of Select2's triangle. */
+.elp-sort .select2-container--default .select2-selection--single .select2-selection__arrow {
+    display: none;
+}
+
+.elp-sort .select2-container--default .select2-dropdown {
+    overflow: hidden;
+    min-width: 177px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+.elp-sort .select2-container--default .select2-results__option {
+    padding: 8px 16px;
+    color: #4d4d4d;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.elp-sort .select2-container--default .select2-results__option--selected {
+    background: #fff5f0;
+    color: #ff4d00;
+}
+
+.elp-sort .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background: #ff4d00;
+    color: #fff;
+}
+
+/* Six short options: the list opens in full, without its own scrollbar (client). */
+.elp-sort .select2-container--default .select2-results > .select2-results__options {
+    max-height: none;
 }

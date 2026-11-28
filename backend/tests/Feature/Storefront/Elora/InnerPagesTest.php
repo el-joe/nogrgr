@@ -43,12 +43,12 @@ it('renders the Elora listings with filters, sort sheet and the floating filter 
         ->assertSee('id="elo-sort"', false)
         ->assertSee('elp-fab', false);
 })->with([
-    'new in' => ['/new-in', 'storefront::themes.elora.pages.listing'],
-    'best selling' => ['/best-selling?period=7', 'storefront::themes.elora.pages.listing'],
-    'top rated' => ['/top-rated', 'storefront::themes.elora.pages.listing'],
-    'offers' => ['/offers', 'storefront::themes.elora.pages.listing'],
-    'search' => ['/search?q=lamp', 'storefront::themes.elora.pages.listing'],
-    'category' => ['/category/elora-gadgets', 'storefront::themes.elora.pages.listing'],
+    'new in' => ['/new-in', 'storefront::themes.elora.pages.listing-v1'],
+    'best selling' => ['/best-selling?period=7', 'storefront::themes.elora.pages.listing-v1'],
+    'top rated' => ['/top-rated', 'storefront::themes.elora.pages.listing-v1'],
+    'offers' => ['/offers', 'storefront::themes.elora.pages.listing-v1'],
+    'search' => ['/search?q=lamp', 'storefront::themes.elora.pages.listing-v1'],
+    'category' => ['/category/elora-gadgets', 'storefront::themes.elora.pages.listing-v1'],
 ]);
 
 it('shows the products in the Elora grid and the empty state', function (): void {

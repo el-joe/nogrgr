@@ -1,6 +1,6 @@
 # Ecommet store category page vs Figma (2026-11-28)
 
-The store at `vendor.nogrgr.loc` renders **Elora v1**, so the frames are the Elora ones: desktop `1:17172`, phone `1:21453`, phone filters `1:22799` (file `2wXSYbP5gQSJHiVQWJJpSf`, read only). The `ecommet` family (Figma 1:1693) and Souqify listings are not touched. The Elora listing template also serves search, best selling, new in, top rated and offers, so they follow the same frames; Elora variants 2-6 share it and keep their own product card.
+The store at `vendor.nogrgr.loc` renders **Elora v1**, so the frames are the Elora ones: desktop `1:17172`, phone `1:21453`, phone filters `1:22799` (file `2wXSYbP5gQSJHiVQWJJpSf`, read only). The `ecommet` family (Figma 1:1693) and Souqify listings are not touched. The new listing is Elora **v1 only** (`pages/listing-v1`, also serving v1's search, best selling, new in, top rated and offers). Variants 2-6 keep `pages/listing` and `partials/filters`, byte-identical to commit 03ed72a (checked in Chrome through the signed theme preview with elora-2 and elora-5; the store theme was not changed). Shared with them without changing their look: the listing query / filter logic (sale, availability, featured, min-max price), the extra facet counts, and two no-op hooks in `elora/pages.js`.
 
 Checked in Chrome (window 1720 and same-origin iframes at 1440 and 375; en and ar). No console errors. Screenshots: `ecommet-category/`.
 
@@ -50,7 +50,7 @@ Empty (with reset), loading (grid dims, spinner while the next page loads, skele
 
 ## Shadows
 
-None on the sidebar, toolbar, circles, grid, search pill or floating filter button; no rail edge fades. Kept: the sort bottom sheet and filter sheet scrim (floating layers). Product card shadows belong to the card component.
+On v1: none on the sidebar, toolbar, circles, grid, search pill or floating filter button; no rail edge fades. Kept: the sort dropdown, sort bottom sheet and filter sheet scrim (floating layers). Variants 2-6 keep their drawn shadows. Product card shadows belong to the card component.
 
 ## Remaining differences
 
@@ -58,4 +58,4 @@ None on the sidebar, toolbar, circles, grid, search pill or floating filter butt
 - Counts beside options, "Show more", Availability and extra variations (Purity) are not drawn; kept for the client's filter requests.
 - The camera in the phone search pill appears only when image search is enabled.
 - With the tab bar hidden as drawn, phones reach the cart from other pages (back, then the tab bar).
-- The sort control keeps a native select styled as drawn.
+- The sort control is a Select2 styled as the drawn pill (its open list is not drawn).
