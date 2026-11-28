@@ -2133,28 +2133,13 @@
     }
 }
 
-/* Ecommet-family image-search result badge (the family's own card ribbon is unchanged). */
-[data-theme-family='ecommet'] .sf-result-badge {
-    position: absolute;
-    top: 0;
-    inset-inline-end: 0;
-    max-width: 100%;
-    overflow: hidden;
-    padding: 2px 6px;
-    background: var(--color-eco-black, #121212);
-    color: #fff;
-    font-size: 11px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
 /*
  * Flat design (client 2026-11-28): no shadows on cards, tiles, bands or sections of the Elora
  * base store. Kept on purpose: header while scrolled, menus / dropdowns / drawers / modals,
  * sticky bars and the phone tab bar, and the small arrow / heart / cart buttons.
  */
-[data-theme-family='elora'][data-theme-variant='1'] .mo-card::after,
-[data-theme-family='ecommet'] .mo-card::after {
+[data-theme-family='elora'][data-theme-variant='1'] .mo-card::after {
     display: none;
 }
 

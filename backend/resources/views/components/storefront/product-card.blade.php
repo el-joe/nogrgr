@@ -30,7 +30,7 @@
 @endphp
 <article {{ $attributes->class(['eco-card', 'eco-card-deal' => $deal]) }} data-product="{{ $card->id }}">
     @if ($card->ribbon && ! $deal)
-        <span class="eco-ribbon" data-ribbon="{{ $card->ribbonKind }}" dir="auto" title="{{ $card->ribbon }}">{{ $card->ribbon }}</span>
+        <span class="eco-ribbon" data-ribbon="{{ $card->ribbonKind }}">{{ $card->ribbon }}</span>
     @endif
     <div class="eco-card-img">
         @if ($card->image)

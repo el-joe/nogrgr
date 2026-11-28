@@ -16,7 +16,7 @@ use Symfony\Component\Finder\Finder;
 
 /** @var array<string, string> $allowlist */
 $allowlist = [
-    'resources/css/storefront/product-card-cover.css' => 'client 2026-11-28 (decisions #131 / #132): product CARD photos of the Elora base / Ecommet themes and the Elora base category tiles fill the box',
+    'resources/css/storefront/product-card-cover.css' => 'client 2026-11-28 (decisions #131 / #132): product CARD photos and category tiles of the Elora base theme fill the box',
 ];
 
 it('never crops content images with object-cover or object-fit: cover', function () use ($allowlist): void {
@@ -44,7 +44,7 @@ it('never crops content images with object-cover or object-fit: cover', function
     expect($offenders)->toBe([]);
 });
 
-it('limits the crop exception to product card and category tile images of the Ecommet store themes', function (): void {
+it('limits the crop exception to product card and category tile images of the Elora base theme', function (): void {
     $css = (string) file_get_contents(dirname(__DIR__, 3).'/resources/css/storefront/product-card-cover.css');
     preg_match_all('/([^{}]+)\{([^{}]*object-fit\s*:\s*cover[^{}]*)\}/', (string) preg_replace('#/\*.*?\*/#s', '', $css), $rules);
 
@@ -52,11 +52,11 @@ it('limits the crop exception to product card and category tile images of the Ec
 
     foreach ($rules[1] as $selectorList) {
         foreach (array_filter(array_map('trim', explode(',', $selectorList))) as $selector) {
-            // A product card image box (v1 card / pair, Elora base card, Ecommet card, image-search result card) or the v1 category tile only.
-            expect($selector)->toMatch('/(\.v1-card-media > img|\.v1-pair-img > img|\.v1-shop-img > img|\.elo-card-media > img|\.eco-card-img img|\[data-card-image\])$/');
+            // A product card image box (v1 card / pair, Elora base card, image-search result card) or the v1 category tile only.
+            expect($selector)->toMatch('/(\.v1-card-media > img|\.v1-pair-img > img|\.v1-shop-img > img|\.elo-card-media > img|\[data-card-image\])$/');
 
             if (! str_starts_with($selector, '.v1-')) {
-                expect($selector)->toMatch("/^\[data-theme-family='(ecommet'\]|elora'\]\[data-theme-variant='1'\])/");
+                expect($selector)->toStartWith("[data-theme-family='elora'][data-theme-variant='1']");
             }
         }
     }

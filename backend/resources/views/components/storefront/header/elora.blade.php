@@ -21,7 +21,7 @@
     <div class="hidden lg:block">
         <div class="elo-header-bar mx-auto flex h-[90px] max-w-[1440px] items-center gap-4 px-6 xl:gap-6 xl:px-12" data-elo-menu>
             @if ($menu !== [])
-                <button type="button" class="elo-menu-btn mo-press" aria-expanded="false" aria-controls="elo-mega" data-elo-menu-toggle data-label-open="{{ __st('elora.menu.open') }}" data-label-close="{{ __st('elora.menu.close') }}" data-text-menu="{{ __st('elora.menu.label') }}" data-text-close="{{ __st('elora.menu.close_label') }}" aria-label="{{ __st('elora.menu.open') }}">
+                <button type="button" class="elo-menu-btn mo-press" aria-expanded="false" aria-controls="elo-mega" data-elo-menu-toggle data-label-open="{{ __st('elora.menu.open') }}" data-label-close="{{ __st('elora.menu.close') }}" @if ($v1) data-text-menu="{{ __st('elora.menu.label') }}" data-text-close="{{ __st('elora.menu.close_label') }}" @endif aria-label="{{ __st('elora.menu.open') }}">
                     <span class="elo-menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
                     <span class="text-[10px] leading-none" data-elo-menu-label>{{ __st('elora.menu.label') }}</span>
                 </button>

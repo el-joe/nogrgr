@@ -46,8 +46,8 @@ export function initCountdowns(root = document) {
 
         const render = () => {
             const left = parts(end - Date.now());
-            /* Designs without a days box: the hours carry the whole time left. */
-            const clock = element.querySelector('[data-unit="days"]') ? left : { ...left, days: 0, hours: left.days * 24 + left.hours };
+            /* data-countdown-total: a design without a days box, the hours carry the whole time left. */
+            const clock = element.dataset.countdownTotal === undefined || element.querySelector('[data-unit="days"]') ? left : { ...left, days: 0, hours: left.days * 24 + left.hours };
             Object.entries(clock).forEach(([unit, value]) => {
                 const node = element.querySelector(`[data-unit="${unit}"]`);
 

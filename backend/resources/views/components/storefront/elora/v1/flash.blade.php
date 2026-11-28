@@ -19,7 +19,7 @@
             <div class="v1-flash-top">
                 {{-- Days box only for sales ending in more than 99 hours; otherwise h / m / s as designed. --}}
                 @php($units = ($sale->endsAt->getTimestamp() - time() > 359999 ? ['days' => 'd'] : []) + ['hours' => 'h', 'minutes' => 'm', 'seconds' => 's'])
-                <p class="v1-countdown" dir="ltr" data-countdown="{{ $sale->endsAt->toIso8601String() }}" data-countdown-label="{{ __st('catalog.card.ends_in') }}">
+                <p class="v1-countdown" dir="ltr" data-countdown="{{ $sale->endsAt->toIso8601String() }}" data-countdown-total data-countdown-label="{{ __st('catalog.card.ends_in') }}">
                     @foreach ($units as $unit => $suffix)
                         <span class="v1-countdown-box"><span data-unit="{{ $unit }}">00</span>{{ __st('elora.flash.'.$suffix) }}</span>
                     @endforeach

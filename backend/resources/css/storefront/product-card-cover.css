@@ -1,7 +1,7 @@
 /*
  * The ONLY place a content image may crop (client 2026-11-28, decisions #131 / #132, narrow #88):
- * product CARD photos of the Ecommet-store themes (Elora base + the Ecommet family) and the
- * Elora base "Shop by Category" tiles fill their image box edge to edge. Not for hero / banner /
+ * product CARD photos and "Shop by Category" tiles of the Elora base design (the client's
+ * "Ecommet" store theme) fill their image box edge to edge. Not for hero / banner /
  * logo / gallery / thumbnail images, and not for other themes. Unlayered so it wins over the
  * contain rules and utilities.
  */
@@ -9,29 +9,18 @@
 .v1-pair-img > img,
 .v1-shop-img > img,
 [data-theme-family='elora'][data-theme-variant='1'] .elo-card-media > img,
-[data-theme-family='elora'][data-theme-variant='1'] [data-card-image],
-[data-theme-family='ecommet'] .eco-card-img img,
-[data-theme-family='ecommet'] [data-card-image] {
+[data-theme-family='elora'][data-theme-variant='1'] [data-card-image] {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
 .v1-card-media,
-[data-theme-family='elora'][data-theme-variant='1'] .elo-card-media,
-[data-theme-family='ecommet'] .eco-card-img {
+[data-theme-family='elora'][data-theme-variant='1'] .elo-card-media {
     overflow: hidden;
     border-radius: 8px 8px 0 0;
 }
 
 [data-theme-family='elora'][data-theme-variant='1'] .elo-card-media {
     border-radius: 8px;
-}
-
-/* Long badge names on the Ecommet ribbon: one line with an ellipsis, clear of the heart. */
-[data-theme-family='ecommet'] .eco-ribbon {
-    max-width: calc(100% - 44px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
