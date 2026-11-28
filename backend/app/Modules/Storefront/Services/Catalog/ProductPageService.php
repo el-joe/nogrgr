@@ -88,6 +88,7 @@ class ProductPageService
         $stock = $selected !== null ? ($priced['variants'][$selected['id']]['stock'] ?? null) : null;
         $perPage = $this->relatedPerPage();
         $related = $this->related($view->id(), $category, 0, $perPage * max(1, $relatedPages));
+        $extra = $this->extraRails($view->id(), $related['cards']);
 
         return new ProductPageData(
             view: $view,
@@ -121,6 +122,8 @@ class ProductPageService
             metaDescription: $view->product->meta_description ?: ($view->overrideText('meta_description') ?? $view->central->meta_description ?? $view->summary),
             media: $media,
             relatedMore: $related['more'],
+            alsoViewed: $extra['also_viewed'],
+            recommended: $extra['recommended'],
         );
     }
 
@@ -295,6 +298,32 @@ class ProductPageService
         $category = $this->categories->primaryFor($this->reader->view($product)->categoryIds);
 
         return [...$this->related($id, $category, ($page - 1) * $perPage, $perPage), 'per_page' => $perPage];
+    }
+
+    /**
+     * Elora base page: "Shoppers also viewed" (best sellers) and "Recommended For You" (top rated, then
+     * newest), never repeating the product itself or a card of the rail above.
+     *
+     * @param  list<ProductCardData>  $related
+     * @return array{also_viewed: list<ProductCardData>, recommended: list<ProductCardData>}
+     */
+    private function extraRails(int $id, array $related): array
+    {
+        if ($this->context->theme()->family !== ThemeFamily::Elora || $this->context->theme()->variant !== 1) {
+            return ['also_viewed' => [], 'recommended' => []];
+        }
+
+        $taken = [$id, ...array_map(static fn (ProductCardData $card): int => $card->id, $related)];
+        $viewed = $this->listing->rail(ListingKind::BestSelling, self::RELATED, null, $taken);
+        $taken = [...$taken, ...array_map(static fn (IndexEntry $entry): int => $entry->id, $viewed)];
+        $picked = $this->listing->rail(ListingKind::TopRated, self::RELATED, null, $taken);
+        $taken = [...$taken, ...array_map(static fn (IndexEntry $entry): int => $entry->id, $picked)];
+
+        if (count($picked) < self::RELATED) {
+            $picked = [...$picked, ...$this->listing->rail(ListingKind::NewIn, self::RELATED - count($picked), null, $taken)];
+        }
+
+        return ['also_viewed' => $this->cards->make($viewed), 'recommended' => $this->cards->make($picked)];
     }
 
     /**

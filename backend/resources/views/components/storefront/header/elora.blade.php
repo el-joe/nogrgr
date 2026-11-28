@@ -73,8 +73,8 @@
                 <div class="v1-mhead-row">
                     <span class="v1-mhead-avatar" aria-hidden="true"><x-ui::icon name="user" :size="22" /></span>
                     <div class="min-w-0 flex-1">
-                        <p class="truncate text-lg font-medium leading-[23px]">{{ $customer ? __st('elora.mobile.hi', ['name' => \Illuminate\Support\Str::of((string) $customer->name)->before(' ')]) : __st('shell.welcome') }} <span aria-hidden="true">&#128075;</span></p>
-                        <button type="button" data-sheet-open="sf-preferences" class="inline-flex max-w-full items-center gap-1 text-xs font-medium tracking-[0.5px]" aria-haspopup="dialog">
+                        <p class="v1-mhead-hi truncate text-lg font-medium leading-[23px]">{{ $customer ? __st('elora.mobile.hi', ['name' => \Illuminate\Support\Str::of((string) $customer->name)->before(' ')]) : __st('shell.welcome') }} <span aria-hidden="true">&#128075;</span></p>
+                        <button type="button" data-sheet-open="sf-preferences" class="v1-mhead-place inline-flex max-w-full items-center gap-1 text-xs font-medium tracking-[0.5px]" aria-haspopup="dialog">
                             <span class="truncate">{{ $context->country()?->name ? __st('elora.mobile.deliver_to', ['place' => $context->country()->name]) : __st('shell.preferences.title') }}</span><span class="v1-mhead-pin" aria-hidden="true"></span>
                         </button>
                     </div>

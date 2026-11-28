@@ -15,7 +15,7 @@
                 @if (! $loop->first)<span class="v1-ico v1-ico-plus" aria-hidden="true"></span>@endif
                 <article class="v1-pair mo-card">
                     <a href="{{ $card->url }}" class="v1-pair-img">
-                        @if ($card->image)<img src="{{ $card->image }}" alt="" width="63" height="55" loading="lazy" decoding="async">@endif
+                        @if ($card->image)<img src="{{ $card->image }}" alt="" width="96" height="96" loading="lazy" decoding="async">@endif
                         @if ($card->badge)
                             <span class="v1-card-badge v1-pair-badge" data-badge="{{ $card->badgeType }}" dir="auto">{{ $card->badge }}</span>
                         @elseif ($card->flash !== null)

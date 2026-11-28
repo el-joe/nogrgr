@@ -7,7 +7,7 @@ import { Swiper, modules, baseOptions, bindKeys, eagerVisible } from './swiper';
 import { options } from './utils';
 
 export function initRail(element) {
-    const settings = options(element, 'rail');
+    const { paginationType = 'progressbar', ...settings } = options(element, 'rail');
     const base = baseOptions(element);
 
     return bindKeys(new Swiper(element, {
@@ -17,7 +17,7 @@ export function initRail(element) {
         spaceBetween: 16,
         freeMode: { enabled: true, sticky: true, momentumRatio: 0.6, momentumBounceRatio: 0.4 },
         watchSlidesProgress: true,
-        pagination: base.pagination ? { ...base.pagination, type: 'progressbar' } : false,
+        pagination: base.pagination ? { ...base.pagination, type: paginationType } : false,
         on: { init: eagerVisible, slideChange: eagerVisible },
         ...settings,
     }));

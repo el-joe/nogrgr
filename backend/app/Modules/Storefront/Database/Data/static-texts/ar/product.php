@@ -61,6 +61,7 @@ return [
         'sign_in_needed' => 'سجّل الدخول لكتابة تقييم.',
     ],
     'video' => 'فيديو المنتج',
+    'play_video' => 'تشغيل الفيديو',
     'video_label' => ':name — فيديو :index',
     'video_fallback' => 'افتح فيديو المنتج',
     'close_video' => 'إغلاق الفيديو',

@@ -61,6 +61,7 @@ return [
         'sign_in_needed' => 'Sign in to write a review.',
     ],
     'video' => 'Product video',
+    'play_video' => 'Play Video',
     'video_label' => ':name — video :index',
     'video_fallback' => 'Open the product video',
     'close_video' => 'Close video',

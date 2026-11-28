@@ -54,6 +54,9 @@ final readonly class ProductPageData
         public ?string $metaDescription,
         public array $media = [],
         public bool $relatedMore = false,
+        /** Elora base: second and third rail of the page (Shoppers also viewed, Recommended For You). */
+        public array $alsoViewed = [],
+        public array $recommended = [],
     ) {}
 
     /**

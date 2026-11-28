@@ -8,7 +8,7 @@
 @if ($banners !== [])
     @php
         $many = count($banners) > 1;
-        $options = ['delay' => 6000, 'effect' => 'slide', 'swiper' => ['slidesPerView' => 'auto', 'spaceBetween' => 15, 'breakpoints' => ['1024' => ['spaceBetween' => 32]]]];
+        $options = ['delay' => 6000, 'effect' => 'slide', 'swiper' => ['slidesPerView' => 'auto', 'spaceBetween' => 12, 'breakpoints' => ['768' => ['spaceBetween' => 15], '1024' => ['spaceBetween' => 32]]]];
     @endphp
     <section {{ $attributes->class(['v1-hero']) }} aria-roledescription="carousel" aria-label="{{ __st('catalog.home.hero_label') }}">
         <div class="v1-hero-frame">

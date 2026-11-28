@@ -267,7 +267,7 @@ function bindReviews(page, data) {
 
             try {
                 const payload = await fetchPage(1);
-                const items = (payload?.data?.items ?? []).slice(0, 2);
+                const items = (payload?.data?.items ?? []).slice(0, Number(preview.dataset.previewCount) || 2);
                 preview.replaceChildren(...items.map((review) => reviewNode(template, review)));
             } catch {
                 preview.replaceChildren();
