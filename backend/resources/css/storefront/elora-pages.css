@@ -253,26 +253,6 @@
         color: #fff;
     }
 
-    .elo-sort {
-        display: inline-flex;
-        align-items: center;
-        gap: 24px;
-        height: 34px;
-        padding-inline: 14px;
-        border: 1px solid #ebebeb;
-        border-radius: 999px;
-        background: #fff;
-        color: var(--nog-ink);
-        font-size: 14px;
-    }
-
-    .elo-sort select {
-        appearance: none;
-        background: transparent;
-        outline: none;
-        cursor: pointer;
-    }
-
     /* ---------- Category circles ---------- */
     .elo-cat {
         display: grid;
@@ -292,13 +272,12 @@
         border-radius: 999px;
         object-fit: contain;
         background: var(--color-media);
-        transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
+        transition: transform var(--motion-base) var(--ease-out);
     }
 
     .elo-cat:hover img,
     .elo-cat:hover .eco-cat-ph {
         transform: translateY(var(--motion-lift)) scale(1.03);
-        box-shadow: var(--motion-card-shadow);
     }
 
     .elo-cat[aria-current] img,
@@ -314,130 +293,7 @@
         }
     }
 
-    /* ---------- Filters (sidebar 1:17172, sheet m 1:22799) ---------- */
-    .elo-filters {
-        border-radius: 0 0 8px 0;
-        background: #fff;
-        box-shadow: 4px 4px 7px rgb(0 0 0 / 0.08);
-    }
-
-    [dir='rtl'] .elo-filters {
-        border-radius: 0 0 0 8px;
-        box-shadow: -4px 4px 7px rgb(0 0 0 / 0.08);
-    }
-
-    .elo-acc > summary {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        min-height: 44px;
-        cursor: pointer;
-        list-style: none;
-        font-size: 16px;
-        font-weight: 500;
-        color: var(--nog-ink);
-    }
-
-    .elo-acc > summary::-webkit-details-marker {
-        display: none;
-    }
-
-    .elo-acc > summary svg {
-        transition: transform var(--motion-base) var(--ease-out);
-    }
-
-    .elo-acc[open] > summary svg {
-        transform: rotate(180deg);
-    }
-
-    .elo-acc[open] > :not(summary) {
-        animation: elo-drop var(--motion-base) var(--ease-out) both;
-    }
-
-    .elo-check {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-height: 30px;
-        font-size: 14px;
-        color: var(--nog-ink);
-        cursor: pointer;
-    }
-
-    .elo-check input {
-        width: 16px;
-        height: 16px;
-        flex-shrink: 0;
-        accent-color: var(--nog-ink);
-        cursor: pointer;
-    }
-
-    .elo-check input[type='radio'] {
-        accent-color: var(--nog-primary);
-    }
-
-    .elo-facet-search {
-        width: 100%;
-        height: 36px;
-        padding-inline: 10px;
-        border: 1px solid var(--nog-line);
-        border-radius: 4px;
-        font-size: 13px;
-        outline: none;
-    }
-
-    .elo-facet-search:focus {
-        border-color: var(--nog-primary);
-    }
-
-    /* Mobile full-height filter sheet (m 1:22799) */
-    @media (max-width: 1023px) {
-        .mo-sheet-panel.elo-sheet-tall {
-            max-height: 100dvh;
-            height: 100dvh;
-            border-radius: 0;
-        }
-    }
-
-    .elo-fab {
-        position: fixed;
-        inset-inline: 0;
-        bottom: calc(80px + env(safe-area-inset-bottom));
-        z-index: 30;
-        display: flex;
-        justify-content: center;
-        pointer-events: none;
-    }
-
-    .elo-fab > div {
-        display: flex;
-        align-items: center;
-        height: 48px;
-        border-radius: 999px;
-        background: var(--nog-primary);
-        color: #fff;
-        box-shadow: 0 8px 20px rgb(255 77 0 / 0.35);
-        pointer-events: auto;
-        animation: elo-rise var(--motion-slow) var(--ease-out) both;
-    }
-
-    .elo-fab button {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        height: 100%;
-        padding-inline: 22px;
-        font-size: 16px;
-        font-weight: 500;
-    }
-
-    .elo-fab span[aria-hidden] {
-        width: 1px;
-        height: 24px;
-        background: rgb(255 255 255 / 0.6);
-    }
-
+    /* ---------- Sort sheet (m 1:23024); the listing itself is in elora-listing.css ---------- */
     .elo-sort-option {
         display: flex;
         align-items: center;
@@ -1133,11 +989,9 @@
 
 @media (prefers-reduced-motion: reduce) {
     .eco-skeleton,
-    .elo-fab > div,
     .elo-empty-icon,
     .elo-status-art,
     .elo-day-bar > span,
-    .elo-acc[open] > :not(summary),
     .elo-track-step[data-state='current'] .elo-track-dot::after {
         animation: none;
     }

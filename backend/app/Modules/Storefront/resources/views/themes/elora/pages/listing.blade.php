@@ -1,13 +1,16 @@
 {{--
     Elora product listing — one template, six entry points (Figma 1:17172 / m 1:21453,
-    variant notes 137:113975; filter sheet m 1:22799, sort popup m 1:23024): search results,
-    best selling (period pills), new in, top rated, offers and categories. Desktop: filter
-    sidebar (applies on change) + quick-filter pills + sort; category circles rail; 5-up
-    grid; load more. Phones: search pill, swipeable quick pills, floating "filter | sort by".
-    Data as the Ecommet listing (RendersListings): $kind, $title, $crumbs, $query, $result,
-    $nextUrl, $category, $subcategories, $categoryOptions, $popular, $cardTag, $seo.
+    variant notes 137:113975; filter sheet m 1:22799, sort popup m 1:23024): categories,
+    search results, best selling (period pills), new in, top rated and offers.
+    Desktop: filter sidebar (applies on change) · quick-filter pills + sort · category
+    circles rail · 5-up grid that loads the next page on scroll. Phones: search pill,
+    swipeable quick pills, 2-up grid, floating "filter | sort by". Every filter is a query
+    parameter, so the state lives in the URL.
+    Data as the Ecommet listing (RendersListings) plus $tiles and $deliveryBy.
+    Styles: resources/css/storefront/elora-listing.css; JS: storefront/elora/pages/listing.js.
 --}}
 @use('App\Modules\Storefront\Enums\ListingKind')
+@use('App\Modules\Storefront\Enums\ListingSort')
 @use('App\Modules\Storefront\Enums\SalesPeriod')
 @php
     /** @var \App\Modules\Storefront\DTOs\Catalog\ListingQuery $query */
@@ -15,103 +18,122 @@
     $isCategory = $kind === ListingKind::Category;
     $sortOptions = $kind->sorts();
     $filtersActive = $query->activeFilters();
-    $subcategories ??= [];
     $popular ??= [];
-    $circles = $isCategory
-        ? $subcategories
-        : array_map(static fn (array $node) => $node['category'], app(\App\Modules\Storefront\Services\Catalog\CategoryCatalog::class)->tree());
+    $tiles ??= [];
+    $sortLabel = static fn (ListingSort $sort): string => $sort === ListingSort::Recommended ? __st('elora_pages.listing.most_relevant') : __st('catalog.sort.'.$sort->value);
+    $sortUrl = static fn (ListingSort $sort): string => request()->fullUrlWithQuery(['sort' => $sort === $kind->defaultSort() ? null : $sort->value, 'page' => null, 'fragment' => null]);
+    $toggle = static fn (string $name, int $value, bool $on): string => request()->fullUrlWithQuery([$name => $on ? null : $value, 'page' => null, 'fragment' => null]);
+    /* Quick filters (1:17280 …): toggles of the current listing; the page that already is that list links back to all products. */
     $quick = [
-        ['route' => 'storefront.offers', 'params' => ['flash' => 1], 'icon' => 'zap', 'label' => 'elora_pages.listing.quick.flash', 'active' => $kind === ListingKind::Offers && $query->flashOnly],
-        ['route' => 'storefront.top-rated', 'params' => [], 'icon' => 'star', 'label' => 'elora_pages.listing.quick.top_rated', 'active' => $kind === ListingKind::TopRated],
-        ['route' => 'storefront.best-sellers', 'params' => [], 'icon' => 'award', 'label' => 'elora_pages.listing.quick.best_selling', 'active' => $kind === ListingKind::BestSelling],
-        ['route' => 'storefront.offers', 'params' => [], 'icon' => 'tag', 'label' => 'elora_pages.listing.quick.offers', 'active' => $kind === ListingKind::Offers && ! $query->flashOnly],
-        ['route' => 'storefront.new-in', 'params' => [], 'icon' => 'sparkles', 'label' => 'elora_pages.listing.quick.new_in', 'active' => $kind === ListingKind::NewIn],
+        ['key' => 'flash', 'icon' => 'zap', 'param' => 'flash', 'value' => 1, 'on' => $query->flashOnly, 'is' => false],
+        ['key' => 'top_rated', 'icon' => 'star', 'param' => 'rating', 'value' => 4, 'on' => $query->minRating !== null && $query->minRating >= 4, 'is' => $kind === ListingKind::TopRated],
+        ['key' => 'fast', 'icon' => 'truck', 'param' => 'in_stock', 'value' => 1, 'on' => $query->inStockOnly, 'is' => false],
+        ['key' => 'coupon', 'icon' => 'ticket', 'param' => 'sale', 'value' => 1, 'on' => $query->onSale, 'is' => $kind === ListingKind::Offers],
+        ['key' => 'new_in', 'icon' => 'sparkles', 'param' => 'added', 'value' => 30, 'on' => $query->addedWithinDays !== null, 'is' => $kind === ListingKind::NewIn],
     ];
-    $sortUrl = fn ($sort) => request()->fullUrlWithQuery(['sort' => $sort->value === $kind->defaultSort()->value ? null : $sort->value, 'page' => null, 'fragment' => null]);
+    $clearUrl = url()->current().($query->term ? '?q='.urlencode($query->term) : '');
+    $imageSearch = \App\Modules\Ai\Services\Tools\OpenAiTools::storefrontImageSearch();
+    /* Back goes one level up the category tree (not through the history), ending at /category. */
+    $category ??= null;
+    $parentCategory ??= null;
+    $upUrl = $category === null ? null : ($parentCategory !== null ? route('storefront.category', ['slug' => $parentCategory->slug]) : route('storefront.category.all'));
+    $upName = $category === null ? null : ($parentCategory !== null ? (string) $parentCategory->name : __st('elora_pages.listing.all_categories'));
+    $back = $upUrl ?? ($isCategory || url()->previous() === url()->current() ? route('storefront.home') : url()->previous());
 @endphp
 <x-sf::layout :seo="$seo" :page="'listing-'.$kind->value" :nav="$isCategory ? 'categories' : null">
-    {{-- Phone search pill (m 1:21453) --}}
-    <div class="elo-wrap pt-3 lg:hidden">
-        <form method="GET" action="{{ route('storefront.search') }}" role="search" class="flex h-12 items-center gap-3 rounded-full bg-elo-soft px-4 shadow-[0_1px_3px_rgb(0_0_0/0.08)]">
-            <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('storefront.home') }}" class="text-elo-ink" aria-label="{{ __st('shell.back') }}"><x-ui::icon name="chevron-left" :size="20" class="rtl:-scale-x-100" /></a>
-            <label for="elo-m-search" class="sr-only">{{ __st('shell.search_submit') }}</label>
-            <input id="elo-m-search" type="search" name="q" value="{{ $query->term }}" placeholder="{{ __st('shell.search') }}" class="h-full min-w-0 flex-1 bg-transparent text-sm text-elo-ink outline-none" enterkeyhint="search" autocomplete="off">
-            <button type="submit" class="text-elo-ink" aria-label="{{ __st('shell.search_submit') }}"><x-ui::icon name="search" :size="20" /></button>
-        </form>
-    </div>
+    {{-- Phone search pill (m 1:21528): back, the listing name as the hint, image search. --}}
+    <form method="GET" action="{{ route('storefront.search') }}" role="search" class="elp-search lg:hidden">
+        <a href="{{ $back }}" class="elp-search-back" data-elp-back aria-label="{{ $upName !== null ? __st('elora_pages.listing.back_to', ['name' => $upName]) : __st('shell.back') }}"><span class="elp-ico elp-ico-back" aria-hidden="true"></span></a>
+        <label for="elp-m-search" class="sr-only">{{ __st('shell.search_submit') }}</label>
+        <input id="elp-m-search" type="search" name="q" value="{{ $query->term }}" placeholder="{{ $isCategory ? $title : __st('shell.search') }}" enterkeyhint="search" autocomplete="off" required>
+        <button type="submit" class="sr-only">{{ __st('shell.search_submit') }}</button>
+        @if ($imageSearch)
+            <button type="button" class="elp-search-camera" data-image-search-open aria-label="{{ __st('search.image.open') }}"><span class="elp-ico elp-ico-camera" aria-hidden="true"></span></button>
+        @endif
+    </form>
 
-    <div class="elo-wrap grid gap-6 pb-28 pt-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8 lg:ps-0 lg:pb-16 lg:pt-6">
-        {{-- Desktop filter sidebar --}}
-        <aside class="elo-filters hidden self-start px-7 pb-8 pt-4 lg:block" aria-label="{{ __st('catalog.filters.title') }}" data-reveal="slide-start">
+    <div class="elp-wrap">
+        <aside class="elp-side" aria-label="{{ __st('catalog.filters.title') }}">
             @include('storefront::themes.elora.partials.filters', ['mode' => 'sidebar'])
         </aside>
 
-        <div class="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-5 lg:gap-6">
-            @if ($isCategory || $kind === ListingKind::Search)
-                <nav aria-label="{{ __st('shell.breadcrumb') }}" class="hidden lg:block">
-                    <ol class="elo-crumbs">
-                        @foreach ($crumbs as $crumb)
-                            <li class="inline-flex items-center gap-1.5">
-                                @if (! $loop->last)<a href="{{ $crumb['url'] }}">{{ $crumb['name'] }}</a><x-ui::icon name="chevron-right" :size="12" class="rtl:-scale-x-100" />@else<span aria-current="page">{{ $crumb['name'] }}</span>@endif
-                            </li>
-                        @endforeach
-                    </ol>
-                </nav>
-            @endif
+        <div class="elp-main">
+            {{-- Not drawn in the design; kept for readers and search engines (JSON-LD carries the trail too). --}}
+            <nav aria-label="{{ __st('shell.breadcrumb') }}" class="sr-only">
+                <ol>
+                    @foreach ($crumbs as $crumb)
+                        <li>@if (! $loop->last)<a href="{{ $crumb['url'] }}" tabindex="-1">{{ $crumb['name'] }}</a>@else<span aria-current="page">{{ $crumb['name'] }}</span>@endif</li>
+                    @endforeach
+                </ol>
+            </nav>
+            <h1 class="sr-only">{{ $title }} — {{ __st('elora_pages.listing.results', ['count' => $result->total]) }}</h1>
 
-            {{-- Quick filters + sort --}}
-            <div class="flex items-center gap-4">
-                <div class="swiper min-w-0 flex-1" data-rail='{"spaceBetween":12,"freeMode":{"enabled":true,"sticky":false}}'>
+            {{-- Quick filters + sort (1:17278 · m 1:21536) --}}
+            <div class="elp-toolbar">
+                <div class="swiper elp-pills" data-rail='{"spaceBetween":12,"freeMode":{"enabled":true,"sticky":false}}'>
                     <ul class="swiper-wrapper" role="list" aria-label="{{ __st('elora_pages.listing.quick_label') }}">
                         @foreach ($quick as $pill)
                             <li class="swiper-slide !w-auto">
-                                <a href="{{ route($pill['route'], $pill['params']) }}" class="elo-pill mo-press" @if ($pill['active']) aria-current="page" @endif><x-ui::icon :name="$pill['icon']" :size="16" />{{ __st($pill['label']) }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-                <label class="elo-sort hidden shrink-0 lg:inline-flex">
-                    <span class="sr-only">{{ __st('catalog.sort.label') }}</span>
-                    <select data-auto-filter="sort" aria-label="{{ __st('catalog.sort.label') }}">
-                        @foreach ($sortOptions as $sort)
-                            <option value="{{ $sort->value }}" @selected($query->sort === $sort)>{{ __st('catalog.sort.'.$sort->value) }}</option>
-                        @endforeach
-                    </select>
-                    <x-ui::icon name="sort" :size="16" class="pointer-events-none text-elo-primary" />
-                </label>
-            </div>
-
-            <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <h1 class="text-lg font-medium text-elo-ink lg:text-xl">{{ $title }}</h1>
-                @unless ($result->isEmpty())
-                    <p class="text-sm text-sf-muted">{{ __st('elora_pages.listing.results', ['count' => $result->total]) }}</p>
-                @endunless
-                @if ($filtersActive)
-                    <a href="{{ url()->current().($query->term ? '?q='.urlencode($query->term) : '') }}" class="ms-auto inline-flex items-center gap-1 text-sm text-elo-primary hover:underline lg:hidden"><x-ui::icon name="x" :size="14" />{{ __st('elora_pages.listing.clear_all') }} ({{ $filtersActive }})</a>
-                @endif
-            </div>
-
-            @if ($kind === ListingKind::BestSelling)
-                <div class="flex gap-2 overflow-x-auto [scrollbar-width:none]" role="group" aria-label="{{ __st('catalog.listing.best_selling.period') }}">
-                    @foreach (SalesPeriod::cases() as $period)
-                        <a href="{{ request()->fullUrlWithQuery(['period' => $period->value, 'page' => null, 'fragment' => null]) }}" class="elo-pill elo-pill-ghost mo-press" @if ($query->period === $period) aria-current="true" @endif>{{ __st('catalog.listing.best_selling.within', ['days' => $period->value]) }}</a>
-                    @endforeach
-                </div>
-            @endif
-
-            {{-- Category circles --}}
-            @if ($circles !== [])
-                <div class="swiper w-full" data-rail='{"spaceBetween":10}' data-reveal="fade">
-                    <ul class="swiper-wrapper" role="list" aria-label="{{ __st('shell.nav.categories') }}">
-                        @foreach ($circles as $circle)
-                            <li class="swiper-slide !w-[82px]">
-                                <a href="{{ route('storefront.category', ['slug' => $circle->slug]) }}" class="elo-cat" @if ($isCategory && $circle->id === $category?->id) aria-current="page" @endif>
-                                    <x-sf::category-image :category="$circle" :size="64" :eager="$loop->index < 8" />
-                                    <span class="line-clamp-2">{{ $circle->name }}</span>
+                                <a href="{{ $pill['is'] ? route('storefront.category.all') : $toggle($pill['param'], $pill['value'], $pill['on']) }}" class="elp-pill mo-press" data-elp-nav @if ($pill['on'] || $pill['is']) aria-current="true" @endif>
+                                    <span class="elp-ico elp-ico-{{ $pill['icon'] }}" aria-hidden="true"></span>
+                                    @if ($pill['key'] === 'top_rated')
+                                        <span class="lg:hidden">{{ __st('elora_pages.listing.quick.top_rated_short') }}</span><span class="max-lg:hidden">{{ __st('elora_pages.listing.quick.top_rated') }}</span>
+                                    @else
+                                        <span>{{ __st('elora_pages.listing.quick.'.$pill['key']) }}</span>
+                                    @endif
                                 </a>
                             </li>
                         @endforeach
                     </ul>
+                </div>
+                <label class="elp-sort">
+                    <span class="sr-only">{{ __st('catalog.sort.label') }}</span>
+                    <select data-auto-filter="sort">
+                        @foreach ($sortOptions as $sort)
+                            <option value="{{ $sort->value }}" @selected($query->sort === $sort)>{{ $sortLabel($sort) }}</option>
+                        @endforeach
+                    </select>
+                    <span class="elp-ico elp-ico-sort" aria-hidden="true"></span>
+                </label>
+            </div>
+
+            @if ($kind === ListingKind::BestSelling)
+                <div class="elp-periods" role="group" aria-label="{{ __st('catalog.listing.best_selling.period') }}">
+                    @foreach (SalesPeriod::cases() as $period)
+                        <a href="{{ request()->fullUrlWithQuery(['period' => $period->value, 'page' => null, 'fragment' => null]) }}" class="elo-pill elo-pill-ghost mo-press" data-elp-nav @if ($query->period === $period) aria-current="true" @endif>{{ __st('catalog.listing.best_selling.within', ['days' => $period->value]) }}</a>
+                    @endforeach
+                </div>
+            @endif
+
+            {{-- Category circles (1:17317), desktop; on a category page the "up one level" tile stays put before the rail. --}}
+            @if ($tiles !== [] || $upUrl !== null)
+                <div class="elp-circles" data-reveal="fade">
+                    @if ($upUrl !== null)
+                        <a href="{{ $upUrl }}" class="elp-circle elp-up mo-press" rel="up" data-elp-back title="{{ __st('elora_pages.listing.back_to', ['name' => $upName]) }}" aria-label="{{ __st('elora_pages.listing.back_to', ['name' => $upName]) }}">
+                            <span class="elp-circle-img"><span class="elp-ico elp-ico-up" aria-hidden="true"></span></span>
+                            <span class="elp-circle-name">{{ $upName }}</span>
+                        </a>
+                    @endif
+                    @if ($tiles !== [])
+                        <div class="swiper elp-circle-rail" data-rail='{"spaceBetween":24,"freeMode":{"enabled":true,"sticky":false}}'>
+                            <ul class="swiper-wrapper" role="list" aria-label="{{ __st('shell.nav.categories') }}">
+                                @foreach ($tiles as $tile)
+                                    <li class="swiper-slide !w-20">
+                                        <a href="{{ route('storefront.category', ['slug' => $tile['category']->slug]) }}" class="elp-circle" @if ($isCategory && $tile['category']->id === $category?->id) aria-current="page" @endif>
+                                            <span class="elp-circle-img">
+                                                @if ($tile['image'])
+                                                    <img src="{{ $tile['image'] }}" alt="" width="62" height="62" loading="{{ $loop->index < 11 ? 'eager' : 'lazy' }}" decoding="async" draggable="false">
+                                                @else
+                                                    <span aria-hidden="true">{{ mb_strtoupper(mb_substr((string) $tile['category']->name, 0, 1)) }}</span>
+                                                @endif
+                                            </span>
+                                            <span class="elp-circle-name">{{ $tile['category']->name }}</span>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                 </div>
             @endif
 
@@ -122,7 +144,7 @@
                     <p class="max-w-md">{{ $filtersActive ? __st('catalog.empty.filtered_body') : __st('catalog.empty.'.$kind->value.'_body') }}</p>
                     <div class="mt-2 flex flex-wrap justify-center gap-3">
                         @if ($filtersActive)
-                            <a href="{{ url()->current().($query->term ? '?q='.urlencode($query->term) : '') }}" class="elo-btn elo-btn-ink mo-press">{{ __st('catalog.filters.reset') }}</a>
+                            <a href="{{ $clearUrl }}" class="elo-btn elo-btn-ink mo-press">{{ __st('catalog.filters.reset') }}</a>
                         @elseif ($kind === ListingKind::BestSelling || $kind === ListingKind::TopRated)
                             <a href="{{ route('storefront.new-in') }}" class="elo-btn elo-btn-ink mo-press">{{ __st('catalog.empty.show_new') }}</a>
                         @else
@@ -134,43 +156,56 @@
                     @endif
                 </section>
                 @if ($popular !== [])
-                    <section class="grid gap-4" aria-labelledby="elo-popular-title">
-                        <h2 id="elo-popular-title" class="text-lg font-medium text-elo-ink" data-reveal="fade-up">{{ __st('search.popular') }}</h2>
-                        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" data-reveal-stagger>
-                            @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $popular])
+                    <section class="grid gap-4" aria-labelledby="elp-popular-title">
+                        <h2 id="elp-popular-title" class="text-lg font-medium text-elo-ink" data-reveal="fade-up">{{ __st('search.popular') }}</h2>
+                        <div class="elp-grid" data-reveal-stagger>
+                            @include('storefront::themes.elora.partials.listing-cards', ['cards' => $popular])
                         </div>
                     </section>
                 @endif
             @else
-                <div id="elo-listing-grid" class="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-3 lg:gap-y-6 xl:grid-cols-5" data-reveal-stagger>
-                    @include(\App\Modules\Storefront\Support\StorefrontView::resolve('partials.card-grid-items'), ['cards' => $result->cards, 'tag' => $cardTag ?? null, 'eager' => $query->page === 1])
+                <div id="elo-listing-grid" class="elp-grid" data-reveal-stagger>
+                    @include('storefront::themes.elora.partials.listing-cards', ['cards' => $result->cards, 'eager' => $query->page === 1])
                 </div>
-                <div class="mt-4">
-                    <x-sf::section.load-more :url="$nextUrl" target="#elo-listing-grid" />
-                </div>
+                {{-- The next page loads as the end of the grid comes into view; the link stays for keyboards, crawlers and retries. --}}
+                @if ($nextUrl)
+                    <div class="elp-more">
+                        <a href="{{ $nextUrl }}" class="elp-more-link" data-load-more data-elp-auto data-target="#elo-listing-grid" data-loading-text="{{ __st('catalog.loading') }}" data-error-text="{{ __st('catalog.load_error') }}" rel="next">
+                            <span class="elp-spinner" aria-hidden="true"></span><span data-load-more-label>{{ __st('catalog.see_more') }}</span>
+                        </a>
+                    </div>
+                @endif
             @endif
         </div>
     </div>
 
-    {{-- Phone floating "filter | sort by" (m 1:21453) --}}
-    <div class="elo-fab lg:hidden">
+    {{-- Phone floating "filter | sort by" (m 1:21569) --}}
+    <div class="elp-fab lg:hidden">
         <div>
-            <button type="button" data-sheet-open="elo-filters"><x-ui::icon name="filter" :size="18" />{{ __st('elora_pages.listing.filter') }}@if ($filtersActive)<span class="grid size-5 place-items-center rounded-full bg-white text-[11px] text-elo-primary">{{ $filtersActive }}</span>@endif</button>
-            <span aria-hidden="true"></span>
-            <button type="button" data-sheet-open="elo-sort"><x-ui::icon name="sort" :size="18" />{{ __st('elora_pages.listing.sort_by') }}</button>
+            <button type="button" data-sheet-open="elo-filters"><span class="elp-ico elp-ico-filter" aria-hidden="true"></span>{{ __st('elora_pages.listing.filter') }}@if ($filtersActive)<span class="elp-fab-count">{{ $filtersActive }}</span>@endif</button>
+            <span class="elp-fab-line" aria-hidden="true"></span>
+            <button type="button" data-sheet-open="elo-sort"><span class="elp-ico elp-ico-arrows" aria-hidden="true"></span>{{ __st('elora_pages.listing.sort_by') }}</button>
         </div>
     </div>
 
-    <x-sf::modal id="elo-filters" :title="__st('catalog.filters.title')" size="sm" data-sheet-mode="always" class="elo-sheet-tall flex flex-col bg-elo-soft">
-        @include('storefront::themes.elora.partials.filters', ['mode' => 'sheet'])
-    </x-sf::modal>
+    {{-- Phone filters (m 1:22799) --}}
+    <div class="mo-sheet elp-sheet" id="elo-filters" data-sheet data-sheet-mode="always" role="dialog" aria-modal="true" aria-label="{{ __st('catalog.filters.title') }}" hidden>
+        <div class="mo-sheet-scrim" data-sheet-close></div>
+        <div class="mo-sheet-panel">
+            <div class="elp-sheet-head" data-sheet-handle data-autofocus tabindex="-1">
+                <x-sf::logo tone="dark" size="lg" />
+                <button type="button" data-sheet-close class="elp-sheet-close" aria-label="{{ __st('shell.close') }}"><span class="elp-ico elp-ico-close" aria-hidden="true"></span></button>
+            </div>
+            @include('storefront::themes.elora.partials.filters', ['mode' => 'sheet'])
+        </div>
+    </div>
 
     <x-sf::modal id="elo-sort" :title="__st('catalog.sort.label')" size="sm" data-sheet-mode="always">
         <ul class="grid" role="list">
             @foreach ($sortOptions as $sort)
                 <li>
                     <a href="{{ $sortUrl($sort) }}" class="elo-sort-option" @if ($query->sort === $sort) aria-current="true" @endif>
-                        {{ __st('catalog.sort.'.$sort->value) }}
+                        {{ $sortLabel($sort) }}
                         <span class="elo-radio" aria-hidden="true">@if ($query->sort === $sort)<x-ui::icon name="check" :size="14" />@endif</span>
                     </a>
                 </li>

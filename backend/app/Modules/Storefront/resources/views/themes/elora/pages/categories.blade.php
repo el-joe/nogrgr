@@ -14,7 +14,7 @@
         </section>
     @else
         <div class="elo-wrap flex min-h-[70vh] gap-0 px-0 lg:gap-8 lg:px-12 lg:py-8" data-simple-tabs>
-            <ul class="w-[124px] shrink-0 bg-elo-soft py-2 lg:w-[260px] lg:rounded-xl lg:bg-white lg:p-3 lg:shadow-[0_4px_7px_rgb(0_0_0/0.08)]" role="tablist" aria-orientation="vertical" aria-label="{{ __st('shell.nav.categories') }}">
+            <ul class="w-[124px] shrink-0 bg-elo-soft py-2 lg:w-[260px] lg:rounded-xl lg:bg-white lg:p-3 lg:border lg:border-sf-border" role="tablist" aria-orientation="vertical" aria-label="{{ __st('shell.nav.categories') }}">
                 @foreach ($tree as $index => $node)
                     <li>
                         <button type="button" role="tab" class="relative flex min-h-12 w-full items-center px-3 text-start text-sm text-sf-muted transition-colors hover:text-elo-ink aria-selected:bg-white aria-selected:font-medium aria-selected:text-elo-ink lg:rounded-lg lg:px-4 lg:text-base lg:aria-selected:bg-elo-tint lg:aria-selected:text-elo-primary aria-selected:before:absolute aria-selected:before:inset-y-3 aria-selected:before:start-0 aria-selected:before:w-[3px] aria-selected:before:rounded-full aria-selected:before:bg-elo-primary" id="elo-cat-tab-{{ $node['category']->id }}" aria-controls="elo-cat-panel-{{ $node['category']->id }}" aria-selected="{{ $index === 0 ? 'true' : 'false' }}">

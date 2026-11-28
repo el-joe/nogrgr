@@ -1,0 +1,832 @@
+/*
+ * Elora product listing (Figma 1:17172 desktop, m 1:21453, filter sheet m 1:22799).
+ * Everything is scoped to .elp-* (and the listing pages' data-sf-page). No box shadows or
+ * edge fades on page sections (client); nothing inside a filter group scrolls.
+ * Icons are the Figma exports (resources/images/elora/listing).
+ */
+@layer components {
+    /* ---------- Layout ---------- */
+    .elp-wrap {
+        width: 100%;
+        max-width: 1440px;
+        margin-inline: auto;
+        padding: 20px 16px 16px;
+    }
+
+    .elp-side {
+        display: none;
+    }
+
+    .elp-main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        gap: 20px;
+        min-width: 0;
+    }
+
+    @media (min-width: 1024px) {
+        .elp-wrap {
+            display: grid;
+            grid-template-columns: 259px minmax(0, 1fr);
+            column-gap: 24px;
+            padding: 9px 0 73px;
+            padding-inline-end: 23px;
+        }
+
+        .elp-side {
+            display: block;
+            align-self: start;
+            min-height: 780px;
+            padding-block: 32px 63px;
+            padding-inline: 32px 24px;
+            border-inline-end: 1px solid #f0f0f0;
+            background: #fff;
+        }
+
+        .elp-main {
+            gap: 24px;
+            padding-top: 19px;
+        }
+    }
+
+    /* ---------- Icons ---------- */
+    .elp-ico {
+        display: inline-block;
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        background-color: currentColor;
+        mask: var(--ico) center / contain no-repeat;
+    }
+
+    .elp-ico-zap { --ico: url('../../images/elora/listing/zap.svg'); width: 14px; }
+    .elp-ico-star { --ico: url('../../images/elora/listing/star.svg'); width: 14px; }
+    .elp-ico-truck { --ico: url('../../images/elora/listing/truck.svg'); width: 14px; }
+    .elp-ico-ticket { --ico: url('../../images/elora/listing/ticket.svg'); width: 14px; }
+    .elp-ico-sparkles { --ico: url('../../images/elora/listing/sparkles.svg'); width: 14px; }
+    .elp-ico-sort { --ico: url('../../images/elora/listing/sort.svg'); width: 11px; height: 12px; color: var(--nog-primary); }
+    .elp-ico-chevron { --ico: url('../../images/elora/listing/chevron-down.svg'); color: #0a0a0a; transition: transform var(--motion-base) var(--ease-out); }
+    .elp-ico-back { --ico: url('../../images/elora/listing/back.svg'); width: 28px; height: 28px; transform: scaleX(-1); color: #0a0a0a; }
+    .elp-ico-camera { --ico: url('../../images/elora/listing/camera.svg'); width: 33px; height: 24px; color: #121212; }
+    .elp-ico-filter { --ico: url('../../images/elora/listing/filter.svg'); width: 22px; height: 22px; }
+    .elp-ico-arrows { --ico: url('../../images/elora/listing/arrows-sort.svg'); width: 22px; height: 22px; }
+    .elp-ico-close { --ico: url('../../images/elora/listing/close.svg'); width: 14px; height: 14px; color: #8f8f8f; }
+
+    [dir='rtl'] .elp-ico-back {
+        transform: none;
+    }
+
+    /* ---------- Phone search pill (m 1:21528) ---------- */
+    .elp-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 54px;
+        margin: 12px 16px 0;
+        padding-inline: 12px;
+        border: 1px solid #d4d4d4;
+        border-radius: 32px;
+        background: #f6f5f5;
+    }
+
+    .elp-search input {
+        min-width: 0;
+        flex: 1;
+        height: 100%;
+        background: transparent;
+        font-size: 16px;
+        color: #121212;
+        outline: none;
+    }
+
+    .elp-search input::placeholder {
+        color: #8f8f8f;
+    }
+
+    .elp-search:focus-within {
+        border-color: var(--nog-primary);
+    }
+
+    .elp-search-back {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+    }
+
+    .elp-search-camera {
+        display: grid;
+        place-items: center;
+        height: 28px;
+        padding-inline-start: 8px;
+        border-inline-start: 1px solid #8f8f8f;
+    }
+
+    /* ---------- Toolbar: quick filters + sort (1:17278) ---------- */
+    .elp-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .elp-pills {
+        min-width: 0;
+        flex: 1;
+        margin: 0;
+    }
+
+    .elp-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        height: 32px;
+        padding-inline: 12px;
+        border: 1px solid #ffac88;
+        border-radius: 16px;
+        color: var(--nog-primary);
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: background-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out;
+    }
+
+    .elp-pill:hover {
+        background: #fff5f0;
+    }
+
+    .elp-pill[aria-current='true'] {
+        border-color: #ff4d00;
+        background: #ff4d00;
+        color: #fff;
+    }
+
+    .elp-sort {
+        display: none;
+    }
+
+    @media (min-width: 1024px) {
+        .elp-pill {
+            gap: 11px;
+            height: 36px;
+            padding-inline: 16px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .elp-sort {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            width: 177px;
+            height: 35px;
+            padding-inline-end: 16px;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            cursor: pointer;
+        }
+
+        .elp-sort:focus-within {
+            border-color: var(--nog-primary);
+        }
+
+        .elp-sort select {
+            min-width: 0;
+            flex: 1;
+            height: 100%;
+            padding-inline-start: 16px;
+            border-radius: 16px;
+            appearance: none;
+            background: transparent;
+            color: #4d4d4d;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .elp-sort .elp-ico {
+            pointer-events: none;
+        }
+    }
+
+    .elp-periods {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* ---------- Category circles (1:17317), desktop only ---------- */
+    .elp-circles {
+        display: none;
+        gap: 24px;
+        min-width: 0;
+    }
+
+    @media (min-width: 1024px) {
+        .elp-circles {
+            display: flex;
+        }
+    }
+
+    .elp-circle-rail {
+        min-width: 0;
+        flex: 1;
+        margin: 0;
+    }
+
+    .elp-up {
+        flex-shrink: 0;
+        align-self: start;
+    }
+
+    .elp-ico-up {
+        --ico: url('../../images/elora/listing/back.svg');
+        width: 28px;
+        height: 28px;
+        transform: scaleX(-1);
+        color: #121212;
+    }
+
+    /* The Figma chevron points forward; "up" points back in the reading direction. */
+    [dir='rtl'] .elp-ico-up {
+        transform: none;
+    }
+
+    .elp-circle {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 80px;
+        min-height: 102px;
+        color: #364153;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 15px;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+
+    .elp-circle-img {
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 64px;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        border-radius: 999px;
+        background: #f3f4f6;
+        font-size: 22px;
+        transition: transform var(--motion-base) var(--ease-out), border-color var(--motion-fast) ease-out;
+    }
+
+    .elp-circle-img img {
+        width: 62px;
+        height: 62px;
+        border-radius: 999px;
+        object-fit: contain;
+    }
+
+    .elp-circle-name {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow-wrap: anywhere;
+    }
+
+    @media (hover: hover) {
+        .elp-circle:hover .elp-circle-img {
+            transform: translateY(-2px);
+            border-color: var(--nog-primary);
+        }
+    }
+
+    .elp-circle[aria-current='page'] .elp-circle-img {
+        border: 2px solid var(--nog-primary);
+    }
+
+    /* ---------- Grid ---------- */
+    .elp-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 15px;
+        transition: opacity var(--motion-fast) ease-out;
+    }
+
+    @media (min-width: 640px) {
+        .elp-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .elp-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 24px 14px;
+            padding-inline: 14px;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .elp-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .elp-grid {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+    }
+
+    .elp-grid > * {
+        min-width: 0;
+    }
+
+    .elp-main[data-busy] .elp-grid {
+        opacity: 0.45;
+        pointer-events: none;
+    }
+
+    .elp-more {
+        display: flex;
+        justify-content: center;
+        min-height: 32px;
+    }
+
+    .elp-more-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #8f8f8f;
+        font-size: 14px;
+    }
+
+    .elp-more-link:hover {
+        color: var(--nog-primary);
+    }
+
+    .elp-spinner {
+        display: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid #ffac88;
+        border-top-color: var(--nog-primary);
+        border-radius: 999px;
+        animation: elp-spin 0.8s linear infinite;
+    }
+
+    .elp-more-link[data-busy] .elp-spinner {
+        display: inline-block;
+    }
+
+    /* ---------- Filters ---------- */
+    .elp-form {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        gap: 24px;
+    }
+
+    .elp-groups {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .elp-group {
+        min-width: 0;
+    }
+
+    .elp-group > summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        min-height: 20px;
+        color: #0a0a0a;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 20px;
+        list-style: none;
+        cursor: pointer;
+    }
+
+    .elp-group > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .elp-group[open] > summary .elp-ico-chevron {
+        transform: rotate(180deg);
+    }
+
+    .elp-group-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        padding-top: 12px;
+    }
+
+    .elp-group-category .elp-group-body {
+        padding-top: 16px;
+    }
+
+    .elp-group[open] > .elp-group-body {
+        animation: elp-drop var(--motion-base) var(--ease-out) both;
+    }
+
+    .elp-field {
+        width: 100%;
+        min-width: 0;
+        height: 34px;
+        margin-bottom: 4px;
+        padding-inline: 12px;
+        border: 1px solid #d1d5dc;
+        border-radius: 4px;
+        background: #fff;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        outline: none;
+    }
+
+    .elp-field::placeholder {
+        color: rgb(10 10 10 / 0.5);
+    }
+
+    .elp-field:focus {
+        border-color: var(--nog-primary);
+    }
+
+    .elp-popular {
+        color: #4a5565;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 16px;
+    }
+
+    .elp-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        min-height: 20px;
+        color: #121212;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+    }
+
+    .elp-check[hidden],
+    .elp-group:not([data-searching]) .elp-check[data-more] {
+        display: none;
+    }
+
+    .elp-check input,
+    .elp-box {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        appearance: none;
+        border: 1px solid rgb(0 0 0 / 0.1);
+        border-radius: 4px;
+        background: #f3f3f5 center / 14px 14px no-repeat;
+        cursor: pointer;
+    }
+
+    .elp-check input[type='radio'] {
+        border-radius: 999px;
+    }
+
+    .elp-check input:checked,
+    .elp-check-current .elp-box {
+        border-color: #333;
+        background-color: #333;
+        background-image: url('../../images/elora/listing/check.svg');
+    }
+
+    .elp-check input:focus-visible {
+        outline: 2px solid var(--nog-primary);
+        outline-offset: 2px;
+    }
+
+    .elp-check-current {
+        color: #333;
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 0;
+    }
+
+    .elp-check-name {
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+        text-align: start;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Latin values ("Open-adjustable") still sit against the checkbox in Arabic. */
+    [dir='rtl'] .elp-check-name {
+        text-align: right;
+    }
+
+    .elp-count {
+        flex-shrink: 0;
+        color: #8f8f8f;
+        font-size: 12px;
+        letter-spacing: 0;
+    }
+
+    .elp-dot {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+        border: 1px solid rgb(0 0 0 / 0.14);
+        border-radius: 999px;
+        background: var(--swatch, #c4c4c4);
+    }
+
+    .elp-toggles {
+        display: flex;
+        gap: 16px;
+    }
+
+    .elp-toggle {
+        color: var(--nog-primary);
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .elp-toggle:hover {
+        text-decoration: underline;
+    }
+
+    .elp-group[data-searching] .elp-toggles,
+    .elp-group[data-searching] .elp-popular {
+        display: none;
+    }
+
+    .elp-none {
+        color: #8f8f8f;
+        font-size: 12px;
+    }
+
+    .elp-price {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .elp-clear {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        justify-self: start;
+        color: var(--nog-primary);
+        font-size: 14px;
+    }
+
+    .elp-form[aria-busy='true'] {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    /* ---------- Floating "filter | sort by" (m 1:21569) ---------- */
+    .elp-fab {
+        position: fixed;
+        inset-inline: 0;
+        bottom: calc(16px + env(safe-area-inset-bottom));
+        z-index: 30;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+    }
+
+    .elp-fab > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        min-width: 217px;
+        height: 51px;
+        border-radius: 48px;
+        background: #ff4d00;
+        color: #fdfdfd;
+        pointer-events: auto;
+        animation: elp-rise var(--motion-slow) var(--ease-out) both;
+    }
+
+    .elp-fab button {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        height: 100%;
+        font-size: 17px;
+        font-weight: 500;
+    }
+
+    .elp-fab button:active {
+        transform: scale(0.97);
+    }
+
+    .elp-fab-line {
+        width: 1px;
+        height: 31px;
+        background: #fdfdfd;
+    }
+
+    .elp-fab-count {
+        display: grid;
+        width: 18px;
+        height: 18px;
+        place-items: center;
+        border-radius: 999px;
+        background: #fff;
+        color: #ff4d00;
+        font-size: 11px;
+    }
+
+    /* ---------- Filter sheet (m 1:22799) ---------- */
+    .elp-sheet .mo-sheet-panel {
+        display: flex;
+        flex-direction: column;
+        height: 100dvh;
+        max-height: 100dvh;
+        overflow: hidden;
+        padding: 0;
+        border-radius: 0;
+        background: #f8f8f8;
+    }
+
+    .elp-sheet-head {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        background: #fdfdfd;
+    }
+
+    .elp-sheet .elp-sheet-head:focus,
+    .elp-sheet .elp-sheet-head:focus-visible {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .elp-sheet-close {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border-radius: 999px;
+        background: #fff;
+    }
+
+    .elp-sheet .elp-form {
+        display: flex;
+        min-height: 0;
+        flex: 1;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .elp-sheet .elp-groups {
+        min-height: 0;
+        flex: 1;
+        align-content: start;
+        gap: 8px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 8px 16px 16px;
+        overscroll-behavior: contain;
+        scrollbar-width: none;
+    }
+
+    .elp-sheet .elp-group > summary {
+        min-height: 40px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+
+    .elp-sheet .elp-ico-chevron {
+        width: 24px;
+        height: 24px;
+    }
+
+    .elp-sheet .elp-group-body {
+        padding-block: 0 8px;
+    }
+
+    .elp-sheet .elp-field {
+        height: 42px;
+        font-size: 12px;
+    }
+
+    /* iOS zooms inputs under 16px on focus. */
+    @supports (-webkit-touch-callout: none) {
+        .elp-sheet .elp-field {
+            font-size: 16px;
+        }
+    }
+
+    .elp-sheet .elp-popular {
+        color: #8f8f8f;
+    }
+
+    .elp-sheet .elp-check {
+        font-size: 12px;
+    }
+
+    .elp-sheet-foot {
+        display: flex;
+        flex-shrink: 0;
+        gap: 12px;
+        padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+        background: #fdfdfd;
+    }
+
+    .elp-show,
+    .elp-reset {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 46px;
+        border: 1px solid #ff4d00;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .elp-show {
+        width: 200px;
+        max-width: 60%;
+        background: #ff4d00;
+        color: #fff;
+    }
+
+    .elp-show strong {
+        font-weight: 500;
+    }
+
+    .elp-show span {
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+    }
+
+    .elp-reset {
+        flex: 1;
+        background: #fdfdfd;
+        color: #ff4d00;
+    }
+
+    /* ---------- Listing page chrome on phones (m 1:21453) ---------- */
+    /* The phone frame draws the search pill instead of the logo bar, and no tab bar. */
+    @media (max-width: 1023px) {
+        .sf-page[data-sf-page^='listing-'] {
+            padding-bottom: 67px;
+        }
+
+        .sf-page[data-sf-page^='listing-'] .elo-header > .lg\:hidden,
+        .sf-page[data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar),
+        .sf-page[data-sf-page^='listing-'] :is(.elo-mobile-nav, .elo-mobile-bar) + [aria-hidden='true'] {
+            display: none !important;
+        }
+    }
+}
+
+@keyframes elp-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes elp-drop {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes elp-rise {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .elp-fab > div,
+    .elp-group[open] > .elp-group-body,
+    .elp-spinner {
+        animation: none;
+    }
+}
