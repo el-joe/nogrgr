@@ -10,7 +10,8 @@ use Illuminate\Contracts\View\View;
 /**
  * Theme-family view resolution: `storefront::themes.{family}.{name}`, falling back to
  * the Ecommet family while a family's inner pages are not built yet. Home pages differ
- * per variant (`pages.home`, `pages.listing` and `pages.product` resolve `…-v{n}` first).
+ * per variant (`pages.home` resolves `pages.home-v{n}` first); every other page is shared
+ * by the family (all Elora variants render the Essence inner pages, decision #140).
  *
  *   return StorefrontView::make('pages.product', ['product' => $page]);
  */
@@ -50,8 +51,8 @@ final class StorefrontView
         $theme = app(StorefrontContext::class)->theme();
         $candidates = [];
 
-        /* Pages a variant may draw its own way: `pages.{name}-v{n}` wins over the family page. */
-        if ($name === 'pages.home' || $name === 'pages.listing' || $name === 'pages.product') {
+        /* Only the home is drawn per variant: `pages.home-v{n}` wins over the family home. */
+        if ($name === 'pages.home') {
             $candidates[] = 'storefront::themes.'.$theme->family->value.'.'.$name.'-v'.$theme->variant;
         }
 

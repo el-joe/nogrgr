@@ -10,8 +10,10 @@
     hover image cross-fade (mo-card / data-hover-image).
 --}}
 @props(['card', 'variant' => 'card', 'eager' => false, 'rank' => null])
-@if ($variant !== 'wide' && app(\App\Modules\Storefront\Services\StorefrontContext::class)->theme()->variant === 1)
-    {{-- Elora base: one product card everywhere (Figma 1:20600), same data and JS hooks. --}}
+@php($cardTheme = app(\App\Modules\Storefront\Services\StorefrontContext::class)->theme())
+{{-- The Essence card (Figma 1:20600) everywhere in every Elora variant, except the home of
+     variants 2–6, whose Figma frames draw their own card (1:26741 / 1:26858; decision #140). --}}
+@if ($variant !== 'wide' && $cardTheme->isElora() && ($cardTheme->variant === 1 || ! request()->routeIs('storefront.home', 'storefront.home.*')))
     <x-sf::elora.v1.card :card="$card" size="grid" :eager="$eager" {{ $attributes }} />
 @else
 @php

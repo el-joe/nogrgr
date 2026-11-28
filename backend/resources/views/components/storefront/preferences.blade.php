@@ -9,9 +9,9 @@
     $countries = app(\App\Modules\Localization\Services\StoreCountries::class)->available()
         ->map(fn ($country) => ['id' => $country->id, 'iso2' => strtolower($country->iso2), 'flag' => $country->flag, 'name' => $country->name])->values()->all();
     $redirect = '/'.ltrim(request()->path() === '/' ? '' : request()->path(), '/');
-    /* The compact panel + searchable picker belong to the Elora base design only; the other
+    /* The compact panel + searchable picker belong to the Elora design (every variant); the other
        themes keep their own panel look (native select). */
-    $eloraBase = $context->theme()->family->value === 'elora' && $context->theme()->variant === 1;
+    $eloraBase = $context->theme()->isElora();
     /* Flag of each currency: the country the code starts with (ISO 4217), when it uses it. */
     $flags = $currencies->mapWithKeys(static fn ($currency): array => [$currency->code => $currency->code === 'EUR' ? 'eu' : strtolower(substr($currency->code, 0, 2))]);
 @endphp

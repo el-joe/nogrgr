@@ -30,6 +30,15 @@ final readonly class ResolvedThemeData
         return new self($theme->slug, $theme->family, (int) $theme->variant, $withName ? (string) $theme->name : null, null, (int) $theme->id);
     }
 
+    /**
+     * Every Elora variant (Essence, Bloom, Noir, Coral, Breeze, Velvet) shares the Essence (v1)
+     * inner pages and components; only home, header, footer and colours differ per variant.
+     */
+    public function isElora(): bool
+    {
+        return $this->family === ThemeFamily::Elora;
+    }
+
     public function isCustom(): bool
     {
         return $this->customVersionId !== null;

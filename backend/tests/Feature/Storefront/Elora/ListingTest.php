@@ -72,22 +72,19 @@ it('renders the filter sheet with the live count, reset and the cards fragment',
         ->assertSee('v1-card-grid');
 });
 
-it('keeps the family listing for Elora variants 2 to 6', function (string $theme): void {
+it('renders the shared Essence listing and cards for every Elora variant', function (string $theme): void {
     $this->shop->tenant->run(fn () => app(StoreThemeService::class)->activate($theme));
     tenancy()->end();
 
     ($this->page)('/category/elp-leaf')
         ->assertViewIs('storefront::themes.elora.pages.listing')
-        ->assertSee('elo-filters', false)
-        ->assertSee('elo-fab', false)
-        // The base design's listing hooks and classes (the category slug itself starts with "elp-").
-        ->assertDontSee('data-elp-', false)
-        ->assertDontSee('class="elp-', false);
+        ->assertSee('data-elp-sheet-form', false)
+        ->assertSee('v1-card', false);
 
     $this->withSession($this->sa)->getJson(($this->url)('/category/elp-leaf?fragment=1'))
         ->assertOk()
-        ->assertDontSee('v1-card');
-})->with(['elora-2', 'elora-5']);
+        ->assertSee('v1-card-grid');
+})->with(['elora-2', 'elora-3', 'elora-4', 'elora-5', 'elora-6']);
 
 it('orders the filter groups like the design and keeps selected values visible', function (): void {
     $attribute = static fn (int $id, string $name): array => ['id' => $id, 'name' => $name, 'values' => []];

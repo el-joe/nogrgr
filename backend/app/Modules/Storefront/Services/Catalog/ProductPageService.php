@@ -301,7 +301,7 @@ class ProductPageService
     }
 
     /**
-     * Elora base page: "Shoppers also viewed" (best sellers) and "Recommended For You" (top rated, then
+     * Elora product page (every variant): "Shoppers also viewed" (best sellers) and "Recommended For You" (top rated, then
      * newest), never repeating the product itself or a card of the rail above.
      *
      * @param  list<ProductCardData>  $related
@@ -309,7 +309,7 @@ class ProductPageService
      */
     private function extraRails(int $id, array $related): array
     {
-        if ($this->context->theme()->family !== ThemeFamily::Elora || $this->context->theme()->variant !== 1) {
+        if (! $this->context->theme()->isElora()) {
             return ['also_viewed' => [], 'recommended' => []];
         }
 

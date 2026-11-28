@@ -28,9 +28,8 @@ trait RendersListings
     protected function listingResponse(Request $request, string $view, ListingQuery $query, ListingResult $result, array $data): View|JsonResponse
     {
         $next = $result->hasMore() ? $request->fullUrlWithQuery(['page' => $query->page + 1, 'fragment' => null]) : null;
-        /* Only Elora v1 (base) has its own listing; variants 2–6 keep the family page and cards. */
-        $theme = app(StorefrontContext::class)->theme();
-        $eloraBase = $theme->family->value === 'elora' && $theme->variant === 1;
+        /* Every Elora variant shares the Essence listing and cards (decision #140). */
+        $eloraBase = app(StorefrontContext::class)->theme()->isElora();
         $deliveryBy = $eloraBase ? $this->deliveryBy() : null;
 
         if ($request->boolean('fragment') || $request->ajax()) {

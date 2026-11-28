@@ -43,12 +43,12 @@ it('renders the Elora listings with filters, sort sheet and the floating filter 
         ->assertSee('id="elo-sort"', false)
         ->assertSee('elp-fab', false);
 })->with([
-    'new in' => ['/new-in', 'storefront::themes.elora.pages.listing-v1'],
-    'best selling' => ['/best-selling?period=7', 'storefront::themes.elora.pages.listing-v1'],
-    'top rated' => ['/top-rated', 'storefront::themes.elora.pages.listing-v1'],
-    'offers' => ['/offers', 'storefront::themes.elora.pages.listing-v1'],
-    'search' => ['/search?q=lamp', 'storefront::themes.elora.pages.listing-v1'],
-    'category' => ['/category/elora-gadgets', 'storefront::themes.elora.pages.listing-v1'],
+    'new in' => ['/new-in', 'storefront::themes.elora.pages.listing'],
+    'best selling' => ['/best-selling?period=7', 'storefront::themes.elora.pages.listing'],
+    'top rated' => ['/top-rated', 'storefront::themes.elora.pages.listing'],
+    'offers' => ['/offers', 'storefront::themes.elora.pages.listing'],
+    'search' => ['/search?q=lamp', 'storefront::themes.elora.pages.listing'],
+    'category' => ['/category/elora-gadgets', 'storefront::themes.elora.pages.listing'],
 ]);
 
 it('shows the products in the Elora grid and the empty state', function (): void {
@@ -75,7 +75,7 @@ it('renders the Elora product page with delivery, privacy and reviews popups', f
     $response = $response->isRedirect() ? $this->withSession($this->sa)->get($response->headers->get('Location')) : $response;
 
     $response->assertOk()
-        ->assertViewIs('storefront::themes.elora.pages.product-v1')
+        ->assertViewIs('storefront::themes.elora.pages.product')
         ->assertSee('data-product-page', false)
         ->assertSee('data-add-to-cart', false)
         ->assertSee('data-gallery', false)
@@ -226,3 +226,21 @@ it('renders the Elora status pages', function (string $view, string $text): void
     'suspended' => ['suspended', 'This store is temporarily unavailable'],
     'not launched' => ['not-launched', 'Opening shortly'],
 ]);
+
+it('renders the shared Essence product page and categories for every Elora variant', function (string $theme): void {
+    $this->shop->tenant->run(fn () => app(StoreThemeService::class)->activate($theme));
+    tenancy()->end();
+
+    $response = $this->withSession($this->sa)->get(($this->url)('/products/'.$this->shop->own->id));
+    $response = $response->isRedirect() ? $this->withSession($this->sa)->get($response->headers->get('Location')) : $response;
+
+    $response->assertOk()
+        ->assertViewIs('storefront::themes.elora.pages.product')
+        ->assertSee('epd-add', false)
+        ->assertSee('data-theme-variant="'.substr($theme, -1).'"', false);
+
+    $this->withSession($this->sa)->get(($this->url)('/categories'))
+        ->assertOk()
+        ->assertSee('lg:border-sf-border', false)
+        ->assertDontSee('lg:shadow-[0_4px_7px_rgb(0_0_0/0.08)]', false);
+})->with(['elora-2', 'elora-3', 'elora-4', 'elora-5', 'elora-6']);
