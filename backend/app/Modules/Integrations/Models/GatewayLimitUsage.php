@@ -3,14 +3,14 @@
 namespace App\Modules\Integrations\Models;
 
 use App\Modules\Platform\Models\Tenant;
+use App\Shared\Tenancy\Concerns\BelongsToCurrentTenant;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 /**
  * A store's volume through the platform account of one gateway in one month (ADM-100c).
- * Central; `tenant_id` is explicit (admin lists every store).
+ * Central; tenant scoped (the admin, outside tenancy, lists every store).
  *
  * @property int $id
  * @property int $tenant_id
@@ -26,6 +26,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  */
 class GatewayLimitUsage extends Model
 {
+    use BelongsToCurrentTenant;
     use CentralConnection;
 
     protected $table = 'gateway_limit_usages';
@@ -47,13 +48,5 @@ class GatewayLimitUsage extends Model
             'blocked_at' => 'datetime',
             'unblocked_at' => 'datetime',
         ];
-    }
-
-    /**
-     * @return BelongsTo<Tenant, $this>
-     */
-    public function tenant(): BelongsTo
-    {
-        return $this->belongsTo(Tenant::class);
     }
 }

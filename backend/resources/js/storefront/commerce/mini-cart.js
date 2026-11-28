@@ -7,6 +7,7 @@
  *  - `sf:cart-updated` (catalog/cart.js after add to cart) shows the dialog with the
  *    added product and quantity.
  */
+import { initReveal } from '../../core/reveal';
 import { bindCartLines, enhanceLines } from './lines';
 import { fragmentLoader, setCartCount } from './api';
 import { isRtl, prefersReducedMotion, token } from '../core/motion/utils';
@@ -131,6 +132,7 @@ export function initMiniCart() {
         try {
             const data = await load();
             body.innerHTML = data.html ?? body.innerHTML;
+            initReveal(body);
             setCartCount(data.items_count);
             enhanceLines(body);
         } catch {

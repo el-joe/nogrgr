@@ -108,7 +108,9 @@ class SurfaceRouter
         $name = 'panel-fallback.'.$mount->surface->value.($mount->isCentralHost() ? '.central' : '.store');
 
         $group->group(static function () use ($name): void {
-            Route::fallback(PanelFallbackController::class)->name($name);
+            // Every verb, not only GET like Route::fallback(): an unknown POST would answer 405 otherwise.
+            Route::match(['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'], '{fallbackPlaceholder}', PanelFallbackController::class)
+                ->where('fallbackPlaceholder', '.*')->fallback()->name($name);
         });
     }
 

@@ -53,7 +53,7 @@ it('notifies finance admins and the owner when an invoice is issued and paid', f
             && $notification->category() === NotificationCategory::Payments
             && $channels === ['database', 'mail', 'broadcast']
             && $data['title_params']['number'] === 'INV-2026-0007'
-            && $data['url'] === route('admin.finance.invoices.show', $invoice->id);
+            && $data['url'] === route('admin.finance.invoices.show', $invoice->id, false); // stored host-independent (QA-FINAL-008)
     });
     Notification::assertNotSentTo($other, BillingAlertNotification::class);
     Notification::assertSentOnDemand(VendorBillingMail::class, fn (VendorBillingMail $mail, array $channels, AnonymousNotifiable $notifiable): bool => $notifiable->routes['mail'] === 'billing@megz.test'
@@ -75,7 +75,7 @@ it('notifies payment admins about failed and refunded payments', function (strin
     event(new $eventClass($log));
 
     Notification::assertSentTo($admin, BillingAlertNotification::class, fn (BillingAlertNotification $notification): bool => $notification->event() === $name
-        && $notification->toArray($admin)['url'] === route('admin.finance.payment-logs.show', $log->id));
+        && $notification->toArray($admin)['url'] === route('admin.finance.payment-logs.show', $log->id, false));
     Notification::assertSentOnDemand(VendorBillingMail::class, fn (VendorBillingMail $mail, array $channels, AnonymousNotifiable $notifiable): bool => $notifiable->routes['mail'] === 'owner@megz.test'
         && $mail->variables['payment.gateway'] === 'Stripe');
 })->with([

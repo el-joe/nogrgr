@@ -51,6 +51,7 @@ it('shows a part refund as partially refunded, without the checkout percentages'
         ->toContain(__('commerce::settlement.vendor_share_plain'))
         ->not->toContain(__('commerce::settlement.vendor_share', ['percent' => 15]));
 
+    tenancy()->end(); // the vendor request leaves the store initialised; admin roles are central
     $this->actingAs(commerceAdmin(), 'admin');
     $row = $this->getJson($this->centralUrl('/admin/orders/data?draw=1&start=0&length=10'))->assertOk()->json('data.0.payment');
 

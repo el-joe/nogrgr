@@ -9,6 +9,7 @@
  *  - closes on Esc / scrim / ✕, or by dragging toward its edge (desktop) / down (phones);
  *    focus is trapped and restored; reduced motion skips the slide.
  */
+import { initReveal } from '../../../core/reveal';
 import { bindCartLines, enhanceLines } from '../../commerce/lines';
 import { fragmentLoader, setCartCount } from '../../commerce/api';
 import { applyDataVars } from '../../catalog/ui';
@@ -115,6 +116,7 @@ export function initEloraMiniCart() {
         try {
             const data = await load();
             body.innerHTML = data.html ?? body.innerHTML;
+            initReveal(body);
             setCartCount(data.items_count);
             enhanceLines(body);
             applyDataVars(body);

@@ -30,7 +30,11 @@ export function initCartPage(page) {
 
             if (summary && data.summary) {
                 summary.innerHTML = data.summary;
+                initReveal(summary);
             }
+
+            /* Swapped-in [data-reveal] content (the empty state) starts hidden until observed. */
+            initReveal(region);
 
             if (rails && typeof data.rails === 'string') {
                 rails.innerHTML = data.rails;
