@@ -82,6 +82,8 @@ return [
         'currency' => 'العملة',
         'country' => 'دولة الشحن',
         'save' => 'حفظ التفضيلات',
+        'search_currency' => 'ابحث عن عملة',
+        'no_currency' => 'لا توجد عملات مطابقة',
     ],
     'free_shipping' => [
         'title' => 'شحن مجاني',

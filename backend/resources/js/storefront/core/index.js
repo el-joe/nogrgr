@@ -25,6 +25,20 @@ function initLazyAccount() {
     });
 }
 
+/* Header preferences panel: the currency Select2 (and jQuery) load when it is first opened. */
+function initPreferences() {
+    document.addEventListener('click', (event) => {
+        const opener = event.target.closest('[data-sheet-open]');
+        const panel = opener ? document.getElementById(opener.dataset.sheetOpen) : null;
+        const select = panel?.querySelector('select[data-currency-select]:not([data-ready])');
+
+        if (select) {
+            select.dataset.ready = '';
+            import('./preferences.js').then(({ initCurrencySelect }) => initCurrencySelect(select, panel));
+        }
+    });
+}
+
 export function bootStorefront(callback) {
     window.Alpine = Alpine;
     Alpine.start();
@@ -33,6 +47,7 @@ export function bootStorefront(callback) {
         initMotion(document);
         initSwatches(document);
         initSliders(document);
+        initPreferences();
 
         /* Hooks inside [data-lazy-account] (e.g. the header preferences panel) load the
            bundle only when that panel opens (initLazyAccount). */

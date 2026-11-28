@@ -69,7 +69,9 @@ function bindDrag(sheet) {
         let start = null;
 
         handle.addEventListener('pointerdown', (event) => {
-            if (event.button !== 0) {
+            /* Never capture a press on a control inside the header: pointer capture would
+               retarget its click to the handle and the close (X) button would do nothing. */
+            if (event.button !== 0 || event.target.closest('button, a, input, select, textarea, label, [data-sheet-close]')) {
                 return;
             }
 
@@ -148,6 +150,12 @@ export function initSheets(root = document) {
         }
 
         if (event.key === 'Escape') {
+            // An open Select2 dropdown inside the sheet closes first (checked in the capture
+            // phase, before Select2 handles the key).
+            if (document.querySelector('.select2-container--open')) {
+                return;
+            }
+
             closeSheet(top);
         } else if (event.key === 'Tab') {
             const items = focusables(top.querySelector('.mo-sheet-panel'));
@@ -162,5 +170,5 @@ export function initSheets(root = document) {
                 first?.focus();
             }
         }
-    });
+    }, true);
 }

@@ -9,9 +9,11 @@
     $countries = app(\App\Modules\Localization\Services\StoreCountries::class)->available()
         ->map(fn ($country) => ['id' => $country->id, 'iso2' => strtolower($country->iso2), 'flag' => $country->flag, 'name' => $country->name])->values()->all();
     $redirect = '/'.ltrim(request()->path() === '/' ? '' : request()->path(), '/');
+    /* Flag of each currency: the country the code starts with (ISO 4217), when it uses it. */
+    $flags = $currencies->mapWithKeys(static fn ($currency): array => [$currency->code => $currency->code === 'EUR' ? 'eu' : strtolower(substr($currency->code, 0, 2))]);
 @endphp
 @if (Route::has('storefront.preferences'))
-    <x-sf::modal id="sf-preferences" :title="__st('shell.preferences.title')" size="sm" data-lazy-account>
+    <x-sf::modal id="sf-preferences" :title="__st('shell.preferences.title')" size="sm" class="sf-pref-panel" data-lazy-account>
         <form method="POST" action="{{ route('storefront.preferences') }}" class="grid gap-5" data-preferences-form>
             @csrf
             <input type="hidden" name="redirect" value="{{ $redirect }}">
@@ -27,10 +29,10 @@
                 </div>
             </fieldset>
             @if ($currencies->isNotEmpty())
-                <x-sf::form.field :label="__st('shell.preferences.currency')" for="sf-pref-currency">
-                    <select id="sf-pref-currency" name="currency" class="sf-control">
+                <x-sf::form.field :label="__st('shell.preferences.currency')" for="sf-pref-currency" class="sf-pref-currency">
+                    <select id="sf-pref-currency" name="currency" class="sf-control" data-currency-select data-empty-text="{{ __st('shell.preferences.no_currency') }}" data-search-text="{{ __st('shell.preferences.search_currency') }}">
                         @foreach ($currencies as $currency)
-                            <option value="{{ $currency->code }}" @selected($context->currencyCode() === $currency->code)>{{ $currency->code }} · {{ $currency->name }}</option>
+                            <option value="{{ $currency->code }}" data-symbol="{{ $currency->symbol }}" data-iso2="{{ $flags[$currency->code] }}" data-name="{{ $currency->name }}" @selected($context->currencyCode() === $currency->code)>{{ $currency->code }} · {{ $currency->name }}</option>
                         @endforeach
                     </select>
                 </x-sf::form.field>

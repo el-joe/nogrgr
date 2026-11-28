@@ -9,9 +9,10 @@ use JsonException;
 
 /**
  * Central `currencies`: ISO 4217 currencies from Database/Data/currencies.json
- * (names en/ar, symbol, decimals). USD is the base (rate 1, always active); the GCC,
- * Egypt and the major world currencies start active, the rest inactive. Rates come
- * from the SyncExchangeRates job. Idempotent: re-running keeps rates and admin settings.
+ * (names en/ar, symbol, decimals). USD is the base (rate 1, always active); every currency
+ * starts active (decision #133, as the old platform's full list), the GCC, Egypt and major
+ * world currencies first. Rates come from the SyncExchangeRates job; a currency without a
+ * synced rate stays hidden from shoppers. Idempotent: re-running keeps rates and admin settings.
  *
  *   php artisan db:seed --class="App\Modules\Localization\Database\Seeders\CurrencySeeder"
  */
@@ -20,7 +21,7 @@ class CurrencySeeder extends Seeder
     public const DATA_FILE = __DIR__.'/../Data/currencies.json';
 
     /**
-     * Active on a fresh install, in display order.
+     * Listed first, in display order.
      */
     public const ACTIVE = ['USD', 'SAR', 'AED', 'KWD', 'QAR', 'BHD', 'OMR', 'EGP', 'EUR', 'GBP'];
 
@@ -42,7 +43,7 @@ class CurrencySeeder extends Seeder
                 'symbol' => $currency['symbol'],
                 'decimals' => $currency['decimals'],
                 'rate' => '1.000000',
-                'is_active' => $position !== false,
+                'is_active' => true,
                 'is_base' => $currency['code'] === Money::BASE_CURRENCY,
                 'rate_synced_at' => null,
                 'sort_order' => $position !== false ? $position + 1 : 100,

@@ -53,7 +53,7 @@ it('seeds ISO currencies with USD as the active base', function (): void {
         ->and($usd->is_base && $usd->is_active)->toBeTrue()
         ->and((float) $usd->rate)->toBe(1.0)
         ->and(Currency::query()->where('code', 'SAR')->value('is_active'))->toBeTrue()
-        ->and(Currency::query()->where('code', 'JPY')->value('is_active'))->toBeFalse();
+        ->and(Currency::query()->where('code', 'JPY')->value('is_active'))->toBeTrue();
 });
 
 dataset('currency endpoints', [

@@ -1,6 +1,6 @@
 {{--
-    Vendor › Settings › Currencies (VEN-072, Figma Vendor Panel 90:112623): USD plus the
-    currencies of the store's selling countries with the platform rate (1 USD =), the
+    Vendor › Settings › Currencies (VEN-072, Figma Vendor Panel 90:112623): every currency
+    the platform has switched on (decision #133) with the platform rate (1 USD =), the
     countries they are shown in, Default (shown automatically there) and Active (offered in
     the storefront switcher). Display only: every order is charged in USD.
 --}}
@@ -43,7 +43,7 @@
                                 <td class="px-4 py-3 text-end font-semibold tabular-nums text-ink"><bdi dir="ltr">{{ number_format((float) $currency->rate, 4) }}</bdi></td>
                                 <td class="px-4 py-3 text-ink">{{ $row['is_base'] ? __('localization::vendor_currencies.all_switcher') : implode(__('localization::vendor_currencies.list_separator'), $row['countries']) }}</td>
                                 <td class="px-4 py-3">
-                                    @if ($row['is_base'])
+                                    @if ($row['is_base'] || $row['countries'] === [])
                                         <x-ui::badge tone="neutral">—</x-ui::badge>
                                     @else
                                         <x-ui::switch :id="'currency-default-'.$currency->code" name="default[]" :value="$currency->code" :checked="$row['default']" :unchecked-value="null" :disabled="! $canManage" :aria-label="__('localization::vendor_currencies.default_label', ['currency' => $currency->code])" data-currency-default />

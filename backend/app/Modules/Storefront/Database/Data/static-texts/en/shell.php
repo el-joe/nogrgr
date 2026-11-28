@@ -82,6 +82,8 @@ return [
         'currency' => 'Currency',
         'country' => 'Shipping country',
         'save' => 'Save preferences',
+        'search_currency' => 'Search currency',
+        'no_currency' => 'No currencies found',
     ],
     'free_shipping' => [
         'title' => 'Free shipping',

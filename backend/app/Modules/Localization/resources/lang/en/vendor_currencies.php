@@ -13,7 +13,7 @@ return [
     'usd_note' => 'Prices are converted for display only: every order is charged in US dollars (USD).',
     'synced' => 'Rates last synced :ago.',
     'empty_title' => 'Only US dollars for now',
-    'empty_description' => 'Currencies appear here for the countries your store sells in. Request more countries from Settings › General.',
+    'empty_description' => 'Currencies appear here once the platform switches them on.',
     'columns' => [
         'currency' => 'Currency',
         'rate' => 'Rate (1 USD =)',

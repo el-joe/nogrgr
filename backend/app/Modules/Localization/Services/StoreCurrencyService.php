@@ -19,10 +19,11 @@ use Illuminate\Support\Collection;
 /**
  * Shopper-facing currencies of the current store (VEN-072, Figma Vendor Panel 90:112623).
  * Display only: every amount is stored and charged in USD (decision #87); rates are the
- * platform's (central `currencies`, synced daily). The store lists USD plus the currencies
- * of its selling countries that the platform has switched on, and decides per currency:
+ * platform's (central `currencies`, synced daily). The store lists every currency the platform
+ * has switched on (decision #133) and decides per currency:
  *   active   offered in the storefront switcher (USD always)
- *   default  shown automatically to shoppers of its countries (otherwise they see USD)
+ *   default  shown automatically to shoppers of its selling countries that use it
+ *            (otherwise they see USD); only currencies of selling countries have it
  * Stored in tenant `store_settings` (StoreSettingKey::Currencies) as the exceptions
  * {"inactive": [code], "not_default": [code]}, so new currencies start on.
  */
@@ -43,7 +44,7 @@ class StoreCurrencyService extends BaseService
     ) {}
 
     /**
-     * Rows of the settings table: the selling countries' currencies, then USD (Figma order).
+     * Rows of the settings table: every platform-active currency (by code), then USD.
      *
      * @return list<array{currency: Currency, countries: list<string>, is_base: bool, active: bool, default: bool}>
      */
@@ -57,17 +58,13 @@ class StoreCurrencyService extends BaseService
             /** @var Currency $currency */
             $base = $currency->isBase();
 
-            if (! $base && ! isset($byCode[$currency->code])) {
-                continue;
-            }
-
             $active = $base || ! in_array($currency->code, $stored['inactive'], true);
             $rows[] = [
                 'currency' => $currency,
-                'countries' => $base ? [] : $byCode[$currency->code]->map(static fn (Country $country): string => (string) $country->name)->values()->all(),
+                'countries' => $base || ! isset($byCode[$currency->code]) ? [] : $byCode[$currency->code]->map(static fn (Country $country): string => (string) $country->name)->values()->all(),
                 'is_base' => $base,
                 'active' => $active,
-                'default' => ! $base && $active && ! in_array($currency->code, $stored['not_default'], true),
+                'default' => ! $base && $active && isset($byCode[$currency->code]) && ! in_array($currency->code, $stored['not_default'], true),
             ];
         }
 
