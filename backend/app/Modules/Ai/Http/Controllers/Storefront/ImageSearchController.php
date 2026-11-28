@@ -66,6 +66,8 @@ class ImageSearchController extends Controller
                 'name' => $card->name,
                 'url' => $card->url,
                 'image' => $card->image,
+                'badge' => $card->badge,
+                'badge_type' => $card->badgeType,
                 'price' => $card->price,
                 'price_minor' => $card->priceMinor,
                 'compare' => $card->compare,

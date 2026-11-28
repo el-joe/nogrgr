@@ -2,6 +2,9 @@
 
 namespace App\Modules\Storefront;
 
+use App\Modules\Catalog\Events\BadgesChanged;
+use App\Modules\Catalog\Events\ProductUpdated;
+use App\Modules\Catalog\Events\Store\StoreProductsChanged;
 use App\Modules\Commerce\Events\PromotionsChanged;
 use App\Modules\Platform\Events\TenantProvisioned;
 use App\Modules\Storefront\Console\DemoStoreCommand;
@@ -11,6 +14,7 @@ use App\Modules\Storefront\Http\Middleware\ApplyCustomThemeSecurityHeaders;
 use App\Modules\Storefront\Http\Middleware\EnsureStoreAvailable;
 use App\Modules\Storefront\Listeners\EnsureStorePages;
 use App\Modules\Storefront\Listeners\ForgetProductIndex;
+use App\Modules\Storefront\Listeners\ForgetProductIndexOnCatalogChange;
 use App\Modules\Storefront\Repositories\Contracts\BannerRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\CustomThemeRepositoryContract;
 use App\Modules\Storefront\Repositories\Contracts\HiddenBannerRepositoryContract;
@@ -119,6 +123,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         // System CMS pages for every new store (sf-data).
         Event::listen(TenantProvisioned::class, EnsureStorePages::class);
         Event::listen(PromotionsChanged::class, ForgetProductIndex::class);
+        Event::listen([BadgesChanged::class, StoreProductsChanged::class, ProductUpdated::class], ForgetProductIndexOnCatalogChange::class);
 
         // Not-launched / suspended store gate for `storefront.*` routes (sf-checkout).
         $this->app['router']->pushMiddlewareToGroup('web', EnsureStoreAvailable::class);

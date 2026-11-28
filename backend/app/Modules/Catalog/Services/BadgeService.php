@@ -6,6 +6,7 @@ use App\Modules\Catalog\DTOs\BadgeAssignmentData;
 use App\Modules\Catalog\DTOs\BadgeSettingsData;
 use App\Modules\Catalog\Enums\BadgeAutoFill;
 use App\Modules\Catalog\Enums\BadgeType;
+use App\Modules\Catalog\Events\BadgesChanged;
 use App\Modules\Catalog\Jobs\RefreshBadgeAutoFill;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
@@ -123,7 +124,10 @@ class BadgeService extends BaseService
             throw new DomainException(__('catalog::badges.nothing_to_add'));
         }
 
-        return $this->transaction(fn (): int => $this->badges->append($badge, array_values(array_unique($ids))), $this->connection());
+        $added = $this->transaction(fn (): int => $this->badges->append($badge, array_values(array_unique($ids))), $this->connection());
+        $this->dispatchAfterCommit(new BadgesChanged);
+
+        return $added;
     }
 
     public function remove(ProductBadge $badge, int $productId): void
@@ -131,6 +135,8 @@ class BadgeService extends BaseService
         if (! $this->badges->remove($badge, $productId)) {
             throw new DomainException(__('catalog::badges.not_assigned'));
         }
+
+        $this->dispatchAfterCommit(new BadgesChanged);
     }
 
     /**
@@ -148,6 +154,7 @@ class BadgeService extends BaseService
         }
 
         $this->transaction(fn () => $this->badges->saveOrder($badge, $productIds), $this->connection());
+        $this->dispatchAfterCommit(new BadgesChanged);
     }
 
     public function updateSettings(ProductBadge $badge, BadgeSettingsData $data): ProductBadge
@@ -158,6 +165,8 @@ class BadgeService extends BaseService
             'auto_fill' => $data->autoFill,
             'auto_fill_limit' => $data->autoFillLimit,
         ]);
+
+        $this->dispatchAfterCommit(new BadgesChanged);
 
         if ($data->autoFill->isAutomatic()) {
             RefreshBadgeAutoFill::dispatch($badge->type);
@@ -179,6 +188,7 @@ class BadgeService extends BaseService
 
         if ($ids !== null) {
             $this->transaction(fn () => $this->badges->replace($badge, $ids), $this->connection());
+            $this->dispatchAfterCommit(new BadgesChanged);
         }
     }
 

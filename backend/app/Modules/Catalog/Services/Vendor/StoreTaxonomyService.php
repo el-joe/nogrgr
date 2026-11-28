@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Services\Vendor;
 
 use App\Modules\Catalog\DTOs\Vendor\StoreCategoryData;
+use App\Modules\Catalog\Events\BadgesChanged;
 use App\Modules\Catalog\Models\ProductBadge;
 use App\Modules\Catalog\Models\StoreCategory;
 use App\Modules\Catalog\Models\StoreProduct;
@@ -298,6 +299,7 @@ class StoreTaxonomyService extends BaseService
         });
 
         $this->reader->flush();
+        $this->badgesChanged();
 
         return count($added);
     }
@@ -334,6 +336,7 @@ class StoreTaxonomyService extends BaseService
         });
 
         $this->reader->flush();
+        $this->badgesChanged();
     }
 
     /**
@@ -346,6 +349,7 @@ class StoreTaxonomyService extends BaseService
         $this->assertSameSet($this->reader->badgeMembers($badge)['store'], $storeProductIds);
         $this->badgePositions->savePositions($badge->id, $storeProductIds);
         $this->reader->flush();
+        $this->badgesChanged();
     }
 
     /**
@@ -455,5 +459,10 @@ class StoreTaxonomyService extends BaseService
         }
 
         return $candidate;
+    }
+
+    private function badgesChanged(): void
+    {
+        $this->dispatchAfterCommit(new BadgesChanged(StoreCatalogService::tenantId()));
     }
 }

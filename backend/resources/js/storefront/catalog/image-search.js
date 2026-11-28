@@ -65,6 +65,14 @@ export function initImageSearch(root = document) {
         node.querySelector('[data-card-name]').textContent = product.name;
         node.querySelector('[data-card-price]').textContent = product.price;
         node.querySelector('[data-card-match]').textContent = (texts.textMatch || '').replace('__PERCENT__', String(product.match));
+        const badge = node.querySelector('[data-card-badge]');
+
+        if (badge) {
+            badge.textContent = product.badge || '';
+            badge.dataset.badge = product.badge_type || '';
+            badge.hidden = !product.badge;
+        }
+
         const image = node.querySelector('[data-card-image]');
 
         if (product.image) {

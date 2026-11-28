@@ -58,7 +58,11 @@
     </div>
     <template data-image-search-card>
         <a class="group block" data-card-link>
-            <span class="block aspect-square overflow-hidden rounded-xl bg-[#f4f4f4]"><img alt="" loading="lazy" class="size-full object-contain transition-transform duration-300 group-hover:scale-[1.03]" data-card-image></span>
+            @php($cardTheme = app(\App\Modules\Storefront\Services\StorefrontContext::class)->theme())
+            <span class="relative block aspect-square overflow-hidden rounded-xl bg-[#f4f4f4]"><img alt="" loading="lazy" class="size-full object-contain transition-transform duration-300 group-hover:scale-[1.03]" data-card-image>
+                {{-- Product badge record on the result card (Elora base / Ecommet themes). --}}
+                @if ($cardTheme->family->value === 'ecommet' || ($cardTheme->family->value === 'elora' && $cardTheme->variant === 1))<span class="sf-result-badge" dir="auto" data-card-badge hidden></span>@endif
+            </span>
             <span class="mt-2 block truncate text-sm font-medium text-sf-ink" data-card-name></span>
             <span class="mt-1 flex flex-wrap items-center gap-2">
                 <span class="text-sm font-semibold text-sf-accent" data-card-price></span>

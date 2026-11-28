@@ -39,6 +39,8 @@ final readonly class ProductCardData
         public ?string $badge = null,
         public ?string $ribbon = null,
         public ?string $ribbonKind = null,
+        public ?string $summary = null,
+        public ?string $badgeType = null,
     ) {}
 
     /**

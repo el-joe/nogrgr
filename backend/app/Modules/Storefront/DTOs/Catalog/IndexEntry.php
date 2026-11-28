@@ -44,6 +44,7 @@ final readonly class IndexEntry
         public int $sortOrder,
         public ?int $stockLeft = null,
         public ?int $weightGrams = null,
+        public ?string $summary = null,
     ) {}
 
     /**

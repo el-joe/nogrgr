@@ -97,17 +97,22 @@ class BadgeShelves
     }
 
     /**
-     * Name of the first active badge of a product (card tag), or null.
+     * The badge a product card shows: of the product's badges, the first active one in the
+     * platform's badge order (null = none). The badge rows are read once per request.
      *
      * @param  list<int>  $badgeIds
      */
-    public function label(array $badgeIds): ?string
+    public function forProduct(array $badgeIds): ?ProductBadge
     {
-        $badges = $this->badges();
+        if ($badgeIds === []) {
+            return null;
+        }
 
-        foreach ($badgeIds as $id) {
-            if (isset($badges[$id])) {
-                return (string) $badges[$id]->name;
+        $wanted = array_flip($badgeIds);
+
+        foreach ($this->badges() as $id => $badge) {
+            if (isset($wanted[$id])) {
+                return $badge;
             }
         }
 

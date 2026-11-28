@@ -39,7 +39,8 @@ class ProductCards
     public function card(IndexEntry $entry): ProductCardData
     {
         $discount = $entry->discount();
-        $badge = $entry->badgeIds !== [] ? app(BadgeShelves::class)->label($entry->badgeIds) : null;
+        $record = $entry->badgeIds !== [] ? app(BadgeShelves::class)->forProduct($entry->badgeIds) : null;
+        $badge = $record !== null ? (string) $record->name : null;
         [$ribbon, $ribbonKind] = match (true) {
             $discount !== null && $entry->flash !== null => [__st('catalog.card.ribbon_flash', ['percent' => $discount]), 'flash'],
             $discount !== null => [__st('catalog.card.ribbon_discount', ['percent' => $discount]), 'discount'],
@@ -70,6 +71,8 @@ class ProductCards
             badge: $badge,
             ribbon: $ribbon,
             ribbonKind: $ribbonKind,
+            summary: $entry->summary,
+            badgeType: $record?->type->value,
         );
     }
 

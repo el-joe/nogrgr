@@ -210,6 +210,7 @@ class ProductIndex
                     sortOrder: $view->product->sort_order,
                     stockLeft: $priced['stock_left'],
                     weightGrams: $view->weightGrams > 0 ? $view->weightGrams : null,
+                    summary: self::shortSummary($view->summary),
                 );
             }
         });
@@ -408,6 +409,16 @@ class ProductIndex
     {
         $tenant = tenancy()->initialized ? (string) tenant()?->getTenantKey() : 'central';
 
-        return 'sf:index:v2:'.self::version($tenant).':'.$tenant.':'.($this->context->countryId() ?? 0).':'.($this->context->visibilityCountryId() ?? 0).':'.app()->getLocale();
+        return 'sf:index:v3:'.self::version($tenant).':'.$tenant.':'.($this->context->countryId() ?? 0).':'.($this->context->visibilityCountryId() ?? 0).':'.app()->getLocale();
+    }
+
+    /**
+     * One-line plain-text summary shown under the card name (Elora v1 card 1:20600).
+     */
+    private static function shortSummary(?string $summary): ?string
+    {
+        $text = trim((string) preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags((string) $summary), ENT_QUOTES | ENT_HTML5)));
+
+        return $text === '' ? null : mb_substr($text, 0, 80);
     }
 }
