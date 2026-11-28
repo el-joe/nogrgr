@@ -47,7 +47,8 @@
                         </a>
                     @endforeach
                     @if ($menu !== [])
-                        <div class="relative" data-mega>
+                        {{-- The ::after bridges the 22px gap to the open panel so the pointer never leaves the menu. --}}
+                        <div class="relative after:absolute after:start-0 after:top-full after:hidden after:h-[22px] after:w-[240px] has-[[aria-expanded=true]]:after:block" data-mega>
                             <button type="button" class="eco-nav-link" aria-expanded="false" aria-controls="sf-mega" data-mega-toggle>
                                 {{ __st('shell.nav.categories') }}<x-ui::icon name="chevron-down" :size="20" class="transition-transform duration-200 [[aria-expanded=true]_&]:rotate-180" />
                             </button>

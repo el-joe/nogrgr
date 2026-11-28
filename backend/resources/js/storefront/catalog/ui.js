@@ -71,12 +71,18 @@ function bindMega(root) {
         set(toggle.getAttribute('aria-expanded') !== 'true');
     });
     root.addEventListener('mouseenter', () => {
+        /* Back inside (e.g. after crossing the gap down to the panel): drop the pending close. */
+        clearTimeout(timer);
+
         if (window.matchMedia('(hover: hover)').matches && toggle.getAttribute('aria-expanded') !== 'true') {
             set(true);
             hovered = true;
         }
     });
-    root.addEventListener('mouseleave', () => (timer = setTimeout(() => set(false), 180)));
+    root.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => set(false), 300);
+    });
     root.addEventListener('keydown', (event) => event.key === 'Escape' && (set(false), toggle.focus()));
     document.addEventListener('click', (event) => !root.contains(event.target) && set(false));
     root.addEventListener('focusout', (event) => !root.contains(event.relatedTarget) && set(false));
